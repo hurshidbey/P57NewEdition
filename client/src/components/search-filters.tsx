@@ -41,10 +41,10 @@ export default function SearchFilters({
     <div className="mb-12 space-y-6">
       <div className="text-center space-y-4">
         <h2 className="text-4xl sm:text-5xl font-black text-black leading-tight">
-          Master AI Protocols
+          AI Protokollarini O'rganing
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Learn proven techniques to get better results from AI models through structured protocol learning.
+          Tizimli protokollar orqali AI modellaridan yaxshi natijalar olishning isbotlangan usullarini o'rganing.
         </p>
       </div>
       
@@ -53,7 +53,7 @@ export default function SearchFilters({
         <form onSubmit={handleSearchSubmit} className="relative">
           <Input
             type="text"
-            placeholder="Search protocols by title or description..."
+            placeholder="Protokollarni sarlavha yoki tavsif bo'yicha qidiring..."
             value={localSearch}
             onChange={(e) => handleSearchInput(e.target.value)}
             className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-accent pr-12 h-auto"
@@ -74,7 +74,7 @@ export default function SearchFilters({
               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
         >
-          All Categories
+          Barcha kategoriyalar
         </Button>
         {categories.map((category) => (
           <Button

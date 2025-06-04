@@ -1,0 +1,176 @@
+2025-06-04T12:26:07: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:07:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:07:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:07:     at doListen (node:net:2139:7)
+2025-06-04T12:26:07:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:07:   code: 'EADDRINUSE',
+2025-06-04T12:26:07:   errno: -48,
+2025-06-04T12:26:07:   syscall: 'listen',
+2025-06-04T12:26:07:   address: '0.0.0.0',
+2025-06-04T12:26:07:   port: 5000
+2025-06-04T12:26:07: }
+2025-06-04T12:26:07: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:07:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:07:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:07:     at doListen (node:net:2139:7)
+2025-06-04T12:26:07:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:07:   code: 'EADDRINUSE',
+2025-06-04T12:26:07:   errno: -48,
+2025-06-04T12:26:07:   syscall: 'listen',
+2025-06-04T12:26:07:   address: '0.0.0.0',
+2025-06-04T12:26:07:   port: 5000
+2025-06-04T12:26:07: }
+2025-06-04T12:26:07: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:07:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:07:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:07:     at doListen (node:net:2139:7)
+2025-06-04T12:26:07:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:07:   code: 'EADDRINUSE',
+2025-06-04T12:26:07:   errno: -48,
+2025-06-04T12:26:07:   syscall: 'listen',
+2025-06-04T12:26:07:   address: '0.0.0.0',
+2025-06-04T12:26:07:   port: 5000
+2025-06-04T12:26:07: }
+2025-06-04T12:26:07: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:07:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:07:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:07:     at doListen (node:net:2139:7)
+2025-06-04T12:26:07:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:07:   code: 'EADDRINUSE',
+2025-06-04T12:26:07:   errno: -48,
+2025-06-04T12:26:07:   syscall: 'listen',
+2025-06-04T12:26:07:   address: '0.0.0.0',
+2025-06-04T12:26:07:   port: 5000
+2025-06-04T12:26:07: }
+2025-06-04T12:26:07: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:07:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:07:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:07:     at doListen (node:net:2139:7)
+2025-06-04T12:26:07:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:07:   code: 'EADDRINUSE',
+2025-06-04T12:26:07:   errno: -48,
+2025-06-04T12:26:07:   syscall: 'listen',
+2025-06-04T12:26:07:   address: '0.0.0.0',
+2025-06-04T12:26:07:   port: 5000
+2025-06-04T12:26:07: }
+2025-06-04T12:26:07: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:07:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:07:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:07:     at doListen (node:net:2139:7)
+2025-06-04T12:26:07:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:07:   code: 'EADDRINUSE',
+2025-06-04T12:26:07:   errno: -48,
+2025-06-04T12:26:07:   syscall: 'listen',
+2025-06-04T12:26:07:   address: '0.0.0.0',
+2025-06-04T12:26:07:   port: 5000
+2025-06-04T12:26:07: }
+2025-06-04T12:26:07: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:07:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:07:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:07:     at doListen (node:net:2139:7)
+2025-06-04T12:26:07:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:07:   code: 'EADDRINUSE',
+2025-06-04T12:26:07:   errno: -48,
+2025-06-04T12:26:07:   syscall: 'listen',
+2025-06-04T12:26:07:   address: '0.0.0.0',
+2025-06-04T12:26:07:   port: 5000
+2025-06-04T12:26:07: }
+2025-06-04T12:26:07: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:07:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:07:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:07:     at doListen (node:net:2139:7)
+2025-06-04T12:26:07:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:07:   code: 'EADDRINUSE',
+2025-06-04T12:26:07:   errno: -48,
+2025-06-04T12:26:07:   syscall: 'listen',
+2025-06-04T12:26:07:   address: '0.0.0.0',
+2025-06-04T12:26:07:   port: 5000
+2025-06-04T12:26:07: }
+2025-06-04T12:26:08: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:08:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:08:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:08:     at doListen (node:net:2139:7)
+2025-06-04T12:26:08:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:08:   code: 'EADDRINUSE',
+2025-06-04T12:26:08:   errno: -48,
+2025-06-04T12:26:08:   syscall: 'listen',
+2025-06-04T12:26:08:   address: '0.0.0.0',
+2025-06-04T12:26:08:   port: 5000
+2025-06-04T12:26:08: }
+2025-06-04T12:26:08: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:08:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:08:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:08:     at doListen (node:net:2139:7)
+2025-06-04T12:26:08:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:08:   code: 'EADDRINUSE',
+2025-06-04T12:26:08:   errno: -48,
+2025-06-04T12:26:08:   syscall: 'listen',
+2025-06-04T12:26:08:   address: '0.0.0.0',
+2025-06-04T12:26:08:   port: 5000
+2025-06-04T12:26:08: }
+2025-06-04T12:26:08: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:08:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:08:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:08:     at doListen (node:net:2139:7)
+2025-06-04T12:26:08:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:08:   code: 'EADDRINUSE',
+2025-06-04T12:26:08:   errno: -48,
+2025-06-04T12:26:08:   syscall: 'listen',
+2025-06-04T12:26:08:   address: '0.0.0.0',
+2025-06-04T12:26:08:   port: 5000
+2025-06-04T12:26:08: }
+2025-06-04T12:26:08: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:08:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:08:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:08:     at doListen (node:net:2139:7)
+2025-06-04T12:26:08:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:08:   code: 'EADDRINUSE',
+2025-06-04T12:26:08:   errno: -48,
+2025-06-04T12:26:08:   syscall: 'listen',
+2025-06-04T12:26:08:   address: '0.0.0.0',
+2025-06-04T12:26:08:   port: 5000
+2025-06-04T12:26:08: }
+2025-06-04T12:26:08: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:08:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:08:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:08:     at doListen (node:net:2139:7)
+2025-06-04T12:26:08:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:08:   code: 'EADDRINUSE',
+2025-06-04T12:26:08:   errno: -48,
+2025-06-04T12:26:08:   syscall: 'listen',
+2025-06-04T12:26:08:   address: '0.0.0.0',
+2025-06-04T12:26:08:   port: 5000
+2025-06-04T12:26:08: }
+2025-06-04T12:26:08: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:08:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:08:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:08:     at doListen (node:net:2139:7)
+2025-06-04T12:26:08:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:08:   code: 'EADDRINUSE',
+2025-06-04T12:26:08:   errno: -48,
+2025-06-04T12:26:08:   syscall: 'listen',
+2025-06-04T12:26:08:   address: '0.0.0.0',
+2025-06-04T12:26:08:   port: 5000
+2025-06-04T12:26:08: }
+2025-06-04T12:26:08: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:08:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:08:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:08:     at doListen (node:net:2139:7)
+2025-06-04T12:26:08:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:08:   code: 'EADDRINUSE',
+2025-06-04T12:26:08:   errno: -48,
+2025-06-04T12:26:08:   syscall: 'listen',
+2025-06-04T12:26:08:   address: '0.0.0.0',
+2025-06-04T12:26:08:   port: 5000
+2025-06-04T12:26:08: }
+2025-06-04T12:26:09: Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+2025-06-04T12:26:09:     at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+2025-06-04T12:26:09:     at listenInCluster (node:net:1965:12)
+2025-06-04T12:26:09:     at doListen (node:net:2139:7)
+2025-06-04T12:26:09:     at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+2025-06-04T12:26:09:   code: 'EADDRINUSE',
+2025-06-04T12:26:09:   errno: -48,
+2025-06-04T12:26:09:   syscall: 'listen',
+2025-06-04T12:26:09:   address: '0.0.0.0',
+2025-06-04T12:26:09:   port: 5000
+2025-06-04T12:26:09: }

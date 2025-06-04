@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Protocol, Category } from "@shared/schema";
 import AppHeader from "@/components/app-header";
-import SearchFilters from "@/components/search-filters";
 import ProtocolCard from "@/components/protocol-card";
 import { Button } from "@/components/ui/button";
 import { createFuseSearch } from "@/lib/fuse";
@@ -32,13 +31,13 @@ export default function Home() {
   });
 
   // Update allProtocols when new data comes in
-  useState(() => {
+  useEffect(() => {
     if (protocols && currentPage === 1) {
       setAllProtocols(protocols);
     } else if (protocols && currentPage > 1) {
       setAllProtocols(prev => [...prev, ...protocols]);
     }
-  });
+  }, [protocols, currentPage]);
 
   // Filter and search protocols
   const displayProtocols = searchQuery 
@@ -77,8 +76,8 @@ export default function Home() {
         <AppHeader />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Protocols</h2>
-            <p className="text-gray-600">Please check your connection and try again.</p>
+            <h2 className="text-2xl font-bold text-red-600 mb-4">Protokollarni yuklashda xatolik</h2>
+            <p className="text-gray-600">Iltimos, internet aloqangizni tekshiring va qayta urinib ko'ring.</p>
           </div>
         </div>
       </div>
@@ -90,13 +89,6 @@ export default function Home() {
       <AppHeader />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <SearchFilters
-          searchQuery={searchQuery}
-          onSearchChange={handleSearch}
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryFilter}
-          categories={categories || []}
-        />
 
         {isLoading && currentPage === 1 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -115,8 +107,8 @@ export default function Home() {
           <>
             {finalProtocols.length === 0 ? (
               <div className="text-center py-12">
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">No protocols found</h3>
-                <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">Protokollar topilmadi</h3>
+                <p className="text-gray-500">Qidiruv yoki filtr sozlamalarini o'zgartirib ko'ring.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -133,7 +125,7 @@ export default function Home() {
                   disabled={isLoading}
                   className="px-8 py-4 bg-accent text-white hover:bg-accent/90 font-semibold text-lg h-auto"
                 >
-                  {isLoading ? "Loading..." : "Load More Protocols"}
+                  {isLoading ? "Yuklanmoqda..." : "Ko'proq protokollar yuklash"}
                 </Button>
               </div>
             )}

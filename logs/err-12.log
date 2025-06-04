@@ -1,0 +1,121 @@
+2025-06-04T12:42:22: Error getting categories: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T12:42:22:     at HybridStorage.getCategories (file:///Users/xb21/P57/dist/index.js:474:33)
+2025-06-04T12:42:22:     at file:///Users/xb21/P57/dist/index.js:577:41
+2025-06-04T12:42:22:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:42:22:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T12:42:22:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T12:42:22:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:42:22:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T12:42:22:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:346:12)
+2025-06-04T12:42:22:     at next (/Users/xb21/P57/node_modules/express/lib/router/index.js:280:10)
+2025-06-04T12:42:22:     at file:///Users/xb21/P57/dist/index.js:733:3
+2025-06-04T12:42:36: Error getting categories: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T12:42:36:     at HybridStorage.getCategories (file:///Users/xb21/P57/dist/index.js:474:33)
+2025-06-04T12:42:36:     at file:///Users/xb21/P57/dist/index.js:577:41
+2025-06-04T12:42:36:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:42:36:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T12:42:36:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T12:42:36:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:42:36:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T12:42:36:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:346:12)
+2025-06-04T12:42:36:     at next (/Users/xb21/P57/node_modules/express/lib/router/index.js:280:10)
+2025-06-04T12:42:36:     at file:///Users/xb21/P57/dist/index.js:733:3
+2025-06-04T12:43:07: Error getting categories: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T12:43:07:     at HybridStorage.getCategories (file:///Users/xb21/P57/dist/index.js:474:33)
+2025-06-04T12:43:07:     at file:///Users/xb21/P57/dist/index.js:577:41
+2025-06-04T12:43:07:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:43:07:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T12:43:07:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T12:43:07:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:43:07:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T12:43:07:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:346:12)
+2025-06-04T12:43:07:     at next (/Users/xb21/P57/node_modules/express/lib/router/index.js:280:10)
+2025-06-04T12:43:07:     at file:///Users/xb21/P57/dist/index.js:733:3
+2025-06-04T12:56:13: Error getting protocol: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T12:56:13:     at HybridStorage.getProtocol (file:///Users/xb21/P57/dist/index.js:413:33)
+2025-06-04T12:56:13:     at file:///Users/xb21/P57/dist/index.js:559:38
+2025-06-04T12:56:13:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:13:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T12:56:13:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T12:56:13:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:13:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T12:56:13:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:365:14)
+2025-06-04T12:56:13:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:376:14)
+2025-06-04T12:56:13:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:421:3)
+2025-06-04T12:56:17: Error getting protocol: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T12:56:17:     at HybridStorage.getProtocol (file:///Users/xb21/P57/dist/index.js:413:33)
+2025-06-04T12:56:17:     at file:///Users/xb21/P57/dist/index.js:559:38
+2025-06-04T12:56:17:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:17:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T12:56:17:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T12:56:17:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:17:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T12:56:17:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:365:14)
+2025-06-04T12:56:17:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:376:14)
+2025-06-04T12:56:17:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:421:3)
+2025-06-04T12:56:20: Error getting protocol: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T12:56:20:     at HybridStorage.getProtocol (file:///Users/xb21/P57/dist/index.js:413:33)
+2025-06-04T12:56:20:     at file:///Users/xb21/P57/dist/index.js:559:38
+2025-06-04T12:56:20:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:20:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T12:56:20:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T12:56:20:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:20:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T12:56:20:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:365:14)
+2025-06-04T12:56:20:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:376:14)
+2025-06-04T12:56:20:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:421:3)
+2025-06-04T12:56:22: Error getting protocol: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T12:56:22:     at HybridStorage.getProtocol (file:///Users/xb21/P57/dist/index.js:413:33)
+2025-06-04T12:56:22:     at file:///Users/xb21/P57/dist/index.js:559:38
+2025-06-04T12:56:22:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:22:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T12:56:22:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T12:56:22:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:22:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T12:56:22:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:365:14)
+2025-06-04T12:56:22:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:376:14)
+2025-06-04T12:56:22:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:421:3)
+2025-06-04T12:56:25: Error getting protocol: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T12:56:25:     at HybridStorage.getProtocol (file:///Users/xb21/P57/dist/index.js:413:33)
+2025-06-04T12:56:25:     at file:///Users/xb21/P57/dist/index.js:559:38
+2025-06-04T12:56:25:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:25:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T12:56:25:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T12:56:25:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:56:25:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T12:56:25:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:365:14)
+2025-06-04T12:56:25:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:376:14)
+2025-06-04T12:56:25:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:421:3)
+2025-06-04T12:57:19: Error getting protocol: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T12:57:19:     at HybridStorage.getProtocol (file:///Users/xb21/P57/dist/index.js:413:33)
+2025-06-04T12:57:19:     at file:///Users/xb21/P57/dist/index.js:559:38
+2025-06-04T12:57:19:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:57:19:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T12:57:19:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T12:57:19:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T12:57:19:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T12:57:19:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:365:14)
+2025-06-04T12:57:19:     at param (/Users/xb21/P57/node_modules/express/lib/router/index.js:376:14)
+2025-06-04T12:57:19:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:421:3)
+2025-06-04T13:21:56: Error searching protocols: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T13:21:56:     at HybridStorage.searchProtocols (file:///Users/xb21/P57/dist/index.js:530:33)
+2025-06-04T13:21:56:     at file:///Users/xb21/P57/dist/index.js:598:36
+2025-06-04T13:21:56:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T13:21:56:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T13:21:56:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T13:21:56:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T13:21:56:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T13:21:56:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:346:12)
+2025-06-04T13:21:56:     at next (/Users/xb21/P57/node_modules/express/lib/router/index.js:280:10)
+2025-06-04T13:21:56:     at file:///Users/xb21/P57/dist/index.js:824:3
+2025-06-04T13:21:56: Error searching protocols: TypeError: Cannot read properties of null (reading 'select')
+2025-06-04T13:21:56:     at HybridStorage.searchProtocols (file:///Users/xb21/P57/dist/index.js:530:33)
+2025-06-04T13:21:56:     at file:///Users/xb21/P57/dist/index.js:598:36
+2025-06-04T13:21:56:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T13:21:56:     at next (/Users/xb21/P57/node_modules/express/lib/router/route.js:149:13)
+2025-06-04T13:21:56:     at Route.dispatch (/Users/xb21/P57/node_modules/express/lib/router/route.js:119:3)
+2025-06-04T13:21:56:     at Layer.handle [as handle_request] (/Users/xb21/P57/node_modules/express/lib/router/layer.js:95:5)
+2025-06-04T13:21:56:     at /Users/xb21/P57/node_modules/express/lib/router/index.js:284:15
+2025-06-04T13:21:56:     at Function.process_params (/Users/xb21/P57/node_modules/express/lib/router/index.js:346:12)
+2025-06-04T13:21:56:     at next (/Users/xb21/P57/node_modules/express/lib/router/index.js:280:10)
+2025-06-04T13:21:56:     at file:///Users/xb21/P57/dist/index.js:824:3

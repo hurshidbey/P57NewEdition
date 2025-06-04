@@ -24,13 +24,39 @@ let db: any = null;
 let isDatabaseConnected = false;
 
 async function initializeDatabase() {
-  const dbPassword = process.env.SUPABASE_DB_PASSWORD;
-  if (!dbPassword) {
-    console.log("No SUPABASE_DB_PASSWORD provided, using in-memory storage");
-    return;
+  // Try Supabase REST API first
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (supabaseUrl && supabaseKey) {
+    try {
+      const { SupabaseStorage } = await import('./supabase-storage');
+      const supabaseStorage = new SupabaseStorage();
+      
+      // Test connection by fetching categories
+      await supabaseStorage.getCategories();
+      
+      // Use Supabase storage globally
+      global.supabaseStorage = supabaseStorage;
+      isDatabaseConnected = true;
+      console.log("Supabase REST API connected successfully");
+      return;
+    } catch (error) {
+      console.log("Supabase connection failed, trying direct database connection:", (error as Error).message);
+    }
   }
 
-  const connectionString = `postgresql://postgres:${dbPassword}@db.bazptglwzqstppwlvmvb.supabase.co:5432/postgres`;
+  // Fall back to direct database connection
+  let connectionString = process.env.DATABASE_URL;
+  
+  if (!connectionString) {
+    const dbPassword = process.env.SUPABASE_DB_PASSWORD;
+    if (!dbPassword) {
+      console.log("No Supabase credentials or DATABASE_URL provided, using in-memory storage");
+      return;
+    }
+    connectionString = `postgresql://postgres:${dbPassword}@db.bazptglwzqstppwlvmvb.supabase.co:5432/postgres`;
+  }
 
   try {
     const client = postgres(connectionString, {
@@ -117,12 +143,12 @@ export class HybridStorage implements IStorage {
   private initializeMemoryData() {
     // Initialize categories
     const defaultCategories = [
-      { id: 1, name: "Audience", description: "Targeting and audience specification" },
-      { id: 2, name: "Creative", description: "Creative and innovative approaches" },
-      { id: 3, name: "Technical", description: "Technical implementation" },
-      { id: 4, name: "Structure", description: "Content structure and formatting" },
-      { id: 5, name: "Evidence", description: "Evidence and validation" },
-      { id: 6, name: "Analysis", description: "Analysis and evaluation" },
+      { id: 1, name: "Auditoriya", description: "Maqsadli auditoriya va yo'naltirish" },
+      { id: 2, name: "Ijodiy", description: "Ijodiy va innovatsion yondashuvlar" },
+      { id: 3, name: "Texnik", description: "Texnik amalga oshirish" },
+      { id: 4, name: "Tuzilish", description: "Kontent tuzilishi va formatlash" },
+      { id: 5, name: "Dalil", description: "Dalil va tekshirish" },
+      { id: 6, name: "Tahlil", description: "Tahlil va baholash" },
     ];
 
     defaultCategories.forEach(cat => {
@@ -183,12 +209,12 @@ export class HybridStorage implements IStorage {
 
   private async seedCategories() {
     const defaultCategories = [
-      { name: "Audience", description: "Targeting and audience specification" },
-      { name: "Creative", description: "Creative and innovative approaches" },
-      { name: "Technical", description: "Technical implementation" },
-      { name: "Structure", description: "Content structure and formatting" },
-      { name: "Evidence", description: "Evidence and validation" },
-      { name: "Analysis", description: "Analysis and evaluation" },
+      { name: "Auditoriya", description: "Maqsadli auditoriya va yo'naltirish" },
+      { name: "Ijodiy", description: "Ijodiy va innovatsion yondashuvlar" },
+      { name: "Texnik", description: "Texnik amalga oshirish" },
+      { name: "Tuzilish", description: "Kontent tuzilishi va formatlash" },
+      { name: "Dalil", description: "Dalil va tekshirish" },
+      { name: "Tahlil", description: "Tahlil va baholash" },
     ];
 
     await db.insert(categories).values(defaultCategories);
@@ -270,7 +296,17 @@ export class HybridStorage implements IStorage {
 
   // Protocol methods
   async getProtocols(limit = 20, offset = 0): Promise<Protocol[]> {
-    if (isDatabaseConnected) {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.getProtocols(limit, offset);
+      } catch (error) {
+        console.error("Error getting protocols from Supabase:", error);
+      }
+    }
+    
+    // Fall back to direct database connection
+    if (isDatabaseConnected && db) {
       try {
         const result = await db.select()
           .from(protocols)
@@ -279,34 +315,53 @@ export class HybridStorage implements IStorage {
           .offset(offset);
         return result;
       } catch (error) {
-        console.error("Error getting protocols:", error);
+        console.error("Error getting protocols from database:", error);
       }
     }
     
+    // Fall back to memory storage
     const allProtocols = Array.from(this.memoryProtocols.values())
       .sort((a, b) => a.number - b.number);
     return allProtocols.slice(offset, offset + limit);
   }
 
   async getProtocol(id: number): Promise<Protocol | undefined> {
-    if (isDatabaseConnected) {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.getProtocol(id);
+      } catch (error) {
+        console.error("Error getting protocol from Supabase:", error);
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
       try {
         const result = await db.select().from(protocols).where(eq(protocols.id, id));
         return result[0];
       } catch (error) {
-        console.error("Error getting protocol:", error);
+        console.error("Error getting protocol from database:", error);
       }
     }
     return this.memoryProtocols.get(id);
   }
 
   async createProtocol(protocol: InsertProtocol): Promise<Protocol> {
-    if (isDatabaseConnected) {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.createProtocol(protocol);
+      } catch (error) {
+        console.error("Error creating protocol in Supabase:", error);
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
       try {
         const result = await db.insert(protocols).values(protocol).returning();
         return result[0];
       } catch (error) {
-        console.error("Error creating protocol:", error);
+        console.error("Error creating protocol in database:", error);
       }
     }
     
@@ -321,7 +376,16 @@ export class HybridStorage implements IStorage {
   }
 
   async updateProtocol(id: number, protocol: Partial<InsertProtocol>): Promise<Protocol | undefined> {
-    if (isDatabaseConnected) {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.updateProtocol(id, protocol);
+      } catch (error) {
+        console.error("Error updating protocol in Supabase:", error);
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
       try {
         const result = await db.update(protocols)
           .set(protocol)
@@ -329,7 +393,7 @@ export class HybridStorage implements IStorage {
           .returning();
         return result[0];
       } catch (error) {
-        console.error("Error updating protocol:", error);
+        console.error("Error updating protocol in database:", error);
       }
     }
     
@@ -342,12 +406,21 @@ export class HybridStorage implements IStorage {
   }
 
   async deleteProtocol(id: number): Promise<boolean> {
-    if (isDatabaseConnected) {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.deleteProtocol(id);
+      } catch (error) {
+        console.error("Error deleting protocol in Supabase:", error);
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
       try {
         await db.delete(protocols).where(eq(protocols.id, id));
         return true;
       } catch (error) {
-        console.error("Error deleting protocol:", error);
+        console.error("Error deleting protocol in database:", error);
         return false;
       }
     }
@@ -391,26 +464,50 @@ export class HybridStorage implements IStorage {
 
   // Category methods
   async getCategories(): Promise<Category[]> {
-    if (isDatabaseConnected) {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.getCategories();
+      } catch (error) {
+        console.error("Error getting categories from Supabase:", error);
+      }
+    }
+    
+    // Fall back to direct database connection
+    if (isDatabaseConnected && db) {
       try {
         const result = await db.select().from(categories);
         return result;
       } catch (error) {
-        console.error("Error getting categories:", error);
+        console.error("Error getting categories from database:", error);
       }
     }
+    
+    // Fall back to memory storage
     return Array.from(this.memoryCategories.values());
   }
 
   async getCategory(id: number): Promise<Category | undefined> {
-    if (isDatabaseConnected) {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.getCategory(id);
+      } catch (error) {
+        console.error("Error getting category from Supabase:", error);
+      }
+    }
+    
+    // Fall back to direct database connection
+    if (isDatabaseConnected && db) {
       try {
         const result = await db.select().from(categories).where(eq(categories.id, id));
         return result[0];
       } catch (error) {
-        console.error("Error getting category:", error);
+        console.error("Error getting category from database:", error);
       }
     }
+    
+    // Fall back to memory storage
     return this.memoryCategories.get(id);
   }
 }
