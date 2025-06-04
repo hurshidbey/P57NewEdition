@@ -7,6 +7,18 @@ import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Add cache control for API routes in development
+  if (process.env.NODE_ENV === "development") {
+    app.use("/api/*", (req, res, next) => {
+      res.set({
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+      next();
+    });
+  }
+  
   // Get all protocols with pagination
   app.get("/api/protocols", async (req, res) => {
     try {

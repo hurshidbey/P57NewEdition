@@ -33,5 +33,14 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
+    hmr: {
+      overlay: true,
+    },
+    headers: {
+      'Cache-Control': 'no-store',
+    },
+  },
+  optimizeDeps: {
+    force: process.env.NODE_ENV === "development",
   },
 });
