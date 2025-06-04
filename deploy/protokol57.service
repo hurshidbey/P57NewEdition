@@ -1,0 +1,27 @@
+[Unit]
+Description=Protokol 57 Learning App
+After=network.target
+
+[Service]
+Type=simple
+User=protokol57
+WorkingDirectory=/home/protokol57/protokol57
+Environment=NODE_ENV=production
+Environment=PORT=5000
+ExecStart=/usr/bin/node /home/protokol57/protokol57/dist/index.js
+Restart=on-failure
+RestartSec=10
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/protokol57/protokol57
+
+# Resource limits
+LimitNOFILE=65536
+MemoryLimit=512M
+
+[Install]
+WantedBy=multi-user.target

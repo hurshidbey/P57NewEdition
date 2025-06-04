@@ -8,8 +8,12 @@ import AppHeader from "@/components/app-header";
 
 export default function ProtocolDetail() {
   const { id } = useParams<{ id: string }>();
-  
-  const { data: protocol, isLoading, error } = useQuery<Protocol>({
+
+  const {
+    data: protocol,
+    isLoading,
+    error,
+  } = useQuery<Protocol>({
     queryKey: [`/api/protocols/${id}`],
     enabled: !!id,
   });
@@ -47,12 +51,16 @@ export default function ProtocolDetail() {
         <AppHeader />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Protocol Not Found</h2>
-            <p className="text-gray-600 mb-6">The protocol you're looking for doesn't exist.</p>
+            <h2 className="text-2xl font-bold text-red-600 mb-4">
+              Protokol topilmadi
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Siz qidirayotgan protokol mavjud emas.
+            </p>
             <Link href="/">
               <Button className="bg-accent text-white hover:bg-accent/90">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Protocols
+                Protokollarga qaytish
               </Button>
             </Link>
           </div>
@@ -64,26 +72,28 @@ export default function ProtocolDetail() {
   return (
     <div className="min-h-screen bg-white">
       <AppHeader />
-      
+
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 bg-accent text-white rounded-xl flex items-center justify-center font-black text-2xl">
-              {protocol.number.toString().padStart(2, '0')}
+              {protocol.number.toString().padStart(2, "0")}
             </div>
             <div>
               <h1 className="text-3xl font-black text-black leading-tight">
                 {protocol.title}
               </h1>
-              <span className="text-sm text-gray-500">Protocol #{protocol.number}</span>
+              <span className="text-sm text-gray-500">
+                Protokol №{protocol.number}
+              </span>
             </div>
           </div>
         </div>
 
         {/* Description */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-black mb-4">Description</h2>
+          <h2 className="text-xl font-bold text-black mb-4">Tavsif</h2>
           <p className="text-gray-700 text-lg leading-relaxed">
             {protocol.description}
           </p>
@@ -96,7 +106,7 @@ export default function ProtocolDetail() {
             <div className="bg-red-50 border-l-4 border-red-400 p-6 rounded-r-xl">
               <h3 className="text-lg font-bold text-red-800 mb-3 flex items-center">
                 <XCircle className="w-5 h-5 mr-2" />
-                Bad Example
+                Yomon misol
               </h3>
               <p className="text-red-700 font-medium">
                 "{protocol.badExample}"
@@ -109,7 +119,7 @@ export default function ProtocolDetail() {
             <div className="bg-green-50 border-l-4 border-green-400 p-6 rounded-r-xl">
               <h3 className="text-lg font-bold text-green-800 mb-3 flex items-center">
                 <CheckCircle className="w-5 h-5 mr-2" />
-                Good Example
+                Yaxshi misol
               </h3>
               <p className="text-green-700 font-medium">
                 "{protocol.goodExample}"
@@ -121,10 +131,8 @@ export default function ProtocolDetail() {
         {/* Notes */}
         {protocol.notes && (
           <div className="mb-8">
-            <h3 className="text-lg font-bold text-black mb-3">Notes</h3>
-            <p className="text-gray-700 leading-relaxed">
-              {protocol.notes}
-            </p>
+            <h3 className="text-lg font-bold text-black mb-3">Eslatmalar</h3>
+            <p className="text-gray-700 leading-relaxed">{protocol.notes}</p>
           </div>
         )}
 
@@ -133,7 +141,7 @@ export default function ProtocolDetail() {
           <Link href="/">
             <Button className="bg-gray-100 text-gray-700 hover:bg-gray-200 font-semibold">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Protocols
+              Protokollarga
             </Button>
           </Link>
         </div>

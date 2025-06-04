@@ -60,11 +60,11 @@ export default function Admin() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/protocols"] });
-      toast({ title: "Protocol created successfully" });
+      toast({ title: "Protokol muvaffaqiyatli yaratildi" });
       form.reset();
     },
     onError: () => {
-      toast({ title: "Failed to create protocol", variant: "destructive" });
+      toast({ title: "Protokol yaratishda xatolik", variant: "destructive" });
     },
   });
 
@@ -75,12 +75,12 @@ export default function Admin() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/protocols"] });
-      toast({ title: "Protocol updated successfully" });
+      toast({ title: "Protokol muvaffaqiyatli yangilandi" });
       setEditingProtocol(null);
       form.reset();
     },
     onError: () => {
-      toast({ title: "Failed to update protocol", variant: "destructive" });
+      toast({ title: "Protokolni yangilashda xatolik", variant: "destructive" });
     },
   });
 
@@ -90,10 +90,10 @@ export default function Admin() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/protocols"] });
-      toast({ title: "Protocol deleted successfully" });
+      toast({ title: "Protokol muvaffaqiyatli o'chirildi" });
     },
     onError: () => {
-      toast({ title: "Failed to delete protocol", variant: "destructive" });
+      toast({ title: "Protokolni o'chirishda xatolik", variant: "destructive" });
     },
   });
 
@@ -129,8 +129,8 @@ export default function Admin() {
       
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-black text-black mb-2">Admin Panel</h1>
-          <p className="text-gray-600">Manage protocols and categories</p>
+          <h1 className="text-4xl font-black text-black mb-2">Boshqaruv paneli</h1>
+          <p className="text-gray-600">Protokollar va kategoriyalarni boshqaring</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -139,7 +139,7 @@ export default function Admin() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Plus className="w-5 h-5 mr-2" />
-                {editingProtocol ? "Edit Protocol" : "Add New Protocol"}
+                {editingProtocol ? "Protokolni tahrirlash" : "Yangi protokol qo'shish"}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -150,7 +150,7 @@ export default function Admin() {
                     name="number"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Protocol Number</FormLabel>
+                        <FormLabel>Protokol raqami</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
@@ -168,7 +168,7 @@ export default function Admin() {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title</FormLabel>
+                        <FormLabel>Sarlavha</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -182,7 +182,7 @@ export default function Admin() {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>Tavsif</FormLabel>
                         <FormControl>
                           <Textarea {...field} rows={4} />
                         </FormControl>
@@ -196,7 +196,7 @@ export default function Admin() {
                     name="badExample"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Bad Example</FormLabel>
+                        <FormLabel>Yomon misol</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -210,7 +210,7 @@ export default function Admin() {
                     name="goodExample"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Good Example</FormLabel>
+                        <FormLabel>Yaxshi misol</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -224,7 +224,7 @@ export default function Admin() {
                     name="categoryId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Category</FormLabel>
+                        <FormLabel>Kategoriya</FormLabel>
                         <Select 
                           onValueChange={(value) => field.onChange(parseInt(value))}
                           value={field.value.toString()}
@@ -252,7 +252,7 @@ export default function Admin() {
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Notes (Optional)</FormLabel>
+                        <FormLabel>Eslatmalar (ixtiyoriy)</FormLabel>
                         <FormControl>
                           <Textarea {...field} rows={2} />
                         </FormControl>
@@ -267,7 +267,7 @@ export default function Admin() {
                       className="flex-1 bg-accent text-white hover:bg-accent/90"
                       disabled={createMutation.isPending || updateMutation.isPending}
                     >
-                      {editingProtocol ? "Update Protocol" : "Create Protocol"}
+                      {editingProtocol ? "Protokolni yangilash" : "Protokol yaratish"}
                     </Button>
                     {editingProtocol && (
                       <Button
@@ -275,7 +275,7 @@ export default function Admin() {
                         variant="outline"
                         onClick={handleCancelEdit}
                       >
-                        Cancel
+                        Bekor qilish
                       </Button>
                     )}
                   </div>
@@ -287,7 +287,7 @@ export default function Admin() {
           {/* Protocols List */}
           <Card>
             <CardHeader>
-              <CardTitle>Existing Protocols</CardTitle>
+              <CardTitle>Mavjud protokollar</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4 max-h-96 overflow-y-auto">
