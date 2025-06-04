@@ -1,0 +1,13 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+No Supabase credentials or DATABASE_URL provided, using in-memory storage
+Forced re-optimization of dependencies
+8:09:11 PM [express] serving on port 5001
+OpenAI evaluation error: Error: OPENAI_API_KEY environment variable is required
+    at getOpenAIClient (/Users/xb21/P57/server/openai-service.ts:10:13)
+    at evaluatePrompt (/Users/xb21/P57/server/openai-service.ts:56:28)
+    at <anonymous> (/Users/xb21/P57/server/routes.ts:145:32)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+8:09:26 PM [express] POST /api/protocols/1/evaluate 200 in 3ms :: {"score":5,"strengths":["Prompt su…

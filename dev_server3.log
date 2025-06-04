@@ -1,0 +1,9 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+Forced re-optimization of dependencies
+8:09:56 PM [express] serving on port 5001
+Tables may already exist: getaddrinfo ENOTFOUND db.bazptglwzqstppwlvmvb.supabase.co
+Database connection failed, using in-memory storage: getaddrinfo ENOTFOUND db.bazptglwzqstppwlvmvb.supabase.co
+8:10:25 PM [express] POST /api/protocols/1/evaluate 200 in 8072ms :: {"score":10,"strengths":["The p…
