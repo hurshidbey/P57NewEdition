@@ -1,0 +1,4 @@
+8:11:45 PM [express] serving on port 5758
+Tables may already exist: getaddrinfo ENOTFOUND db.bazptglwzqstppwlvmvb.supabase.co
+Database connection failed, using in-memory storage: getaddrinfo ENOTFOUND db.bazptglwzqstppwlvmvb.supabase.co
+8:12:41 PM [express] POST /api/protocols/1/evaluate 200 in 8434ms :: {"score":10,"strengths":["The p…
