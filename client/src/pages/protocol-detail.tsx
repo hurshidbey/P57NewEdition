@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, XCircle } from "lucide-react";
 import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
+import PromptPractice from "@/components/prompt-practice";
 
 export default function ProtocolDetail() {
   const { id } = useParams<{ id: string }>();
@@ -135,6 +136,11 @@ export default function ProtocolDetail() {
             <p className="text-gray-700 leading-relaxed">{protocol.notes}</p>
           </div>
         )}
+
+        {/* Practice Section */}
+        <div className="mb-8">
+          <PromptPractice protocol={protocol} />
+        </div>
 
         {/* Back Button */}
         <div className="pt-6 border-t border-gray-200">
