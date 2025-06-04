@@ -1,5 +1,8 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+// Development vs Production detection
+const isDevelopment = import.meta.env.DEV;
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -12,9 +15,18 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  const headers: HeadersInit = data ? { "Content-Type": "application/json" } : {};
+  
+  // Add cache busting headers in development
+  if (isDevelopment) {
+    headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    headers['Pragma'] = 'no-cache';
+    headers['Expires'] = '0';
+  }
+  
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -47,8 +59,18 @@ export const getQueryFn: <T>(options: {
       }
     }
 
+    // Add cache busting headers in development
+    const headers: HeadersInit = {};
+    
+    if (isDevelopment) {
+      headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+      headers['Pragma'] = 'no-cache';
+      headers['Expires'] = '0';
+    }
+    
     const res = await fetch(url, {
       credentials: "include",
+      headers,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
@@ -59,13 +81,15 @@ export const getQueryFn: <T>(options: {
     return await res.json();
   };
 
+// Development vs Production caching strategy
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      refetchOnWindowFocus: isDevelopment ? true : false,
+      staleTime: isDevelopment ? 0 : 5 * 60 * 1000, // 0ms in dev, 5min in prod
+      gcTime: isDevelopment ? 0 : 5 * 60 * 1000, // 0ms in dev, 5min in prod
       retry: false,
     },
     mutations: {
