@@ -7,9 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, XCircle, Lightbulb, RefreshCw, Send } from "lucide-react";
+import { CheckCircle, XCircle, Lightbulb, RefreshCw, Send, AlertTriangle } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { usePromptUsage } from "@/hooks/use-prompt-usage";
 
 interface PromptEvaluation {
   score: number;
@@ -27,6 +28,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
   const [userPrompt, setUserPrompt] = useState("");
   const [evaluation, setEvaluation] = useState<PromptEvaluation | null>(null);
   const { toast } = useToast();
+  const { usage, limit, canUsePrompt, getRemainingUsage, getUsagePercentage, incrementUsage } = usePromptUsage();
 
   const evaluationMutation = useMutation({
     mutationFn: async (prompt: string) => {
@@ -39,6 +41,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
     },
     onSuccess: (data) => {
       setEvaluation(data);
+      incrementUsage();
       toast({
         title: "Prompt baholandi!",
         description: `Sizning ball: ${data.score}/10`,
@@ -55,6 +58,15 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
   });
 
   const handleSubmit = () => {
+    if (!canUsePrompt()) {
+      toast({
+        title: "Kunlik limit tugadi",
+        description: `Siz bugun ${limit} ta promptni baholadingiz. Ertaga qaytadan urinib ko'ring.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!userPrompt.trim()) {
       toast({
         title: "Prompt kerak",
