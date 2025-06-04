@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertProtocolSchema } from "@shared/schema";
+import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -107,6 +108,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(categories);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch categories" });
+    }
+  });
+
+  // Evaluate user prompt against a protocol
+  app.post("/api/protocols/:id/evaluate", async (req, res) => {
+    try {
+      const protocolId = parseInt(req.params.id);
+      const { prompt } = req.body;
+
+      if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
+        return res.status(400).json({ message: "Prompt is required" });
+      }
+
+      if (prompt.length > 2000) {
+        return res.status(400).json({ message: "Prompt too long (max 2000 characters)" });
+      }
+
+      const protocol = await storage.getProtocol(protocolId);
+      if (!protocol) {
+        return res.status(404).json({ message: "Protocol not found" });
+      }
+
+      const evaluation = await evaluatePrompt(prompt.trim(), protocol);
+      res.json(evaluation);
+    } catch (error) {
+      console.error("Evaluation error:", error);
+      res.status(500).json({ message: "Failed to evaluate prompt" });
     }
   });
 

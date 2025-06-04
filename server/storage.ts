@@ -37,7 +37,7 @@ async function initializeDatabase() {
       await supabaseStorage.getCategories();
       
       // Use Supabase storage globally
-      global.supabaseStorage = supabaseStorage;
+      (global as any).supabaseStorage = supabaseStorage;
       isDatabaseConnected = true;
       console.log("Supabase REST API connected successfully");
       return;
@@ -369,7 +369,10 @@ export class HybridStorage implements IStorage {
     const newProtocol: Protocol = { 
       ...protocol, 
       id,
-      createdAt: new Date()
+      createdAt: new Date(),
+      badExample: protocol.badExample ?? null,
+      goodExample: protocol.goodExample ?? null,
+      notes: protocol.notes ?? null
     };
     this.memoryProtocols.set(id, newProtocol);
     return newProtocol;
