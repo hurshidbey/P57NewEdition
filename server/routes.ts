@@ -1,0 +1,130 @@
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import { storage } from "./storage";
+import { insertProtocolSchema } from "@shared/schema";
+import { z } from "zod";
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Get all protocols with pagination
+  app.get("/api/protocols", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+      const search = req.query.search as string;
+      const categoryId = req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined;
+
+      let protocols;
+      if (search) {
+        protocols = await storage.searchProtocols(search);
+        if (categoryId) {
+          protocols = protocols.filter(p => p.categoryId === categoryId);
+        }
+        protocols = protocols.slice(offset, offset + limit);
+      } else {
+        protocols = await storage.getProtocols(limit, offset);
+        if (categoryId) {
+          protocols = protocols.filter(p => p.categoryId === categoryId);
+        }
+      }
+
+      res.json(protocols);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch protocols" });
+    }
+  });
+
+  // Get single protocol
+  app.get("/api/protocols/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const protocol = await storage.getProtocol(id);
+      
+      if (!protocol) {
+        return res.status(404).json({ message: "Protocol not found" });
+      }
+      
+      res.json(protocol);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch protocol" });
+    }
+  });
+
+  // Create new protocol
+  app.post("/api/protocols", async (req, res) => {
+    try {
+      const validatedData = insertProtocolSchema.parse(req.body);
+      const protocol = await storage.createProtocol(validatedData);
+      res.status(201).json(protocol);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create protocol" });
+    }
+  });
+
+  // Update protocol
+  app.put("/api/protocols/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertProtocolSchema.partial().parse(req.body);
+      const protocol = await storage.updateProtocol(id, validatedData);
+      
+      if (!protocol) {
+        return res.status(404).json({ message: "Protocol not found" });
+      }
+      
+      res.json(protocol);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update protocol" });
+    }
+  });
+
+  // Delete protocol
+  app.delete("/api/protocols/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteProtocol(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Protocol not found" });
+      }
+      
+      res.json({ message: "Protocol deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete protocol" });
+    }
+  });
+
+  // Get all categories
+  app.get("/api/categories", async (req, res) => {
+    try {
+      const categories = await storage.getCategories();
+      res.json(categories);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch categories" });
+    }
+  });
+
+  // Simple auth endpoint (basic implementation)
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (username === "admin" && password === "admin123") {
+        res.json({ user: { id: 1, username: "admin" }, success: true });
+      } else {
+        res.status(401).json({ message: "Invalid credentials" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  const httpServer = createServer(app);
+  return httpServer;
+}

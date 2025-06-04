@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "number": 1,
+    "title": "So'z miqdorini belgilang va hajmni nazorat qiling",
+    "description": "Aniq so'z soni belgilash javoblar hajmini boshqaradi. Model ko'rsatilgan miqdorga qat'iy rioya qilishga intiladi. Qisqa javoblar uchun kam, chuqur tahlil uchun ko'proq so'z talab qiling. Muhim narsalarni o'sha \"chegaraga\" sig'diradi va ortiqcha narsalar bilan boshingizni og'ritmaydi. Vaqtiz tejaladi.",
+    "badExample": "Sedana haqida menga ko'proq ma'lumot ber.",
+    "goodExample": "Sedana haqida 350 ta so'z qatnashgan maqola tayyorlab ber.",
+    "categoryId": 4,
+    "notes": null
+  },
+  {
+    "id": 2,
+    "number": 2,
+    "title": "Raqamlangan ro'yxat talab qiling. Oson bo'ladi",
+    "description": "Raqamlangan ro'yxatlar ma'lumotni oson o'qish va eslab qolish imkonini beradi. Sub (qo'shimcha kichik) bandlar qo'shish strukturani yanada mustahkamlaydi. Murakkab tushunchalarni aniq qadamlarga ajratadi. O'quvchiga har bir nuqtani ketma-ket o'rganish imkonini beradi.",
+    "badExample": "Marketing strategiyasini tushuntir",
+    "goodExample": "Marketing strategiyasini 7 ta alohida band shaklida taqdim et, har bir band a, b, c kabi kichik bandlarga bo'linsin.",
+    "categoryId": 4,
+    "notes": null
+  },
+  {
+    "id": 3,
+    "number": 3,
+    "title": "Noaniq iboralarni taqiqlang. Kerak emas!",
+    "description": "Noaniq iboralar javoblarni sust va ishonchsiz qiladi. Ularni taqiqlash modelni aniq pozitsiya egallashiga majbur qiladi. Natijada keskin, aniq va foydalanish uchun qulay ma'lumot olasiz. Munozarali mavzularda ham aniq fikr bildiriladi.",
+    "badExample": "Bu masala bo'yicha fikringni bilsam bo'ladimi?",
+    "goodExample": "Bu masala bo'yicha fikringni 200 ta so'z bilan xulosala, \"balki\", \"ehtimol\" kabi noaniq jumlalarni qo'llama.",
+    "categoryId": 6,
+    "notes": null
+  }
+]
