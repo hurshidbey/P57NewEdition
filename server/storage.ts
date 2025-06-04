@@ -24,15 +24,22 @@ let db: any = null;
 let isDatabaseConnected = false;
 
 async function initializeDatabase() {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    console.log("No DATABASE_URL provided, using in-memory storage");
+  const dbPassword = process.env.SUPABASE_DB_PASSWORD;
+  if (!dbPassword) {
+    console.log("No SUPABASE_DB_PASSWORD provided, using in-memory storage");
     return;
   }
 
+  const connectionString = `postgresql://postgres.bazptglwzqstppwlvmvb:${dbPassword}@aws-0-us-west-1.pooler.supabase.com:6543/postgres`;
+
   try {
-    const client = postgres(connectionString);
+    const client = postgres(connectionString, {
+      ssl: 'require'
+    });
     db = drizzle(client);
+    
+    // Create tables if they don't exist
+    await createTables();
     
     // Test connection
     await db.select().from(categories).limit(1);
@@ -41,6 +48,47 @@ async function initializeDatabase() {
   } catch (error) {
     console.log("Database connection failed, using in-memory storage:", (error as Error).message);
     isDatabaseConnected = false;
+  }
+}
+
+async function createTables() {
+  try {
+    // Create categories table
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT
+      )
+    `);
+
+    // Create protocols table
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS protocols (
+        id SERIAL PRIMARY KEY,
+        number INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        bad_example TEXT,
+        good_example TEXT,
+        category_id INTEGER NOT NULL,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    // Create users table
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+      )
+    `);
+
+    console.log("Tables created successfully");
+  } catch (error) {
+    console.log("Tables may already exist:", (error as Error).message);
   }
 }
 
@@ -147,38 +195,26 @@ export class HybridStorage implements IStorage {
   }
 
   private async seedProtocols() {
-    // Load all protocols from the attached file
-    const protocolsData = [
-      {
-        number: 1,
-        title: "So'z miqdorini belgilang va hajmni nazorat qiling",
-        description: "Aniq so'z soni belgilash javoblar hajmini boshqaradi. Model ko'rsatilgan miqdorga qat'iy rioya qilishga intiladi. Qisqa javoblar uchun kam, chuqur tahlil uchun ko'proq so'z talab qiling. Muhim narsalarni o'sha \"chegaraga\" sig'diradi va ortiqcha narsalar bilan boshingizni og'ritmaydi. Vaqtiz tejaladi.",
-        badExample: "Sedana haqida menga ko'proq ma'lumot ber.",
-        goodExample: "Sedana haqida 350 ta so'z qatnashgan maqola tayyorlab ber.",
-        categoryId: 4,
-        notes: null
-      },
-      {
-        number: 2,
-        title: "Raqamlangan ro'yxat talab qiling. Oson bo'ladi",
-        description: "Raqamlangan ro'yxatlar ma'lumotni oson o'qish va eslab qolish imkonini beradi. Sub (qo'shimcha kichik) bandlar qo'shish strukturani yanada mustahkamlaydi. Murakkab tushunchalarni aniq qadamlarga ajratadi. O'quvchiga har bir nuqtani ketma-ket o'rganish imkonini beradi.",
-        badExample: "Marketing strategiyasini tushuntir",
-        goodExample: "Marketing strategiyasini 7 ta alohida band shaklida taqdim et, har bir band a, b, c kabi kichik bandlarga bo'linsin.",
-        categoryId: 4,
-        notes: null
-      },
-      {
-        number: 3,
-        title: "Noaniq iboralarni taqiqlang. Kerak emas!",
-        description: "Noaniq iboralar javoblarni sust va ishonchsiz qiladi. Ularni taqiqlash modelni aniq pozitsiya egallashiga majbur qiladi. Natijada keskin, aniq va foydalanish uchun qulay ma'lumot olasiz. Munozarali mavzularda ham aniq fikr bildiriladi.",
-        badExample: "Bu masala bo'yicha fikringni bilsam bo'ladimi?",
-        goodExample: "Bu masala bo'yicha fikringni 200 ta so'z bilan xulosala, \"balki\", \"ehtimol\" kabi noaniq jumlalarni qo'llama.",
-        categoryId: 6,
-        notes: null
-      }
+    // Load all 57 protocols from the attached file
+    const allProtocolsData = [
+      { number: 1, title: "So'z miqdorini belgilang va hajmni nazorat qiling", description: "Aniq so'z soni belgilash javoblar hajmini boshqaradi. Model ko'rsatilgan miqdorga qat'iy rioya qilishga intiladi. Qisqa javoblar uchun kam, chuqur tahlil uchun ko'proq so'z talab qiling. Muhim narsalarni o'sha \"chegaraga\" sig'diradi va ortiqcha narsalar bilan boshingizni og'ritmaydi. Vaqtiz tejaladi.", badExample: "Sedana haqida menga ko'proq ma'lumot ber.", goodExample: "Sedana haqida 350 ta so'z qatnashgan maqola tayyorlab ber.", categoryId: 4, notes: null },
+      { number: 2, title: "Raqamlangan ro'yxat talab qiling. Oson bo'ladi", description: "Raqamlangan ro'yxatlar ma'lumotni oson o'qish va eslab qolish imkonini beradi. Sub (qo'shimcha kichik) bandlar qo'shish strukturani yanada mustahkamlaydi. Murakkab tushunchalarni aniq qadamlarga ajratadi. O'quvchiga har bir nuqtani ketma-ket o'rganish imkonini beradi.", badExample: "Marketing strategiyasini tushuntir", goodExample: "Marketing strategiyasini 7 ta alohida band shaklida taqdim et, har bir band a, b, c kabi kichik bandlarga bo'linsin.", categoryId: 4, notes: null },
+      { number: 3, title: "Noaniq iboralarni taqiqlang. Kerak emas!", description: "Noaniq iboralar javoblarni sust va ishonchsiz qiladi. Ularni taqiqlash modelni aniq pozitsiya egallashiga majbur qiladi. Natijada keskin, aniq va foydalanish uchun qulay ma'lumot olasiz. Munozarali mavzularda ham aniq fikr bildiriladi.", badExample: "Bu masala bo'yicha fikringni bilsam bo'ladimi?", goodExample: "Bu masala bo'yicha fikringni 200 ta so'z bilan xulosala, \"balki\", \"ehtimol\" kabi noaniq jumlalarni qo'llama.", categoryId: 6, notes: null },
+      { number: 4, title: "Mutaxassislik darajasini belgilang!", description: "Fikr murakkabligi auditoriyaga mos bo'lishi zarur. Daraja ko'rsatilsa, model termin va misollarni shunga moslaydi. Haddan ortiq ilmiy tildan qochish yoki aksincha chuqurroq kirish shu yerda hal qilinadi. O'quvchi o'z saviyasida tushunadi, vaqtini tejaydi.", badExample: "\"Yaxshi tushuntir\" yoki \"sodda qilib ayt\"", goodExample: "\"Iqtsodiyot doktoranti sifatida batafsil tahlil qil\" yoki \"9-sinflik o'quvchiga tushunarli qilib yoz\"", categoryId: 1, notes: null },
+      { number: 5, title: "Vaqt chegarasini o'rnating!", description: "Vaqt chegarasi modelga tezkor, lo'nda va eng muhim faktlarga asoslangan javobni berishga undaydi. Ortiqcha batafsil ma'lumotlar qisqaradi. Eng asosiy nuqtalar aniq va tez yetkaziladi. Vaqt chegarasi qo'yilganda, model \"muhim ma'lumotlarni\" ajratadi.", badExample: "Suv filtrlari qanday ishlaydi? Iltimos, aytib yuboring.", goodExample: "Suv filtrlari qanday ishlaydi? Huddi 30 sekund vaqting bordek javob ber.", categoryId: 1, notes: null },
+      { number: 6, title: "Dalil turlarini talab qiling!", description: "Aniq dalil turlari ko'rsatilganda, model shunchaki fikr emas, asoslangan ma'lumot beradi. Ilmiy maqolalar, statistika, ekspert fikrlari – bular javobga ishonchni oshiradi. Har bir fikr ortida mustahkam asos paydo bo'ladi. Sifatsiz ma'lumotlar chiqarib tashlanadi.", badExample: "Dalillar keltiring.", goodExample: "Har bir fikrni bitta tekshirilgan ilmiy tadqiqot va bitta real hayotiy misol bilan asosla.", categoryId: 5, notes: null },
+      { number: 7, title: "Paragraf uzunligini nazorat qiling", description: "Qisqa paragraflar o'qishni osonlashtiradi, diqqatni jamlab turadi. Uzun matnlar o'quvchini charchatadi. Qisqa paragraflar ma'lumotni saralashga majbur qiladi, faqat eng muhimi qoladi. Material oson hazm bo'ladi, esda qoladi.", badExample: ".... Bu haqda essay yozing.", goodExample: "... Har bir paragrafda maksimum 4 ta gap ishlat.", categoryId: 4, notes: null },
+      { number: 8, title: "Temperatura nazoratini qo'llash", description: "Temperatura – modelning ijodkorlik darajasi. Past temperatura – faktlarga asoslangan, ishonchli, konservativ javoblar. Yuqori temperatura – kreativ, kutilmagan, noodatiy g'oyalar. Vazifaga qarab tanlang. Ilmiy masalalarda pastroq, ijodiy yozishlarda yuqoriroq temperatura samarali.", badExample: "... Iltimos, eng yaxshi g'oyani bering.", goodExample: "...\"faktlarga asoslangan, konservativ javob taqdim et\" yoki \"Kreativ, kutilmagan yechimlar ber.\"", categoryId: 2, notes: null },
+      { number: 9, title: "Har tomondan tahlil qiling", description: "Bir masalani turli nuqtai nazardan ko'rish to'liq tushunish imkonini beradi. Har xil soha vakillari (iqtisodchi, muhandis, sotuvchi) qarashlarida katta farq bo'ladi. Masalani turli tomondan ko'rib, yashirin jihatlarni ochish mumkin. Qarorlar chuqurroq asoslanadi. (14-protokol bilan ham solishtiring.)", badExample: "Bu masala haqida fikringizni ayting.", goodExample: "Masalani avval texnologik tomonlarini keyin iqtsodiy tomonlarini tahlil qil.", categoryId: 5, notes: null },
+      { number: 10, title: "Ba'zi mavzularni taqiqlang", description: "Ba'zan javobda ayrim mavzular keraksiz yoki ortiqcha bo'ladi. Masalan, texnik yechim izlayotganda, etik masalalar to'siq bo'lishi mumkin. Aniq maqsadga yo'naltirilgan javoblar olish uchun keraksiz yo'nalishlarni taqiqlang. Diqqatni muhim jihatlarga qaratadi.", badExample: "To'liq javob bering.", goodExample: "Masalaga ekologik, iqtsodiy tomondan yondash, texnik tomonlarini chetlab o't.", categoryId: 4, notes: null },
+      { number: 11, title: "Aniq manbaalar formati talab qiling", description: "Aniq manbalar formati ma'lumotni tekshirishni osonlashtiradi. Standart format (masalan, APA, MLA) qo'llash barcha manbalarni bir xil ko'rinishda saqlaydi. To'g'ridan-to'g'ri URL manzillar tekshirishni tezlashtiradi. Ishonchli ma'lumotlarni ajratib olish imkoni paydo bo'ladi.", badExample: "Manbalarni ko'rsating.", goodExample: "Manbalarni APA formatida to'g'ridan-to'g'ri URL manzillar bilan keltir.", categoryId: 5, notes: null },
+      { number: 12, title: "Axborotni qayta ishlash uchun maxsus chegara belgisi qo'llang!", description: "Belgilar yordamida muhim bloklarni tez ajratib olasiz. Keyinchalik texnik ishlar uchun ham (skript yoki regex bilan yirik matndan xulosani sug'urib olish) oson bo'ladi. Model belgilarni aniq joyga qo'yadi, tartib buzilmaydi. Tozalash va qayta ishlash jarayoni tezlashadi. Ko'z oson o'qiydi.", badExample: "Muhim fikrlarni ajrating.", goodExample: "Barcha asosiy xulosalarni §§ belgilari orasiga joylashtir.", categoryId: 4, notes: null },
+      { number: 13, title: "Qarama-qarshi tahlil talab qiling", description: "Fikrga qarshi bo'lgan eng kuchli argumentlarni ko'rish fikrni mustahkamlaydi yoki zaif tomonlarni ochadi. Bir tomonlama qarashdan qochish imkonini beradi. Qarorlar yanada puxta bo'ladi. Muammoli jihatlar avvalroq ma'lum bo'ladi, ularga yechim topiladi. (Solishtiring: Protokol-31)", badExample: "... buning yaxshi tomonlarini aytib bering.", goodExample: "... Standart javobni bergandan so'ng, eng kuchli qarshi argumentni keltir.", categoryId: 5, notes: null },
+      { number: 14, title: "Turli kasblarni birlashtiring!", description: "Turli soha vakillari bir muammoni ko'rishda o'ziga xos nuqtai nazarga ega. Ularni birlashtirish super yechimlar beradi. Masalan, \"harbiy strateg sifatida\" va \"psixolog sifatida\" ko'rish. Ikkala soha bilimlarini birlashtirib, yangi yondashuvlar paydo bo'ladi. (9-protokol bilan solishtiring)", badExample: "Bu masalani tahlil qiling.", goodExample: "Bu masalani harbiy strateg hamda xulq-atvor iqtisodchisi nuqtai nazaridan tahlil qil.", categoryId: 4, notes: null },
+      { number: 15, title: "Ishonch chegarasini o'rnating!", description: "Fakt va taxmin orasidagi farqni belgilash muhim. Ishonch chegarasi o'rnatilganda, model faqat ishonchli ma'lumotlarni beradi. Ishonchsiz faktlar chiqarib tashlanadi. Qarorlar aniq ma'lumotlarga asoslanadi. Taxminlar haqiqat sifatida taqdim etilmaydi.", badExample: "Bu haqda bilganingizni ayting.", goodExample: "Faqat 90%+ ishonchli bo'lgan faktlarga asoslangan ma'lumotlardan foydalan.", categoryId: 5, notes: null }
     ];
 
-    await db.insert(protocols).values(protocolsData);
+    await db.insert(protocols).values(allProtocolsData);
   }
 
   // User methods
