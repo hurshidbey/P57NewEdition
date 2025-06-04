@@ -328,3 +328,9 @@
 2025-06-04T20:02:06: 8:02:06 PM [express] GET /api/categories 200 in 961ms :: [{"id":1,"name":"Auditoriya","description":…
 2025-06-04T20:02:06: 8:02:06 PM [express] GET /api/protocols 200 in 1064ms :: [{"id":1,"number":1,"title":"So'z miqdorini…
 2025-06-04T20:02:09: 8:02:09 PM [express] GET /api/protocols/1 200 in 282ms :: {"id":1,"number":1,"title":"So'z miqdorini…
+2025-06-05T02:47:09: 2:47:09 AM [express] serving on port 5757
+2025-06-05T02:47:10: Supabase REST API connected successfully
+2025-06-05T02:47:10: Error seeding database: Cannot read properties of null (reading 'select')
+2025-06-05T03:15:42: 3:15:42 AM [express] serving on port 5757
+2025-06-05T03:15:43: Supabase REST API connected successfully
+2025-06-05T03:15:43: Error seeding database: Cannot read properties of null (reading 'select')
