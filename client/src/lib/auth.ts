@@ -9,17 +9,27 @@ export interface AuthUser {
 
 export const authService = {
   async signUp(email: string, password: string, name?: string) {
+    console.log('🔐 Attempting signup for:', email)
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/auth/confirm`,
         data: {
           name: name || email.split('@')[0]
         }
       }
     })
     
-    if (error) throw error
+    if (error) {
+      console.error('❌ Signup error:', error)
+      throw error
+    }
+    
+    console.log('✅ Signup response:', data)
+    console.log('User created:', data.user?.email)
+    console.log('Email confirmed:', data.user?.email_confirmed_at)
+    
     return data
   },
 
@@ -43,6 +53,8 @@ export const authService = {
     
     if (!user) return null
     
+    console.log('Current user check:', user.email, 'confirmed:', user.email_confirmed_at)
+    
     return {
       id: user.id,
       email: user.email!,
@@ -51,8 +63,9 @@ export const authService = {
   },
 
   onAuthStateChange(callback: (user: AuthUser | null) => void) {
-    return supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
+    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email)
+      if (session?.user && session?.user?.email_confirmed_at) {
         const authUser: AuthUser = {
           id: session.user.id,
           email: session.user.email!,
@@ -63,5 +76,6 @@ export const authService = {
         callback(null)
       }
     })
+    return data
   }
 }
