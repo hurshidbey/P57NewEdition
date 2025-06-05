@@ -150,6 +150,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test Supabase connection endpoint
+  app.get("/api/test-supabase", async (req, res) => {
+    try {
+      // This will test if we can connect to Supabase from the server
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        'https://bazptglwzqstppwlvmvb.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+      );
+      
+      const { data, error } = await supabase.auth.getSession();
+      
+      res.json({
+        connected: !error,
+        error: error?.message,
+        sessionExists: !!data.session
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        connected: false, 
+        error: error.message 
+      });
+    }
+  });
+
   // Simple auth endpoint (basic implementation)
   app.post("/api/auth/login", async (req, res) => {
     try {

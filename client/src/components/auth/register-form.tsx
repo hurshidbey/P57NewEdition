@@ -54,7 +54,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       await signUp(email, password, name)
       toast({
         title: "Muvaffaqiyat!",
-        description: "Ro'yxatdan o'tish muvaffaqiyatli. Emailingizni tasdiqlang."
+        description: "Emailingizga tasdiqlash havolasi yuborildi. Emailingizni tekshiring."
       })
       onRegistered()
     } catch (error: any) {

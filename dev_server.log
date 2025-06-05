@@ -2,12 +2,24 @@
 > rest-express@1.0.0 dev
 > NODE_ENV=development tsx server/index.ts
 
-No Supabase credentials or DATABASE_URL provided, using in-memory storage
 Forced re-optimization of dependencies
-8:08:37 PM [express] serving on port 5001
-OpenAI evaluation error: Error: OPENAI_API_KEY environment variable is required
-    at getOpenAIClient (/Users/xb21/P57/server/openai-service.ts:10:13)
-    at evaluatePrompt (/Users/xb21/P57/server/openai-service.ts:56:28)
-    at <anonymous> (/Users/xb21/P57/server/routes.ts:145:32)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-8:08:58 PM [express] POST /api/protocols/1/evaluate 200 in 3ms :: {"score":5,"strengths":["Prompt su…
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at doListen (node:net:2139:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1944:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v20.19.2

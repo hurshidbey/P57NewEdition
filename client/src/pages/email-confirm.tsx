@@ -12,13 +12,13 @@ export default function EmailConfirmPage() {
   useEffect(() => {
     const handleEmailConfirmation = async () => {
       try {
-        const urlParams = new URLSearchParams(location.split('?')[1])
-        const token = urlParams.get('token')
+        const urlParams = new URLSearchParams(window.location.search)
+        const token_hash = urlParams.get('token_hash')
         const type = urlParams.get('type')
         
-        if (type === 'signup' && token) {
+        if (type === 'email' && token_hash) {
           const { error } = await supabase.auth.verifyOtp({
-            token_hash: token,
+            token_hash,
             type: 'email'
           })
           
@@ -41,7 +41,7 @@ export default function EmailConfirmPage() {
     }
 
     handleEmailConfirmation()
-  }, [location])
+  }, [])
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
