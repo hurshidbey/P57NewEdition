@@ -15,7 +15,7 @@ function getOpenAIClient(): OpenAI {
 }
 
 export interface PromptEvaluation {
-  score: number; // 1-10 scale
+  score: number; // 1-100 scale
   strengths: string[];
   improvements: string[];
   rewrittenPrompt: string;
@@ -27,37 +27,37 @@ export async function evaluatePrompt(
   protocol: Protocol
 ): Promise<PromptEvaluation> {
   try {
-    const systemPrompt = `You are an expert AI prompt evaluator. Your job is to evaluate user prompts based on specific prompting protocols.
+    const systemPrompt = `Siz ekspert AI prompt baholovchisisiz. Sizning vazifangiz foydalanuvchi promptlarini ma'lum protokollar asosida baholashdir.
 
-PROTOCOL BEING EVALUATED:
-Title: ${protocol.title}
-Description: ${protocol.description}
-Good Example: ${protocol.goodExample}
-Bad Example: ${protocol.badExample}
+BAHOLANADIGAN PROTOKOL:
+Sarlavha: ${protocol.title}
+Tavsif: ${protocol.description}
+Yaxshi misol: ${protocol.goodExample}
+Yomon misol: ${protocol.badExample}
 
-EVALUATION CRITERIA:
-1. How well does the prompt follow the specific protocol principles?
-2. Is it clear, specific, and actionable?
-3. Does it avoid the mistakes shown in the bad example?
-4. Does it incorporate techniques from the good example?
+BAHOLASH MEZONLARI:
+1. Prompt protokol tamoyillariga qanchalik mos keladi?
+2. Aniq, tushunarli va amaliy bo'ladimi?
+3. Yomon misoldagi xatolardan qochganmi?
+4. Yaxshi misoldagi usullarni qo'llaganmi?
 
-RESPONSE FORMAT:
-Provide your evaluation as a JSON object with these exact fields:
+JAVOB FORMATI:
+Baholashingizni JSON obyekt sifatida bering:
 {
-  "score": number (1-10, where 10 is perfect application of the protocol),
-  "strengths": ["strength1", "strength2", ...] (2-4 specific things done well),
-  "improvements": ["improvement1", "improvement2", ...] (2-4 specific suggestions),
-  "rewrittenPrompt": "improved version of the prompt following the protocol better",
-  "explanation": "Brief explanation (2-3 sentences) of the score and key recommendations"
+  "score": raqam (1-100, 100 - protokolni mukammal qo'llash),
+  "strengths": ["kuchli tomon1", "kuchli tomon2", ...] (2-4 ta aniq yaxshi jihatlari),
+  "improvements": ["taklif1", "taklif2", ...] (2-4 ta aniq takliflar),
+  "rewrittenPrompt": "protokolga ko'ra yaxshilangan prompt versiyasi",
+  "explanation": "Ball va asosiy tavsiyalarning qisqacha tushuntirishi (2-3 jumla)"
 }
 
-Be constructive, specific, and focus on how well the prompt applies THIS specific protocol.`;
+Konstruktiv, aniq bo'ling va promptning aynan SHU protokolga qanchalik mos kelishiga e'tibor bering. Barcha javoblar O'ZBEK TILIDA bo'lishi kerak.`;
 
     const response = await getOpenAIClient().chat.completions.create({
       model: 'gpt-4',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Evaluate this prompt: "${userPrompt}"` }
+        { role: 'user', content: `Ushbu promptni baholang: "${userPrompt}"` }
       ],
       temperature: 0.3,
       max_tokens: 800,
@@ -82,17 +82,17 @@ Be constructive, specific, and focus on how well the prompt applies THIS specifi
       }
 
       // Ensure score is within range
-      evaluation.score = Math.max(1, Math.min(10, Math.round(evaluation.score)));
+      evaluation.score = Math.max(1, Math.min(100, Math.round(evaluation.score)));
 
       return evaluation;
     } catch (parseError) {
       // If JSON parsing fails, create a fallback response
       return {
-        score: 5,
-        strengths: ['Prompt submitted for evaluation'],
-        improvements: ['Consider following the protocol more closely', 'Add more specific details'],
+        score: 50,
+        strengths: ['Prompt baholash uchun yuborildi'],
+        improvements: ['Protokolga ko\'proq amal qiling', 'Ko\'proq aniq ma\'lumotlar qo\'shing'],
         rewrittenPrompt: userPrompt,
-        explanation: 'Unable to parse detailed evaluation. Please try again.'
+        explanation: 'Batafsil baholashni tahlil qilib bo\'lmadi. Qaytadan urinib ko\'ring.'
       };
     }
 
@@ -101,11 +101,11 @@ Be constructive, specific, and focus on how well the prompt applies THIS specifi
     
     // Return a fallback evaluation if API fails
     return {
-      score: 5,
-      strengths: ['Prompt submitted'],
-      improvements: ['Service temporarily unavailable', 'Please try again later'],
+      score: 50,
+      strengths: ['Prompt yuborildi'],
+      improvements: ['Xizmat vaqtincha mavjud emas', 'Keyinroq qaytadan urinib ko\'ring'],
       rewrittenPrompt: userPrompt,
-      explanation: 'Evaluation service is currently unavailable. Please try again.'
+      explanation: 'Baholash xizmati hozirda mavjud emas. Qaytadan urinib ko\'ring.'
     };
   }
 }

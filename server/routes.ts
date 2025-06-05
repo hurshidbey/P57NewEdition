@@ -133,8 +133,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Prompt is required" });
       }
 
-      if (prompt.length > 2000) {
-        return res.status(400).json({ message: "Prompt too long (max 2000 characters)" });
+      if (prompt.length > 300) {
+        return res.status(400).json({ message: "Prompt too long (max 300 characters)" });
       }
 
       const protocol = await storage.getProtocol(protocolId);
@@ -167,7 +167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: error?.message,
         sessionExists: !!data.session
       });
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ 
         connected: false, 
         error: error.message 
