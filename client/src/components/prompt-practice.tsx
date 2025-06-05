@@ -44,7 +44,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
       incrementUsage();
       toast({
         title: "Prompt baholandi!",
-        description: `Sizning ball: ${data.score}/10`,
+        description: `Sizning ball: ${data.score}/100`,
       });
     },
     onError: (error) => {
@@ -76,10 +76,10 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
       return;
     }
 
-    if (userPrompt.length > 2000) {
+    if (userPrompt.length > 300) {
       toast({
         title: "Prompt juda uzun",
-        description: "Prompt 2000 belgidan uzun bo'lmasligi kerak.",
+        description: "Prompt 300 belgidan uzun bo'lmasligi kerak.",
         variant: "destructive",
       });
       return;
@@ -94,15 +94,16 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 8) return "text-green-600";
-    if (score >= 6) return "text-yellow-600";
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
     return "text-red-600";
   };
 
   const getScoreLabel = (score: number) => {
-    if (score >= 8) return "A'lo";
-    if (score >= 6) return "Yaxshi";
-    if (score >= 4) return "Qoniqarli";
+    if (score >= 90) return "A'lo";
+    if (score >= 80) return "Yaxshi";
+    if (score >= 70) return "Qoniqarli";
+    if (score >= 60) return "O'rtacha";
     return "Yaxshilanishi kerak";
   };
 
@@ -132,9 +133,9 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
               disabled={evaluationMutation.isPending}
             />
             <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-              <span>{userPrompt.length}/2000 belgi</span>
+              <span>{userPrompt.length}/300 belgi</span>
               <span>
-                {userPrompt.length > 2000 && (
+                {userPrompt.length > 300 && (
                   <span className="text-red-500">Juda uzun!</span>
                 )}
               </span>
@@ -144,7 +145,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
           <div className="flex gap-2">
             <Button
               onClick={handleSubmit}
-              disabled={!userPrompt.trim() || evaluationMutation.isPending || userPrompt.length > 2000}
+              disabled={!userPrompt.trim() || evaluationMutation.isPending || userPrompt.length > 300}
               className="flex-1"
             >
               {evaluationMutation.isPending ? (
@@ -176,9 +177,9 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
               <span>Baholash natijalari</span>
               <div className="flex items-center gap-2">
                 <span className={`text-2xl font-bold ${getScoreColor(evaluation.score)}`}>
-                  {evaluation.score}/10
+                  {evaluation.score}/100
                 </span>
-                <Badge variant={evaluation.score >= 7 ? "default" : evaluation.score >= 5 ? "secondary" : "destructive"}>
+                <Badge variant={evaluation.score >= 70 ? "default" : evaluation.score >= 50 ? "secondary" : "destructive"}>
                   {getScoreLabel(evaluation.score)}
                 </Badge>
               </div>
@@ -187,7 +188,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <Progress value={evaluation.score * 10} className="h-3" />
+              <Progress value={evaluation.score} className="h-3" />
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">

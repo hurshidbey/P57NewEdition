@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => subscription.subscription.unsubscribe()
   }, [])
 
   const signIn = async (email: string, password: string) => {
