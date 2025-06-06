@@ -197,6 +197,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user progress
+  app.get("/api/progress/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const result = await storage.getUserProgress(userId);
+      res.json(result);
+    } catch (error: any) {
+      console.error('Error fetching user progress:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Update protocol progress
+  app.post("/api/progress/:userId/:protocolId", async (req, res) => {
+    try {
+      const { userId, protocolId } = req.params;
+      const { score } = req.body;
+      
+      const result = await storage.updateProtocolProgress(
+        userId, 
+        parseInt(protocolId), 
+        score
+      );
+      
+      res.json(result);
+    } catch (error: any) {
+      console.error('Error updating protocol progress:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Simple auth endpoint (basic implementation)
   app.post("/api/auth/login", async (req, res) => {
     try {

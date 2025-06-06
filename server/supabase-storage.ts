@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { type User, type InsertUser, type Protocol, type InsertProtocol, type Category } from "@shared/schema";
+import { type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress } from "@shared/schema";
 import { type IStorage } from './storage';
 
 export class SupabaseStorage implements IStorage {
@@ -194,5 +194,79 @@ export class SupabaseStorage implements IStorage {
     
     if (error && error.code !== 'PGRST116') throw error;
     return data;
+  }
+
+  async getUserProgress(userId: string): Promise<UserProgress[]> {
+    const { data, error } = await this.supabase
+      .from('user_progress')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (error) throw error;
+    return (data || []).map((item: any) => ({
+      ...item,
+      userId: item.user_id,
+      protocolId: item.protocol_id,
+      completedAt: item.completed_at,
+      practiceCount: item.practice_count,
+      lastScore: item.last_score
+    }));
+  }
+
+  async updateProtocolProgress(userId: string, protocolId: number, score: number): Promise<UserProgress> {
+    // Try to update existing record first
+    const { data: existing } = await this.supabase
+      .from('user_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('protocol_id', protocolId)
+      .single();
+
+    if (existing) {
+      // Update existing progress
+      const { data, error } = await this.supabase
+        .from('user_progress')
+        .update({
+          practice_count: existing.practice_count + 1,
+          last_score: score,
+          completed_at: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+        .eq('protocol_id', protocolId)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return {
+        ...data,
+        userId: data.user_id,
+        protocolId: data.protocol_id,
+        completedAt: data.completed_at,
+        practiceCount: data.practice_count,
+        lastScore: data.last_score
+      };
+    } else {
+      // Create new progress record
+      const { data, error } = await this.supabase
+        .from('user_progress')
+        .insert({
+          user_id: userId,
+          protocol_id: protocolId,
+          last_score: score,
+          practice_count: 1
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return {
+        ...data,
+        userId: data.user_id,
+        protocolId: data.protocol_id,
+        completedAt: data.completed_at,
+        practiceCount: data.practice_count,
+        lastScore: data.last_score
+      };
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { users, protocols, categories, type User, type InsertUser, type Protocol, type InsertProtocol, type Category } from "@shared/schema";
-import { eq, ilike, or, desc } from "drizzle-orm";
+import { users, protocols, categories, userProgress, type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress } from "@shared/schema";
+import { eq, ilike, or, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -17,6 +17,9 @@ export interface IStorage {
   
   getCategories(): Promise<Category[]>;
   getCategory(id: number): Promise<Category | undefined>;
+  
+  getUserProgress(userId: string): Promise<UserProgress[]>;
+  updateProtocolProgress(userId: string, protocolId: number, score: number): Promise<UserProgress>;
 }
 
 // Database connection with fallback
@@ -110,6 +113,27 @@ async function createTables() {
         username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL
       )
+    `);
+
+    // Create user_progress table
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS user_progress (
+        id SERIAL PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        protocol_id INTEGER NOT NULL,
+        completed_at TIMESTAMP DEFAULT NOW(),
+        practice_count INTEGER DEFAULT 1,
+        last_score INTEGER,
+        UNIQUE(user_id, protocol_id)
+      )
+    `);
+
+    // Create indexes for user_progress table
+    await db.execute(`
+      CREATE INDEX IF NOT EXISTS idx_user_progress_user_id ON user_progress(user_id)
+    `);
+    await db.execute(`
+      CREATE INDEX IF NOT EXISTS idx_user_progress_protocol_id ON user_progress(protocol_id)
     `);
 
     console.log("Tables created successfully");
@@ -512,6 +536,77 @@ export class HybridStorage implements IStorage {
     
     // Fall back to memory storage
     return this.memoryCategories.get(id);
+  }
+
+  // Progress methods
+  async getUserProgress(userId: string): Promise<UserProgress[]> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.select().from(userProgress).where(eq(userProgress.userId, userId));
+        return result;
+      } catch (error) {
+        console.error("Error getting user progress from database:", error);
+      }
+    }
+    
+    // For now, return empty array for memory storage (could implement localStorage fallback here)
+    return [];
+  }
+
+  async updateProtocolProgress(userId: string, protocolId: number, score: number): Promise<UserProgress> {
+    if (isDatabaseConnected && db) {
+      try {
+        // Check if progress already exists
+        const existing = await db.select()
+          .from(userProgress)
+          .where(and(
+            eq(userProgress.userId, userId),
+            eq(userProgress.protocolId, protocolId)
+          ));
+
+        if (existing.length > 0) {
+          // Update existing progress
+          const updated = await db.update(userProgress)
+            .set({
+              practiceCount: existing[0].practiceCount! + 1,
+              lastScore: score,
+              completedAt: new Date()
+            })
+            .where(and(
+              eq(userProgress.userId, userId),
+              eq(userProgress.protocolId, protocolId)
+            ))
+            .returning();
+          
+          return updated[0];
+        } else {
+          // Create new progress record
+          const newProgress = await db.insert(userProgress)
+            .values({
+              userId,
+              protocolId,
+              lastScore: score,
+              practiceCount: 1
+            })
+            .returning();
+          
+          return newProgress[0];
+        }
+      } catch (error) {
+        console.error("Error updating protocol progress in database:", error);
+        throw error;
+      }
+    }
+    
+    // Fallback for memory storage - create a basic progress object
+    return {
+      id: Math.floor(Math.random() * 1000000),
+      userId,
+      protocolId,
+      completedAt: new Date(),
+      practiceCount: 1,
+      lastScore: score
+    };
   }
 }
 
