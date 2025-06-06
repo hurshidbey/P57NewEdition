@@ -48,7 +48,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
       
       // Mark protocol as completed if score is good enough (70+)
       if (data.score >= 70) {
-        markProtocolCompleted(protocol.id);
+        markProtocolCompleted(protocol.id, data.score);
       }
       
       toast({

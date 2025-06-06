@@ -26,6 +26,15 @@ export const categories = pgTable("categories", {
   description: text("description"),
 });
 
+export const userProgress = pgTable("user_progress", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  protocolId: integer("protocol_id").notNull(),
+  completedAt: timestamp("completed_at").defaultNow(),
+  practiceCount: integer("practice_count").default(1),
+  lastScore: integer("last_score"),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -40,9 +49,16 @@ export const insertCategorySchema = createInsertSchema(categories).omit({
   id: true,
 });
 
+export const insertUserProgressSchema = createInsertSchema(userProgress).omit({
+  id: true,
+  completedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Protocol = typeof protocols.$inferSelect;
 export type InsertProtocol = z.infer<typeof insertProtocolSchema>;
 export type Category = typeof categories.$inferSelect;
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
+export type UserProgress = typeof userProgress.$inferSelect;
+export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
