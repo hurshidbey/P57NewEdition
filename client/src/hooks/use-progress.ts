@@ -45,7 +45,6 @@ export function useProgress() {
   useEffect(() => {
     async function loadProgress() {
       if (!user) {
-        // Load from localStorage if no user
         loadFromLocalStorage();
         setLoading(false);
         return;
@@ -75,7 +74,7 @@ export function useProgress() {
         setLastStudiedDate(lastDate);
         calculateStreak(progressMap);
       } catch (error) {
-        console.error('Failed to load progress from server:', error);
+        console.error('❌ Failed to load progress from server:', error);
         // Fallback to localStorage
         loadFromLocalStorage();
       } finally {
@@ -84,7 +83,7 @@ export function useProgress() {
     }
 
     loadProgress();
-  }, [user]);
+  }, [user?.id]); // Only depend on user.id, not the whole user object
 
   // Load from localStorage (fallback)
   const loadFromLocalStorage = () => {
@@ -151,90 +150,32 @@ export function useProgress() {
   };
 
   const markProtocolCompleted = async (protocolId: number, score: number = 70) => {
-    if (!user) {
-      // Fallback to localStorage for non-authenticated users
-      setProtocolProgress(prev => {
-        const newMap = new Map(prev);
-        const existing = newMap.get(protocolId);
-        
-        if (existing) {
-          newMap.set(protocolId, {
-            ...existing,
-            practiceCount: existing.practiceCount + 1,
-            completedAt: new Date().toISOString(),
-            lastScore: score
-          });
-        } else {
-          newMap.set(protocolId, {
-            protocolId,
-            completedAt: new Date().toISOString(),
-            practiceCount: 1,
-            lastScore: score
-          });
-        }
-        
-        return newMap;
+    // ALWAYS update local state first for immediate feedback
+    setProtocolProgress(prev => {
+      const newMap = new Map(prev);
+      
+      // Simple: just mark as completed
+      newMap.set(protocolId, {
+        protocolId,
+        completedAt: new Date().toISOString(),
+        practiceCount: 1,
+        lastScore: score
       });
       
-      setLastStudiedDate(new Date().toISOString());
-      return;
-    }
+      calculateStreak(newMap);
+      return newMap;
+    });
+    
+    setLastStudiedDate(new Date().toISOString());
 
-    try {
-      // Update on server
-      await apiRequest('POST', `/api/progress/${user.id}/${protocolId}`, { score });
-      
-      // Update local state
-      setProtocolProgress(prev => {
-        const newMap = new Map(prev);
-        const existing = newMap.get(protocolId);
-        
-        if (existing) {
-          newMap.set(protocolId, {
-            ...existing,
-            practiceCount: existing.practiceCount + 1,
-            completedAt: new Date().toISOString(),
-            lastScore: score
-          });
-        } else {
-          newMap.set(protocolId, {
-            protocolId,
-            completedAt: new Date().toISOString(),
-            practiceCount: 1,
-            lastScore: score
-          });
-        }
-        
-        calculateStreak(newMap);
-        return newMap;
-      });
-      
-      setLastStudiedDate(new Date().toISOString());
-    } catch (error) {
-      console.error('Failed to update progress on server:', error);
-      // Still update locally as fallback
-      setProtocolProgress(prev => {
-        const newMap = new Map(prev);
-        const existing = newMap.get(protocolId);
-        
-        if (existing) {
-          newMap.set(protocolId, {
-            ...existing,
-            practiceCount: existing.practiceCount + 1,
-            completedAt: new Date().toISOString(),
-            lastScore: score
-          });
-        } else {
-          newMap.set(protocolId, {
-            protocolId,
-            completedAt: new Date().toISOString(),
-            practiceCount: 1,
-            lastScore: score
-          });
-        }
-        
-        return newMap;
-      });
+    // Try to sync with server in background (don't block UI)
+    if (user) {
+      try {
+        await apiRequest('POST', `/api/progress/${user.id}/${protocolId}`, { score });
+      } catch (error) {
+        console.error('Failed to sync progress to server:', error);
+        // Progress is already saved locally, so this is okay
+      }
     }
   };
 

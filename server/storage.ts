@@ -540,6 +540,16 @@ export class HybridStorage implements IStorage {
 
   // Progress methods
   async getUserProgress(userId: string): Promise<UserProgress[]> {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.getUserProgress(userId);
+      } catch (error) {
+        console.error("Error getting user progress from Supabase:", error);
+      }
+    }
+    
+    // Fall back to direct database connection
     if (isDatabaseConnected && db) {
       try {
         const result = await db.select().from(userProgress).where(eq(userProgress.userId, userId));
@@ -554,6 +564,17 @@ export class HybridStorage implements IStorage {
   }
 
   async updateProtocolProgress(userId: string, protocolId: number, score: number): Promise<UserProgress> {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.updateProtocolProgress(userId, protocolId, score);
+      } catch (error) {
+        console.error("Error updating protocol progress in Supabase:", error);
+        throw error;
+      }
+    }
+    
+    // Fall back to direct database connection
     if (isDatabaseConnected && db) {
       try {
         // Check if progress already exists

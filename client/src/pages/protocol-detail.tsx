@@ -6,9 +6,11 @@ import { ArrowLeft, CheckCircle, XCircle } from "lucide-react";
 import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
 import PromptPractice from "@/components/prompt-practice";
+import { useProgress } from "@/hooks/use-progress";
 
 export default function ProtocolDetail() {
   const { id } = useParams<{ id: string }>();
+  const { isProtocolCompleted, markProtocolCompleted } = useProgress();
 
   const {
     data: protocol,
@@ -78,7 +80,11 @@ export default function ProtocolDetail() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-accent text-white rounded-xl flex items-center justify-center font-black text-2xl">
+            <div className={`w-16 h-16 rounded-xl flex items-center justify-center font-black text-2xl ${
+              isProtocolCompleted(protocol.id) 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-accent text-white'
+            }`}>
               {protocol.number.toString().padStart(2, "0")}
             </div>
             <div>
@@ -89,6 +95,25 @@ export default function ProtocolDetail() {
                 Protokol №{protocol.number}
               </span>
             </div>
+          </div>
+          
+          <div>
+            {!isProtocolCompleted(protocol.id) ? (
+              <Button 
+                onClick={() => markProtocolCompleted(protocol.id, 70)}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                O'rgandim
+              </Button>
+            ) : (
+              <Button 
+                onClick={() => markProtocolCompleted(protocol.id, 70)}
+                variant="outline"
+                className="border-green-600 text-green-600 hover:bg-green-50"
+              >
+                Qayta mashq qilish
+              </Button>
+            )}
           </div>
         </div>
 

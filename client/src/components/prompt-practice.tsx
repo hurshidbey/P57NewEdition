@@ -127,7 +127,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
             </div>
             {protocolProgress && (
               <Badge variant="secondary" className="font-normal">
-                {protocolProgress.practiceCount} marta mashq qilingan
+                O'rganilgan
               </Badge>
             )}
           </CardTitle>
