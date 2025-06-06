@@ -39,6 +39,10 @@ async function initializeDatabase() {
       // Test connection by fetching categories
       await supabaseStorage.getCategories();
       
+      // CRITICAL: Create user_progress table using SupabaseStorage
+      console.log("Creating user_progress table via Supabase...");
+      await createSupabaseTable(supabaseStorage);
+      
       // Use Supabase storage globally
       (global as any).supabaseStorage = supabaseStorage;
       isDatabaseConnected = true;
@@ -77,6 +81,111 @@ async function initializeDatabase() {
   } catch (error) {
     console.log("Database connection failed, using in-memory storage:", (error as Error).message);
     isDatabaseConnected = false;
+  }
+}
+
+async function createSupabaseTable(supabaseStorage: any) {
+  try {
+    // Test if table already exists by trying to insert
+    const { error: testError } = await supabaseStorage.supabase
+      .from('user_progress')
+      .select('id')
+      .limit(1);
+    
+    if (!testError) {
+      console.log("✅ user_progress table already exists and working!");
+      return;
+    }
+    
+    // Table doesn't exist, create it using direct HTTP request with service role key
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    
+    console.log("🔨 Creating user_progress table via direct SQL execution...");
+    
+    // Create table using a stored procedure approach
+    const createTableSQL = `
+      DO $$
+      BEGIN
+        CREATE TABLE IF NOT EXISTS user_progress (
+          id SERIAL PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          protocol_id INTEGER NOT NULL,
+          completed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          practice_count INTEGER DEFAULT 1,
+          last_score INTEGER,
+          UNIQUE(user_id, protocol_id)
+        );
+        
+        CREATE INDEX IF NOT EXISTS idx_user_progress_user_id ON user_progress(user_id);
+        CREATE INDEX IF NOT EXISTS idx_user_progress_protocol_id ON user_progress(protocol_id);
+      END $$;
+    `;
+
+    // Try using the SQL via direct HTTP request
+    const response = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+      method: 'POST',
+      headers: {
+        'apikey': serviceRoleKey,
+        'Authorization': `Bearer ${serviceRoleKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sql: createTableSQL })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.log("❌ Direct SQL failed:", errorText);
+      
+      // Try alternative: Force table creation by attempting operations
+      console.log("🔄 Attempting alternative table creation...");
+      await forceCreateTable(supabaseStorage);
+    } else {
+      console.log("✅ user_progress table created successfully!");
+    }
+    
+  } catch (error) {
+    console.error("❌ Failed to create user_progress table:", (error as Error).message);
+    await forceCreateTable(supabaseStorage);
+  }
+}
+
+async function forceCreateTable(supabaseStorage: any) {
+  try {
+    // Create a temporary function in Supabase that will create our table
+    console.log("🔨 Creating table via INSERT attempt...");
+    
+    // This will fail but might give us info about schema
+    const { error } = await supabaseStorage.supabase
+      .from('user_progress')
+      .insert({
+        user_id: 'temp-test',
+        protocol_id: 1,
+        last_score: 75
+      });
+    
+    if (error) {
+      console.log("📋 Expected error (table doesn't exist):", error.message);
+      console.log("🚨 USER_PROGRESS TABLE MUST BE CREATED MANUALLY IN SUPABASE DASHBOARD!");
+      console.log("📋 SQL to run in Supabase SQL Editor:");
+      console.log(`
+        CREATE TABLE user_progress (
+          id SERIAL PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          protocol_id INTEGER NOT NULL,
+          completed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          practice_count INTEGER DEFAULT 1,
+          last_score INTEGER,
+          UNIQUE(user_id, protocol_id)
+        );
+        
+        CREATE INDEX idx_user_progress_user_id ON user_progress(user_id);
+        CREATE INDEX idx_user_progress_protocol_id ON user_progress(protocol_id);
+      `);
+    }
+    
+  } catch (error) {
+    console.error("❌ Force create failed:", (error as Error).message);
   }
 }
 
