@@ -11,6 +11,7 @@ import { CheckCircle, XCircle, Lightbulb, RefreshCw, Send, AlertTriangle } from 
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { usePromptUsage } from "@/hooks/use-prompt-usage";
+import { useProgress } from "@/hooks/use-progress";
 
 interface PromptEvaluation {
   score: number;
@@ -29,6 +30,8 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
   const [evaluation, setEvaluation] = useState<PromptEvaluation | null>(null);
   const { toast } = useToast();
   const { usage, limit, canUsePrompt, getRemainingUsage, getUsagePercentage, incrementUsage } = usePromptUsage();
+  const { markProtocolCompleted, getProtocolProgress } = useProgress();
+  const protocolProgress = getProtocolProgress(protocol.id);
 
   const evaluationMutation = useMutation({
     mutationFn: async (prompt: string) => {
@@ -42,6 +45,12 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
     onSuccess: (data) => {
       setEvaluation(data);
       incrementUsage();
+      
+      // Mark protocol as completed if score is good enough (70+)
+      if (data.score >= 70) {
+        markProtocolCompleted(protocol.id);
+      }
+      
       toast({
         title: "Prompt baholandi!",
         description: `Sizning ball: ${data.score}/100`,
@@ -111,9 +120,16 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="h-5 w-5 text-accent" />
-            Protokolni mashq qiling
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Lightbulb className="h-5 w-5 text-accent" />
+              Protokolni mashq qiling
+            </div>
+            {protocolProgress && (
+              <Badge variant="secondary" className="font-normal">
+                {protocolProgress.practiceCount} marta mashq qilingan
+              </Badge>
+            )}
           </CardTitle>
           <CardDescription>
             Ushbu protokol asosida o'z promptingizni yozing va AI baholashini oling

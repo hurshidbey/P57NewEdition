@@ -175,6 +175,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test OpenAI connection endpoint
+  app.get("/api/test-openai", async (req, res) => {
+    try {
+      const { testOpenAIConnection } = await import('./openai-service');
+      const isConnected = await testOpenAIConnection();
+      
+      res.json({
+        connected: isConnected,
+        message: isConnected ? 'OpenAI connection successful' : 'OpenAI connection failed',
+        apiKeyPresent: !!process.env.OPENAI_API_KEY,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('OpenAI test error:', error);
+      res.status(500).json({
+        connected: false,
+        error: error.message,
+        apiKeyPresent: !!process.env.OPENAI_API_KEY
+      });
+    }
+  });
+
   // Simple auth endpoint (basic implementation)
   app.post("/api/auth/login", async (req, res) => {
     try {
