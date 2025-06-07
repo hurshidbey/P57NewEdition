@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, XCircle, Lightbulb, RefreshCw, Send, AlertTriangle } from "lucide-react";
+import { Lightbulb, RefreshCw, Send, AlertTriangle } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { usePromptUsage } from "@/hooks/use-prompt-usage";
@@ -207,49 +206,6 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
               <Progress value={evaluation.score} className="h-3" />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold text-green-700 flex items-center gap-2 mb-3">
-                  <CheckCircle className="h-4 w-4" />
-                  Yaxshi tomonlar
-                </h4>
-                <ul className="space-y-2">
-                  {evaluation.strengths.map((strength, index) => (
-                    <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0" />
-                      {strength}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="font-semibold text-red-700 flex items-center gap-2 mb-3">
-                  <XCircle className="h-4 w-4" />
-                  Yaxshilanishi mumkin
-                </h4>
-                <ul className="space-y-2">
-                  {evaluation.improvements.map((improvement, index) => (
-                    <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0" />
-                      {improvement}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <Separator />
-
-            <div>
-              <h4 className="font-semibold text-blue-700 flex items-center gap-2 mb-3">
-                <Lightbulb className="h-4 w-4" />
-                Taklif qilingan yaxshilangan variant
-              </h4>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm">{evaluation.rewrittenPrompt}</p>
-              </div>
-            </div>
           </CardContent>
         </Card>
       )}
