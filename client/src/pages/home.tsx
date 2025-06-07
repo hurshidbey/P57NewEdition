@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Protocol, Category } from "@shared/schema";
 import AppHeader from "@/components/app-header";
+import AppFooter from "@/components/app-footer";
 import ProtocolCard from "@/components/protocol-card";
 import ProgressDashboard from "@/components/progress-dashboard";
 import { Button } from "@/components/ui/button";
@@ -143,6 +144,7 @@ export default function Home() {
           )}
         </section>
       </main>
+      <AppFooter />
     </div>
   );
 }

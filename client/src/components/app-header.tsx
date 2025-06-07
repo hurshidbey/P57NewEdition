@@ -15,9 +15,12 @@ export default function AppHeader() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
             <Link href="/">
-              <h1 className="text-2xl font-black text-black cursor-pointer">Protokol 57</h1>
+              <img 
+                src="https://bazptglwzqstppwlvmvb.supabase.co/storage/v1/object/public/assets/protokol57-logo.svg" 
+                alt="Protokol 57 Logo" 
+                className="h-8 w-auto transition-transform hover:scale-105 cursor-pointer"
+              />
             </Link>
-            <span className="text-sm text-gray-600 hidden sm:block">AI Protokollarini O'rganish</span>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-600 hidden sm:block">
@@ -26,7 +29,7 @@ export default function AppHeader() {
             <Link href="/onboarding">
               <Button 
                 variant="ghost" 
-                className="text-sm font-medium text-gray-700 hover:text-accent"
+                className="text-sm font-medium text-gray-700 hover:text-white"
               >
                 O'rganish
               </Button>
@@ -34,14 +37,14 @@ export default function AppHeader() {
             <Link href="/admin">
               <Button 
                 variant="ghost" 
-                className="text-sm font-medium text-gray-700 hover:text-accent"
+                className="text-sm font-medium text-gray-700 hover:text-white"
               >
                 Boshqaruv
               </Button>
             </Link>
             <Button 
               variant="ghost" 
-              className="text-sm font-medium text-gray-700 hover:text-accent"
+              className="text-sm font-medium text-gray-700 hover:text-white"
               onClick={signOut}
             >
               Chiqish

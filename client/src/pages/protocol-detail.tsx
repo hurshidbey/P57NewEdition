@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, XCircle } from "lucide-react";
 import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
+import AppFooter from "@/components/app-footer";
 import PromptPractice from "@/components/prompt-practice";
 import { useProgress } from "@/hooks/use-progress";
 
@@ -219,6 +220,7 @@ export default function ProtocolDetail() {
 
         </div>
       </main>
+      <AppFooter />
     </div>
   );
 }

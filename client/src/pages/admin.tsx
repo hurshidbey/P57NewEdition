@@ -13,6 +13,7 @@ import { Trash2, Edit, Plus } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import AppHeader from "@/components/app-header";
+import AppFooter from "@/components/app-footer";
 
 type FormData = {
   number: number;
@@ -328,6 +329,7 @@ export default function Admin() {
           </Card>
         </div>
       </main>
+      <AppFooter />
     </div>
   );
 }
