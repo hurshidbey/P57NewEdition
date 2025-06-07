@@ -12,6 +12,8 @@ import EmailConfirmPage from "@/pages/email-confirm";
 import NotFound from "@/pages/not-found";
 import Onboarding from "@/pages/onboarding";
 import PaymentPage from "@/pages/payment";
+import LandingPage from "@/pages/landing";
+import LandingSimple from "@/pages/landing-simple";
 
 function AppContent() {
   const { isAuthenticated, loading } = useAuth();
@@ -30,6 +32,8 @@ function AppContent() {
 
   return (
     <Switch>
+      <Route path="/landing" component={LandingPage} />
+      <Route path="/test" component={LandingSimple} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/auth/confirm" component={EmailConfirmPage} />
       <Route path="/">
