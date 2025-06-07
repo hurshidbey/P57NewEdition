@@ -23,6 +23,14 @@ export default function AppHeader() {
             <span className="text-sm text-gray-600 hidden sm:block">
               Salom, {user?.name || user?.email}
             </span>
+            <Link href="/onboarding">
+              <Button 
+                variant="ghost" 
+                className="text-sm font-medium text-gray-700 hover:text-accent"
+              >
+                O'rganish
+              </Button>
+            </Link>
             <Link href="/admin">
               <Button 
                 variant="ghost" 

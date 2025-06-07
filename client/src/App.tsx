@@ -10,6 +10,7 @@ import Admin from "@/pages/admin";
 import AuthPage from "@/pages/auth";
 import EmailConfirmPage from "@/pages/email-confirm";
 import NotFound from "@/pages/not-found";
+import Onboarding from "@/pages/onboarding";
 
 function AppContent() {
   const { isAuthenticated, loading } = useAuth();
@@ -38,6 +39,9 @@ function AppContent() {
       </Route>
       <Route path="/admin">
         {isAuthenticated ? <Admin /> : <AuthPage />}
+      </Route>
+      <Route path="/onboarding">
+        {isAuthenticated ? <Onboarding /> : <AuthPage />}
       </Route>
       <Route component={NotFound} />
     </Switch>
