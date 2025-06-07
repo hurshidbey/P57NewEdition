@@ -4,6 +4,7 @@
 @tailwind utilities;
 
 :root {
+  /* Color System */
   --background: 0 0% 100%;
   --foreground: 0 0% 0%;
   --card: 0 0% 100%;
@@ -24,6 +25,51 @@
   --input: 0 0% 89%;
   --ring: 0 0% 4%;
   --radius: 0.75rem;
+  
+  /* 8pt Grid System */
+  --space-unit: 8px;
+  --space-xs: 4px;   /* 0.5x */
+  --space-sm: 8px;   /* 1x */
+  --space-md: 16px;  /* 2x */
+  --space-lg: 24px;  /* 3x */
+  --space-xl: 32px;  /* 4x */
+  --space-2xl: 40px; /* 5x */
+  --space-3xl: 48px; /* 6x */
+  --space-4xl: 64px; /* 8x */
+  --space-5xl: 80px; /* 10x */
+  --space-6xl: 96px; /* 12x */
+  
+  /* Typography Scale (1.25 ratio) */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.563rem;  /* 25px */
+  --font-size-3xl: 1.953rem;  /* 31px */
+  --font-size-4xl: 2.441rem;  /* 39px */
+  --font-size-5xl: 3.052rem;  /* 49px */
+  
+  /* Line Heights (multiples of 8px) */
+  --line-height-xs: 1rem;      /* 16px */
+  --line-height-sm: 1.25rem;   /* 20px */
+  --line-height-base: 1.5rem;  /* 24px */
+  --line-height-lg: 1.75rem;   /* 28px */
+  --line-height-xl: 2rem;      /* 32px */
+  --line-height-2xl: 2.5rem;   /* 40px */
+  --line-height-3xl: 3rem;     /* 48px */
+  --line-height-4xl: 3.5rem;   /* 56px */
+  --line-height-5xl: 4rem;     /* 64px */
+  
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  
+  /* Transitions */
+  --transition-base: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @layer base {
@@ -49,30 +95,23 @@
     overflow: hidden;
   }
   
-  /* 8pt Grid System - Baseline Grid */
-  .line-height-\[1\.4\] { line-height: 1.4; }
-  .line-height-\[1\.5\] { line-height: 1.5; }
-  .line-height-\[1\.6\] { line-height: 1.6; }
+  /* Hover States */
+  .hover-lift {
+    @apply transition-all duration-150;
+  }
   
-  /* Typography Scale - 8pt Grid Based */
-  .text-scale-sm { font-size: 14px; line-height: 20px; }
-  .text-scale-base { font-size: 16px; line-height: 24px; }
-  .text-scale-lg { font-size: 18px; line-height: 28px; }
-  .text-scale-xl { font-size: 20px; line-height: 32px; }
-  .text-scale-2xl { font-size: 24px; line-height: 32px; }
+  .hover-lift:hover {
+    @apply -translate-y-0.5 shadow-strong;
+  }
   
-  /* Spacing Scale - 8pt Grid System */
-  .space-4 { margin: 16px; }
-  .space-6 { margin: 24px; }
-  .space-8 { margin: 32px; }
-  .space-10 { margin: 40px; }
-  .space-12 { margin: 48px; }
-  .space-16 { margin: 64px; }
+  /* Focus States */
+  .focus-ring {
+    @apply transition-shadow duration-150;
+  }
   
-  /* Component Spacing */
-  .card-padding { padding: 24px; }
-  .section-padding { padding: 32px 0; }
-  .content-gap { gap: 24px; }
+  .focus-ring:focus-visible {
+    @apply outline-none ring-2 ring-black ring-offset-2;
+  }
   
   /* 3D Flip Card Styles */
   .perspective-1000 {
@@ -95,7 +134,7 @@
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(var(--space-sm));
     }
     to {
       opacity: 1;
@@ -103,12 +142,55 @@
     }
   }
   
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-var(--space-md));
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
   .animate-in {
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn var(--transition-smooth) ease-out;
+  }
+  
+  .animate-slide-in {
+    animation: slideIn var(--transition-smooth) ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn var(--transition-base) ease-out;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   
   .fade-in {
     opacity: 0;
-    animation: fadeIn 0.3s ease-out forwards;
+    animation: fadeIn var(--transition-smooth) ease-out forwards;
   }
 }
