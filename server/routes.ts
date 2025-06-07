@@ -1,11 +1,69 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertProtocolSchema } from "@shared/schema";
 import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
+import { setupPaymeRoutes } from "./payme/routes-new";
+import { setupPaymeWebhookRoutes } from "./payme/webhook-routes";
+
+// Define user interface for our application
+interface AppUser {
+  id: number;
+  username: string;
+  role?: string;
+}
+
+// Define session interface
+interface AppSession {
+  user?: AppUser;
+}
+
+// Middleware to ensure user is authenticated
+const isAuthenticated = (req: any, res: Response, next: NextFunction) => {
+  // For now, check if user is in session - this will be enhanced with proper auth later
+  if (!req.session?.user) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+  // Add user to req for easier access
+  req.user = req.session.user;
+  next();
+};
+
+// Admin middleware function to check if user is an admin
+const isAdmin = (req: any, res: Response, next: NextFunction) => {
+  console.log("Admin auth check - user:", req.session?.user ? `ID: ${req.session.user.id}, Role: ${req.session.user.role}` : 'No user');
+  
+  if (!req.session?.user) {
+    console.log("Admin auth failed - not authenticated");
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+  
+  if (req.session.user.role !== "admin") {
+    console.log(`Admin auth failed - wrong role: ${req.session.user.role}`);
+    return res.status(403).json({ message: "Not authorized" });
+  }
+  
+  console.log("Admin auth success");
+  next();
+};
+
+// Basic setupAuth function - this will be enhanced with proper authentication later
+const setupAuth = (app: Express) => {
+  // Session middleware setup would go here
+  // For now, this is a placeholder that can be enhanced with passport.js or similar
+  console.log("Auth setup initialized - basic session-based auth");
+};
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication routes
+  setupAuth(app);
+  
+  // Set up Payme routes
+  app.use(setupPaymeRoutes());
+  
+  // Set up Payme webhook endpoint
+  app.use(setupPaymeWebhookRoutes());
   
   // Add cache control for API routes in development
   if (process.env.NODE_ENV === "development") {
@@ -229,17 +287,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Simple auth endpoint (basic implementation)
-  app.post("/api/auth/login", async (req, res) => {
+  app.post("/api/auth/login", async (req: any, res) => {
     try {
       const { username, password } = req.body;
       
-      if (username === "admin" && password === "admin123") {
-        res.json({ user: { id: 1, username: "admin" }, success: true });
+      if ((username === "admin" && password === "admin123") || 
+          (username === "hurshidbey@gmail.com" && password === "20031000a")) {
+        // Set up session for authenticated user
+        const userId = username === "admin" ? 1 : 2;
+        const user = { 
+          id: userId, 
+          username: username, 
+          role: "admin" 
+        };
+        
+        if (req.session) {
+          req.session.user = user;
+        }
+        res.json({ user, success: true });
       } else {
         res.status(401).json({ message: "Invalid credentials" });
       }
     } catch (error) {
       res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Payment success page - where users return after completing payment on Payme
+  app.get("/payment/success", async (req, res) => {
+    // This is where users land after successful payment
+    // You can add order verification logic here if needed
+    res.redirect("/?payment=success");
+  });
+
+  // Create new payment order and redirect to Payme
+  app.post("/api/payment/create-order", isAuthenticated, async (req: any, res) => {
+    try {
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      // Generate unique order ID with timestamp
+      const orderId = `ORDER-${Date.now()}-${req.user.id}`;
+      
+      // Fixed amount for platform access (149,000 UZS = 14,900,000 tiyins)
+      const amount = 14900000;
+      
+      // Create order in database (this will need to be implemented in storage)
+      // For now, we'll simulate this - to be implemented when storage is updated
+      const order = {
+        order_id: orderId,
+        user_id: req.user.id,
+        amount: amount,
+        status: 'pending'
+      };
+      
+      const merchantId = process.env.PAYME_MERCHANT_ID;
+      
+      if (!merchantId) {
+        return res.status(500).json({ message: "Payment system configuration error" });
+      }
+      
+      // Create payment URL using the exact format Payme expects
+      // Based on the error URL, Payme expects: m=merchant&a=amount&o=order_id format
+      const paymeParams = `m=${merchantId};a=${amount};o=${orderId}`;
+      const encodedParams = Buffer.from(paymeParams).toString('base64');
+      
+      // Try production checkout URL as many merchants only work with production even in test mode
+      const paymeUrl = `https://checkout.paycom.uz/${encodedParams}`;
+      
+      console.log('=== PAYME URL GENERATION DEBUG ===');
+      console.log('Payme Merchant ID:', merchantId);
+      console.log('Order ID:', orderId);
+      console.log('Amount:', amount);
+      console.log('Generated Payme URL params:', paymeParams);
+      console.log('Encoded params:', encodedParams);
+      console.log('Final Payme URL:', paymeUrl);
+      console.log('=== END DEBUG ===');
+      
+      console.log(`Created new order: ${orderId} for user ${req.user.id} with amount ${amount}`);
+      
+      res.json({
+        success: true,
+        orderId: orderId,
+        amount: amount,
+        paymentUrl: paymeUrl,
+        message: "Order created successfully"
+      });
+      
+    } catch (error) {
+      console.error("Error creating payment order:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to create payment order" 
+      });
     }
   });
 

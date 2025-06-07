@@ -34,6 +34,14 @@ export default function AppHeader() {
                 O'rganish
               </Button>
             </Link>
+            <Link href="/payment">
+              <Button 
+                variant="ghost" 
+                className="text-sm font-medium text-gray-700 hover:text-white"
+              >
+                Premium
+              </Button>
+            </Link>
             <Link href="/admin">
               <Button 
                 variant="ghost" 
