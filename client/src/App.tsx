@@ -11,6 +11,7 @@ import AuthPage from "@/pages/auth";
 import EmailConfirmPage from "@/pages/email-confirm";
 import NotFound from "@/pages/not-found";
 import Onboarding from "@/pages/onboarding";
+import PaymentPage from "@/pages/payment";
 
 function AppContent() {
   const { isAuthenticated, loading } = useAuth();
@@ -42,6 +43,9 @@ function AppContent() {
       </Route>
       <Route path="/onboarding">
         {isAuthenticated ? <Onboarding /> : <AuthPage />}
+      </Route>
+      <Route path="/payment">
+        {isAuthenticated ? <PaymentPage /> : <AuthPage />}
       </Route>
       <Route component={NotFound} />
     </Switch>

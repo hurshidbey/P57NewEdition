@@ -1,7 +1,7 @@
 // server/payme/controller-new.ts
-import { db } from "../db";
-import { payment_transactions, users, orders } from "@shared/schema";
-import { eq, and, ne, lte } from "drizzle-orm";
+// import { db } from "../db";
+// import { payment_transactions, users, orders } from "@shared/schema";
+// import { eq, and, ne, lte } from "drizzle-orm";
 import { 
   isTestTransaction, 
   isTestOrder,

@@ -1,7 +1,7 @@
 // server/payme/webhook-controller.ts
-import { db } from '../db';
-import { payment_transactions, users } from '../../shared/schema';
-import { eq, and, gte, lte, isNull, isNotNull } from 'drizzle-orm';
+// import { db } from '../db';
+// import { payment_transactions, users } from '../../shared/schema';
+// import { eq, and, gte, lte, isNull, isNotNull } from 'drizzle-orm';
 
 // Payment transaction states
 enum PaymeStatus {
