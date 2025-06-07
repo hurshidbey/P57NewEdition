@@ -1,7 +1,7 @@
 import { Protocol } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, CheckCircle, RotateCw } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { Link } from "wouter";
 import { useProgress } from "@/hooks/use-progress";
 
@@ -21,7 +21,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
   };
   
   return (
-    <Card className={`bg-white border-2 transition-all group h-full ${
+    <Card className={`bg-white border-2 transition-all duration-200 group h-full ${
       isCompleted 
         ? 'border-green-400 hover:border-green-500 shadow-sm' 
         : 'border-gray-200 hover:border-accent hover:shadow-lg'
@@ -35,36 +35,35 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
         )}
         
         <Link href={`/protocols/${protocol.id}`} className="block">
-          <div className="flex items-start justify-between mb-4">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg ${
+          {/* Protocol Number */}
+          <div className="mb-4">
+            <div className={`w-14 h-14 rounded-xl flex items-center justify-center font-black text-lg shadow-sm ${
               isCompleted 
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-accent text-white'
             }`}>
               {protocol.number.toString().padStart(2, '0')}
             </div>
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-              {!isCompleted && <ChevronRight className="w-5 h-5 text-accent" />}
-              {isCompleted && <RotateCw className="w-5 h-5 text-green-600" />}
-            </div>
           </div>
           
-          <h3 className="text-xl font-bold text-black mb-3 leading-tight pr-10">
+          {/* Title - 8pt grid spacing */}
+          <h3 className="text-lg font-bold text-black mb-3 leading-tight pr-6 line-height-[1.4]">
             {protocol.title}
           </h3>
           
-          <p className="text-gray-600 leading-relaxed line-clamp-3 mb-4">
+          {/* Description - 8pt grid spacing */}
+          <p className="text-gray-600 leading-relaxed line-clamp-3 mb-4 text-sm line-height-[1.5]">
             {protocol.description}
           </p>
         </Link>
         
-        {/* Action buttons */}
-        <div className="flex items-center gap-2 mt-4">
+        {/* Action buttons - 8pt grid spacing */}
+        <div className="flex items-center gap-2 pt-2">
           {!isCompleted ? (
             <Button 
               onClick={handleMarkCompleted}
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 h-7 text-xs font-medium"
             >
               O'rgandim
             </Button>
@@ -73,14 +72,14 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               onClick={handleMarkCompleted}
               size="sm"
               variant="outline"
-              className="border-green-600 text-green-600 hover:bg-green-50"
+              className="border-green-600 text-green-600 hover:bg-green-50 px-3 py-1.5 h-7 text-xs font-medium"
             >
               Qayta mashq qilish
             </Button>
           )}
           
           <Link href={`/protocols/${protocol.id}`}>
-            <Button size="sm" variant="outline">
+            <Button size="sm" variant="outline" className="px-3 py-1.5 h-7 text-xs font-medium">
               Ko'rish
             </Button>
           </Link>

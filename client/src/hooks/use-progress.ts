@@ -1,13 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { apiRequest } from '@/lib/queryClient';
 
 const STORAGE_KEY = 'protokol57_progress';
-
-// Debug function
-const debugProgress = (action: string, data: any) => {
-  console.log(`🔍 Progress Debug [${action}]:`, data);
-};
 
 export interface ProgressData {
   completedProtocols: Set<number>;
@@ -49,23 +44,17 @@ export function useProgress() {
   // Load progress from server when user is available
   useEffect(() => {
     async function loadProgress() {
-      debugProgress('loadProgress called', { userId: user?.id, loading });
-      
       // ALWAYS load from localStorage first for immediate UI updates
       loadFromLocalStorage();
       
       if (!user) {
-        debugProgress('no user, setting loading false', {});
         setLoading(false);
         return;
       }
 
       try {
-        debugProgress('attempting server load', { userId: user.id });
         const response = await apiRequest('GET', `/api/progress/${user.id}`);
         const serverProgress: ServerProgress[] = await response.json();
-        
-        debugProgress('server response', { length: serverProgress?.length });
         
         // Only update if server has data
         if (serverProgress && serverProgress.length > 0) {
@@ -85,18 +74,15 @@ export function useProgress() {
             }
           });
 
-          debugProgress('server data loaded', { protocolCount: progressMap.size });
           setProtocolProgress(progressMap);
           setLastStudiedDate(lastDate);
           calculateStreak(progressMap);
         }
       } catch (error) {
         console.warn('Server progress unavailable, using localStorage:', error.message);
-        debugProgress('server load failed', { error: error.message });
         // localStorage already loaded above, so we're good
       } finally {
         setLoading(false);
-        debugProgress('loading set to false', {});
       }
     }
 
@@ -107,24 +93,16 @@ export function useProgress() {
   const loadFromLocalStorage = () => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      debugProgress('localStorage read', { saved: !!saved, length: saved?.length });
       
       if (saved) {
         const data: StoredProgress = JSON.parse(saved);
         const progressMap = new Map(
           data.completed.map(p => [p.protocolId, p])
         );
-        debugProgress('localStorage loaded', { 
-          completed: data.completed.length, 
-          protocols: Array.from(progressMap.keys()),
-          streak: data.currentStreak 
-        });
         
         setProtocolProgress(progressMap);
         setLastStudiedDate(data.lastStudiedDate || null);
         setCurrentStreak(data.currentStreak || 0);
-      } else {
-        debugProgress('localStorage empty', {});
       }
     } catch (error) {
       console.error('Failed to load progress data from localStorage:', error);
@@ -141,12 +119,6 @@ export function useProgress() {
         lastStudiedDate,
         currentStreak
       };
-      
-      debugProgress('localStorage save', { 
-        completed: dataToStore.completed.length,
-        protocols: dataToStore.completed.map(p => p.protocolId),
-        streak: dataToStore.currentStreak
-      });
       
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
     } catch (error) {
@@ -185,50 +157,79 @@ export function useProgress() {
   };
 
   const markProtocolCompleted = async (protocolId: number, score: number = 70) => {
-    debugProgress('markProtocolCompleted called', { protocolId, score, user: !!user });
+    // Create the new progress entry
+    const newProgress: ProtocolProgress = {
+      protocolId,
+      completedAt: new Date().toISOString(),
+      practiceCount: 1,
+      lastScore: score
+    };
+
+    const newDate = new Date().toISOString();
+
+    // First, read current localStorage to merge with existing data
+    let existingProgress: ProtocolProgress[] = [];
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved) as StoredProgress;
+        existingProgress = data.completed || [];
+      }
+    } catch (error) {
+      console.error('Failed to read existing progress:', error);
+    }
+
+    // Merge new progress with existing (avoiding duplicates)
+    const progressMap = new Map(existingProgress.map(p => [p.protocolId, p]));
+    progressMap.set(protocolId, newProgress);
     
-    // ALWAYS update local state first for immediate feedback
-    setProtocolProgress(prev => {
-      const newMap = new Map(prev);
-      
-      debugProgress('before protocol set', { 
-        currentSize: newMap.size, 
-        hasProtocol: newMap.has(protocolId),
-        allProtocols: Array.from(newMap.keys()) 
-      });
-      
-      // Simple: just mark as completed
-      newMap.set(protocolId, {
-        protocolId,
-        completedAt: new Date().toISOString(),
-        practiceCount: 1,
-        lastScore: score
-      });
-      
-      debugProgress('after protocol set', { 
-        newSize: newMap.size, 
-        addedProtocol: protocolId,
-        allProtocols: Array.from(newMap.keys()) 
-      });
-      
-      calculateStreak(newMap);
-      return newMap;
-    });
+    // Calculate streak with the updated map
+    const uniqueDates = Array.from(progressMap.values())
+      .map(p => new Date(p.completedAt).toDateString())
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
     
-    setLastStudiedDate(new Date().toISOString());
+    const uniqueDateSet = Array.from(new Set(uniqueDates));
+    let streak = 0;
+    const today = new Date().toDateString();
+    
+    for (let i = 0; i < uniqueDateSet.length; i++) {
+      const date = uniqueDateSet[i];
+      const expectedDate = new Date();
+      expectedDate.setDate(expectedDate.getDate() - i);
+      
+      if (date === expectedDate.toDateString()) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+
+    // Save to localStorage immediately with all data
+    const dataToStore: StoredProgress = {
+      completed: Array.from(progressMap.values()),
+      lastStudiedDate: newDate,
+      currentStreak: streak
+    };
+    
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
+    } catch (error) {
+      console.error('Failed to save progress to localStorage:', error);
+    }
+
+    // Update React state
+    setProtocolProgress(progressMap);
+    setLastStudiedDate(newDate);
+    setCurrentStreak(streak);
 
     // Try to sync with server in background (don't block UI)
     if (user) {
       try {
         await apiRequest('POST', `/api/progress/${user.id}/${protocolId}`, { score });
-        debugProgress('server sync success', { protocolId });
       } catch (error) {
         console.error('Failed to sync progress to server:', error);
-        debugProgress('server sync failed', { protocolId, error: error.message });
         // Progress is already saved locally, so this is okay
       }
-    } else {
-      debugProgress('no user for server sync', {});
     }
   };
 
@@ -244,14 +245,6 @@ export function useProgress() {
     const completedSet = new Set(protocolProgress.keys());
     const completed = completedSet.size;
     const percentage = totalProtocols > 0 ? Math.round((completed / totalProtocols) * 100) : 0;
-    
-    debugProgress('getProgressData called', { 
-      completed,
-      totalProtocols,
-      percentage,
-      protocols: Array.from(completedSet),
-      mapSize: protocolProgress.size
-    });
     
     return {
       completedProtocols: completedSet,

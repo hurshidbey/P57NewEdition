@@ -89,51 +89,59 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <AppHeader />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Progress Dashboard */}
-        <ProgressDashboard totalProtocols={57} />
+      {/* Main Container - 8pt Grid System */}
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Progress Section - 32px top padding, 40px bottom margin */}
+        <section className="pt-8 pb-10">
+          <ProgressDashboard totalProtocols={57} />
+        </section>
 
-        {isLoading && currentPage === 1 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-gray-100 rounded-xl p-6 animate-pulse">
-                <div className="w-12 h-12 bg-gray-200 rounded-xl mb-4"></div>
-                <div className="h-6 bg-gray-200 rounded mb-3"></div>
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded"></div>
-                  <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+        {/* Content Section */}
+        <section className="pb-16">
+          {isLoading && currentPage === 1 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="bg-gray-100 rounded-xl p-6 animate-pulse">
+                  <div className="w-12 h-12 bg-gray-200 rounded-xl mb-4"></div>
+                  <div className="h-6 bg-gray-200 rounded mb-3"></div>
+                  <div className="space-y-2">
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <>
-            {finalProtocols.length === 0 ? (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">Protokollar topilmadi</h3>
-                <p className="text-gray-500">Qidiruv yoki filtr sozlamalarini o'zgartirib ko'ring.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                {finalProtocols.map((protocol) => (
-                  <ProtocolCard key={protocol.id} protocol={protocol} />
-                ))}
-              </div>
-            )}
+              ))}
+            </div>
+          ) : (
+            <>
+              {finalProtocols.length === 0 ? (
+                <div className="text-center py-20">
+                  <div className="max-w-md mx-auto">
+                    <h3 className="text-xl font-semibold text-gray-600 mb-3">Protokollar topilmadi</h3>
+                    <p className="text-gray-500 leading-relaxed">Qidiruv yoki filtr sozlamalarini o'zgartirib ko'ring.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                  {finalProtocols.map((protocol) => (
+                    <ProtocolCard key={protocol.id} protocol={protocol} />
+                  ))}
+                </div>
+              )}
 
-            {!searchQuery && protocols && protocols.length === 20 && (
-              <div className="text-center">
-                <Button
-                  onClick={handleLoadMore}
-                  disabled={isLoading}
-                  className="px-8 py-4 bg-accent text-white hover:bg-accent/90 font-semibold text-lg h-auto"
-                >
-                  {isLoading ? "Yuklanmoqda..." : "Ko'proq protokollar yuklash"}
-                </Button>
-              </div>
-            )}
-          </>
-        )}
+              {!searchQuery && protocols && protocols.length === 20 && (
+                <div className="text-center pt-8 pb-12">
+                  <Button
+                    onClick={handleLoadMore}
+                    disabled={isLoading}
+                    className="px-8 py-3 bg-accent text-white hover:bg-accent/90 font-semibold rounded-lg"
+                  >
+                    {isLoading ? "Yuklanmoqda..." : "Ko'proq protokollar yuklash"}
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </section>
       </main>
     </div>
   );

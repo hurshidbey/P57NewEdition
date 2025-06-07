@@ -62,3 +62,7 @@ Three main tables defined in `shared/schema.ts`:
 - Client-side search uses Fuse.js for fuzzy matching
 - Pagination: 20 items per page
 - Mobile-first responsive design
+
+## Development Tools
+
+- Using docker for containerization and consistent development environment
