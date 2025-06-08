@@ -49,11 +49,11 @@ function AppContent() {
       <Route path="/onboarding">
         {isAuthenticated ? <Onboarding /> : <AuthPage />}
       </Route>
-      <Route path="/payment">
-        {isAuthenticated ? <PaymentPage /> : <AuthPage />}
-      </Route>
       <Route path="/payment/atmos">
         {isAuthenticated ? <AtmosPayment /> : <AuthPage />}
+      </Route>
+      <Route path="/payment">
+        {isAuthenticated ? <PaymentPage /> : <AuthPage />}
       </Route>
       <Route component={NotFound} />
     </Switch>
