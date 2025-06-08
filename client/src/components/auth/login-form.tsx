@@ -55,7 +55,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -72,8 +72,12 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="email@example.com"
+            placeholder="Emailingizni kiriting"
             className="h-12 px-4 text-base border-2 focus:border-accent transition-colors duration-200 focus-ring"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
             required
           />
         </div>
@@ -95,8 +99,12 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder="Parolingizni kiriting"
             className="h-12 px-4 text-base border-2 focus:border-accent transition-colors duration-200 focus-ring"
+            autoComplete="new-password"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
             required
           />
         </div>
