@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import { Mail, Lock, ArrowRight } from "lucide-react"
+import { useLocation } from "wouter"
 
 interface LoginFormProps {
   onToggleMode: () => void
@@ -17,6 +18,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   const [loading, setLoading] = useState(false)
   const { signIn } = useAuth()
   const { toast } = useToast()
+  const [, setLocation] = useLocation()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,6 +39,10 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         title: "Muvaffaqiyat!",
         description: "Tizimga kirildi"
       })
+      // Redirect to home page after successful login
+      setTimeout(() => {
+        setLocation("/")
+      }, 500)
     } catch (error: any) {
       toast({
         title: "Xatolik",
