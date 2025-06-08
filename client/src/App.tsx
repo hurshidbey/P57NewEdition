@@ -49,7 +49,7 @@ function AppContent() {
       <Route path="/onboarding">
         {isAuthenticated ? <Onboarding /> : <AuthPage />}
       </Route>
-      <Route path="/payment/atmos">
+      <Route path="/atmos-payment">
         {isAuthenticated ? <AtmosPayment /> : <AuthPage />}
       </Route>
       <Route path="/payment">
