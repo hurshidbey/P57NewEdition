@@ -11,7 +11,7 @@ git push origin main
 
 # Deploy to VPS
 echo "🌐 Deploying to VPS..."
-ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'cd /opt/protokol57 && ./deploy.sh'
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'cd /opt/protokol57 && bash deploy.sh'
 
 echo "✅ Deployment complete!"
 echo "🌐 Website: https://srv852801.hstgr.cloud/"
