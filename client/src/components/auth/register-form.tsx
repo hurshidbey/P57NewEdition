@@ -86,7 +86,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -104,6 +104,10 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           onChange={(e) => setName(e.target.value)}
           placeholder="Ismingizni kiriting"
           className="h-12 px-4 text-base border-2 focus:border-accent transition-colors duration-200 focus-ring"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="words"
+          spellCheck={false}
           required
         />
       </motion.div>
@@ -123,8 +127,12 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="email@example.com"
+          placeholder="Emailingizni kiriting"
           className="h-12 px-4 text-base border-2 focus:border-accent transition-colors duration-200 focus-ring"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
           required
         />
       </motion.div>
@@ -146,6 +154,10 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Kuchli parol kiriting"
           className="h-12 px-4 text-base border-2 focus:border-accent transition-colors duration-200 focus-ring"
+          autoComplete="new-password"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
           required
         />
         {password && (
@@ -198,6 +210,10 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
               ? "border-green-300 focus:border-green-500"
               : "focus:border-accent"
           }`}
+          autoComplete="new-password"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
           required
         />
         {confirmPassword && (
