@@ -6,6 +6,7 @@ import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupPaymeRoutes } from "./payme/routes-new";
 import { setupPaymeWebhookRoutes } from "./payme/webhook-routes";
+import { setupAtmosRoutes } from "./atmos-routes";
 
 // Define user interface for our application
 interface AppUser {
@@ -64,6 +65,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Set up Payme webhook endpoint
   app.use(setupPaymeWebhookRoutes());
+  
+  // Set up ATMOS payment routes
+  app.use(setupAtmosRoutes());
   
   // Add cache control for API routes in development
   if (process.env.NODE_ENV === "development") {
