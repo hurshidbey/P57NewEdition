@@ -37,9 +37,6 @@ function AppContent() {
       <Route path="/test" component={LandingSimple} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/auth/confirm" component={EmailConfirmPage} />
-      <Route path="/">
-        {isAuthenticated ? <Home /> : <AuthPage />}
-      </Route>
       <Route path="/protocols/:id">
         {isAuthenticated ? <ProtocolDetail /> : <AuthPage />}
       </Route>
@@ -54,6 +51,9 @@ function AppContent() {
       </Route>
       <Route path="/payment">
         {isAuthenticated ? <PaymentPage /> : <AuthPage />}
+      </Route>
+      <Route path="/" exact>
+        {isAuthenticated ? <Home /> : <AuthPage />}
       </Route>
       <Route component={NotFound} />
     </Switch>
