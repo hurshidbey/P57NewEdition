@@ -232,3 +232,16 @@
 2025-06-08T11:42:26: ✅ user_progress table already exists and working!
 2025-06-08T11:42:26: Supabase REST API connected successfully
 2025-06-08T11:42:26: Error seeding database: Cannot read properties of null (reading 'select')
+2025-06-08T12:01:11: Auth setup initialized - basic session-based auth
+2025-06-08T12:01:11: Payme Configuration:
+2025-06-08T12:01:11: - Merchant ID: 682c005253a2e309cf048d70
+2025-06-08T12:01:11: - Environment: Production
+2025-06-08T12:01:11: ATMOS Service initialized for store: -1981
+2025-06-08T12:01:11: ✅ ATMOS routes configured
+2025-06-08T12:01:11: 12:01:11 PM [express] serving on port 5757
+2025-06-08T12:01:12: Creating user_progress table via Supabase...
+2025-06-08T12:01:12: ✅ user_progress table already exists and working!
+2025-06-08T12:01:12: Supabase REST API connected successfully
+2025-06-08T12:01:12: Error seeding database: Cannot read properties of null (reading 'select')
+2025-06-08T12:01:15: ATMOS Service initialized for store: -1981
+2025-06-08T12:01:26: 12:01:26 PM [express] GET /api/atmos/test 500 in 10521ms :: {"success":false,"message":"Failed to get…
