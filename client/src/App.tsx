@@ -12,6 +12,7 @@ import EmailConfirmPage from "@/pages/email-confirm";
 import NotFound from "@/pages/not-found";
 import Onboarding from "@/pages/onboarding";
 import PaymentPage from "@/pages/payment";
+import AtmosPayment from "@/pages/atmos-payment";
 import LandingPage from "@/pages/landing";
 import LandingSimple from "@/pages/landing-simple";
 
@@ -50,6 +51,9 @@ function AppContent() {
       </Route>
       <Route path="/payment">
         {isAuthenticated ? <PaymentPage /> : <AuthPage />}
+      </Route>
+      <Route path="/payment/atmos">
+        {isAuthenticated ? <AtmosPayment /> : <AuthPage />}
       </Route>
       <Route component={NotFound} />
     </Switch>
