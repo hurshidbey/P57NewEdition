@@ -47,7 +47,10 @@ function AppContent() {
         {isAuthenticated ? <Onboarding /> : <AuthPage />}
       </Route>
       <Route path="/atmos-payment">
-        <AtmosPayment />
+        <div style={{padding: '20px', textAlign: 'center'}}>
+          <h1>ATMOS Payment Page Working!</h1>
+          <p>This is a test to verify routing works</p>
+        </div>
       </Route>
       <Route path="/payment">
         {isAuthenticated ? <PaymentPage /> : <AuthPage />}
