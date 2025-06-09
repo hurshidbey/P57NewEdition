@@ -94,11 +94,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
   
-  // Set up Payme routes
-  app.use(setupPaymeRoutes());
+  // Set up Payme routes (temporarily disabled to focus on ATMOS)
+  // app.use(setupPaymeRoutes());
   
-  // Set up Payme webhook endpoint
-  app.use(setupPaymeWebhookRoutes());
+  // Set up Payme webhook endpoint (temporarily disabled to focus on ATMOS)
+  // app.use(setupPaymeWebhookRoutes());
   
   // Set up ATMOS payment routes
   app.use('/api', setupAtmosRoutes());
