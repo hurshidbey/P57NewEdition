@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import { User, Mail, Lock, CheckCircle, ArrowRight } from "lucide-react"
+import { GoogleOAuthButton } from "./google-oauth-button"
 
 interface RegisterFormProps {
   onToggleMode: () => void
@@ -279,10 +280,20 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         </div>
       </motion.div>
 
-      <motion.p 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
+      >
+        <GoogleOAuthButton>
+          Google bilan ro'yxatdan o'tish
+        </GoogleOAuthButton>
+      </motion.div>
+
+      <motion.p 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.9 }}
         className="text-center text-sm text-gray-600"
       >
         Hisobingiz bormi?{" "}

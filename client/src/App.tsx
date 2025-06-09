@@ -9,6 +9,7 @@ import ProtocolDetail from "@/pages/protocol-detail";
 import Admin from "@/pages/admin";
 import AuthPage from "@/pages/auth";
 import EmailConfirmPage from "@/pages/email-confirm";
+import AuthCallback from "@/pages/auth-callback";
 import NotFound from "@/pages/not-found";
 import Onboarding from "@/pages/onboarding";
 import PaymentPage from "@/pages/payment";
@@ -37,6 +38,7 @@ function AppContent() {
       <Route path="/test" component={LandingSimple} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/auth/confirm" component={EmailConfirmPage} />
+      <Route path="/auth/callback" component={AuthCallback} />
       <Route path="/protocols/:id">
         {isAuthenticated ? <ProtocolDetail /> : <AuthPage />}
       </Route>
