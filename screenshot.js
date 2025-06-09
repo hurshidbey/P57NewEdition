@@ -7,8 +7,8 @@ async function takeScreenshot() {
   // Set viewport size for consistent screenshots
   await page.setViewport({ width: 1200, height: 800 });
   
-  // Navigate to the home page first
-  await page.goto('http://localhost:3333', { waitUntil: 'networkidle2' });
+  // Navigate to the ATMOS payment page
+  await page.goto('http://localhost:5001/atmos', { waitUntil: 'networkidle2' });
   
   // Login if needed
   const isLoginPage = await page.$('input[type="email"]');
@@ -28,20 +28,20 @@ async function takeScreenshot() {
       console.log('Login completed, navigating to protocol details...');
       
       // Navigate to protocol details page
-      await page.goto('http://localhost:3333/protocols/1', { waitUntil: 'networkidle2' });
+      await page.goto('http://localhost:5001/protocols/1', { waitUntil: 'networkidle2' });
       
     } catch (e) {
       console.log('Login might have failed, taking screenshot anyway...');
     }
   }
   
-  // Take screenshot of protocol details page
+  // Take screenshot of ATMOS payment page
   await page.screenshot({ 
-    path: 'protocol-details-screenshot.png',
+    path: 'atmos-payment-screenshot.png',
     fullPage: true 
   });
   
-  console.log('Screenshot saved as protocol-details-screenshot.png');
+  console.log('Screenshot saved as atmos-payment-screenshot.png');
   
   await browser.close();
 }

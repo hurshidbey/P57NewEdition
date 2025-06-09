@@ -24,11 +24,11 @@ RUN chown -R nextjs:nodejs /app
 USER nextjs
 
 # Expose port
-EXPOSE 3333
+EXPOSE 5000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3333/api/protocols || exit 1
+  CMD curl -f http://localhost:5000/api/protocols || exit 1
 
 # Start command
 CMD ["npm", "run", "dev"]
