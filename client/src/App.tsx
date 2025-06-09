@@ -18,7 +18,10 @@ import LandingPage from "@/pages/landing";
 import LandingSimple from "@/pages/landing-simple";
 
 function AppContent() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
+
+  // Check if current user is admin
+  const isAdmin = user?.email === 'hurshidbey@gmail.com';
 
   // Show loading while checking auth
   if (loading) {
@@ -43,7 +46,7 @@ function AppContent() {
         {isAuthenticated ? <ProtocolDetail /> : <AuthPage />}
       </Route>
       <Route path="/admin">
-        {isAuthenticated ? <Admin /> : <AuthPage />}
+        {isAuthenticated && isAdmin ? <Admin /> : <AuthPage />}
       </Route>
       <Route path="/onboarding">
         {isAuthenticated ? <Onboarding /> : <AuthPage />}
@@ -52,7 +55,7 @@ function AppContent() {
       <Route path="/payment">
         {isAuthenticated ? <PaymentPage /> : <AuthPage />}
       </Route>
-      <Route path="/" exact>
+      <Route path="/">
         {isAuthenticated ? <Home /> : <AuthPage />}
       </Route>
       <Route component={NotFound} />
