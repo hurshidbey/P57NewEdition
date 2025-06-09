@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Trash2, Edit, Plus } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-context";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 
@@ -26,9 +27,23 @@ type FormData = {
 };
 
 export default function Admin() {
+  const { user } = useAuth();
   const [editingProtocol, setEditingProtocol] = useState<Protocol | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // CRITICAL SECURITY CHECK: Only hurshidbey@gmail.com can access admin
+  if (user?.email !== 'hurshidbey@gmail.com') {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-black text-red-600 mb-4">Ruxsat berilmagan</h1>
+          <p className="text-gray-600 mb-4">Bu sahifaga kirish huquqingiz yo'q.</p>
+          <p className="text-sm text-gray-400">Faqat admin foydalanuvchi kira oladi.</p>
+        </div>
+      </div>
+    );
+  }
 
   const { data: protocols } = useQuery<Protocol[]>({
     queryKey: ["/api/protocols", { limit: 1000 }],
