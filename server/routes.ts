@@ -31,7 +31,41 @@ const isAuthenticated = (req: any, res: Response, next: NextFunction) => {
   next();
 };
 
-// Admin middleware function to check if user is an admin
+// Admin middleware function to check if user is an admin (using Supabase auth)
+const isSupabaseAdmin = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No authorization token provided' });
+    }
+    
+    const token = authHeader.split(' ')[1];
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(
+      'https://bazptglwzqstppwlvmvb.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+    );
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+    
+    // Only allow admin user (hurshidbey@gmail.com)
+    if (user.email !== 'hurshidbey@gmail.com') {
+      return res.status(403).json({ error: 'Access denied - admin only' });
+    }
+    
+    req.user = user;
+    next();
+  } catch (error: any) {
+    console.error('Admin auth middleware error:', error);
+    res.status(500).json({ error: 'Authentication failed' });
+  }
+};
+
+// Admin middleware function to check if user is an admin (legacy session-based)
 const isAdmin = (req: any, res: Response, next: NextFunction) => {
   console.log("Admin auth check - user:", req.session?.user ? `ID: ${req.session.user.id}, Role: ${req.session.user.role}` : 'No user');
   
@@ -126,7 +160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create new protocol
-  app.post("/api/protocols", async (req, res) => {
+  app.post("/api/protocols", isSupabaseAdmin, async (req, res) => {
     try {
       const validatedData = insertProtocolSchema.parse(req.body);
       const protocol = await storage.createProtocol(validatedData);
@@ -140,7 +174,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update protocol
-  app.put("/api/protocols/:id", async (req, res) => {
+  app.put("/api/protocols/:id", isSupabaseAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const validatedData = insertProtocolSchema.partial().parse(req.body);
@@ -160,7 +194,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete protocol
-  app.delete("/api/protocols/:id", async (req, res) => {
+  app.delete("/api/protocols/:id", isSupabaseAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const deleted = await storage.deleteProtocol(id);
@@ -259,10 +293,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get user progress
+  // Get user progress (with Supabase auth verification)
   app.get("/api/progress/:userId", async (req, res) => {
     try {
       const { userId } = req.params;
+      
+      // Verify Supabase JWT token
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'No authorization token provided' });
+      }
+      
+      const token = authHeader.split(' ')[1];
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        'https://bazptglwzqstppwlvmvb.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+      );
+      
+      const { data: { user }, error } = await supabase.auth.getUser(token);
+      
+      if (error || !user) {
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+      
+      // Only allow users to access their own progress
+      if (user.id !== userId) {
+        return res.status(403).json({ error: 'Access denied - can only access own progress' });
+      }
+      
       const result = await storage.getUserProgress(userId);
       res.json(result);
     } catch (error: any) {
@@ -271,11 +330,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update protocol progress
+  // Update protocol progress (with Supabase auth verification)
   app.post("/api/progress/:userId/:protocolId", async (req, res) => {
     try {
       const { userId, protocolId } = req.params;
       const { score } = req.body;
+      
+      // Verify Supabase JWT token
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'No authorization token provided' });
+      }
+      
+      const token = authHeader.split(' ')[1];
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        'https://bazptglwzqstppwlvmvb.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+      );
+      
+      const { data: { user }, error } = await supabase.auth.getUser(token);
+      
+      if (error || !user) {
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+      
+      // Only allow users to update their own progress
+      if (user.id !== userId) {
+        return res.status(403).json({ error: 'Access denied - can only update own progress' });
+      }
       
       const result = await storage.updateProtocolProgress(
         userId, 
