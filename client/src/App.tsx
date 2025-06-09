@@ -24,7 +24,13 @@ function AppContent() {
   const isAdmin = user?.email === 'hurshidbey@gmail.com';
   
   // DEBUG: Log current user and admin status
-  console.log('🔍 Current user:', user?.email, 'isAdmin:', isAdmin);
+  console.log('🔍 DEBUG ADMIN CHECK:');
+  console.log('- User email:', user?.email);
+  console.log('- Expected admin email: hurshidbey@gmail.com');
+  console.log('- Email match:', user?.email === 'hurshidbey@gmail.com');
+  console.log('- isAdmin:', isAdmin);
+  console.log('- isAuthenticated:', isAuthenticated);
+  console.log('- Should show admin?', isAuthenticated && isAdmin);
 
   // Show loading while checking auth
   if (loading) {
