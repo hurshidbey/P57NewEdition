@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import { Mail, Lock, ArrowRight } from "lucide-react"
 import { useLocation } from "wouter"
+import { GoogleOAuthButton } from "./google-oauth-button"
 
 interface LoginFormProps {
   onToggleMode: () => void
@@ -162,10 +163,20 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         </div>
       </motion.div>
 
-      <motion.p 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
+      >
+        <GoogleOAuthButton>
+          Google bilan kirish
+        </GoogleOAuthButton>
+      </motion.div>
+
+      <motion.p 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
         className="text-center text-sm text-gray-600"
       >
         Hisobingiz yo'qmi?{" "}
