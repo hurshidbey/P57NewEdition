@@ -6,6 +6,7 @@ interface AuthContextType {
   loading: boolean
   isAuthenticated: boolean
   signIn: (email: string, password: string) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signUp: (email: string, password: string, name?: string) => Promise<void>
   signOut: () => Promise<void>
 }
@@ -43,6 +44,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const signInWithGoogle = async () => {
+    await authService.signInWithGoogle()
+    // OAuth redirect will handle the rest
+  }
+
   const signUp = async (email: string, password: string, name?: string) => {
     await authService.signUp(email, password, name)
     // Note: User will be null until email is confirmed
@@ -58,6 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     isAuthenticated: !!user,
     signIn,
+    signInWithGoogle,
     signUp,
     signOut
   }
