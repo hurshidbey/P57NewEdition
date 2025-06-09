@@ -22,6 +22,9 @@ function AppContent() {
 
   // Check if current user is admin
   const isAdmin = user?.email === 'hurshidbey@gmail.com';
+  
+  // DEBUG: Log current user and admin status
+  console.log('🔍 Current user:', user?.email, 'isAdmin:', isAdmin);
 
   // Show loading while checking auth
   if (loading) {
