@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { supabase } from './supabase';
 
 // Development vs Production detection
 const isDevelopment = import.meta.env.DEV;
@@ -16,6 +17,12 @@ export async function apiRequest(
   data?: unknown | undefined,
 ): Promise<Response> {
   const headers: HeadersInit = data ? { "Content-Type": "application/json" } : {};
+  
+  // Add Supabase auth token if available
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    headers['Authorization'] = `Bearer ${session.access_token}`;
+  }
   
   // Add cache busting headers in development
   if (isDevelopment) {
@@ -61,6 +68,12 @@ export const getQueryFn: <T>(options: {
 
     // Add cache busting headers in development
     const headers: HeadersInit = {};
+    
+    // Add Supabase auth token if available
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
     
     if (isDevelopment) {
       headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';

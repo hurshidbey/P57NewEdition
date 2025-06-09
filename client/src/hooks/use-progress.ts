@@ -79,7 +79,7 @@ export function useProgress() {
           calculateStreak(progressMap);
         }
       } catch (error) {
-        console.warn('Server progress unavailable, using localStorage:', error.message);
+        console.warn('Server progress unavailable, using localStorage:', error instanceof Error ? error.message : 'Unknown error');
         // localStorage already loaded above, so we're good
       } finally {
         setLoading(false);
