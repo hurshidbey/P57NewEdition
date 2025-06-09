@@ -67,7 +67,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(setupPaymeWebhookRoutes());
   
   // Set up ATMOS payment routes
-  app.use(setupAtmosRoutes());
+  app.use('/api', setupAtmosRoutes());
   
   // Add cache control for API routes in development
   if (process.env.NODE_ENV === "development") {

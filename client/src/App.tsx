@@ -46,7 +46,7 @@ function AppContent() {
       <Route path="/onboarding">
         {isAuthenticated ? <Onboarding /> : <AuthPage />}
       </Route>
-      <Route path="/test-atmos" component={AtmosPayment} />
+      <Route path="/atmos" component={AtmosPayment} />
       <Route path="/payment">
         {isAuthenticated ? <PaymentPage /> : <AuthPage />}
       </Route>

@@ -176,25 +176,40 @@ export default function PaymentPage() {
                   </Alert>
                 )}
 
-                {/* Payment Button */}
-                <Button
-                  onClick={handlePayment}
-                  disabled={isProcessing || !user}
-                  className="w-full h-14 bg-accent hover:bg-gray-800 text-white font-semibold text-lg group"
-                >
-                  {isProcessing ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Payme ga yo'naltirilmoqda...
-                    </div>
-                  ) : (
+                {/* Payment Buttons */}
+                <div className="space-y-3">
+                  <Button
+                    onClick={handlePayment}
+                    disabled={isProcessing || !user}
+                    className="w-full h-14 bg-accent hover:bg-gray-800 text-white font-semibold text-lg group"
+                  >
+                    {isProcessing ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Payme ga yo'naltirilmoqda...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-5 h-5" />
+                        Payme orqali to'lash
+                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                      </div>
+                    )}
+                  </Button>
+                  
+                  <Button
+                    onClick={() => window.location.href = '/atmos'}
+                    disabled={!user}
+                    variant="outline"
+                    className="w-full h-14 border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-lg group"
+                  >
                     <div className="flex items-center gap-2">
                       <CreditCard className="w-5 h-5" />
-                      Payme orqali to'lash
+                      ATMOS orqali to'lash (UzCard/Humo)
                       <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </div>
-                  )}
-                </Button>
+                  </Button>
+                </div>
 
                 {!user && (
                   <Alert className="border-blue-200 bg-blue-50">
