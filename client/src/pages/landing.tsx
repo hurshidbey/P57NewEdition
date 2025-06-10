@@ -142,12 +142,12 @@ export default function LandingPage() {
         scrollY > 50 ? 'bg-black/90 backdrop-blur-lg border-b border-gray-800' : ''
       }`}>
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
-          <div className="text-2xl font-black tracking-tight">
+          <div className="font-inter font-black text-2xl lg:text-3xl tracking-tight">
             PROTOKOL57
           </div>
           <Button 
             onClick={handleGetStarted}
-            className="bg-white text-black hover:bg-gray-200 font-bold px-8 py-3 rounded-full transition-all hover:scale-105"
+            className="font-inter font-bold bg-white text-black hover:bg-gray-100 px-8 py-3 rounded-full transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl"
           >
             Premium
           </Button>
@@ -168,55 +168,60 @@ export default function LandingPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 text-center">
           <div className="animate-fade-in-up">
-            <Badge className="mb-8 bg-gray-900/50 backdrop-blur text-gray-300 border-gray-700 text-lg px-6 py-2">
-              <Sparkles className="w-4 h-4 mr-2" />
+            <Badge className="mb-10 bg-gray-900/60 backdrop-blur text-gray-200 border-gray-600 font-inter font-medium text-base px-8 py-3 rounded-full">
+              <Sparkles className="w-4 h-4 mr-3" />
               AI inqilobi boshlandi
             </Badge>
           </div>
           
           <h1 
-            className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black leading-[0.9] mb-8 animate-fade-in-up"
-            style={{ animationDelay: '0.2s' }}
+            className="font-inter font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.85] tracking-tight mb-12 animate-fade-in-up"
+            style={{ 
+              animationDelay: '0.2s',
+              lineHeight: '0.85',
+              letterSpacing: '-0.02em'
+            }}
           >
-            Sun'iy intellekt sizni
-            <br />
-            <span className="gradient-text">chetlab o'tishidan</span>
-            <br />
-            oldin uni boshqaring
+            <span className="block mb-2">Sun'iy intellekt sizni</span>
+            <span className="block gradient-text mb-2">chetlab o'tishidan</span>
+            <span className="block">oldin uni boshqaring</span>
           </h1>
           
           <p 
-            className="text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto mb-12 font-light animate-fade-in-up"
-            style={{ animationDelay: '0.4s' }}
+            className="font-inter font-light text-lg md:text-xl lg:text-2xl text-gray-300 max-w-5xl mx-auto mb-16 leading-relaxed animate-fade-in-up"
+            style={{ 
+              animationDelay: '0.4s',
+              lineHeight: '1.7',
+              letterSpacing: '0.01em'
+            }}
           >
-            Goldman Sachs: 300 million ish o'rni xavf ostida. 
-            <br />
-            AI'dan 5x yaxshi natijalar olishning maxfiy formulasi.
+            <span className="block mb-3">Goldman Sachs: 300 million ish o'rni xavf ostida.</span>
+            <span className="block font-medium text-white">AI'dan 5x yaxshi natijalar olishning maxfiy formulasi.</span>
           </p>
 
           <div 
-            className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up"
+            className="flex flex-col sm:flex-row gap-8 justify-center animate-fade-in-up"
             style={{ animationDelay: '0.6s' }}
           >
             <Button 
               onClick={handleTryDemo}
               variant="outline"
-              className="bg-transparent border-2 border-gray-600 text-white hover:bg-gray-900 px-10 py-7 text-lg rounded-full transition-all hover:scale-105"
+              className="font-inter font-medium bg-transparent border-2 border-gray-500 text-white hover:bg-gray-800 hover:border-gray-400 px-12 py-6 text-lg rounded-full transition-all duration-300 hover:scale-[1.02]"
             >
               Bepul demo versiya
             </Button>
             <Button 
               onClick={handleGetStarted}
-              className="bg-gradient-to-r from-white to-gray-200 text-black hover:from-gray-200 hover:to-gray-300 px-10 py-7 text-lg font-bold rounded-full group transition-all hover:scale-105 animate-pulse"
+              className="font-inter font-bold bg-gradient-to-r from-white to-gray-100 text-black hover:from-gray-100 hover:to-gray-200 px-12 py-6 text-lg rounded-full group transition-all duration-300 hover:scale-[1.02] shadow-2xl hover:shadow-white/20"
             >
-              Premium — 199,000 so'm
-              <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-2" />
+              <span className="tracking-tight">Premium — 199,000 so'm</span>
+              <ArrowRight className="ml-4 w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
 
           {/* Stats */}
           <div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24 animate-fade-in-up"
+            className="grid grid-cols-1 md:grid-cols-3 gap-12 mt-28 animate-fade-in-up"
             style={{ animationDelay: '0.8s' }}
           >
             {[
@@ -224,9 +229,13 @@ export default function LandingPage() {
               { number: "5x", label: "yaxshiroq natijalar" },
               { number: "57", label: "professional protokol" }
             ].map((stat, idx) => (
-              <div key={idx} className="text-center">
-                <div className="text-5xl md:text-6xl font-black text-accent mb-2">{stat.number}</div>
-                <div className="text-gray-400">{stat.label}</div>
+              <div key={idx} className="text-center group">
+                <div className="font-inter font-black text-6xl md:text-7xl lg:text-8xl text-white mb-4 tracking-tight group-hover:scale-110 transition-transform duration-300">
+                  {stat.number}
+                </div>
+                <div className="font-inter font-light text-lg text-gray-300 tracking-wide">
+                  {stat.label}
+                </div>
               </div>
             ))}
           </div>
@@ -249,10 +258,10 @@ export default function LandingPage() {
               isVisible['problems-header'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-            <h2 className="text-5xl md:text-7xl font-black mb-6">
-              Sizda shunday
-              <br />
-              <span className="text-red-500">muammolar</span> bormi?
+            <h2 className="font-inter font-black text-4xl md:text-6xl lg:text-7xl leading-tight tracking-tight mb-8">
+              <span className="block mb-2">Sizda shunday</span>
+              <span className="block text-red-500">muammolar</span>
+              <span className="block">bormi?</span>
             </h2>
           </div>
 
@@ -295,8 +304,8 @@ export default function LandingPage() {
                 <Card className="bg-gray-900/50 backdrop-blur border-gray-800 p-8 h-full hover:bg-gray-900/70 transition-all hover:scale-105 hover:border-gray-700">
                   <CardContent className="p-0">
                     <problem.icon className={`w-12 h-12 ${problem.color} mb-6`} />
-                    <h3 className="text-2xl font-bold mb-4">{problem.title}</h3>
-                    <p className="text-gray-400 text-lg">{problem.description}</p>
+                    <h3 className="font-inter font-bold text-2xl lg:text-3xl mb-5 tracking-tight">{problem.title}</h3>
+                    <p className="font-inter font-light text-base lg:text-lg text-gray-300 leading-relaxed">{problem.description}</p>
                   </CardContent>
                 </Card>
               </div>
@@ -309,10 +318,9 @@ export default function LandingPage() {
               isVisible['problems-cta'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-            <p className="text-2xl text-gray-300">
-              Agar shu savollarning birortasiga "ha" deb javob bergan bo'lsangiz,
-              <br />
-              <span className="text-white font-bold text-3xl">demak siz to'g'ri joydasiz.</span>
+            <p className="font-inter font-light text-xl lg:text-2xl text-gray-300 leading-relaxed">
+              <span className="block mb-3">Agar shu savollarning birortasiga "ha" deb javob bergan bo'lsangiz,</span>
+              <span className="font-black text-2xl lg:text-3xl text-white tracking-tight">demak siz to'g'ri joydasiz.</span>
             </p>
           </div>
         </div>
@@ -327,14 +335,13 @@ export default function LandingPage() {
               isVisible['solution-header'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-            <h2 className="text-5xl md:text-7xl font-black mb-8">
-              "57PROTOCOLS"
-              <br />
-              <span className="gradient-text">sizning qo'llanmangiz</span>
+            <h2 className="font-inter font-black text-4xl md:text-6xl lg:text-7xl leading-tight tracking-tight mb-10">
+              <span className="block mb-2">"57PROTOCOLS"</span>
+              <span className="block gradient-text">sizning qo'llanmangiz</span>
             </h2>
-            <p className="text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto">
-              Muallif Xurshid Maroziqov 15+ ilmiy maqola, OpenAI va Anthropic hujjatlarini o'rganib,
-              eng samarali 57 ta protokolni siz uchun jamladi.
+            <p className="font-inter font-light text-lg md:text-xl lg:text-2xl text-gray-300 max-w-5xl mx-auto leading-relaxed">
+              <span className="block mb-2">Muallif Xurshid Maroziqov 15+ ilmiy maqola, OpenAI va Anthropic hujjatlarini o'rganib,</span>
+              <span className="font-medium text-white">eng samarali 57 ta protokolni siz uchun jamladi.</span>
             </p>
           </div>
 
@@ -374,8 +381,8 @@ export default function LandingPage() {
                     <feature.icon className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                    <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+                    <h3 className="font-inter font-bold text-xl lg:text-2xl mb-4 tracking-tight">{feature.title}</h3>
+                    <p className="font-inter font-light text-base lg:text-lg text-gray-300 leading-relaxed">{feature.description}</p>
                   </div>
                 </div>
               ))}
