@@ -66,7 +66,7 @@ export default function AtmosPayment() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: 73900000, // 739,000 UZS in tiins (50% early bird discount)
+          amount: 500000, // 5,000 UZS in tiins (testing price)
           description: 'Protokol 57 - Premium Access'
         })
       });
@@ -202,7 +202,7 @@ export default function AtmosPayment() {
           className="text-lg tracking-wider font-mono"
           required
         />
-        <div className="text-xs text-gray-600 mt-1">
+        <div className="text-xs text-muted-foreground mt-1">
           UzCard (8600...) yoki Humo (9860...) kartalari qabul qilinadi
         </div>
       </div>
@@ -260,7 +260,7 @@ export default function AtmosPayment() {
     <form onSubmit={handleOtpSubmit} className="space-y-4">
       <div className="text-center mb-4">
         <CheckCircle className="mx-auto h-12 w-12 text-green-500 mb-2" />
-        <p className="text-sm text-gray-600">{paymentState.message}</p>
+        <p className="text-sm text-muted-foreground">{paymentState.message}</p>
       </div>
 
       <div className="space-y-2">
@@ -275,7 +275,7 @@ export default function AtmosPayment() {
           required
           autoFocus
         />
-        <p className="text-xs text-gray-600 text-center">
+        <p className="text-xs text-muted-foreground text-center">
           6 raqamli kodni kiriting
         </p>
       </div>
@@ -329,8 +329,8 @@ export default function AtmosPayment() {
     <div className="text-center space-y-4">
       <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
       <h3 className="text-xl font-semibold text-green-700">Muvaffaqiyat!</h3>
-      <p className="text-gray-600">{paymentState.message}</p>
-      <p className="text-sm text-gray-500">3 soniyadan keyin bosh sahifaga yo'naltirilasiz...</p>
+      <p className="text-muted-foreground">{paymentState.message}</p>
+      <p className="text-sm text-muted-foreground">3 soniyadan keyin bosh sahifaga yo'naltirilasiz...</p>
     </div>
   );
 
@@ -338,7 +338,7 @@ export default function AtmosPayment() {
     <div className="text-center space-y-4">
       <XCircle className="mx-auto h-16 w-16 text-red-500" />
       <h3 className="text-xl font-semibold text-red-700">Xatolik yuz berdi</h3>
-      <p className="text-gray-600">{paymentState.message}</p>
+      <p className="text-muted-foreground">{paymentState.message}</p>
       <Button 
         onClick={() => setPaymentState({ step: 'card-details' })}
         className="bg-[#FF4F30] hover:bg-[#E63E20] text-white"
@@ -349,7 +349,7 @@ export default function AtmosPayment() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Card>
           <CardHeader className="text-center">
@@ -360,14 +360,14 @@ export default function AtmosPayment() {
             <div className="mt-2 p-3 bg-blue-50 rounded-lg">
               <div className="flex items-center justify-between mb-1">
                 <p className="text-sm font-medium text-blue-800">
-                  To'lov miqdori: 739,000 UZS
+                  To'lov miqdori: 5,000 UZS
                 </p>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                  50% chegirma
+                <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
+                  Test narxi
                 </span>
               </div>
-              <p className="text-xs text-gray-500 line-through">
-                Asl narxi: 1,478,000 UZS
+              <p className="text-xs text-muted-foreground">
+                Test rejimi uchun arzon narx
               </p>
               <p className="text-xs text-blue-600 mt-1">
                 UzCard va Humo kartalari qabul qilinadi
@@ -390,7 +390,7 @@ export default function AtmosPayment() {
             {paymentState.step === 'success' && renderSuccess()}
             {paymentState.step === 'error' && renderError()}
 
-            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <Shield className="h-3 w-3" />
               <span>Xavfsiz to'lov ATMOS orqali</span>
             </div>

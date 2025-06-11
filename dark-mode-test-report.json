@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-06-10T06:58:58.669Z",
+  "summary": {
+    "themePersistenceWorking": null,
+    "screenshotsGenerated": 3,
+    "errors": [
+      "SyntaxError: Failed to execute 'querySelector' on 'Document': '[role=\"button\"]:has-text(\"Toggle theme\"), button:has([data-testid=\"theme-toggle\"])' is not a valid selector."
+    ]
+  },
+  "details": {
+    "themeToggle": null,
+    "adminNavigation": null,
+    "themePersistence": null,
+    "colorContrast": null,
+    "errors": [
+      "SyntaxError: Failed to execute 'querySelector' on 'Document': '[role=\"button\"]:has-text(\"Toggle theme\"), button:has([data-testid=\"theme-toggle\"])' is not a valid selector."
+    ]
+  }
+}

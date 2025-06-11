@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
+import { ThemeProvider } from "@/contexts/theme-context";
 import Home from "@/pages/home";
 import ProtocolDetail from "@/pages/protocol-detail";
 import Admin from "@/pages/admin";
@@ -16,6 +17,7 @@ import PaymentPage from "@/pages/payment";
 import AtmosPayment from "@/pages/atmos-payment";
 import LandingPage from "@/pages/landing";
 import LandingSimple from "@/pages/landing-simple";
+import LandingConversion from "@/pages/landing-conversion";
 
 function AppContent() {
   const { isAuthenticated, loading, user } = useAuth();
@@ -35,10 +37,10 @@ function AppContent() {
   // Show loading while checking auth
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
-          <p className="text-gray-600">Yuklanmoqda...</p>
+          <p className="text-muted-foreground">Yuklanmoqda...</p>
         </div>
       </div>
     );
@@ -47,6 +49,7 @@ function AppContent() {
   return (
     <Switch>
       <Route path="/landing" component={LandingPage} />
+      <Route path="/landing-conversion" component={LandingConversion} />
       <Route path="/test" component={LandingSimple} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/auth/confirm" component={EmailConfirmPage} />
@@ -60,7 +63,7 @@ function AppContent() {
       <Route path="/onboarding">
         {isAuthenticated ? <Onboarding /> : <AuthPage />}
       </Route>
-      <Route path="/atmos" component={AtmosPayment} />
+      <Route path="/atmos-payment" component={AtmosPayment} />
       <Route path="/payment">
         {isAuthenticated ? <PaymentPage /> : <AuthPage />}
       </Route>
@@ -76,10 +79,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <AppContent />
-        </TooltipProvider>
+        <ThemeProvider defaultTheme="system" storageKey="protokol57-theme">
+          <TooltipProvider>
+            <Toaster />
+            <AppContent />
+          </TooltipProvider>
+        </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

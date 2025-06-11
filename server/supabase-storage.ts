@@ -158,22 +158,6 @@ export class SupabaseStorage implements IStorage {
     return true;
   }
 
-  async searchProtocols(query: string): Promise<Protocol[]> {
-    const { data, error } = await this.supabase
-      .from('protocols')
-      .select('*')
-      .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
-      .order('number', { ascending: true });
-    
-    if (error) throw error;
-    return (data || []).map((item: any) => ({
-      ...item,
-      categoryId: item.category_id,
-      badExample: item.bad_example,
-      goodExample: item.good_example,
-      createdAt: item.created_at
-    }));
-  }
 
   async getCategories(): Promise<Category[]> {
     const { data, error } = await this.supabase

@@ -24,6 +24,11 @@ type FormData = {
   goodExample: string;
   categoryId: number;
   notes?: string;
+  problemStatement?: string;
+  whyExplanation?: string;
+  solutionApproach?: string;
+  difficultyLevel?: string;
+  levelOrder?: number;
 };
 
 export default function Admin() {
@@ -35,11 +40,11 @@ export default function Admin() {
   // CRITICAL SECURITY CHECK: Only hurshidbey@gmail.com can access admin
   if (user?.email !== 'hurshidbey@gmail.com') {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-black text-red-600 mb-4">Ruxsat berilmagan</h1>
-          <p className="text-gray-600 mb-4">Bu sahifaga kirish huquqingiz yo'q.</p>
-          <p className="text-sm text-gray-400">Faqat admin foydalanuvchi kira oladi.</p>
+          <p className="text-muted-foreground mb-4">Bu sahifaga kirish huquqingiz yo'q.</p>
+          <p className="text-sm text-muted-foreground/70">Faqat admin foydalanuvchi kira oladi.</p>
         </div>
       </div>
     );
@@ -66,6 +71,11 @@ export default function Admin() {
       goodExample: "",
       categoryId: 1,
       notes: "",
+      problemStatement: "",
+      whyExplanation: "",
+      solutionApproach: "",
+      difficultyLevel: "",
+      levelOrder: 1,
     },
   });
 
@@ -131,6 +141,11 @@ export default function Admin() {
       goodExample: protocol.goodExample || "",
       categoryId: protocol.categoryId,
       notes: protocol.notes || "",
+      problemStatement: protocol.problemStatement || "",
+      whyExplanation: protocol.whyExplanation || "",
+      solutionApproach: protocol.solutionApproach || "",
+      difficultyLevel: protocol.difficultyLevel || "",
+      levelOrder: protocol.levelOrder || 1,
     });
   };
 
@@ -140,25 +155,25 @@ export default function Admin() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <AppHeader />
       
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-black text-black mb-2">Boshqaruv paneli</h1>
-          <p className="text-gray-600">Protokollar va kategoriyalarni boshqaring</p>
+          <h1 className="text-4xl font-black text-foreground mb-2">Boshqaruv paneli</h1>
+          <p className="text-muted-foreground">Protokollar va kategoriyalarni boshqaring</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Protocol Form */}
-          <Card>
+          <Card className="h-fit">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Plus className="w-5 h-5 mr-2" />
                 {editingProtocol ? "Protokolni tahrirlash" : "Yangi protokol qo'shish"}
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="max-h-[600px] overflow-y-auto">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <FormField
@@ -277,10 +292,96 @@ export default function Admin() {
                     )}
                   />
 
+                  <FormField
+                    control={form.control}
+                    name="problemStatement"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Muammo bayoni (ixtiyoriy)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} rows={3} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="whyExplanation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nima uchun tushuntirish (ixtiyoriy)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} rows={3} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="solutionApproach"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Yechim yondashuvi (ixtiyoriy)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} rows={3} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="difficultyLevel"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Qiyinchilik darajasi (ixtiyoriy)</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Daraja tanlang" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Boshlang'ich">🟢 Boshlang'ich</SelectItem>
+                            <SelectItem value="O'rta daraja">🟡 O'rta daraja</SelectItem>
+                            <SelectItem value="Yuqori daraja">🔴 Yuqori daraja</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="levelOrder"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Daraja tartibi (ixtiyoriy)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <div className="flex space-x-4 pt-4">
                     <Button
                       type="submit"
-                      className="flex-1 bg-accent text-white hover:bg-accent/90"
+                      className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
                       disabled={createMutation.isPending || updateMutation.isPending}
                     >
                       {editingProtocol ? "Protokolni yangilash" : "Protokol yaratish"}
@@ -305,26 +406,48 @@ export default function Admin() {
             <CardHeader>
               <CardTitle>Mavjud protokollar</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4 max-h-96 overflow-y-auto">
+            <CardContent className="h-[600px] overflow-hidden">
+              <div className="space-y-4 h-full overflow-y-auto pr-2">
                 {protocols?.map((protocol) => (
-                  <div key={protocol.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="w-8 h-8 bg-accent text-white rounded-lg flex items-center justify-center text-sm font-bold">
+                  <div key={protocol.id} className="flex items-start justify-between p-4 border rounded-lg min-h-[120px]">
+                    <div className="flex-1 min-w-0 pr-4">
+                      <div className="flex items-center space-x-2 mb-2 flex-wrap">
+                        <span className="w-8 h-8 bg-accent text-accent-foreground rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">
                           {protocol.number}
                         </span>
-                        <h3 className="font-semibold">{protocol.title}</h3>
+                        <h3 className="font-semibold truncate">{protocol.title}</h3>
+                        {/* Difficulty Level Badge */}
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                          protocol.number >= 1 && protocol.number <= 20
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                            : protocol.number >= 21 && protocol.number <= 40
+                            ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
+                            : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                        }`}>
+                          {protocol.number >= 1 && protocol.number <= 20
+                            ? '🟢 Boshlang\'ich'
+                            : protocol.number >= 21 && protocol.number <= 40
+                            ? '🟡 O\'rta daraja'
+                            : '🔴 Yuqori daraja'
+                          }
+                        </span>
                       </div>
-                      <p className="text-sm text-gray-600 line-clamp-2">
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
                         {protocol.description}
                       </p>
+                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                        <span className="bg-muted px-2 py-1 rounded">Kategoriya: {categories?.find(c => c.id === protocol.categoryId)?.name}</span>
+                        {protocol.difficultyLevel && <span className="bg-muted px-2 py-1 rounded">Daraja: {protocol.difficultyLevel}</span>}
+                        {protocol.levelOrder && <span className="bg-muted px-2 py-1 rounded">Tartib: {protocol.levelOrder}</span>}
+                        {protocol.notes && <span className="bg-muted px-2 py-1 rounded">Eslatma: {protocol.notes.substring(0, 20)}...</span>}
+                      </div>
                     </div>
-                    <div className="flex space-x-2 ml-4">
+                    <div className="flex flex-col space-y-2 flex-shrink-0">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleEdit(protocol)}
+                        className="w-10 h-10 p-0"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
@@ -333,6 +456,7 @@ export default function Admin() {
                         variant="destructive"
                         onClick={() => deleteMutation.mutate(protocol.id)}
                         disabled={deleteMutation.isPending}
+                        className="w-10 h-10 p-0"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>

@@ -13,7 +13,6 @@ export interface IStorage {
   createProtocol(protocol: InsertProtocol): Promise<Protocol>;
   updateProtocol(id: number, protocol: Partial<InsertProtocol>): Promise<Protocol | undefined>;
   deleteProtocol(id: number): Promise<boolean>;
-  searchProtocols(query: string): Promise<Protocol[]>;
   
   getCategories(): Promise<Category[]>;
   getCategory(id: number): Promise<Category | undefined>;
@@ -126,8 +125,8 @@ async function createSupabaseTable(supabaseStorage: any) {
     const response = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
       method: 'POST',
       headers: {
-        'apikey': serviceRoleKey,
-        'Authorization': `Bearer ${serviceRoleKey}`,
+        'apikey': serviceRoleKey || '',
+        'Authorization': `Bearer ${serviceRoleKey || ''}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ sql: createTableSQL })
@@ -505,7 +504,12 @@ export class HybridStorage implements IStorage {
       createdAt: new Date(),
       badExample: protocol.badExample ?? null,
       goodExample: protocol.goodExample ?? null,
-      notes: protocol.notes ?? null
+      notes: protocol.notes ?? null,
+      problemStatement: null,
+      whyExplanation: null,
+      solutionApproach: null,
+      difficultyLevel: null,
+      levelOrder: null
     };
     this.memoryProtocols.set(id, newProtocol);
     return newProtocol;
@@ -564,39 +568,6 @@ export class HybridStorage implements IStorage {
     return this.memoryProtocols.delete(id);
   }
 
-  async searchProtocols(query: string): Promise<Protocol[]> {
-    if (isDatabaseConnected) {
-      try {
-        if (!query.trim()) {
-          return this.getProtocols();
-        }
-        
-        const result = await db.select()
-          .from(protocols)
-          .where(
-            or(
-              ilike(protocols.title, `%${query}%`),
-              ilike(protocols.description, `%${query}%`)
-            )
-          )
-          .orderBy(protocols.number);
-        
-        return result;
-      } catch (error) {
-        console.error("Error searching protocols:", error);
-      }
-    }
-    
-    if (!query.trim()) return this.getProtocols();
-    
-    const searchTerm = query.toLowerCase();
-    return Array.from(this.memoryProtocols.values())
-      .filter(protocol => 
-        protocol.title.toLowerCase().includes(searchTerm) ||
-        protocol.description.toLowerCase().includes(searchTerm)
-      )
-      .sort((a, b) => a.number - b.number);
-  }
 
   // Category methods
   async getCategories(): Promise<Category[]> {
