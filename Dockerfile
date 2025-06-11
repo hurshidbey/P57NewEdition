@@ -30,5 +30,8 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:5000/api/protocols || exit 1
 
-# Start command
-CMD ["npm", "run", "dev"]
+# Build the application
+RUN npm run build
+
+# Start command for production
+CMD ["npm", "run", "start"]

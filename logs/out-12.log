@@ -445,3 +445,11 @@
 2025-06-08T14:03:02: ✅ user_progress table already exists and working!
 2025-06-08T14:03:02: Supabase REST API connected successfully
 2025-06-08T14:03:02: Error seeding database: Cannot read properties of null (reading 'select')
+2025-06-11T18:18:02: Auth setup initialized - basic session-based auth
+2025-06-11T18:18:02: ATMOS Service initialized for store: 1981
+2025-06-11T18:18:02: ✅ ATMOS routes configured
+2025-06-11T18:18:03: 6:18:03 PM [express] serving on port 5757
+2025-06-11T18:18:03: Creating user_progress table via Supabase...
+2025-06-11T18:18:03: ✅ user_progress table already exists and working!
+2025-06-11T18:18:03: Supabase REST API connected successfully
+2025-06-11T18:18:03: Error seeding database: Cannot read properties of null (reading 'select')
