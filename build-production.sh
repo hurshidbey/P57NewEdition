@@ -5,12 +5,12 @@ echo "🔧 Building Protokol57 for production..."
 
 # Load environment variables
 echo "📋 Loading environment variables..."
-if [ -f .env ]; then
+if [ -f .env.production ]; then
     set -a
-    source .env
+    source .env.production
     set +a
 else
-    echo "❌ .env file not found\!"
+    echo "❌ .env.production file not found!"
     exit 1
 fi
 

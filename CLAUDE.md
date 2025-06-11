@@ -6,7 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Development
-npm run dev              # Start development server (port 5000)
+# DO NOT use npm run dev, use docker instead!
+docker-compose up       # Start development environment 
 
 # Build & Production
 npm run build           # Build client and server for production

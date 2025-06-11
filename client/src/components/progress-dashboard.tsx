@@ -29,7 +29,7 @@ export default function ProgressDashboard({ totalProtocols }: ProgressDashboardP
   };
 
   return (
-    <Card className="border-accent/20 bg-gradient-to-r from-slate-50 to-gray-50 shadow-sm">
+    <Card className="border-border bg-card shadow-sm dark:bg-card">
       <CardContent className="p-8">
         {/* Header Section - 8pt Grid Spacing */}
         <div className="flex items-center justify-between mb-6">

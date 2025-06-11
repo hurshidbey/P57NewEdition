@@ -94,7 +94,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         transition={{ delay: 0.1 }}
         className="space-y-2"
       >
-        <Label htmlFor="name" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        <Label htmlFor="name" className="text-sm font-medium text-foreground flex items-center gap-2">
           <User className="w-4 h-4" />
           Ism
         </Label>
@@ -119,7 +119,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         transition={{ delay: 0.2 }}
         className="space-y-2"
       >
-        <Label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        <Label htmlFor="email" className="text-sm font-medium text-foreground flex items-center gap-2">
           <Mail className="w-4 h-4" />
           Email
         </Label>
@@ -144,7 +144,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         transition={{ delay: 0.3 }}
         className="space-y-2"
       >
-        <Label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        <Label htmlFor="password" className="text-sm font-medium text-foreground flex items-center gap-2">
           <Lock className="w-4 h-4" />
           Parol
         </Label>
@@ -172,7 +172,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
                 <div
                   key={level}
                   className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                    level <= strengthLevel ? strengthColors[strengthLevel] : "bg-gray-200"
+                    level <= strengthLevel ? strengthColors[strengthLevel] : "bg-muted"
                   }`}
                 />
               ))}
@@ -194,7 +194,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         transition={{ delay: 0.4 }}
         className="space-y-2"
       >
-        <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        <Label htmlFor="confirmPassword" className="text-sm font-medium text-foreground flex items-center gap-2">
           <CheckCircle className="w-4 h-4" />
           Parolni tasdiqlang
         </Label>
@@ -234,9 +234,9 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-gray-50 rounded-lg p-4 border border-gray-100"
+        className="bg-muted/50 rounded-lg p-4 border border-border"
       >
-        <p className="text-xs text-gray-600">
+        <p className="text-xs text-muted-foreground">
           Ro'yxatdan o'tish orqali siz bizning <a href="#" className="text-accent hover:underline">foydalanish shartlari</a> va{" "}
           <a href="#" className="text-accent hover:underline">maxfiylik siyosati</a>ga rozilik bildirasiz.
         </p>
@@ -249,7 +249,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       >
         <Button 
           type="submit" 
-          className="w-full h-12 bg-accent hover:bg-gray-800 text-white font-medium text-base transition-all duration-300 hover-lift group"
+          className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-medium text-base transition-all duration-300 hover-lift group"
           disabled={loading || !email || !password || !name || password !== confirmPassword}
         >
           {loading ? (
@@ -273,10 +273,10 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         className="relative"
       >
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200"></div>
+          <div className="w-full border-t border-border"></div>
         </div>
         <div className="relative flex justify-center text-caption">
-          <span className="bg-white px-4 text-gray-500">yoki</span>
+          <span className="bg-background px-4 text-muted-foreground">yoki</span>
         </div>
       </motion.div>
 
@@ -294,13 +294,13 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9 }}
-        className="text-center text-sm text-gray-600"
+        className="text-center text-sm text-muted-foreground"
       >
         Hisobingiz bormi?{" "}
         <button
           type="button"
           onClick={onToggleMode}
-          className="text-accent hover:text-gray-800 font-medium transition-colors duration-200 hover:underline underline-offset-4"
+          className="text-accent hover:text-accent/80 font-medium transition-colors duration-200 hover:underline underline-offset-4"
         >
           Kirish
         </button>

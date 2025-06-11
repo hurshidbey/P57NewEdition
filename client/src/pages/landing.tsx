@@ -56,7 +56,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;

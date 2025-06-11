@@ -4,8 +4,6 @@ import { storage } from "./storage";
 import { insertProtocolSchema } from "@shared/schema";
 import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
-import { setupPaymeRoutes } from "./payme/routes-new";
-import { setupPaymeWebhookRoutes } from "./payme/webhook-routes";
 import { setupAtmosRoutes } from "./atmos-routes";
 
 // Define user interface for our application
@@ -94,11 +92,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
   
-  // Set up Payme routes (temporarily disabled to focus on ATMOS)
-  // app.use(setupPaymeRoutes());
-  
-  // Set up Payme webhook endpoint (temporarily disabled to focus on ATMOS)
-  // app.use(setupPaymeWebhookRoutes());
   
   // Set up ATMOS payment routes
   app.use('/api', setupAtmosRoutes());
@@ -120,21 +113,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
-      const search = req.query.search as string;
-      const categoryId = req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined;
+      const difficulty = req.query.difficulty as string;
 
       let protocols;
-      if (search) {
-        protocols = await storage.searchProtocols(search);
-        if (categoryId) {
-          protocols = protocols.filter(p => p.categoryId === categoryId);
-        }
-        protocols = protocols.slice(offset, offset + limit);
+      
+      // If difficulty filter is applied, get all protocols first
+      if (difficulty) {
+        protocols = await storage.getProtocols(1000, 0); // Get all protocols
       } else {
         protocols = await storage.getProtocols(limit, offset);
-        if (categoryId) {
-          protocols = protocols.filter(p => p.categoryId === categoryId);
-        }
+      }
+
+      // Apply difficulty filter based on protocol number ranges
+      if (difficulty) {
+        protocols = protocols.filter(p => {
+          if (difficulty === "BEGINNER") return p.number >= 1 && p.number <= 20;
+          if (difficulty === "ORTA DARAJA") return p.number >= 21 && p.number <= 40;
+          if (difficulty === "YUQORI DARAJA") return p.number >= 41 && p.number <= 57;
+          return true;
+        });
+      }
+
+      // Apply pagination after filtering
+      if (difficulty) {
+        protocols = protocols.slice(offset, offset + limit);
       }
 
       res.json(protocols);
@@ -400,76 +402,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Payment success page - where users return after completing payment on Payme
-  app.get("/payment/success", async (req, res) => {
-    // This is where users land after successful payment
-    // You can add order verification logic here if needed
-    res.redirect("/?payment=success");
-  });
-
-  // Create new payment order and redirect to Payme
-  app.post("/api/payment/create-order", isAuthenticated, async (req: any, res) => {
-    try {
-      if (!req.user || !req.user.id) {
-        return res.status(401).json({ message: "User not authenticated" });
-      }
-
-      // Generate unique order ID with timestamp
-      const orderId = `ORDER-${Date.now()}-${req.user.id}`;
-      
-      // Fixed amount for platform access (149,000 UZS = 14,900,000 tiyins)
-      const amount = 14900000;
-      
-      // Create order in database (this will need to be implemented in storage)
-      // For now, we'll simulate this - to be implemented when storage is updated
-      const order = {
-        order_id: orderId,
-        user_id: req.user.id,
-        amount: amount,
-        status: 'pending'
-      };
-      
-      const merchantId = process.env.PAYME_MERCHANT_ID;
-      
-      if (!merchantId) {
-        return res.status(500).json({ message: "Payment system configuration error" });
-      }
-      
-      // Create payment URL using the exact format Payme expects
-      // Based on the error URL, Payme expects: m=merchant&a=amount&o=order_id format
-      const paymeParams = `m=${merchantId};a=${amount};o=${orderId}`;
-      const encodedParams = Buffer.from(paymeParams).toString('base64');
-      
-      // Try production checkout URL as many merchants only work with production even in test mode
-      const paymeUrl = `https://checkout.paycom.uz/${encodedParams}`;
-      
-      console.log('=== PAYME URL GENERATION DEBUG ===');
-      console.log('Payme Merchant ID:', merchantId);
-      console.log('Order ID:', orderId);
-      console.log('Amount:', amount);
-      console.log('Generated Payme URL params:', paymeParams);
-      console.log('Encoded params:', encodedParams);
-      console.log('Final Payme URL:', paymeUrl);
-      console.log('=== END DEBUG ===');
-      
-      console.log(`Created new order: ${orderId} for user ${req.user.id} with amount ${amount}`);
-      
-      res.json({
-        success: true,
-        orderId: orderId,
-        amount: amount,
-        paymentUrl: paymeUrl,
-        message: "Order created successfully"
-      });
-      
-    } catch (error) {
-      console.error("Error creating payment order:", error);
-      res.status(500).json({ 
-        success: false, 
-        message: "Failed to create payment order" 
-      });
-    }
-  });
 
   const httpServer = createServer(app);
   return httpServer;
