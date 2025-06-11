@@ -133,7 +133,7 @@
   }
   
   .focus-ring:focus-visible {
-    @apply outline-none ring-2 ring-black ring-offset-2;
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
   
   /* 3D Flip Card Styles */
@@ -215,5 +215,16 @@
   .fade-in {
     opacity: 0;
     animation: fadeIn var(--transition-smooth) ease-out forwards;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

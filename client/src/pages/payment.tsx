@@ -24,38 +24,12 @@ export default function PaymentPage() {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
-  const handlePayment = async () => {
+  const handleAtmosPayment = () => {
     if (!user) {
       setError("Iltimos, avval tizimga kiring");
       return;
     }
-
-    setIsProcessing(true);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/payment/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-
-      if (data.success && data.paymentUrl) {
-        // Redirect to Payme checkout
-        window.location.href = data.paymentUrl;
-      } else {
-        setError(data.message || "To'lov yaratishda xatolik yuz berdi");
-      }
-    } catch (error: any) {
-      console.error('Payment error:', error);
-      setError("To'lov tizimiga ulanishda xatolik");
-    } finally {
-      setIsProcessing(false);
-    }
+    window.location.href = '/atmos-payment';
   };
 
   return (
@@ -164,7 +138,7 @@ export default function PaymentPage() {
                 {/* Security Badge */}
                 <div className="flex items-center gap-2 text-sm text-gray-600 bg-green-50 p-3 rounded-lg border border-green-200">
                   <Shield className="w-4 h-4 text-green-600" />
-                  <span>Payme orqali xavfsiz to'lov</span>
+                  <span>ATMOS orqali xavfsiz to'lov</span>
                 </div>
 
                 {/* Error Display */}
@@ -176,32 +150,12 @@ export default function PaymentPage() {
                   </Alert>
                 )}
 
-                {/* Payment Buttons */}
+                {/* Payment Button */}
                 <div className="space-y-3">
                   <Button
-                    onClick={handlePayment}
-                    disabled={isProcessing || !user}
-                    className="w-full h-14 bg-accent hover:bg-gray-800 text-white font-semibold text-lg group"
-                  >
-                    {isProcessing ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Payme ga yo'naltirilmoqda...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="w-5 h-5" />
-                        Payme orqali to'lash
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                      </div>
-                    )}
-                  </Button>
-                  
-                  <Button
-                    onClick={() => window.location.href = '/atmos'}
+                    onClick={handleAtmosPayment}
                     disabled={!user}
-                    variant="outline"
-                    className="w-full h-14 border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-lg group"
+                    className="w-full h-14 bg-accent hover:bg-gray-800 text-white font-semibold text-lg group"
                   >
                     <div className="flex items-center gap-2">
                       <CreditCard className="w-5 h-5" />
@@ -256,7 +210,7 @@ export default function PaymentPage() {
               </div>
               <div className="flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-blue-500" />
-                <span>Payme himoyasi</span>
+                <span>ATMOS himoyasi</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />

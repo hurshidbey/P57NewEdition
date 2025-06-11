@@ -2,7 +2,7 @@ import { Link } from "wouter";
 
 export default function AppFooter() {
   return (
-    <footer className="bg-gray-50 border-t border-gray-200 mt-auto">
+    <footer className="bg-muted/30 border-t border-border mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Description */}
@@ -15,12 +15,12 @@ export default function AppFooter() {
                   className="h-10 w-auto transition-transform group-hover:scale-105"
                 />
                 <div className="flex flex-col">
-                  <h2 className="text-2xl font-black text-black leading-tight">Protokol 57</h2>
-                  <span className="text-sm text-gray-600 leading-tight">AI Protokollarini O'rganish</span>
+                  <h2 className="text-2xl font-black text-foreground leading-tight">Protokol 57</h2>
+                  <span className="text-sm text-muted-foreground leading-tight">AI Protokollarini O'rganish</span>
                 </div>
               </div>
             </Link>
-            <p className="text-gray-600 max-w-md leading-relaxed">
+            <p className="text-muted-foreground max-w-md leading-relaxed">
               ChatGPT va boshqa AI vositalari bilan professional darajada ishlashni o'rganish uchun 
               57 ta amaliy protokol va strategiyalar to'plami.
             </p>
@@ -28,25 +28,25 @@ export default function AppFooter() {
 
           {/* Navigation Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">O'rganish</h3>
+            <h3 className="font-semibold text-foreground mb-4">O'rganish</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/onboarding">
-                  <span className="text-gray-600 hover:text-accent transition-colors cursor-pointer">
+                  <span className="text-muted-foreground hover:text-accent transition-colors cursor-pointer">
                     Boshlang'ich qo'llanma
                   </span>
                 </Link>
               </li>
               <li>
                 <Link href="/">
-                  <span className="text-gray-600 hover:text-accent transition-colors cursor-pointer">
+                  <span className="text-muted-foreground hover:text-accent transition-colors cursor-pointer">
                     57 Protokol
                   </span>
                 </Link>
               </li>
               <li>
                 <Link href="/admin">
-                  <span className="text-gray-600 hover:text-accent transition-colors cursor-pointer">
+                  <span className="text-muted-foreground hover:text-accent transition-colors cursor-pointer">
                     Admin Panel
                   </span>
                 </Link>
@@ -56,20 +56,20 @@ export default function AppFooter() {
 
           {/* Contact & Info */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Bog'lanish</h3>
+            <h3 className="font-semibold text-foreground mb-4">Bog'lanish</h3>
             <ul className="space-y-3">
               <li>
                 <a 
                   href="https://t.me/birfoizbilim" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-accent transition-colors"
+                  className="text-muted-foreground hover:text-accent transition-colors"
                 >
                   Telegram
                 </a>
               </li>
               <li>
-                <span className="text-gray-600">
+                <span className="text-muted-foreground">
                   Muallif: Xurshid Mo'roziqov
                 </span>
               </li>
@@ -78,12 +78,12 @@ export default function AppFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-200 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm">
+        <div className="border-t border-border mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
+          <p className="text-muted-foreground text-sm">
             © {new Date().getFullYear()} Protokol 57. Barcha huquqlar himoyalangan.
           </p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
-            <span className="text-gray-500 text-sm">
+            <span className="text-muted-foreground text-sm">
               AI bilan professional ishlash platformasi
             </span>
           </div>

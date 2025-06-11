@@ -63,7 +63,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         transition={{ delay: 0.1 }}
         className="space-y-2"
       >
-        <Label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        <Label htmlFor="email" className="text-sm font-medium text-foreground flex items-center gap-2">
           <Mail className="w-4 h-4" />
           Email
         </Label>
@@ -90,7 +90,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         transition={{ delay: 0.2 }}
         className="space-y-2"
       >
-        <Label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        <Label htmlFor="password" className="text-sm font-medium text-foreground flex items-center gap-2">
           <Lock className="w-4 h-4" />
           Parol
         </Label>
@@ -119,7 +119,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
       >
         <button
           type="button"
-          className="text-sm text-gray-600 hover:text-accent transition-colors duration-200"
+          className="text-sm text-muted-foreground hover:text-accent transition-colors duration-200"
         >
           Parolni unutdingizmi?
         </button>
@@ -132,7 +132,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
       >
         <Button 
           type="submit" 
-          className="w-full h-12 bg-accent hover:bg-gray-800 text-white font-medium text-base transition-all duration-300 hover-lift group"
+          className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-medium text-base transition-all duration-300 hover-lift group"
           disabled={loading}
         >
           {loading ? (
@@ -156,10 +156,10 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         className="relative"
       >
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200"></div>
+          <div className="w-full border-t border-border"></div>
         </div>
         <div className="relative flex justify-center text-caption">
-          <span className="bg-white px-4 text-gray-500">yoki</span>
+          <span className="bg-background px-4 text-muted-foreground">yoki</span>
         </div>
       </motion.div>
 
@@ -177,13 +177,13 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
-        className="text-center text-sm text-gray-600"
+        className="text-center text-sm text-muted-foreground"
       >
         Hisobingiz yo'qmi?{" "}
         <button
           type="button"
           onClick={onToggleMode}
-          className="text-accent hover:text-gray-800 font-medium transition-colors duration-200 hover:underline underline-offset-4"
+          className="text-accent hover:text-accent/80 font-medium transition-colors duration-200 hover:underline underline-offset-4"
         >
           Ro'yxatdan o'ting
         </button>

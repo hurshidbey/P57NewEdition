@@ -8,10 +8,10 @@ This document describes the successful integration of ATMOS payment gateway into
 - **Status**: ✅ **PRODUCTION READY**
 
 ## Payment Details
-- **Original Price**: 1,478,000 UZS
-- **Early Bird Discount**: 50% 
-- **Final Price**: 739,000 UZS
-- **Amount in Tiins**: 73,900,000 (1 UZS = 100 tiins)
+- **Test Price**: 5,000 UZS (for testing purposes)
+- **Amount in Tiins**: 500,000 (1 UZS = 100 tiins)
+- **Production Price**: 739,000 UZS (original early bird price)
+- **Production Amount in Tiins**: 73,900,000
 
 ## Technical Configuration
 
@@ -95,7 +95,7 @@ For technical issues with ATMOS integration:
 ## Deployment Checklist
 - [x] OAuth credentials configured
 - [x] Store ID set to production value (1981)
-- [x] Payment amount set to 739,000 UZS
+- [x] Payment amount set to 5,000 UZS (testing mode)
 - [x] Error messages in Uzbek
 - [x] SSL/HTTPS enabled
 - [x] Docker configuration updated

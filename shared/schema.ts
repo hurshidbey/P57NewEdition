@@ -18,6 +18,12 @@ export const protocols = pgTable("protocols", {
   categoryId: integer("category_id").notNull(),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
+  // New fields for enhanced protocol structure
+  problemStatement: text("problem_statement"),
+  whyExplanation: text("why_explanation"),
+  solutionApproach: text("solution_approach"),
+  difficultyLevel: text("difficulty_level"),
+  levelOrder: integer("level_order"),
 });
 
 export const categories = pgTable("categories", {
