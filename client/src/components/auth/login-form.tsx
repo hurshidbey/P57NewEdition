@@ -8,6 +8,7 @@ import { motion } from "framer-motion"
 import { Mail, Lock, ArrowRight } from "lucide-react"
 import { useLocation } from "wouter"
 import { GoogleOAuthButton } from "./google-oauth-button"
+import { TelegramLoginButton } from './telegram-login-button';
 
 interface LoginFormProps {
   onToggleMode: () => void
@@ -167,10 +168,14 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
+        className="space-y-4"
       >
         <GoogleOAuthButton>
           Google bilan kirish
         </GoogleOAuthButton>
+        <TelegramLoginButton>
+          Telegram bilan kirish
+        </TelegramLoginButton>
       </motion.div>
 
       <motion.p 

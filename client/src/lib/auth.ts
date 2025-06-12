@@ -1,5 +1,15 @@
 import { supabase } from './supabase'
-import type { User } from '@supabase/supabase-js'
+import type { User } from '@supabase/supabase-js';
+
+export interface TelegramUser {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+  photo_url?: string;
+  auth_date: number;
+  hash: string;
+}
 
 export interface AuthUser {
   id: string
@@ -41,6 +51,43 @@ export const authService = {
     
     if (error) throw error
     return data
+  },
+
+  async signInWithTelegram(user: TelegramUser) {
+    console.log('🔐 Attempting Telegram signin');
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('telegram-auth', {
+        body: { user },
+      });
+
+      if (error) {
+        console.error('❌ Telegram function error:', error);
+        throw new Error(error.message || 'Telegram authentication failed');
+      }
+
+      if (!data?.access_token) {
+        console.error('❌ No access token received');
+        throw new Error('Invalid response from authentication service');
+      }
+
+      // Set the session using the received access token
+      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token || data.access_token // Fallback if no refresh token
+      });
+
+      if (sessionError) {
+        console.error('❌ Session creation error:', sessionError);
+        throw sessionError;
+      }
+
+      console.log('✅ Telegram signin successful:', sessionData);
+      return sessionData;
+    } catch (error: any) {
+      console.error('❌ Telegram signin error:', error);
+      throw new Error(error.message || 'Telegram authentication failed');
+    }
   },
 
   async signInWithGoogle() {

@@ -3,6 +3,16 @@ FROM node:20
 # Install dependencies for tsx and development
 RUN apt-get update && apt-get install -y python3 make g++ curl && rm -rf /var/lib/apt/lists/*
 
+# Accept build args for VITE environment variables
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+ARG VITE_TELEGRAM_BOT_USERNAME
+
+# Set as ENV for build process
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+ENV VITE_TELEGRAM_BOT_USERNAME=$VITE_TELEGRAM_BOT_USERNAME
+
 # Set working directory
 WORKDIR /app
 
@@ -15,12 +25,21 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Copy and set permissions for entrypoint before user switch
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Build the application with embedded VITE variables
+RUN npm run build
+
 # Create non-root user
 RUN groupadd --gid 1001 nodejs && \
     useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home nextjs
 
 # Change ownership
 RUN chown -R nextjs:nodejs /app
+
+# Switch to non-root user
 USER nextjs
 
 # Expose port
@@ -30,8 +49,8 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:5000/api/protocols || exit 1
 
-# Build the application
-RUN npm run build
+# Set entrypoint
+ENTRYPOINT ["entrypoint.sh"]
 
 # Start command for production
 CMD ["npm", "run", "start"]
