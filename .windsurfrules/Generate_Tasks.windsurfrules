@@ -1,0 +1,33 @@
+# Engineering Tasks: Telegram Login Integration
+
+Based on the PRD, here is the breakdown of tasks required to implement the Telegram Login feature.
+
+### Phase 1: Backend & Database Setup
+
+*   [ ] **Database:** Add a new nullable and unique column `telegram_id` of type `VARCHAR` or `BIGINT` to the `users` table.
+    *   `ALTER TABLE users ADD COLUMN telegram_id VARCHAR UNIQUE;`
+*   [ ] **Configuration:** Securely store the Telegram Bot Token in environment variables or a secrets management service.
+*   [ ] **API Endpoint:** Create a new `POST` endpoint at `/api/auth/telegram/callback` to handle the authentication data from the frontend.
+*   [ ] **Security:** Implement the hash verification logic on the backend to ensure data integrity, as specified in the Telegram Login documentation.
+*   [ ] **Authentication Logic:**
+    *   If the `telegram_id` does not exist in the database, create a new user record.
+    *   If the `telegram_id` exists, log in the corresponding user.
+    *   Upon successful login/registration, generate and return a JWT session token.
+*   [ ] **Error Handling:** Implement robust error handling for scenarios like invalid hash, Telegram API downtime, or database errors.
+
+### Phase 2: Frontend Implementation
+
+*   [ ] **UI Component:** Create and style a "Login with Telegram" button. Ensure it meets the accessibility (a11y) requirements outlined in the PRD.
+*   [ ] **Widget Integration:** Add the official Telegram Login widget script to the login/signup page.
+*   [ ] **Callback Handling:** Implement the `onauth` JavaScript callback function to receive user data from the Telegram widget.
+*   [ ] **API Integration:** On receiving the callback, send the user data to the `/api/auth/telegram/callback` backend endpoint.
+*   [ ] **State Management:**
+    *   On successful login, store the received JWT and redirect the user to their dashboard.
+    *   Handle and display appropriate error messages for login failures (e.g., "Telegram login cancelled," "Login failed, please try again").
+
+### Phase 3: Testing & Deployment
+
+*   [ ] **Unit & Integration Tests:** Write tests for the backend logic, including hash verification, user creation, and login flows.
+*   [ ] **End-to-End Testing:** Manually test the full user journey from clicking the button to successfully logging in. Test all edge cases identified in the PRD.
+*   [ ] **Performance Testing:** Validate that the P95 login time is under 3 seconds and the P99 API response is under 500ms.
+*   [ ] **Deployment:** Deploy the changes, initially behind a feature flag for a staged rollout as per the launch plan.

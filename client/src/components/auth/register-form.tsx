@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import { User, Mail, Lock, CheckCircle, ArrowRight } from "lucide-react"
 import { GoogleOAuthButton } from "./google-oauth-button"
+import { TelegramLoginButton } from './telegram-login-button';
 
 interface RegisterFormProps {
   onToggleMode: () => void
@@ -284,10 +285,14 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
+        className="space-y-4"
       >
         <GoogleOAuthButton>
           Google bilan ro'yxatdan o'tish
         </GoogleOAuthButton>
+        <TelegramLoginButton>
+          Telegram bilan ro'yxatdan o'tish
+        </TelegramLoginButton>
       </motion.div>
 
       <motion.p 

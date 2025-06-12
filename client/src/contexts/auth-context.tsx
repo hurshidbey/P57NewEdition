@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { authService, type AuthUser } from '@/lib/auth'
+import { authService, type AuthUser, type TelegramUser } from '@/lib/auth'
 
 interface AuthContextType {
   user: AuthUser | null
@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   signIn: (email: string, password: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
+  signInWithTelegram: (user: TelegramUser) => Promise<void>
   signUp: (email: string, password: string, name?: string) => Promise<void>
   signOut: () => Promise<void>
 }
@@ -49,6 +50,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // OAuth redirect will handle the rest
   }
 
+  const signInWithTelegram = async (user: TelegramUser) => {
+    await authService.signInWithTelegram(user)
+    // The onAuthStateChange listener will update the user state
+  }
+
   const signUp = async (email: string, password: string, name?: string) => {
     await authService.signUp(email, password, name)
     // Note: User will be null until email is confirmed
@@ -65,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated: !!user,
     signIn,
     signInWithGoogle,
+    signInWithTelegram,
     signUp,
     signOut
   }
