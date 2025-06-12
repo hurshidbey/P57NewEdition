@@ -57,6 +57,7 @@ export const authService = {
     console.log('🔐 Attempting Telegram signin');
     
     try {
+      // First, validate with our Edge Function
       const { data, error } = await supabase.functions.invoke('telegram-auth', {
         body: { user },
       });
@@ -66,35 +67,54 @@ export const authService = {
         throw new Error(error.message || 'Telegram authentication failed');
       }
 
-      if (!data?.auth_url) {
-        console.error('❌ No auth URL received');
+      if (!data?.success || !data?.telegram_user) {
+        console.error('❌ Invalid response from auth service');
         throw new Error('Invalid response from authentication service');
       }
 
-      console.log('✅ Received auth URL, verifying session...');
-
-      // Use the magic link to create a session
-      const url = new URL(data.auth_url);
-      const params = new URLSearchParams(url.search);
-      const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
-
-      if (accessToken && refreshToken) {
-        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken
+      console.log('✅ Telegram validation successful, creating/signing in user...');
+      
+      const telegramUser = data.telegram_user;
+      
+      // Try to sign in with the Telegram email first
+      try {
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: telegramUser.email,
+          password: `telegram_${telegramUser.id}` // Use Telegram ID as password
         });
-
-        if (sessionError) {
-          console.error('❌ Session creation error:', sessionError);
-          throw sessionError;
+        
+        if (signInData.user) {
+          console.log('✅ Telegram user signed in successfully');
+          return signInData;
         }
-
-        console.log('✅ Telegram signin successful:', sessionData);
-        return sessionData;
-      } else {
-        throw new Error('No tokens found in auth URL');
+      } catch (signInError) {
+        console.log('User does not exist, creating new user...');
       }
+
+      // If sign in failed, create a new user
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: telegramUser.email,
+        password: `telegram_${telegramUser.id}`,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+          data: {
+            name: telegramUser.name,
+            telegram_id: telegramUser.id,
+            username: telegramUser.username,
+            avatar_url: telegramUser.photo_url,
+            provider: 'telegram'
+          }
+        }
+      });
+
+      if (signUpError) {
+        console.error('❌ Signup error:', signUpError);
+        throw signUpError;
+      }
+
+      console.log('✅ Telegram user created successfully');
+      return signUpData;
+      
     } catch (error: any) {
       console.error('❌ Telegram signin error:', error);
       throw new Error(error.message || 'Telegram authentication failed');
