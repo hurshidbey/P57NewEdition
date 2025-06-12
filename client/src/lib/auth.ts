@@ -54,7 +54,7 @@ export const authService = {
   },
 
   async signInWithTelegram(user: TelegramUser) {
-    console.log('🔐 TELEGRAM AUTH START - User ID:', user.id, '- SIMPLIFIED v3.0');
+    console.log('🔐 TELEGRAM AUTH START - User ID:', user.id, '- SIMPLIFIED v4.0 NO EDGE FUNCTIONS');
     
     // Generate consistent credentials with valid email domain
     const email = `telegram_${user.id}@protokol57.app`;
@@ -69,6 +69,7 @@ export const authService = {
     
     console.log('📧 Email:', email);
     console.log('🔑 Password length:', password.length);
+    console.log('✅ Using direct Supabase Auth (NO Edge Functions)');
     
     try {
       // Strategy: Always try signup first for new users (most common case)
