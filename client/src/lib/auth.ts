@@ -54,11 +54,11 @@ export const authService = {
   },
 
   async signInWithTelegram(user: TelegramUser) {
-    console.log('🔐 TELEGRAM AUTH START - User ID:', user.id);
+    console.log('🔐 TELEGRAM AUTH START - User ID:', user.id, '- SIMPLIFIED v3.0');
     
-    // Generate consistent credentials
-    const email = `tg_${user.id}@telegram.local`;
-    const password = `telegram_${user.id}`;
+    // Generate consistent credentials with valid email domain
+    const email = `telegram_${user.id}@protokol57.app`;
+    const password = `tg_${user.id}_${user.auth_date}`;
     const userData = {
       name: `${user.first_name} ${user.last_name || ''}`.trim(),
       telegram_id: user.id,
@@ -68,7 +68,7 @@ export const authService = {
     };
     
     console.log('📧 Email:', email);
-    console.log('🔑 Password:', password);
+    console.log('🔑 Password length:', password.length);
     
     try {
       // Strategy: Always try signup first for new users (most common case)
@@ -78,9 +78,12 @@ export const authService = {
         email,
         password,
         options: {
-          data: userData
+          data: userData,
+          emailRedirectTo: undefined // Disable email confirmation for Telegram users
         }
       });
+      
+      console.log('📝 Signup response:', { data: signUpData, error: signUpError });
       
       // If signup succeeded with session, user is created and logged in
       if (!signUpError && signUpData.session) {
@@ -89,7 +92,7 @@ export const authService = {
       }
       
       // If signup failed because user exists, try signin
-      if (signUpError?.message?.includes('already registered')) {
+      if (signUpError?.message?.includes('already registered') || signUpError?.message?.includes('User already registered')) {
         console.log('👤 User exists, attempting signin...');
         
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -97,19 +100,22 @@ export const authService = {
           password
         });
         
+        console.log('🔐 Signin response:', { data: signInData, error: signInError });
+        
         if (!signInError && signInData.session) {
           console.log('✅ EXISTING user signed in');
           return signInData;
         }
         
-        throw new Error(`Sign-in failed: ${signInError?.message}`);
+        throw new Error(`Sign-in failed: ${signInError?.message || 'Unknown signin error'}`);
       }
       
-      // Other signup errors
-      throw new Error(`User creation failed: ${signUpError?.message}`);
+      // Other signup errors - be more specific
+      console.error('❌ Signup error details:', signUpError);
+      throw new Error(`User creation failed: ${signUpError?.message || 'Unknown signup error'}`);
       
     } catch (error: any) {
-      console.error('❌ Telegram auth error:', error.message);
+      console.error('❌ Telegram auth complete error:', error);
       throw error;
     }
   },
