@@ -108,20 +108,29 @@ Deno.serve(async (req) => {
       console.log('User created successfully:', authUser.id);
     }
 
-    // 5. Generate access token for the user
-    const { data: tokenData, error: tokenError } = await supabaseAdmin.auth.admin.generateAccessToken(authUser.id);
+    // 5. Generate authentication link for the user
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'magiclink',
+      email: telegramEmail,
+      options: {
+        redirectTo: `${req.headers.get('origin') || 'https://p57.birfoiz.uz'}/auth/callback`
+      }
+    });
 
-    if (tokenError) {
-      console.error('Failed to generate token:', tokenError);
-      throw tokenError;
+    if (linkError) {
+      console.error('Failed to generate auth link:', linkError);
+      throw linkError;
     }
 
-    console.log('Token generated successfully');
+    console.log('Auth link generated successfully');
 
+    // Return the authentication URL and user data
     return new Response(JSON.stringify({ 
-      access_token: tokenData.access_token,
+      auth_url: linkData.properties?.action_link,
+      hashed_token: linkData.properties?.hashed_token,
+      verification_type: linkData.properties?.verification_type,
       user: authUser,
-      session: tokenData
+      success: true
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
