@@ -1,35 +1,22 @@
 services:
   protokol57:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
+      args:
+        VITE_SUPABASE_URL: https://bazptglwzqstppwlvmvb.supabase.co
+        VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8
+        VITE_TELEGRAM_BOT_USERNAME: protokol57bot
     ports:
       - "5001:5000"
     volumes:
       - .:/app
       - /app/node_modules
       - /app/dist
+    env_file:
+      - .env.production
     environment:
-      - NODE_ENV=production
-      - HOST=0.0.0.0
-      - PORT=5000
-      # Production Supabase connection
-      - SUPABASE_URL=${SUPABASE_URL:-https://bazptglwzqstppwlvmvb.supabase.co}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTAxNzU5MCwiZXhwIjoyMDY0NTkzNTkwfQ.GdDEVx5CRy1NC_2e5QbtCKcXZmoEL1z2RU7SlHA_-oQ}
-      - SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD:-20031000a}
-      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:20031000a@db.bazptglwzqstppwlvmvb.supabase.co:5432/postgres}
-      # VITE variables for client-side
-      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL:-https://bazptglwzqstppwlvmvb.supabase.co}
-      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8}
-      # ATMOS payment system
-      - ATMOS_STORE_ID=${ATMOS_STORE_ID:-1981}
-      - ATMOS_CONSUMER_KEY=${ATMOS_CONSUMER_KEY:-UhGzIAQ10FhOZiZ9KTHH_3NhTZ8a}
-      - ATMOS_CONSUMER_SECRET=${ATMOS_CONSUMER_SECRET:-JCuvoGpaV6VHf3migqRy7r6qtiMa}
-      - ATMOS_ENV=${ATMOS_ENV:-production}
-      # OpenAI (optional)
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
-      # Session secret
-      - SESSION_SECRET=${SESSION_SECRET:-protokol57-production-secret-change-this-to-random-string}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
     restart: unless-stopped
     stdin_open: true
     tty: true

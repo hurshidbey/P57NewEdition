@@ -73,7 +73,10 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+  
+  console.log(`[serveStatic] Looking for static files in: ${distPath}`);
+  console.log(`[serveStatic] Directory exists: ${fs.existsSync(distPath)}`);
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
@@ -82,9 +85,11 @@ export function serveStatic(app: Express) {
   }
 
   app.use(express.static(distPath));
+  console.log(`[serveStatic] Express static middleware configured for: ${distPath}`);
 
   // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
+  app.use("*", (req, res) => {
+    console.log(`[serveStatic] Fallback route hit for: ${req.originalUrl}`);
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
