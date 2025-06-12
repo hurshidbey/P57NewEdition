@@ -66,24 +66,35 @@ export const authService = {
         throw new Error(error.message || 'Telegram authentication failed');
       }
 
-      if (!data?.access_token) {
-        console.error('❌ No access token received');
+      if (!data?.auth_url) {
+        console.error('❌ No auth URL received');
         throw new Error('Invalid response from authentication service');
       }
 
-      // Set the session using the received access token
-      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token || data.access_token // Fallback if no refresh token
-      });
+      console.log('✅ Received auth URL, verifying session...');
 
-      if (sessionError) {
-        console.error('❌ Session creation error:', sessionError);
-        throw sessionError;
+      // Use the magic link to create a session
+      const url = new URL(data.auth_url);
+      const params = new URLSearchParams(url.search);
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+
+      if (accessToken && refreshToken) {
+        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken
+        });
+
+        if (sessionError) {
+          console.error('❌ Session creation error:', sessionError);
+          throw sessionError;
+        }
+
+        console.log('✅ Telegram signin successful:', sessionData);
+        return sessionData;
+      } else {
+        throw new Error('No tokens found in auth URL');
       }
-
-      console.log('✅ Telegram signin successful:', sessionData);
-      return sessionData;
     } catch (error: any) {
       console.error('❌ Telegram signin error:', error);
       throw new Error(error.message || 'Telegram authentication failed');
