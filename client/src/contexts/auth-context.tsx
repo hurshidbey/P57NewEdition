@@ -51,8 +51,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signInWithTelegram = async (user: TelegramUser) => {
-    await authService.signInWithTelegram(user)
-    // The onAuthStateChange listener will update the user state
+    const result = await authService.signInWithTelegram(user)
+    
+    // If we got a user and session, update state immediately
+    if (result.user && result.session) {
+      setUser({
+        id: result.user.id,
+        email: result.user.email!,
+        name: result.user.user_metadata?.name || result.user.email?.split('@')[0]
+      })
+    }
+    
+    return result
   }
 
   const signUp = async (email: string, password: string, name?: string) => {

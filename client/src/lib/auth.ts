@@ -91,7 +91,7 @@ export const authService = {
         console.log('User does not exist, creating new user...');
       }
 
-      // If sign in failed, create a new user
+      // If sign in failed, create a new user and immediately sign them in
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: telegramUser.email,
         password: `telegram_${telegramUser.id}`,
@@ -113,6 +113,24 @@ export const authService = {
       }
 
       console.log('✅ Telegram user created successfully');
+      
+      // If user was created but not automatically signed in, sign them in now
+      if (signUpData.user && !signUpData.session) {
+        console.log('🔄 User created but not signed in, attempting sign in...');
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: telegramUser.email,
+          password: `telegram_${telegramUser.id}`
+        });
+        
+        if (signInError) {
+          console.error('❌ Auto sign-in failed:', signInError);
+          throw signInError;
+        }
+        
+        console.log('✅ Auto sign-in successful');
+        return signInData;
+      }
+      
       return signUpData;
       
     } catch (error: any) {
