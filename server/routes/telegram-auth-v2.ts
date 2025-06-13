@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 const router = Router();
 
@@ -24,7 +24,7 @@ interface TelegramAuthData {
   hash: string;
 }
 
-// Verify Telegram authentication data
+// Verify Telegram authentication data according to official documentation
 function verifyTelegramAuth(authData: TelegramAuthData): boolean {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   if (!botToken) {
@@ -32,26 +32,44 @@ function verifyTelegramAuth(authData: TelegramAuthData): boolean {
     return false;
   }
 
-  // Create data check string
-  const checkData = Object.keys(authData)
-    .filter(key => key !== 'hash')
-    .sort()
-    .map(key => `${key}=${authData[key as keyof TelegramAuthData]}`)
-    .join('\n');
+  console.log('🔍 Verifying Telegram auth data:', { ...authData, hash: '[HIDDEN]' });
 
-  // Create secret key
+  // Create data check string - exclude hash and sort alphabetically
+  const dataCheckArr: string[] = [];
+  Object.keys(authData).forEach(key => {
+    if (key !== 'hash') {
+      const value = authData[key as keyof TelegramAuthData];
+      if (value !== undefined && value !== null) {
+        dataCheckArr.push(`${key}=${value}`);
+      }
+    }
+  });
+  
+  // Sort alphabetically and join with newlines
+  dataCheckArr.sort();
+  const dataCheckString = dataCheckArr.join('\n');
+  
+  console.log('📝 Data check string:', dataCheckString);
+
+  // Create secret key using SHA256 of bot token
   const secretKey = crypto
     .createHash('sha256')
     .update(botToken)
     .digest();
 
-  // Calculate hash
+  // Calculate HMAC-SHA256 hash
   const calculatedHash = crypto
     .createHmac('sha256', secretKey)
-    .update(checkData)
+    .update(dataCheckString)
     .digest('hex');
 
-  return calculatedHash === authData.hash;
+  console.log('🔐 Calculated hash:', calculatedHash);
+  console.log('📨 Received hash:', authData.hash);
+
+  const isValid = calculatedHash === authData.hash;
+  console.log('✅ Hash verification result:', isValid);
+
+  return isValid;
 }
 
 // Generate JWT token

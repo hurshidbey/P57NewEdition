@@ -19,12 +19,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check for Telegram user first
-    import('@/lib/telegram-auth').then(({ telegramAuth }) => {
-      telegramAuth.init();
-      const telegramUser = telegramAuth.getCurrentUser();
-      
-      if (telegramUser) {
+    // Check for Telegram user first (using localStorage directly)
+    const telegramUserStr = localStorage.getItem('protokol57_telegram_user');
+    if (telegramUserStr) {
+      try {
+        const telegramUser = JSON.parse(telegramUserStr);
         setUser({
           id: telegramUser.id,
           email: `telegram_${telegramUser.telegram_id}@protokol57.app`,
@@ -32,14 +31,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         setLoading(false);
         return;
+      } catch {
+        // Invalid Telegram user data, continue to Supabase auth
       }
-      
-      // If no Telegram user, check Supabase auth
-      authService.getCurrentUser().then(user => {
-        setUser(user)
-        setLoading(false)
-      })
-    });
+    }
+    
+    // If no Telegram user, check Supabase auth
+    authService.getCurrentUser().then(user => {
+      setUser(user)
+      setLoading(false)
+    })
 
     // Listen for auth changes (Supabase only)
     const subscription = authService.onAuthStateChange((user) => {
@@ -85,10 +86,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
-    // Check if this is a Telegram user
-    const { telegramAuth } = await import('@/lib/telegram-auth');
-    if (telegramAuth.isAuthenticated()) {
-      telegramAuth.signOut();
+    // Check if this is a Telegram user (using localStorage directly)
+    const telegramToken = localStorage.getItem('protokol57_telegram_token');
+    if (telegramToken) {
+      // Clear Telegram tokens
+      localStorage.removeItem('protokol57_telegram_token');
+      localStorage.removeItem('protokol57_telegram_refresh');
+      localStorage.removeItem('protokol57_telegram_user');
+      window.location.reload();
     } else {
       await authService.signOut()
     }
