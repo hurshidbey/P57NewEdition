@@ -1,6 +1,6 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Protocol } from "@shared/schema";
+import { Protocol } from "@shared/types";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, XCircle } from "lucide-react";
 import { Link } from "wouter";

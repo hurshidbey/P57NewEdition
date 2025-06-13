@@ -1,4 +1,4 @@
-import { Protocol } from "@shared/schema";
+import { Protocol } from "@shared/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
