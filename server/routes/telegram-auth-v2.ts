@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
-import { sign as jwtSign, verify as jwtVerify } from 'jsonwebtoken';
+import * as jsonwebtoken from 'jsonwebtoken';
 
 const router = Router();
 
@@ -74,7 +74,7 @@ function verifyTelegramAuth(authData: TelegramAuthData): boolean {
 
 // Generate JWT token
 function generateToken(userId: string, telegramId: number): string {
-  return jwtSign(
+  return jsonwebtoken.sign(
     {
       sub: userId,
       telegram_id: telegramId,
@@ -225,7 +225,7 @@ export function verifyTelegramToken(req: any, res: any, next: any) {
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwtVerify(token, JWT_SECRET) as any;
+    const decoded = jsonwebtoken.verify(token, JWT_SECRET) as any;
     req.telegramUser = {
       id: decoded.sub,
       telegram_id: decoded.telegram_id
