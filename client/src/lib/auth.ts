@@ -54,7 +54,7 @@ export const authService = {
   },
 
   async signInWithTelegram(user: TelegramUser) {
-    console.log('🔐 TELEGRAM AUTH START - User ID:', user.id, '- SIMPLIFIED v4.0 NO EDGE FUNCTIONS');
+    console.log('🔐 TELEGRAM AUTH START - User ID:', user.id, '- SIMPLIFIED v5.0 SIGNIN-FIRST');
     
     // Generate consistent credentials with valid email domain
     const email = `telegram_${user.id}@protokol57.app`;
@@ -72,48 +72,66 @@ export const authService = {
     console.log('✅ Using direct Supabase Auth (NO Edge Functions)');
     
     try {
-      // Strategy: Always try signup first for new users (most common case)
-      console.log('🆕 Attempting to create new user...');
+      // Strategy: Try signin first (most users are returning users)
+      console.log('🔐 Attempting signin for returning user...');
       
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          data: userData,
-          emailRedirectTo: undefined // Disable email confirmation for Telegram users
-        }
+        password
       });
       
-      console.log('📝 Signup response:', { data: signUpData, error: signUpError });
+      console.log('🔐 Signin response:', { data: signInData, error: signInError });
       
-      // If signup succeeded with session, user is created and logged in
-      if (!signUpError && signUpData.session) {
-        console.log('✅ NEW user created and signed in');
-        return signUpData;
+      // If signin succeeded, user exists and is logged in
+      if (!signInError && signInData.session) {
+        console.log('✅ RETURNING user signed in successfully');
+        return signInData;
       }
       
-      // If signup failed because user exists, try signin
-      if (signUpError?.message?.includes('already registered') || signUpError?.message?.includes('User already registered')) {
-        console.log('👤 User exists, attempting signin...');
+      // If signin failed with invalid credentials, user doesn't exist - create them
+      if (signInError?.message?.includes('Invalid login credentials') || 
+          signInError?.message?.includes('invalid_credentials')) {
+        console.log('🆕 User not found, creating new account...');
         
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        // Wait a bit to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
-          password
+          password,
+          options: {
+            data: userData,
+            emailRedirectTo: undefined // Disable email confirmation for Telegram users
+          }
         });
         
-        console.log('🔐 Signin response:', { data: signInData, error: signInError });
+        console.log('📝 Signup response:', { data: signUpData, error: signUpError });
         
-        if (!signInError && signInData.session) {
-          console.log('✅ EXISTING user signed in');
-          return signInData;
+        if (!signUpError && signUpData.session) {
+          console.log('✅ NEW user created and signed in');
+          return signUpData;
         }
         
-        throw new Error(`Sign-in failed: ${signInError?.message || 'Unknown signin error'}`);
+        // Handle rate limiting
+        if (signUpError?.message?.includes('For security purposes')) {
+          const match = signUpError.message.match(/after (\d+) seconds/);
+          const seconds = match ? parseInt(match[1]) : 60;
+          throw new Error(`Iltimos ${seconds} soniyadan so'ng qayta urinib ko'ring (xavfsizlik maqsadida)`);
+        }
+        
+        throw new Error(`Foydalanuvchi yaratishda xatolik: ${signUpError?.message || 'Noma\'lum xatolik'}`);
       }
       
-      // Other signup errors - be more specific
-      console.error('❌ Signup error details:', signUpError);
-      throw new Error(`User creation failed: ${signUpError?.message || 'Unknown signup error'}`);
+      // Handle rate limiting on signin
+      if (signInError?.message?.includes('For security purposes')) {
+        const match = signInError.message.match(/after (\d+) seconds/);
+        const seconds = match ? parseInt(match[1]) : 60;
+        throw new Error(`Iltimos ${seconds} soniyadan so'ng qayta urinib ko'ring (xavfsizlik maqsadida)`);
+      }
+      
+      // Other signin errors
+      console.error('❌ Signin error details:', signInError);
+      throw new Error(`Tizimga kirishda xatolik: ${signInError?.message || 'Noma\'lum xatolik'}`);
       
     } catch (error: any) {
       console.error('❌ Telegram auth complete error:', error);
