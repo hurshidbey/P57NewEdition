@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 const router = Router();
 

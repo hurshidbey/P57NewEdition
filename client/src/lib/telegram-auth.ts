@@ -93,12 +93,16 @@ export const telegramAuth = {
       // Only add header for API requests
       if (typeof resource === 'string' && resource.startsWith('/api/')) {
         config = config || {};
-        config.headers = config.headers || {};
+        
+        // Convert headers to Headers object if needed
+        const headers = new Headers(config.headers);
         
         // Don't override if Authorization is already set
-        if (!config.headers['Authorization']) {
-          config.headers['Authorization'] = `Bearer ${token}`;
+        if (!headers.has('Authorization')) {
+          headers.set('Authorization', `Bearer ${token}`);
         }
+        
+        config.headers = headers;
       }
       
       return originalFetch(resource, config);
