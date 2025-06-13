@@ -54,30 +54,56 @@ export const authService = {
   },
 
   async signInWithTelegram(user: TelegramUser) {
-    // Import our custom Telegram auth
-    const { telegramAuth } = await import('./telegram-auth');
+    console.log('🔐 TELEGRAM AUTH v7.0 - Custom JWT auth');
+    console.log('👤 User:', user.id, user.first_name);
     
-    // Use custom auth that doesn't touch Supabase Auth
-    const session = await telegramAuth.signIn(user);
-    
-    // Return in a format compatible with existing code
-    return {
-      user: {
-        id: session.user.id,
-        email: `telegram_${session.user.telegram_id}@protokol57.app`, // Fake email for compatibility
-        user_metadata: {
-          name: `${session.user.first_name} ${session.user.last_name || ''}`.trim(),
-          telegram_id: session.user.telegram_id,
-          username: session.user.username,
-          avatar_url: session.user.photo_url
-        }
-      },
-      session: {
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-        expires_in: session.expires_in
+    try {
+      // Send to our new v2 endpoint directly
+      const response = await fetch('/api/auth/telegram-v2', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error('❌ Server auth error:', data);
+        throw new Error(data.error || 'Telegram orqali kirishda xatolik');
       }
-    };
+
+      console.log('✅ Server auth successful, storing tokens...');
+      
+      // Store tokens and user data in localStorage
+      localStorage.setItem('protokol57_telegram_token', data.access_token);
+      localStorage.setItem('protokol57_telegram_refresh', data.refresh_token);
+      localStorage.setItem('protokol57_telegram_user', JSON.stringify(data.user));
+      
+      // Return in a format compatible with existing code
+      return {
+        user: {
+          id: data.user.id,
+          email: `telegram_${data.user.telegram_id}@protokol57.app`, // Fake email for compatibility
+          user_metadata: {
+            name: `${data.user.first_name} ${data.user.last_name || ''}`.trim(),
+            telegram_id: data.user.telegram_id,
+            username: data.user.username,
+            avatar_url: data.user.photo_url
+          }
+        },
+        session: {
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+          expires_in: data.expires_in
+        }
+      };
+      
+    } catch (error: any) {
+      console.error('❌ Telegram auth error:', error);
+      throw error;
+    }
   },
 
   async signInWithGoogle() {
