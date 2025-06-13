@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Protocol } from "@shared/schema";
+import { Protocol } from "@shared/types";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import ProtocolCard from "@/components/protocol-card";
