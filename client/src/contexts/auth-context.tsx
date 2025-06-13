@@ -19,13 +19,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check current user on mount
-    authService.getCurrentUser().then(user => {
-      setUser(user)
-      setLoading(false)
-    })
+    // Check for Telegram user first
+    import('@/lib/telegram-auth').then(({ telegramAuth }) => {
+      telegramAuth.init();
+      const telegramUser = telegramAuth.getCurrentUser();
+      
+      if (telegramUser) {
+        setUser({
+          id: telegramUser.id,
+          email: `telegram_${telegramUser.telegram_id}@protokol57.app`,
+          name: `${telegramUser.first_name} ${telegramUser.last_name || ''}`.trim()
+        });
+        setLoading(false);
+        return;
+      }
+      
+      // If no Telegram user, check Supabase auth
+      authService.getCurrentUser().then(user => {
+        setUser(user)
+        setLoading(false)
+      })
+    });
 
-    // Listen for auth changes
+    // Listen for auth changes (Supabase only)
     const subscription = authService.onAuthStateChange((user) => {
       setUser(user)
       setLoading(false)
@@ -69,7 +85,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
-    await authService.signOut()
+    // Check if this is a Telegram user
+    const { telegramAuth } = await import('@/lib/telegram-auth');
+    if (telegramAuth.isAuthenticated()) {
+      telegramAuth.signOut();
+    } else {
+      await authService.signOut()
+    }
     setUser(null)
   }
 
