@@ -54,87 +54,51 @@ export const authService = {
   },
 
   async signInWithTelegram(user: TelegramUser) {
-    console.log('🔐 TELEGRAM AUTH START - User ID:', user.id, '- SIMPLIFIED v5.0 SIGNIN-FIRST');
-    
-    // Generate consistent credentials with valid email domain
-    const email = `telegram_${user.id}@protokol57.app`;
-    const password = `tg_${user.id}_${user.auth_date}`;
-    const userData = {
-      name: `${user.first_name} ${user.last_name || ''}`.trim(),
-      telegram_id: user.id,
-      username: user.username,
-      avatar_url: user.photo_url,
-      provider: 'telegram'
-    };
-    
-    console.log('📧 Email:', email);
-    console.log('🔑 Password length:', password.length);
-    console.log('✅ Using direct Supabase Auth (NO Edge Functions)');
+    console.log('🔐 TELEGRAM AUTH v6.0 - Using server verification');
+    console.log('👤 User:', user.id, user.first_name);
     
     try {
-      // Strategy: Try signin first (most users are returning users)
-      console.log('🔐 Attempting signin for returning user...');
-      
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password
+      // Send Telegram data to our server for verification
+      const response = await fetch('/api/auth/telegram', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
       });
+
+      const data = await response.json();
       
-      console.log('🔐 Signin response:', { data: signInData, error: signInError });
-      
-      // If signin succeeded, user exists and is logged in
-      if (!signInError && signInData.session) {
-        console.log('✅ RETURNING user signed in successfully');
-        return signInData;
+      if (!response.ok) {
+        console.error('❌ Server auth error:', data);
+        throw new Error(data.error || 'Telegram orqali kirishda xatolik');
       }
+
+      console.log('✅ Server auth successful, setting session...');
       
-      // If signin failed with invalid credentials, user doesn't exist - create them
-      if (signInError?.message?.includes('Invalid login credentials') || 
-          signInError?.message?.includes('invalid_credentials')) {
-        console.log('🆕 User not found, creating new account...');
-        
-        // Wait a bit to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: userData,
-            emailRedirectTo: undefined // Disable email confirmation for Telegram users
-          }
+      // Set the session using the tokens from our server
+      if (data.access_token && data.refresh_token) {
+        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token
         });
         
-        console.log('📝 Signup response:', { data: signUpData, error: signUpError });
-        
-        if (!signUpError && signUpData.session) {
-          console.log('✅ NEW user created and signed in');
-          return signUpData;
+        if (sessionError) {
+          console.error('❌ Failed to set session:', sessionError);
+          throw new Error('Sessiya o\'rnatishda xatolik');
         }
         
-        // Handle rate limiting
-        if (signUpError?.message?.includes('For security purposes')) {
-          const match = signUpError.message.match(/after (\d+) seconds/);
-          const seconds = match ? parseInt(match[1]) : 60;
-          throw new Error(`Iltimos ${seconds} soniyadan so'ng qayta urinib ko'ring (xavfsizlik maqsadida)`);
-        }
-        
-        throw new Error(`Foydalanuvchi yaratishda xatolik: ${signUpError?.message || 'Noma\'lum xatolik'}`);
+        console.log('✅ Session set successfully');
+        return {
+          user: sessionData.user || data.user,
+          session: sessionData.session
+        };
       }
       
-      // Handle rate limiting on signin
-      if (signInError?.message?.includes('For security purposes')) {
-        const match = signInError.message.match(/after (\d+) seconds/);
-        const seconds = match ? parseInt(match[1]) : 60;
-        throw new Error(`Iltimos ${seconds} soniyadan so'ng qayta urinib ko'ring (xavfsizlik maqsadida)`);
-      }
-      
-      // Other signin errors
-      console.error('❌ Signin error details:', signInError);
-      throw new Error(`Tizimga kirishda xatolik: ${signInError?.message || 'Noma\'lum xatolik'}`);
+      throw new Error('Server dan token olinmadi');
       
     } catch (error: any) {
-      console.error('❌ Telegram auth complete error:', error);
+      console.error('❌ Telegram auth error:', error);
       throw error;
     }
   },

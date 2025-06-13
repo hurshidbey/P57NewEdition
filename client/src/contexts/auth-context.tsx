@@ -61,8 +61,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         name: result.user.user_metadata?.name || result.user.email?.split('@')[0]
       })
     }
-    
-    return result
   }
 
   const signUp = async (email: string, password: string, name?: string) => {
