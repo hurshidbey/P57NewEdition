@@ -6,6 +6,7 @@ import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
 import telegramAuthRouter from "./routes/telegram-auth";
+import telegramAuthV2Router from "./routes/telegram-auth-v2";
 
 // Define user interface for our application
 interface AppUser {
@@ -96,8 +97,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up Telegram authentication routes
   app.use('/api/auth', telegramAuthRouter);
   
-  // Import and use v2 Telegram auth
-  const telegramAuthV2Router = require('./routes/telegram-auth-v2').default;
+  // Use v2 Telegram auth
   app.use('/api/auth', telegramAuthV2Router);
   
   // Set up ATMOS payment routes
