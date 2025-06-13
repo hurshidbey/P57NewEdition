@@ -96,6 +96,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up Telegram authentication routes
   app.use('/api/auth', telegramAuthRouter);
   
+  // Import and use v2 Telegram auth
+  const telegramAuthV2Router = require('./routes/telegram-auth-v2').default;
+  app.use('/api/auth', telegramAuthV2Router);
+  
   // Set up ATMOS payment routes
   app.use('/api', setupAtmosRoutes());
   
