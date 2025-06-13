@@ -54,53 +54,30 @@ export const authService = {
   },
 
   async signInWithTelegram(user: TelegramUser) {
-    console.log('🔐 TELEGRAM AUTH v6.0 - Using server verification');
-    console.log('👤 User:', user.id, user.first_name);
+    // Import our custom Telegram auth
+    const { telegramAuth } = await import('./telegram-auth');
     
-    try {
-      // Send Telegram data to our server for verification
-      const response = await fetch('/api/auth/telegram', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        console.error('❌ Server auth error:', data);
-        throw new Error(data.error || 'Telegram orqali kirishda xatolik');
-      }
-
-      console.log('✅ Server auth successful, setting session...');
-      
-      // Set the session using the tokens from our server
-      if (data.access_token && data.refresh_token) {
-        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-          access_token: data.access_token,
-          refresh_token: data.refresh_token
-        });
-        
-        if (sessionError) {
-          console.error('❌ Failed to set session:', sessionError);
-          throw new Error('Sessiya o\'rnatishda xatolik');
+    // Use custom auth that doesn't touch Supabase Auth
+    const session = await telegramAuth.signIn(user);
+    
+    // Return in a format compatible with existing code
+    return {
+      user: {
+        id: session.user.id,
+        email: `telegram_${session.user.telegram_id}@protokol57.app`, // Fake email for compatibility
+        user_metadata: {
+          name: `${session.user.first_name} ${session.user.last_name || ''}`.trim(),
+          telegram_id: session.user.telegram_id,
+          username: session.user.username,
+          avatar_url: session.user.photo_url
         }
-        
-        console.log('✅ Session set successfully');
-        return {
-          user: sessionData.user || data.user,
-          session: sessionData.session
-        };
+      },
+      session: {
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+        expires_in: session.expires_in
       }
-      
-      throw new Error('Server dan token olinmadi');
-      
-    } catch (error: any) {
-      console.error('❌ Telegram auth error:', error);
-      throw error;
-    }
+    };
   },
 
   async signInWithGoogle() {
