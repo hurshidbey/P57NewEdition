@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Protocol, Category, insertProtocolSchema } from "@shared/schema";
+import { Protocol, Category, InsertProtocol } from "@shared/types";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,10 +59,25 @@ export default function Admin() {
     queryKey: ["/api/categories"],
   });
 
+  const protocolSchema = z.object({
+    number: z.number(),
+    title: z.string(),
+    description: z.string(),
+    badExample: z.string().optional(),
+    goodExample: z.string().optional(),
+    categoryId: z.number(),
+    notes: z.string().optional(),
+    problemStatement: z.string().optional(),
+    whyExplanation: z.string().optional(),
+    solutionApproach: z.string().optional(),
+    difficultyLevel: z.string().optional(),
+    levelOrder: z.number().optional(),
+  });
+
   const form = useForm<FormData>({
-    resolver: zodResolver(insertProtocolSchema.extend({
-      badExample: insertProtocolSchema.shape.badExample.optional(),
-      goodExample: insertProtocolSchema.shape.goodExample.optional(),
+    resolver: zodResolver(protocolSchema.extend({
+      badExample: z.string().optional(),
+      goodExample: z.string().optional(),
     })),
     defaultValues: {
       number: 1,
