@@ -5,6 +5,7 @@ import { insertProtocolSchema } from "@shared/schema";
 import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
+import telegramAuthRouter from "./routes/telegram-auth";
 
 // Define user interface for our application
 interface AppUser {
@@ -92,6 +93,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
   
+  // Set up Telegram authentication routes
+  app.use('/api/auth', telegramAuthRouter);
   
   // Set up ATMOS payment routes
   app.use('/api', setupAtmosRoutes());
