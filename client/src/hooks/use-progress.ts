@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { apiRequest } from '@/lib/queryClient';
 
-const STORAGE_KEY = 'protokol57_progress';
+const getStorageKey = (userId: string | null) => {
+  return userId ? `protokol57_progress_${userId}` : 'protokol57_progress_anonymous';
+};
 
 export interface ProgressData {
   completedProtocols: Set<number>;
@@ -89,10 +91,23 @@ export function useProgress() {
     loadProgress();
   }, [user?.id]); // Only depend on user.id, not the whole user object
 
+  // Clean up old shared progress data when user logs in
+  useEffect(() => {
+    if (user?.id) {
+      // Remove the old shared storage key if it exists
+      const oldSharedKey = 'protokol57_progress';
+      if (localStorage.getItem(oldSharedKey)) {
+        console.log('Cleaning up old shared progress data');
+        localStorage.removeItem(oldSharedKey);
+      }
+    }
+  }, [user?.id]);
+
   // Load from localStorage (fallback)
   const loadFromLocalStorage = () => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const storageKey = getStorageKey(user?.id || null);
+      const saved = localStorage.getItem(storageKey);
       
       if (saved) {
         const data: StoredProgress = JSON.parse(saved);
@@ -114,17 +129,18 @@ export function useProgress() {
     if (loading) return;
     
     try {
+      const storageKey = getStorageKey(user?.id || null);
       const dataToStore: StoredProgress = {
         completed: Array.from(protocolProgress.values()),
         lastStudiedDate,
         currentStreak
       };
       
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
+      localStorage.setItem(storageKey, JSON.stringify(dataToStore));
     } catch (error) {
       console.error('Failed to save progress data to localStorage:', error);
     }
-  }, [protocolProgress, lastStudiedDate, currentStreak, loading]);
+  }, [protocolProgress, lastStudiedDate, currentStreak, loading, user?.id]);
 
   // Calculate streak based on progress data
   const calculateStreak = (progressMap: Map<number, ProtocolProgress>) => {
@@ -139,7 +155,6 @@ export function useProgress() {
 
     const uniqueDates = Array.from(new Set(dates));
     let streak = 0;
-    const today = new Date().toDateString();
     
     for (let i = 0; i < uniqueDates.length; i++) {
       const date = uniqueDates[i];
@@ -170,7 +185,8 @@ export function useProgress() {
     // First, read current localStorage to merge with existing data
     let existingProgress: ProtocolProgress[] = [];
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const storageKey = getStorageKey(user?.id || null);
+      const saved = localStorage.getItem(storageKey);
       if (saved) {
         const data = JSON.parse(saved) as StoredProgress;
         existingProgress = data.completed || [];
@@ -190,7 +206,6 @@ export function useProgress() {
     
     const uniqueDateSet = Array.from(new Set(uniqueDates));
     let streak = 0;
-    const today = new Date().toDateString();
     
     for (let i = 0; i < uniqueDateSet.length; i++) {
       const date = uniqueDateSet[i];
@@ -212,7 +227,8 @@ export function useProgress() {
     };
     
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
+      const storageKey = getStorageKey(user?.id || null);
+      localStorage.setItem(storageKey, JSON.stringify(dataToStore));
     } catch (error) {
       console.error('Failed to save progress to localStorage:', error);
     }
@@ -259,7 +275,8 @@ export function useProgress() {
     setProtocolProgress(new Map());
     setLastStudiedDate(null);
     setCurrentStreak(0);
-    localStorage.removeItem(STORAGE_KEY);
+    const storageKey = getStorageKey(user?.id || null);
+    localStorage.removeItem(storageKey);
   };
 
   return {
