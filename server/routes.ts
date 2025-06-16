@@ -1,16 +1,17 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProtocolSchema } from "@shared/schema";
+import { insertProtocolSchema, users } from "@shared/schema";
 import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
 import telegramAuthRouter from "./routes/telegram-auth";
 import telegramAuthV2Router from "./routes/telegram-auth-v2";
+import { eq } from "drizzle-orm";
 
 // Define user interface for our application
 interface AppUser {
-  id: number;
+  id: string;
   username: string;
   role?: string;
 }
@@ -387,12 +388,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { username, password } = req.body;
       
+      // Check if credentials match known users
       if ((username === "admin" && password === "admin123") || 
           (username === "hurshidbey@gmail.com" && password === "20031000a")) {
+        
+        // Try to find or create user in database
+        let dbUser;
+        try {
+          // First try to find existing user
+          dbUser = await storage.getUserByUsername(username);
+          
+          if (!dbUser) {
+            // Create new user if doesn't exist
+            dbUser = await storage.createUser({
+              username,
+              password // In production, this should be hashed!
+            });
+          }
+        } catch (dbError) {
+          console.error('Database error, using fallback IDs:', dbError);
+          // Fallback to consistent IDs if DB fails
+          // Create a consistent hash-based ID for users when DB is unavailable
+          const hashCode = username.split('').reduce((hash: number, char: string) => {
+            return ((hash << 5) - hash) + char.charCodeAt(0);
+          }, 0);
+          
+          dbUser = {
+            id: Math.abs(hashCode) % 1000000, // Ensure positive ID under 1M
+            username,
+            password
+          };
+        }
+        
         // Set up session for authenticated user
-        const userId = username === "admin" ? 1 : 2;
         const user = { 
-          id: userId, 
+          id: String(dbUser?.id || (username === "admin" ? 1 : 2)), 
           username: username, 
           role: "admin" 
         };
