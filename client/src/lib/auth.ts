@@ -136,8 +136,16 @@ export const authService = {
     
     console.log('Current user check:', user.email, 'confirmed:', user.email_confirmed_at)
     
+    // 🔧 FIX: Create email-based user ID for Google OAuth users
+    // This ensures different Google accounts get different user IDs
+    const userId = user.app_metadata?.provider === 'google' 
+      ? `google_${user.email?.replace(/[^a-zA-Z0-9]/g, '_')}` 
+      : user.id;
+    
+    console.log(`🔍 [DEBUG] User ID assignment: ${user.id} -> ${userId} (${user.email})`);
+    
     return {
-      id: user.id,
+      id: userId,
       email: user.email!,
       name: user.user_metadata?.name || user.email?.split('@')[0]
     }
@@ -147,8 +155,15 @@ export const authService = {
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user?.email)
       if (session?.user && session?.user?.email_confirmed_at) {
+        // 🔧 FIX: Create email-based user ID for Google OAuth users
+        const userId = session.user.app_metadata?.provider === 'google' 
+          ? `google_${session.user.email?.replace(/[^a-zA-Z0-9]/g, '_')}` 
+          : session.user.id;
+        
+        console.log(`🔍 [DEBUG] Auth state change - User ID assignment: ${session.user.id} -> ${userId} (${session.user.email})`);
+        
         const authUser: AuthUser = {
-          id: session.user.id,
+          id: userId,
           email: session.user.email!,
           name: session.user.user_metadata?.name || session.user.email?.split('@')[0]
         }
