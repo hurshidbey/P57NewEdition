@@ -54,9 +54,15 @@ export function useProgress() {
         return;
       }
 
+      // 🔍 Debug logging for Google Auth users
+      console.log(`🔍 [DEBUG] Loading progress for user: ${user.id} (${user.email})`);
+      console.log(`🔍 [DEBUG] Expected localStorage key: ${getStorageKey(user.id)}`);
+
       try {
         const response = await apiRequest('GET', `/api/progress/${user.id}`);
         const serverProgress: ServerProgress[] = await response.json();
+        
+        console.log(`🔍 [DEBUG] Server progress response for ${user.id}:`, serverProgress);
         
         // Only update if server has data
         if (serverProgress && serverProgress.length > 0) {
@@ -109,11 +115,18 @@ export function useProgress() {
       const storageKey = getStorageKey(user?.id || null);
       const saved = localStorage.getItem(storageKey);
       
+      // 🔍 Debug logging
+      console.log(`🔍 [DEBUG] loadFromLocalStorage for user: ${user?.id || 'anonymous'}`);
+      console.log(`🔍 [DEBUG] Using storage key: ${storageKey}`);
+      console.log(`🔍 [DEBUG] Found localStorage data:`, saved ? 'YES' : 'NO');
+      
       if (saved) {
         const data: StoredProgress = JSON.parse(saved);
         const progressMap = new Map(
           data.completed.map(p => [p.protocolId, p])
         );
+        
+        console.log(`🔍 [DEBUG] Loaded ${data.completed.length} completed protocols from localStorage`);
         
         setProtocolProgress(progressMap);
         setLastStudiedDate(data.lastStudiedDate || null);
@@ -172,6 +185,9 @@ export function useProgress() {
   };
 
   const markProtocolCompleted = async (protocolId: number, score: number = 70) => {
+    // 🔍 Debug logging
+    console.log(`🔍 [DEBUG] markProtocolCompleted - User: ${user?.id || 'anonymous'}, Protocol: ${protocolId}, Score: ${score}`);
+    
     // Create the new progress entry
     const newProgress: ProtocolProgress = {
       protocolId,
@@ -228,6 +244,7 @@ export function useProgress() {
     
     try {
       const storageKey = getStorageKey(user?.id || null);
+      console.log(`🔍 [DEBUG] Saving progress to localStorage key: ${storageKey} for user: ${user?.id || 'anonymous'}`);
       localStorage.setItem(storageKey, JSON.stringify(dataToStore));
     } catch (error) {
       console.error('Failed to save progress to localStorage:', error);
