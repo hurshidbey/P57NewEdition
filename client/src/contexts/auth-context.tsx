@@ -97,6 +97,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       await authService.signOut()
     }
+    
+    // 🔧 FIX: Clear all progress localStorage keys on logout
+    // This prevents cross-user contamination when switching Google accounts
+    console.log('🧹 Clearing all progress data on logout...');
+    const allKeys = Object.keys(localStorage);
+    const progressKeys = allKeys.filter(key => key.startsWith('protokol57_progress_'));
+    progressKeys.forEach(key => {
+      console.log(`🗑️ Removing progress key: ${key}`);
+      localStorage.removeItem(key);
+    });
+    
     setUser(null)
   }
 
