@@ -20,6 +20,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [lastSubmit, setLastSubmit] = useState<number>(0)
   const { signUp } = useAuth()
   const { toast } = useToast()
 
@@ -41,10 +42,32 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    // Prevent rapid-fire submissions
+    const now = Date.now()
+    if (now - lastSubmit < 5000) { // 5 second cooldown
+      toast({
+        title: "Iltimos kuting",
+        description: "Juda tez urinish. 5 soniya kutib qayta urinib ko'ring.",
+        variant: "destructive"
+      })
+      return
+    }
+    
     if (!name || !email || !password || !confirmPassword) {
       toast({
         title: "Xatolik",
         description: "Barcha maydonlarni to'ldiring",
+        variant: "destructive"
+      })
+      return
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Xatolik",
+        description: "Email manzili noto'g'ri formatda",
         variant: "destructive"
       })
       return
@@ -68,19 +91,42 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       return
     }
 
+    // Check password strength
+    if (passwordStrength(password) < 2) {
+      toast({
+        title: "Xatolik",
+        description: "Parol juda zaif. Harf, raqam va belgilarni aralashtiring.",
+        variant: "destructive"
+      })
+      return
+    }
+
     setLoading(true)
+    setLastSubmit(now)
+    
     try {
       await signUp(email, password, name)
       toast({
         title: "Muvaffaqiyat!",
-        description: "Emailingizga tasdiqlash havolasi yuborildi. Emailingizni tekshiring."
+        description: "Emailingizga tasdiqlash havolasi yuborildi. Emailingizni tekshiring.",
+        duration: 6000 // Show longer for important message
       })
+      
+      // Clear form on success
+      setName("")
+      setEmail("")
+      setPassword("")
+      setConfirmPassword("")
+      
       onRegistered()
     } catch (error: any) {
+      console.error('Registration error:', error)
+      
       toast({
         title: "Xatolik",
         description: error.message || "Ro'yxatdan o'tishda xatolik yuz berdi",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 8000 // Show error longer
       })
     } finally {
       setLoading(false)
