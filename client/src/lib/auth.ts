@@ -20,6 +20,18 @@ export interface AuthUser {
 export const authService = {
   async signUp(email: string, password: string, name?: string) {
     console.log('🔐 Attempting signup for:', email)
+    
+    // Check if user recently attempted signup to prevent rate limiting
+    const lastAttempt = localStorage.getItem(`signup_attempt_${email}`)
+    const now = Date.now()
+    
+    if (lastAttempt && now - parseInt(lastAttempt) < 60000) { // 1 minute cooldown
+      throw new Error('Iltimos, 1 daqiqa kutib qayta urinib ko\'ring. Email yuborish cheklovi.')
+    }
+    
+    // Store attempt timestamp
+    localStorage.setItem(`signup_attempt_${email}`, now.toString())
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -33,7 +45,25 @@ export const authService = {
     
     if (error) {
       console.error('❌ Signup error:', error)
-      throw error
+      
+      // Handle specific rate limiting errors
+      if (error.message.includes('rate') || error.message.includes('limit') || error.message.includes('too many')) {
+        throw new Error('Juda ko\'p urinish. Iltimos, bir necha daqiqa kutib qayta urinib ko\'ring.')
+      }
+      
+      if (error.message.includes('already registered') || error.message.includes('already exists')) {
+        throw new Error('Bu email allaqachon ro\'yxatdan o\'tgan. Kirish sahifasiga o\'ting.')
+      }
+      
+      if (error.message.includes('invalid email')) {
+        throw new Error('Email manzili noto\'g\'ri formatda.')
+      }
+      
+      if (error.message.includes('password')) {
+        throw new Error('Parol juda zaif. Kamida 6 ta belgi, harf va raqam ishlatib ko\'ring.')
+      }
+      
+      throw new Error('Ro\'yxatdan o\'tishda xatolik: ' + error.message)
     }
     
     console.log('✅ Signup response:', data)
@@ -44,12 +74,44 @@ export const authService = {
   },
 
   async signIn(email: string, password: string) {
+    console.log('🔐 Attempting signin for:', email)
+    
+    // Check if user recently attempted signin to prevent rate limiting
+    const lastAttempt = localStorage.getItem(`signin_attempt_${email}`)
+    const now = Date.now()
+    
+    if (lastAttempt && now - parseInt(lastAttempt) < 30000) { // 30 second cooldown
+      throw new Error('Iltimos, 30 soniya kutib qayta urinib ko\'ring.')
+    }
+    
+    // Store attempt timestamp
+    localStorage.setItem(`signin_attempt_${email}`, now.toString())
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     })
     
-    if (error) throw error
+    if (error) {
+      console.error('❌ Signin error:', error)
+      
+      // Handle specific errors
+      if (error.message.includes('rate') || error.message.includes('limit') || error.message.includes('too many')) {
+        throw new Error('Juda ko\'p urinish. Iltimos, bir necha daqiqa kutib qayta urinib ko\'ring.')
+      }
+      
+      if (error.message.includes('Invalid login credentials') || error.message.includes('invalid') || error.message.includes('wrong')) {
+        throw new Error('Email yoki parol noto\'g\'ri.')
+      }
+      
+      if (error.message.includes('not confirmed') || error.message.includes('confirm')) {
+        throw new Error('Email tasdiqlanmagan. Emailingizni tekshirib tasdiqlash havolasini bosing.')
+      }
+      
+      throw new Error('Kirishda xatolik: ' + error.message)
+    }
+    
+    console.log('✅ Signin successful:', data.user?.email)
     return data
   },
 
