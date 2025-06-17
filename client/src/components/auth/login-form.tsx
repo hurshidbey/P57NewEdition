@@ -18,12 +18,24 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [lastSubmit, setLastSubmit] = useState<number>(0)
   const { signIn } = useAuth()
   const { toast } = useToast()
   const [, setLocation] = useLocation()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Prevent rapid-fire submissions
+    const now = Date.now()
+    if (now - lastSubmit < 3000) { // 3 second cooldown
+      toast({
+        title: "Iltimos kuting",
+        description: "Juda tez urinish. 3 soniya kutib qayta urinib ko'ring.",
+        variant: "destructive"
+      })
+      return
+    }
     
     if (!email || !password) {
       toast({
@@ -34,22 +46,43 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
       return
     }
 
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Xatolik",
+        description: "Email manzili noto'g'ri formatda",
+        variant: "destructive"
+      })
+      return
+    }
+
     setLoading(true)
+    setLastSubmit(now)
+    
     try {
       await signIn(email, password)
       toast({
         title: "Muvaffaqiyat!",
         description: "Tizimga kirildi"
       })
+      
+      // Clear form on success
+      setEmail("")
+      setPassword("")
+      
       // Redirect to home page after successful login
       setTimeout(() => {
         setLocation("/")
       }, 500)
     } catch (error: any) {
+      console.error('Login error:', error)
+      
       toast({
         title: "Xatolik",
         description: error.message || "Kirish jarayonida xatolik yuz berdi",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 8000 // Show error longer
       })
     } finally {
       setLoading(false)
