@@ -21,9 +21,25 @@ export interface IStorage {
   updateProtocolProgress(userId: string, protocolId: number, score: number): Promise<UserProgress>;
 }
 
-// Database connection with fallback
+// Database connection with fallback and retry logic
 let db: any = null;
 let isDatabaseConnected = false;
+let connectionRetries = 0;
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 5000; // 5 seconds
+
+// Connection pool configuration
+const connectionConfig = {
+  ssl: 'require' as const,
+  max: 20,
+  idle_timeout: 30,
+  connect_timeout: 30,
+};
+
+// Helper function to wait
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function initializeDatabase() {
   // Try Supabase REST API first
@@ -31,25 +47,40 @@ async function initializeDatabase() {
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   
   if (supabaseUrl && supabaseKey) {
-    try {
-      const { SupabaseStorage } = await import('./supabase-storage');
-      const supabaseStorage = new SupabaseStorage();
-      
-      // Test connection by fetching categories
-      await supabaseStorage.getCategories();
-      
-      // CRITICAL: Create user_progress table using SupabaseStorage
-      console.log("Creating user_progress table via Supabase...");
-      await createSupabaseTable(supabaseStorage);
-      
-      // Use Supabase storage globally
-      (global as any).supabaseStorage = supabaseStorage;
-      isDatabaseConnected = true;
-      console.log("Supabase REST API connected successfully");
-      return;
-    } catch (error) {
-      console.log("Supabase connection failed, trying direct database connection:", (error as Error).message);
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        console.log(`[DB] Attempting Supabase connection (${attempt}/${MAX_RETRIES})...`);
+        const { SupabaseStorage } = await import('./supabase-storage');
+        const supabaseStorage = new SupabaseStorage();
+        
+        // Test connection by fetching categories with timeout
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Connection timeout')), 10000)
+        );
+        
+        await Promise.race([
+          supabaseStorage.getCategories(),
+          timeoutPromise
+        ]);
+        
+        // CRITICAL: Create user_progress table using SupabaseStorage
+        console.log("[DB] Creating user_progress table via Supabase...");
+        await createSupabaseTable(supabaseStorage);
+        
+        // Use Supabase storage globally
+        (global as any).supabaseStorage = supabaseStorage;
+        isDatabaseConnected = true;
+        console.log("[DB] ✅ Supabase REST API connected successfully");
+        return;
+      } catch (error) {
+        console.log(`[DB] ❌ Supabase connection attempt ${attempt} failed:`, (error as Error).message);
+        if (attempt < MAX_RETRIES) {
+          console.log(`[DB] Waiting ${RETRY_DELAY}ms before retry...`);
+          await sleep(RETRY_DELAY);
+        }
+      }
     }
+    console.log(`[DB] All Supabase connection attempts failed, trying direct database connection...`);
   }
 
   // Fall back to direct database connection
@@ -64,23 +95,40 @@ async function initializeDatabase() {
     connectionString = `postgresql://postgres:${dbPassword}@db.bazptglwzqstppwlvmvb.supabase.co:5432/postgres`;
   }
 
-  try {
-    const client = postgres(connectionString, {
-      ssl: 'require'
-    });
-    db = drizzle(client);
-    
-    // Create tables if they don't exist
-    await createTables();
-    
-    // Test connection
-    await db.select().from(categories).limit(1);
-    isDatabaseConnected = true;
-    console.log("Database connected successfully");
-  } catch (error) {
-    console.log("Database connection failed, using in-memory storage:", (error as Error).message);
-    isDatabaseConnected = false;
+  // Try direct database connection with retry logic
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`[DB] Attempting direct database connection (${attempt}/${MAX_RETRIES})...`);
+      const client = postgres(connectionString, connectionConfig);
+      db = drizzle(client);
+      
+      // Create tables if they don't exist
+      await createTables();
+      
+      // Test connection with timeout
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database query timeout')), 10000)
+      );
+      
+      await Promise.race([
+        db.select().from(categories).limit(1),
+        timeoutPromise
+      ]);
+      
+      isDatabaseConnected = true;
+      console.log("[DB] ✅ Direct database connected successfully");
+      return;
+    } catch (error) {
+      console.log(`[DB] ❌ Database connection attempt ${attempt} failed:`, (error as Error).message);
+      if (attempt < MAX_RETRIES) {
+        console.log(`[DB] Waiting ${RETRY_DELAY}ms before retry...`);
+        await sleep(RETRY_DELAY);
+      }
+    }
   }
+  
+  console.log("[DB] ⚠️ All database connection attempts failed, using in-memory storage");
+  isDatabaseConnected = false;
 }
 
 async function createSupabaseTable(supabaseStorage: any) {
@@ -319,6 +367,9 @@ export class HybridStorage implements IStorage {
       this.memoryProtocols.set(protocol.id, protocol);
       this.currentProtocolId = Math.max(this.currentProtocolId, protocol.id + 1);
     });
+    
+    console.log(`[DB] ✅ Loaded ${allProtocols.length} protocols into memory storage`);
+    console.log(`[DB] ✅ Loaded ${defaultCategories.length} categories into memory storage`);
   }
 
   private async seedDatabaseData() {
@@ -384,6 +435,42 @@ export class HybridStorage implements IStorage {
 
     await db.insert(protocols).values(allProtocolsData);
   }
+  
+  // Error handling and recovery methods
+  private scheduleReconnect(operation: string): void {
+    console.log(`[DB] ⚠️ Database error in ${operation}, scheduling reconnection...`);
+    
+    // Try to reconnect after a short delay (don't block current request)
+    setTimeout(async () => {
+      console.log(`[DB] 🔄 Attempting to reconnect after ${operation} failure...`);
+      try {
+        await initializeDatabase();
+      } catch (error) {
+        console.error(`[DB] ❌ Reconnection failed:`, (error as Error).message);
+      }
+    }, 3000);
+  }
+  
+  // Health check method
+  async isHealthy(): Promise<boolean> {
+    try {
+      if ((global as any).supabaseStorage) {
+        await (global as any).supabaseStorage.getCategories();
+        return true;
+      }
+      
+      if (isDatabaseConnected && db) {
+        await db.select().from(categories).limit(1);
+        return true;
+      }
+      
+      // In-memory storage is always "healthy"
+      return true;
+    } catch (error) {
+      console.error("[DB] Health check failed:", (error as Error).message);
+      return false;
+    }
+  }
 
   // User methods
   async getUser(id: number): Promise<User | undefined> {
@@ -433,7 +520,8 @@ export class HybridStorage implements IStorage {
       try {
         return await (global as any).supabaseStorage.getProtocols(limit, offset);
       } catch (error) {
-        console.error("Error getting protocols from Supabase:", error);
+        console.error("[DB] Error getting protocols from Supabase:", (error as Error).message);
+        // Don't mark as failed immediately, Supabase might be temporarily down
       }
     }
     
@@ -447,11 +535,16 @@ export class HybridStorage implements IStorage {
           .offset(offset);
         return result;
       } catch (error) {
-        console.error("Error getting protocols from database:", error);
+        console.error("[DB] Error getting protocols from database:", (error as Error).message);
+        // Mark as disconnected and try to reconnect
+        isDatabaseConnected = false;
+        db = null;
+        this.scheduleReconnect('getProtocols');
       }
     }
     
     // Fall back to memory storage
+    console.log("[DB] ⚠️ Using in-memory storage for getProtocols");
     const allProtocols = Array.from(this.memoryProtocols.values())
       .sort((a, b) => a.number - b.number);
     return allProtocols.slice(offset, offset + limit);
@@ -463,7 +556,7 @@ export class HybridStorage implements IStorage {
       try {
         return await (global as any).supabaseStorage.getProtocol(id);
       } catch (error) {
-        console.error("Error getting protocol from Supabase:", error);
+        console.error("[DB] Error getting protocol from Supabase:", (error as Error).message);
       }
     }
     
@@ -472,9 +565,14 @@ export class HybridStorage implements IStorage {
         const result = await db.select().from(protocols).where(eq(protocols.id, id));
         return result[0];
       } catch (error) {
-        console.error("Error getting protocol from database:", error);
+        console.error("[DB] Error getting protocol from database:", (error as Error).message);
+        isDatabaseConnected = false;
+        db = null;
+        this.scheduleReconnect('getProtocol');
       }
     }
+    
+    console.log("[DB] ⚠️ Using in-memory storage for getProtocol");
     return this.memoryProtocols.get(id);
   }
 
@@ -576,7 +674,7 @@ export class HybridStorage implements IStorage {
       try {
         return await (global as any).supabaseStorage.getCategories();
       } catch (error) {
-        console.error("Error getting categories from Supabase:", error);
+        console.error("[DB] Error getting categories from Supabase:", (error as Error).message);
       }
     }
     
@@ -586,11 +684,15 @@ export class HybridStorage implements IStorage {
         const result = await db.select().from(categories);
         return result;
       } catch (error) {
-        console.error("Error getting categories from database:", error);
+        console.error("[DB] Error getting categories from database:", (error as Error).message);
+        isDatabaseConnected = false;
+        db = null;
+        this.scheduleReconnect('getCategories');
       }
     }
     
     // Fall back to memory storage
+    console.log("[DB] ⚠️ Using in-memory storage for getCategories");
     return Array.from(this.memoryCategories.values());
   }
 

@@ -669,3 +669,53 @@
 2025-06-11T18:18:03: ✅ user_progress table already exists and working!
 2025-06-11T18:18:03: Supabase REST API connected successfully
 2025-06-11T18:18:03: Error seeding database: Cannot read properties of null (reading 'select')
+2025-06-18T15:01:03: Error: Cannot find module @rollup/rollup-darwin-arm64. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.
+2025-06-18T15:01:03:     at requireWithFriendlyError (/Users/xb21/P57/node_modules/rollup/dist/native.js:63:9)
+2025-06-18T15:01:03:     at Object.<anonymous> (/Users/xb21/P57/node_modules/rollup/dist/native.js:72:76)
+2025-06-18T15:01:03:     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+2025-06-18T15:01:03:     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+2025-06-18T15:01:03:     at Module.load (node:internal/modules/cjs/loader:1275:32)
+2025-06-18T15:01:03:     at Module._load (node:internal/modules/cjs/loader:1096:12)
+2025-06-18T15:01:03:     at cjsLoader (node:internal/modules/esm/translators:298:15)
+2025-06-18T15:01:03:     at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)
+2025-06-18T15:01:03:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-06-18T15:01:03:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24) {
+2025-06-18T15:01:03:   [cause]: Error: dlopen(/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node, 0x0001): tried: '/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' (code signature in <B5338D0E-CEC1-3E32-8102-F2AB325AB0F6> '/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' not valid for use in process: library load denied by system policy), '/System/Volumes/Preboot/Cryptexes/OS/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' (no such file), '/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' (code signature in <B5338D0E-CEC1-3E32-8102-F2AB325AB0F6> '/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' not valid for use in process: library load denied by system policy)
+2025-06-18T15:01:03:       at Module._extensions..node (node:internal/modules/cjs/loader:1651:18)
+2025-06-18T15:01:03:       at Module.load (node:internal/modules/cjs/loader:1275:32)
+2025-06-18T15:01:03:       at Module._load (node:internal/modules/cjs/loader:1096:12)
+2025-06-18T15:01:03:       at Module.require (node:internal/modules/cjs/loader:1298:19)
+2025-06-18T15:01:03:       at Hook._require.Module.require (/opt/homebrew/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+2025-06-18T15:01:03:       at require (node:internal/modules/helpers:182:18)
+2025-06-18T15:01:03:       at requireWithFriendlyError (/Users/xb21/P57/node_modules/rollup/dist/native.js:45:10)
+2025-06-18T15:01:03:       at Object.<anonymous> (/Users/xb21/P57/node_modules/rollup/dist/native.js:72:76)
+2025-06-18T15:01:03:       at Module._compile (node:internal/modules/cjs/loader:1529:14)
+2025-06-18T15:01:03:       at Module._extensions..js (node:internal/modules/cjs/loader:1613:10) {
+2025-06-18T15:01:03:     code: 'ERR_DLOPEN_FAILED'
+2025-06-18T15:01:03:   }
+2025-06-18T15:01:03: }
+2025-06-18T15:01:03: Error: Cannot find module @rollup/rollup-darwin-arm64. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.
+2025-06-18T15:01:03:     at requireWithFriendlyError (/Users/xb21/P57/node_modules/rollup/dist/native.js:63:9)
+2025-06-18T15:01:03:     at Object.<anonymous> (/Users/xb21/P57/node_modules/rollup/dist/native.js:72:76)
+2025-06-18T15:01:03:     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+2025-06-18T15:01:03:     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+2025-06-18T15:01:03:     at Module.load (node:internal/modules/cjs/loader:1275:32)
+2025-06-18T15:01:03:     at Module._load (node:internal/modules/cjs/loader:1096:12)
+2025-06-18T15:01:03:     at cjsLoader (node:internal/modules/esm/translators:298:15)
+2025-06-18T15:01:03:     at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)
+2025-06-18T15:01:03:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-06-18T15:01:03:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24) {
+2025-06-18T15:01:03:   [cause]: Error: dlopen(/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node, 0x0001): tried: '/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' (code signature in <B5338D0E-CEC1-3E32-8102-F2AB325AB0F6> '/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' not valid for use in process: library load denied by system policy), '/System/Volumes/Preboot/Cryptexes/OS/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' (no such file), '/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' (code signature in <B5338D0E-CEC1-3E32-8102-F2AB325AB0F6> '/Users/xb21/P57/node_modules/@rollup/rollup-darwin-arm64/rollup.darwin-arm64.node' not valid for use in process: library load denied by system policy)
+2025-06-18T15:01:03:       at Module._extensions..node (node:internal/modules/cjs/loader:1651:18)
+2025-06-18T15:01:03:       at Module.load (node:internal/modules/cjs/loader:1275:32)
+2025-06-18T15:01:03:       at Module._load (node:internal/modules/cjs/loader:1096:12)
+2025-06-18T15:01:03:       at Module.require (node:internal/modules/cjs/loader:1298:19)
+2025-06-18T15:01:03:       at Hook._require.Module.require (/opt/homebrew/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+2025-06-18T15:01:03:       at require (node:internal/modules/helpers:182:18)
+2025-06-18T15:01:03:       at requireWithFriendlyError (/Users/xb21/P57/node_modules/rollup/dist/native.js:45:10)
+2025-06-18T15:01:03:       at Object.<anonymous> (/Users/xb21/P57/node_modules/rollup/dist/native.js:72:76)
+2025-06-18T15:01:03:       at Module._compile (node:internal/modules/cjs/loader:1529:14)
+2025-06-18T15:01:03:       at Module._extensions..js (node:internal/modules/cjs/loader:1613:10) {
+2025-06-18T15:01:03:     code: 'ERR_DLOPEN_FAILED'
+2025-06-18T15:01:03:   }
+2025-06-18T15:01:03: }
