@@ -32,8 +32,11 @@ export async function setupVite(app: Express, server: Server) {
     customLogger: {
       ...viteLogger,
       error: (msg, options) => {
-        viteLogger.error(msg, options);
-        process.exit(1);
+  viteLogger.error(msg, options);
+        // Don't exit in production, just log the error
+        if (process.env.NODE_ENV !== 'production') {
+          process.exit(1);
+        }
       },
     },
     server: serverOptions,
@@ -77,19 +80,48 @@ export function serveStatic(app: Express) {
   
   console.log(`[serveStatic] Looking for static files in: ${distPath}`);
   console.log(`[serveStatic] Directory exists: ${fs.existsSync(distPath)}`);
+  
+  // List contents if directory exists
+  if (fs.existsSync(distPath)) {
+    try {
+      const files = fs.readdirSync(distPath);
+      console.log(`[serveStatic] Files in dist directory:`, files);
+    } catch (err) {
+      console.log(`[serveStatic] Error reading directory:`, err);
+    }
+  }
 
   if (!fs.existsSync(distPath)) {
+    console.error(`[serveStatic] Build directory not found: ${distPath}`);
+    console.error(`[serveStatic] Make sure to build the client first with: npm run build`);
     throw new Error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`,
     );
   }
 
-  app.use(express.static(distPath));
+  // Serve static files with proper caching headers
+  app.use(express.static(distPath, {
+    maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
+    etag: true,
+    lastModified: true
+  }));
   console.log(`[serveStatic] Express static middleware configured for: ${distPath}`);
 
   // fall through to index.html if the file doesn't exist
-  app.use("*", (req, res) => {
+  app.use("*", (req, res, next) => {
+    const indexPath = path.resolve(distPath, "index.html");
     console.log(`[serveStatic] Fallback route hit for: ${req.originalUrl}`);
-    res.sendFile(path.resolve(distPath, "index.html"));
+    
+    if (!fs.existsSync(indexPath)) {
+      console.error(`[serveStatic] index.html not found at: ${indexPath}`);
+      return res.status(500).json({ error: 'Application not built properly' });
+    }
+    
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        console.error(`[serveStatic] Error serving index.html:`, err);
+        next(err);
+      }
+    });
   });
 }

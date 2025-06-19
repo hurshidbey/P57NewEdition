@@ -9,13 +9,14 @@ services:
         VITE_TELEGRAM_BOT_USERNAME: protokol57bot
     ports:
       - "5001:5000"
-    # Remove volume mounts in production to prevent overriding built assets
-    # volumes:
-    #   - .:/app
-    #   - /app/node_modules
+    volumes:
+      # Development volume mounts for hot reload
+      - .:/app
+      - /app/node_modules
     env_file:
       - .env.production
     environment:
+      - NODE_ENV=development
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
     restart: unless-stopped
     stdin_open: true
@@ -26,8 +27,8 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/protocols"]
       interval: 30s
       timeout: 15s
-      retries: 5
-      start_period: 60s
+      retries: 3
+      start_period: 40s
 
 networks:
   protokol-network:

@@ -104,6 +104,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up ATMOS payment routes
   app.use('/api', setupAtmosRoutes());
   
+  // Health check endpoint
+  app.get("/api/health", async (req, res) => {
+    try {
+      const health = {
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'unknown',
+        uptime: process.uptime(),
+        memory: {
+          used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+          total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024)
+        },
+        database: {
+          connected: false,
+          supabase: false,
+          memory: false
+        }
+      };
+      
+      // Check database health if storage has health check method
+      if ((storage as any).isHealthy) {
+        health.database.connected = await (storage as any).isHealthy();
+      }
+      
+      // Check specific connection types
+      if ((global as any).supabaseStorage) {
+        health.database.supabase = true;
+      }
+      
+      // Always have memory storage as backup
+      health.database.memory = true;
+      
+      res.json(health);
+    } catch (error) {
+      res.status(500).json({
+        status: 'error',
+        timestamp: new Date().toISOString(),
+        error: (error as Error).message
+      });
+    }
+  });
+  
   // Add cache control for API routes in development
   if (process.env.NODE_ENV === "development") {
     app.use("/api/*", (req, res, next) => {

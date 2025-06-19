@@ -69,9 +69,22 @@ app.use((req, res, next) => {
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
+    
+    // Log the error for debugging
+    console.error(`[ERROR] ${status}: ${message}`);
+    if (err.stack) {
+      console.error(`[ERROR] Stack trace:`, err.stack);
+    }
 
-    res.status(status).json({ message });
-    throw err;
+    res.status(status).json({ 
+      message,
+      ...(process.env.NODE_ENV === 'development' ? { stack: err.stack } : {})
+    });
+    
+    // Don't throw in production - let the server continue running
+    if (process.env.NODE_ENV !== 'production') {
+      throw err;
+    }
   });
 
   // importantly only setup vite in development and after
