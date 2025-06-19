@@ -14,75 +14,58 @@ export default function EmailConfirmPage() {
       try {
         console.log('🚀 Starting email confirmation process...')
         console.log('📍 Current URL:', window.location.href)
-        console.log('🔍 Query string:', window.location.search)
-        console.log('🔗 Hash fragment:', window.location.hash)
         
-        // Check both query params (?token=) and hash params (#token_hash=)
-        let urlParams: URLSearchParams
-        let token: string | null = null
-        let type: string | null = null
-
-        // First, try query parameters (most common for email links)
-        urlParams = new URLSearchParams(window.location.search)
-        token = urlParams.get('token') || urlParams.get('token_hash')
-        type = urlParams.get('type')
+        // Check if we're coming from Supabase redirect after verification
+        const urlParams = new URLSearchParams(window.location.search)
+        const hashParams = new URLSearchParams(window.location.hash.substring(1))
         
-        console.log('📝 Query params extracted:', { token: token?.substring(0, 10) + '...', type })
-
-        // If not found in query, check hash fragment (Supabase sometimes uses this)
-        if (!token || !type) {
-          const hashString = window.location.hash.substring(1)
-          if (hashString) {
-            urlParams = new URLSearchParams(hashString)
-            token = token || urlParams.get('token') || urlParams.get('token_hash')
-            type = type || urlParams.get('type')
-            console.log('📝 Hash params extracted:', { token: token?.substring(0, 10) + '...', type })
-          }
-        }
-
-        console.log('🔑 Final params:', { 
-          hasToken: !!token, 
-          tokenLength: token?.length,
-          type: type,
-          tokenPreview: token?.substring(0, 15) + '...'
+        // Check for error parameters from Supabase redirect
+        const error = urlParams.get('error') || hashParams.get('error')
+        const errorDescription = urlParams.get('error_description') || hashParams.get('error_description')
+        
+        // Check for success indicators
+        const accessToken = urlParams.get('access_token') || hashParams.get('access_token')
+        const refreshToken = urlParams.get('refresh_token') || hashParams.get('refresh_token')
+        
+        console.log('📊 Redirect params:', { 
+          hasError: !!error, 
+          hasAccessToken: !!accessToken,
+          error,
+          errorDescription 
         })
         
-        // Handle different type formats
-        const isValidType = type === 'email' || type === 'signup' || type === 'email_confirmation'
-        
-        if (isValidType && token) {
-          console.log('✅ Valid parameters found, attempting verification...')
+        if (error) {
+          // Supabase redirected with an error
+          console.error('❌ Supabase verification failed:', error, errorDescription)
+          setStatus('error')
+          setMessage(`Tasdiqlashda xatolik: ${errorDescription || error}`)
+        } else if (accessToken) {
+          // Supabase verification was successful - tokens provided
+          console.log('✅ Email verification successful - access token received')
+          setStatus('success')
+          setMessage('Email muvaffaqiyatli tasdiqlandi!')
+          setTimeout(() => {
+            console.log('🔄 Redirecting to home page...')
+            window.location.href = '/'
+          }, 2000)
+        } else {
+          // Check current auth state - user might already be logged in
+          console.log('🔍 Checking current auth state...')
+          const { data: { user } } = await supabase.auth.getUser()
           
-          const { data, error } = await supabase.auth.verifyOtp({
-            token_hash: token,
-            type: type === 'signup' ? 'email' : type as any
-          })
-          
-          console.log('📊 Verification result:', { data, error })
-          
-          if (error) {
-            console.error('❌ Email verification failed:', error.message)
-            setStatus('error')
-            setMessage(`Tasdiqlashda xatolik: ${error.message}`)
-          } else {
-            console.log('✅ Email verified successfully!')
-            console.log('👤 User data:', data)
+          if (user && user.email_confirmed_at) {
+            console.log('✅ User is already authenticated and confirmed:', user.email)
             setStatus('success')
-            setMessage('Email muvaffaqiyatli tasdiqlandi!')
+            setMessage('Email allaqachon tasdiqlangan!')
             setTimeout(() => {
               console.log('🔄 Redirecting to home page...')
               window.location.href = '/'
             }, 2000)
+          } else {
+            console.log('❌ No verification result and user not authenticated')
+            setStatus('error')
+            setMessage('Tasdiqlash jarayoni tugallanmadi. Iltimos, qaytadan urinib ko\'ring.')
           }
-        } else {
-          console.error('❌ Invalid or missing parameters:', { 
-            hasToken: !!token, 
-            type: type, 
-            isValidType: isValidType,
-            allParams: Object.fromEntries(new URLSearchParams(window.location.search))
-          })
-          setStatus('error')
-          setMessage('Noto\'g\'ri tasdiqlash havolasi yoki parametrlar topilmadi')
         }
       } catch (error) {
         console.error('💥 Unexpected error during email confirmation:', error)
