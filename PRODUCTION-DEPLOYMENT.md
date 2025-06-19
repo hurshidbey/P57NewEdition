@@ -1,494 +1,380 @@
-# Production Deployment Guide for Protokol57
+# 🚀 Protokol57 Production Deployment Guide
 
-This guide provides comprehensive instructions for deploying and maintaining Protokol57 in production with 99.9%+ uptime.
+This guide provides comprehensive instructions for deploying and maintaining the Protokol57 application in production with enterprise-grade reliability and monitoring.
 
-## Overview
+## 🎯 Quick Start
 
-The production setup includes:
-- 🐳 **Docker-based deployment** with zero-downtime updates
-- 🔄 **Automatic reconnection** and error recovery
-- 📊 **Health monitoring** and alerting
-- 🔒 **SSL/HTTPS** with auto-renewal
-- 🚀 **Zero-downtime deployment** with rollback capability
-- 📈 **Resource monitoring** and optimization
-
-## Quick Start
-
-### 1. Initial VPS Setup
+### Initial Setup
 ```bash
-# Setup VPS (first time only)
+# 1. Setup VPS infrastructure
 ./setup-vps.sh setup
 
-# Check VPS status
-./setup-vps.sh status
+# 2. Deploy application
+./deploy-production.sh deploy
+
+# 3. Verify deployment
+./monitor.sh check
 ```
 
-### 2. Deploy Application
+## 📋 Prerequisites
+
+### Required Tools
+- SSH access to VPS (69.62.126.73)
+- SSH key: `~/.ssh/protokol57_ed25519`
+- `curl`, `jq`, `bc` (for monitoring)
+- Docker and Docker Compose on VPS
+
+### Environment Variables
+Ensure these are set in `.env.production`:
 ```bash
-# Deploy to production
+SUPABASE_URL=https://bazptglwzqstppwlvmvb.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+DATABASE_URL=postgresql://postgres:password@db.supabase.co:5432/postgres
+SESSION_SECRET=protokol57-production-secret
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+NODE_ENV=production
+```
+
+## 🏗️ Infrastructure Architecture
+
+### Application Stack
+- **Frontend**: React 18 + Vite + TypeScript
+- **Backend**: Express.js + TypeScript
+- **Database**: Supabase PostgreSQL (with fallback to in-memory)
+- **Proxy**: Nginx with SSL/HTTPS
+- **Container**: Docker with resource limits
+- **Domains**: p57.birfoiz.uz (primary), srv852801.hstgr.cloud (backup)
+
+### Security Features
+- SSL/TLS encryption with Let's Encrypt
+- Rate limiting (10 req/s for API, 30 req/s general)
+- Security headers (HSTS, XSS protection, CSP)
+- Fail2ban for intrusion prevention
+- Firewall with minimal open ports
+- Automatic security updates
+
+## 🛠️ Deployment Scripts
+
+### 1. VPS Setup Script (`setup-vps.sh`)
+
+Configures the entire VPS infrastructure:
+
+```bash
+# Complete setup
+./setup-vps.sh setup
+
+# Individual components
+./setup-vps.sh ssl        # SSL certificates only
+./setup-vps.sh firewall   # Firewall configuration
+./setup-vps.sh monitoring # Monitoring setup
+./setup-vps.sh security   # Security hardening
+./setup-vps.sh status     # Check VPS status
+```
+
+**What it does:**
+- Installs and configures Nginx with SSL
+- Sets up Let's Encrypt certificates with auto-renewal
+- Configures UFW firewall
+- Implements fail2ban for security
+- Sets up automated monitoring and log rotation
+- Applies security hardening
+
+### 2. Deployment Script (`deploy-production.sh`)
+
+Handles zero-downtime application deployment:
+
+```bash
+# Deploy latest version
 ./deploy-production.sh deploy
 
 # Check deployment status
 ./deploy-production.sh status
+
+# Rollback to previous version
+./deploy-production.sh rollback [backup_name]
 ```
 
-### 3. Monitor Application
+**Features:**
+- Zero-downtime deployment
+- Automatic backup before deployment
+- Health checks with automatic rollback
+- Docker cache clearing for clean builds
+- Automatic cleanup of old images/backups
+
+### 3. Monitoring Script (`monitor.sh`)
+
+Provides comprehensive health monitoring:
+
 ```bash
-# Run health check
+# One-time health check
 ./monitor.sh check
 
-# Continuous monitoring
+# Continuous monitoring (5-minute intervals)
 ./monitor.sh monitor
 
 # View recent alerts
 ./monitor.sh alerts
 ```
 
-## Architecture
+**Monitors:**
+- Application health (both domains)
+- VPS resources (CPU, memory, disk)
+- Docker container status
+- Error logs and warnings
+- Response times and performance
 
-### Docker Configuration
+## 📊 Health Check Endpoint
 
-**Production**: `docker-compose.prod.yml`
-- No volume mounts (everything built into container)
-- Resource limits and health checks
-- Proper restart policies
-- Security optimizations
-
-**Development**: `docker-compose.dev.yml`
-- Volume mounts for hot reload
-- Development environment variables
-
-### Database Connection Strategy
-
-The application uses a **hybrid storage system** with automatic fallback:
-
-1. **Primary**: Supabase REST API (with retry logic)
-2. **Fallback**: Direct PostgreSQL connection (with connection pooling)
-3. **Emergency**: In-memory storage (with seeded data)
-
-### Error Recovery
-
-- **Automatic reconnection** after database failures
-- **Circuit breaker pattern** for external services
-- **Graceful degradation** to in-memory storage
-- **Health checks** with recovery triggers
-
-## Deployment Process
-
-### Zero-Downtime Deployment
-
-The deployment script (`deploy-production.sh`) follows these steps:
-
-1. **Pre-deployment checks**
-   - Verify VPS connectivity
-   - Check current application health
-   - Validate deployment environment
-
-2. **Backup current state**
-   - Container configurations
-   - Image information
-   - Current health status
-
-3. **Deploy new version**
-   - Update code from git
-   - Build new Docker image
-   - Gracefully stop old containers
-   - Start new containers
-
-4. **Health verification**
-   - Internal health checks
-   - External connectivity tests
-   - Performance validation
-
-5. **Rollback on failure**
-   - Automatic rollback if health checks fail
-   - Restore previous working state
-   - Alert administrators
-
-### Deployment Commands
-
-```bash
-# Standard deployment
-./deploy-production.sh deploy
-
-# Rollback to previous version
-./deploy-production.sh rollback
-
-# Check application health
-./deploy-production.sh health
-
-# View live logs
-./deploy-production.sh logs
-
-# Check deployment status
-./deploy-production.sh status
-
-# Clean up old images
-./deploy-production.sh cleanup
-```
-
-## Monitoring
-
-### Health Check Endpoint
-
-The application exposes a comprehensive health check at `/api/health`:
+Enhanced health check at `/api/health` provides:
 
 ```json
 {
   "status": "ok",
-  "timestamp": "2025-06-19T10:30:00.000Z",
+  "timestamp": "2024-06-19T10:30:00.000Z",
   "environment": "production",
-  "uptime": 3600,
+  "uptime": {
+    "seconds": 86400,
+    "formatted": "1d 0h 0m 0s"
+  },
   "memory": {
     "used": 128,
-    "total": 256
+    "total": 256,
+    "percentage": 50
   },
   "database": {
     "connected": true,
     "supabase": true,
-    "memory": true
+    "responseTime": 45
+  },
+  "performance": {
+    "responseTime": 23,
+    "platform": "linux",
+    "nodeVersion": "v18.17.0"
+  },
+  "services": {
+    "api": "ok",
+    "storage": "supabase"
   }
 }
 ```
 
-### Monitoring Script
+## 🔧 Configuration Files
 
-The monitoring script (`monitor.sh`) provides:
+### Docker Configurations
 
-```bash
-# Full monitoring check
-./monitor.sh check
+#### Production (`docker-compose.prod.yml`)
+- Resource limits (512MB memory, 1 CPU)
+- Security optimizations
+- Health checks every 30 seconds
+- No volume mounts (prevents asset override)
 
-# Application health only
-./monitor.sh health
+#### Development (`docker-compose.dev.yml`)
+- Volume mounts for hot reload
+- Relaxed timeouts
+- Development environment variables
 
-# VPS resources only
-./monitor.sh resources
+### Nginx Configuration
 
-# Docker container status
-./monitor.sh docker
+Located at `/etc/nginx/sites-available/protokol57`:
+- SSL/TLS with modern ciphers
+- Rate limiting and security headers
+- Gzip compression
+- Static file caching
+- Proxy configuration with timeouts
 
-# Continuous monitoring (every 60s)
-./monitor.sh monitor
-
-# View recent alerts
-./monitor.sh alerts
-
-# View monitoring logs
-./monitor.sh logs
-```
+## 🚨 Monitoring & Alerting
 
 ### Automated Monitoring
+- **VPS monitoring**: Every 5 minutes via cron
+- **Docker health checks**: Every 30 seconds
+- **Application monitoring**: Continuous via scripts
 
-The VPS is configured with:
-- **Cron job**: Health checks every 5 minutes
-- **Log rotation**: Automatic log cleanup
-- **SSL renewal**: Automatic certificate renewal
-- **Docker cleanup**: Weekly cleanup of unused images
+### Alert Thresholds
+- **Memory usage**: >85%
+- **CPU usage**: >80%
+- **Disk usage**: >85%
+- **Response time**: >5 seconds
 
-### Alerting Thresholds
+### Log Files
+- **Monitoring logs**: `/tmp/protokol57_monitor.log`
+- **Alerts**: `/tmp/protokol57_alerts.log`
+- **Nginx logs**: `/var/log/nginx/protokol57_*.log`
+- **VPS monitoring**: `/var/log/protokol57_monitor.log`
 
-- **Response time**: > 10 seconds
-- **Memory usage**: > 400MB
-- **CPU usage**: > 80%
-- **Disk usage**: > 85%
-- **Uptime**: < 60 seconds (indicates restart)
+## 🔐 Security Features
 
-## Nginx Configuration
+### SSL/HTTPS
+- Let's Encrypt certificates for both domains
+- Automatic renewal via cron job
+- HSTS headers for enhanced security
+- TLS 1.2+ only
 
-### Features
-
-- **SSL termination** with automatic renewal
-- **HTTP to HTTPS redirect**
-- **Gzip compression** for static assets
-- **Rate limiting** for API endpoints
-- **Health check bypassing** (no caching)
-- **Security headers** (HSTS, XSS protection, etc.)
-- **Static asset caching** with proper headers
-
-### SSL Setup
-
-SSL certificates are automatically managed:
-
-```bash
-# Initial setup (done by setup-vps.sh)
-certbot --nginx -d p57.birfoiz.uz
-
-# Auto-renewal (configured in cron)
-0 12 * * * /usr/bin/certbot renew --quiet
+### Security Headers
+```nginx
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 ```
 
-## Database Management
+### Rate Limiting
+- API endpoints: 10 requests/second (burst 20)
+- General traffic: 30 requests/second (burst 50)
+- Health checks: No rate limiting
 
-### Connection Strategy
+### Fail2ban Protection
+- SSH brute force protection
+- Nginx rate limit violations
+- Automatic IP banning
 
-The application implements robust database connectivity:
+## 🗄️ Database Configuration
 
-1. **Connection Pooling**: Maximum 20 connections
-2. **Retry Logic**: 3 attempts with 5-second delays
-3. **Health Checks**: Continuous monitoring
-4. **Automatic Reconnection**: On connection failures
-5. **Graceful Fallback**: To in-memory storage
+### Primary: Supabase
+- Connection with retry logic (3 attempts, 5-second delays)
+- Connection pooling (20 max connections)
+- Automatic reconnection on failures
 
-### Supabase Configuration
+### Fallback: In-Memory Storage
+- Activated when database connection fails
+- Contains full protocol dataset (57 protocols)
+- Maintains service availability during outages
 
-Environment variables for Supabase:
-```bash
-SUPABASE_URL=https://bazptglwzqstppwlvmvb.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIs...
-DATABASE_URL=postgresql://postgres:password@db.supabase.co:5432/postgres
-```
+## 📈 Performance Optimization
 
-## Security
+### Application
+- Database connection pooling
+- Circuit breaker pattern for external services
+- Graceful error handling and recovery
+- Memory usage monitoring
 
-### Network Security
+### Nginx
+- Gzip compression for text content
+- Static file caching (1 year)
+- Optimized proxy buffers
+- Connection reuse
 
-- **Firewall**: UFW enabled with minimal ports
-- **SSH**: Key-based authentication only
-- **SSL**: TLS 1.2+ with modern ciphers
-- **Headers**: Security headers via Nginx
+### Docker
+- Multi-stage builds for smaller images
+- Resource limits prevent memory leaks
+- Health checks ensure container stability
 
-### Container Security
+## 🔄 Deployment Workflow
 
-- **Non-root user**: Application runs as non-root
-- **Read-only filesystem**: Where possible
-- **No new privileges**: Security flag set
-- **Resource limits**: Memory and CPU limits
+### Standard Deployment
+1. **Backup**: Create container snapshot
+2. **Pull**: Latest code from repository
+3. **Build**: Clean Docker build (no cache)
+4. **Deploy**: Zero-downtime container restart
+5. **Verify**: Health checks and monitoring
+6. **Cleanup**: Remove old images/backups
 
-### Application Security
+### Rollback Process
+1. **Automatic**: Triggered on failed health checks
+2. **Manual**: Use backup images from previous deployments
+3. **Verification**: Health checks after rollback
+4. **Notification**: Alert on rollback completion
 
-- **Environment variables**: Secure credential management
-- **Session security**: HTTPOnly cookies
-- **Input validation**: Zod schema validation
-- **Rate limiting**: API endpoint protection
+## 🚀 Production URLs
 
-## Performance Optimization
+- **Primary**: https://p57.birfoiz.uz
+- **Backup**: https://srv852801.hstgr.cloud
+- **Health Check**: https://p57.birfoiz.uz/api/health
 
-### Caching Strategy
-
-- **Static assets**: 1-year cache with immutable headers
-- **API responses**: No caching for dynamic content
-- **Gzip compression**: All text-based content
-
-### Resource Management
-
-- **Memory limit**: 512MB container limit
-- **CPU limit**: 1 CPU core maximum
-- **Connection pooling**: Database connections
-- **Image optimization**: Multi-stage Docker builds
-
-## Troubleshooting
+## 📞 Troubleshooting
 
 ### Common Issues
 
-#### 1. Bad Gateway (502) Errors
+#### Bad Gateway (502)
+1. Check container status: `./deploy-production.sh status`
+2. Check health endpoint: `curl https://p57.birfoiz.uz/api/health`
+3. Review logs: `./monitor.sh check`
+4. Restart if needed: `./deploy-production.sh deploy`
 
-**Symptoms**: Nginx returns 502 Bad Gateway
-**Causes**: 
-- Application container not running
-- Database connection failures
-- Health check failures
+#### SSL Certificate Issues
+1. Check certificate status: `./setup-vps.sh status`
+2. Renew certificates: `./setup-vps.sh ssl`
+3. Verify Nginx config: Check `/etc/nginx/sites-available/protokol57`
 
-**Resolution**:
-```bash
-# Check container status
-./deploy-production.sh status
+#### Database Connection Issues
+- Application automatically falls back to in-memory storage
+- Check Supabase status and environment variables
+- Monitor reconnection attempts in logs
 
-# Check application health
-./monitor.sh health
-
-# View application logs
-./deploy-production.sh logs
-
-# Restart if needed
-./deploy-production.sh deploy
-```
-
-#### 2. Database Connection Issues
-
-**Symptoms**: "Cannot read properties of null" errors
-**Causes**:
-- Supabase connectivity issues
-- Database credentials incorrect
-- Network connectivity problems
-
-**Resolution**:
-```bash
-# Check database health in monitoring
-./monitor.sh check
-
-# Check environment variables
-ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'cd /opt/protokol57 && docker-compose exec protokol57 env | grep SUPABASE'
-
-# Restart with fresh connection
-./deploy-production.sh deploy
-```
-
-#### 3. SSL Certificate Issues
-
-**Symptoms**: Browser SSL warnings
-**Causes**:
-- Certificate expired
-- Certificate not renewed
-- Domain configuration issues
-
-**Resolution**:
-```bash
-# Check certificate status
-ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'certbot certificates'
-
-# Renew certificates
-ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'certbot renew --force-renewal'
-
-# Reload Nginx
-ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'systemctl reload nginx'
-```
-
-#### 4. High Memory Usage
-
-**Symptoms**: Container OOM kills, slow performance
-**Causes**:
-- Memory leaks
-- High traffic
-- Inefficient queries
-
-**Resolution**:
-```bash
-# Check resource usage
-./monitor.sh resources
-
-# Restart container
-./deploy-production.sh deploy
-
-# Monitor memory usage
-./monitor.sh monitor
-```
+#### Performance Issues
+1. Check resource usage: `./monitor.sh check`
+2. Review alerts: `./monitor.sh alerts`
+3. Check Docker container resources
+4. Monitor database response times
 
 ### Emergency Procedures
 
-#### Complete System Recovery
-
-If the entire system is down:
-
+#### Complete Service Restart
 ```bash
-# 1. Check VPS connectivity
-ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'uptime'
-
-# 2. Check Docker service
-ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'systemctl status docker'
-
-# 3. Restart Docker if needed
-ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'systemctl restart docker'
-
-# 4. Deploy fresh instance
-./deploy-production.sh deploy
-
-# 5. Verify health
-./monitor.sh check
+# On VPS
+cd /opt/protokol57
+docker compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml up -d
 ```
 
-#### Database Recovery
-
-If database is completely unavailable:
-
-1. Application will automatically fall back to in-memory storage
-2. Users can still access all 57 protocols
-3. New user registrations will be temporary
-4. Monitor for database recovery
-5. Restart application when database is available
-
-## Maintenance
-
-### Regular Tasks
-
-#### Daily
-- Monitor application health
-- Check alert logs
-- Verify SSL certificate status
-
-#### Weekly
-- Review resource usage trends
-- Clean up old Docker images
-- Check for security updates
-
-#### Monthly
-- Update system packages
-- Review and rotate logs
-- Performance optimization review
-
-### Maintenance Commands
-
+#### Manual Rollback
 ```bash
-# Update system packages
-ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 'apt update && apt upgrade -y'
+# Find available backups
+./deploy-production.sh status
 
-# Clean up Docker resources
-./deploy-production.sh cleanup
-
-# Check system status
-./setup-vps.sh status
-
-# Review logs
-./monitor.sh logs
+# Rollback to specific backup
+./deploy-production.sh rollback protokol57_backup_YYYYMMDD_HHMMSS
 ```
 
-## Performance Metrics
+#### SSL Certificate Emergency Renewal
+```bash
+# On VPS
+systemctl stop nginx
+certbot renew --force-renewal
+systemctl start nginx
+```
 
-### Target SLAs
+## 📋 Maintenance Schedule
+
+### Daily
+- Automated health checks
+- Log rotation
+- Security updates (automatic)
+
+### Weekly
+- Monitor disk space and cleanup
+- Review monitoring logs
+- Check SSL certificate expiry
+
+### Monthly
+- Full system updates
+- Backup verification
+- Performance review
+- Security audit
+
+## 🎯 SLA Targets
 
 - **Uptime**: 99.9% (< 8.77 hours downtime/year)
 - **Response Time**: < 2 seconds average
 - **Recovery Time**: < 30 seconds from failure
 - **Deployment Time**: < 5 minutes zero-downtime
 
-### Monitoring Metrics
+## 📚 Additional Resources
 
-- **Application Health**: Every 30 seconds
-- **Resource Monitoring**: Every 5 minutes
-- **External Monitoring**: Every 1 minute
-- **Log Analysis**: Real-time
+- **Supabase Dashboard**: https://app.supabase.com/project/bazptglwzqstppwlvmvb
+- **VPS Provider**: Your hosting provider dashboard
+- **SSL Certificate Monitoring**: Let's Encrypt dashboard
+- **Docker Hub**: Registry for container images
 
-## Support and Escalation
+## 🆘 Support Contacts
 
-### Log Locations
-
-- **Application logs**: `docker-compose logs -f`
-- **Monitor logs**: `/tmp/protokol57_monitor.log`
-- **Alert logs**: `/tmp/protokol57_alerts.log`
-- **Nginx logs**: `/var/log/nginx/`
-- **System logs**: `/var/log/syslog`
-
-### Contact Information
-
-For production issues:
-1. Check monitoring dashboard
-2. Review alert logs
-3. Follow troubleshooting guide
-4. Escalate to development team if needed
+- **Primary Developer**: hurshidbey@gmail.com
+- **VPS Issues**: Your hosting provider support
+- **Domain Issues**: Your domain registrar
+- **SSL Issues**: Let's Encrypt community support
 
 ---
 
-## Deployment Checklist
-
-Before deploying to production:
-
-- [ ] VPS setup completed (`./setup-vps.sh setup`)
-- [ ] SSL certificates configured
-- [ ] Environment variables verified
-- [ ] Database connectivity tested
-- [ ] Monitoring scripts deployed
-- [ ] Backup procedures verified
-- [ ] Rollback procedures tested
-- [ ] Performance benchmarks established
-- [ ] Security scan completed
-- [ ] Documentation updated
-
-After deployment:
-
-- [ ] Health check passes (`./monitor.sh check`)
-- [ ] External access verified (`curl https://p57.birfoiz.uz/api/health`)
-- [ ] SSL certificate valid
-- [ ] Performance metrics within SLA
-- [ ] Monitoring alerts configured
-- [ ] Team notified of deployment
-- [ ] Documentation updated
+**Last Updated**: June 19, 2024
+**Version**: 1.0.0
+**Environment**: Production

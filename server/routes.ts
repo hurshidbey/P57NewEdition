@@ -9,6 +9,24 @@ import telegramAuthRouter from "./routes/telegram-auth";
 import telegramAuthV2Router from "./routes/telegram-auth-v2";
 import { eq } from "drizzle-orm";
 
+// Helper function to format uptime
+function formatUptime(seconds: number): string {
+  const days = Math.floor(seconds / (24 * 60 * 60));
+  const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60));
+  const minutes = Math.floor((seconds % (60 * 60)) / 60);
+  const secs = Math.floor(seconds % 60);
+  
+  if (days > 0) {
+    return `${days}d ${hours}h ${minutes}m ${secs}s`;
+  } else if (hours > 0) {
+    return `${hours}h ${minutes}m ${secs}s`;
+  } else if (minutes > 0) {
+    return `${minutes}m ${secs}s`;
+  } else {
+    return `${secs}s`;
+  }
+}
+
 // Define user interface for our application
 interface AppUser {
   id: string;
@@ -104,44 +122,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up ATMOS payment routes
   app.use('/api', setupAtmosRoutes());
   
-  // Health check endpoint
+  // Enhanced health check endpoint with comprehensive metrics
   app.get("/api/health", async (req, res) => {
     try {
+      const memUsage = process.memoryUsage();
+      const startTime = Date.now();
+      
       const health = {
         status: 'ok',
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'unknown',
-        uptime: process.uptime(),
+        uptime: {
+          seconds: Math.floor(process.uptime()),
+          formatted: formatUptime(process.uptime())
+        },
         memory: {
-          used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
-          total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024)
+          used: Math.round(memUsage.heapUsed / 1024 / 1024),
+          total: Math.round(memUsage.heapTotal / 1024 / 1024),
+          rss: Math.round(memUsage.rss / 1024 / 1024),
+          external: Math.round(memUsage.external / 1024 / 1024),
+          percentage: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100)
         },
         database: {
           connected: false,
           supabase: false,
-          memory: false
+          memory: false,
+          responseTime: null as number | null
+        },
+        performance: {
+          responseTime: null as number | null,
+          cpuUsage: process.cpuUsage(),
+          platform: process.platform,
+          nodeVersion: process.version
+        },
+        services: {
+          api: 'ok',
+          storage: 'unknown'
         }
       };
       
-      // Check database health if storage has health check method
-      if ((storage as any).isHealthy) {
-        health.database.connected = await (storage as any).isHealthy();
+      // Test database connectivity and measure response time
+      const dbStartTime = Date.now();
+      try {
+        if ((storage as any).isHealthy) {
+          health.database.connected = await (storage as any).isHealthy();
+          health.database.responseTime = Date.now() - dbStartTime;
+        }
+        
+        // Check specific connection types
+        if ((global as any).supabaseStorage) {
+          health.database.supabase = true;
+          health.services.storage = 'supabase';
+        } else if (health.database.connected) {
+          health.services.storage = 'database';
+        } else {
+          health.services.storage = 'memory';
+        }
+        
+        // Always have memory storage as backup
+        health.database.memory = true;
+        
+      } catch (dbError) {
+        health.database.connected = false;
+        health.database.responseTime = Date.now() - dbStartTime;
+        health.services.storage = 'error';
       }
       
-      // Check specific connection types
-      if ((global as any).supabaseStorage) {
-        health.database.supabase = true;
+      // Calculate total response time
+      health.performance.responseTime = Date.now() - startTime;
+      
+      // Determine overall status
+      if (!health.database.connected && !health.database.memory) {
+        health.status = 'degraded';
+      } else if (health.memory.percentage > 90) {
+        health.status = 'warning';
       }
       
-      // Always have memory storage as backup
-      health.database.memory = true;
+      // Set appropriate HTTP status
+      const httpStatus = health.status === 'ok' ? 200 : 
+                        health.status === 'warning' ? 200 : 503;
       
-      res.json(health);
+      res.status(httpStatus).json(health);
     } catch (error) {
       res.status(500).json({
         status: 'error',
         timestamp: new Date().toISOString(),
-        error: (error as Error).message
+        error: (error as Error).message,
+        stack: process.env.NODE_ENV === 'development' ? (error as Error).stack : undefined
       });
     }
   });
