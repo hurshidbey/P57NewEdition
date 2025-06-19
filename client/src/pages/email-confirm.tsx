@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
@@ -8,128 +8,83 @@ export default function EmailConfirmPage() {
   const [location] = useLocation()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [message, setMessage] = useState('')
+  const hasRun = useRef(false) // Prevent multiple runs
 
   useEffect(() => {
+    // Prevent multiple executions due to auth context re-renders
+    if (hasRun.current) {
+      console.log('⏭️ Email confirmation already ran, skipping...')
+      return
+    }
+    hasRun.current = true
+
     const handleEmailConfirmation = async () => {
       try {
-        console.log('🚀 Starting email confirmation process...')
+        console.log('🚀 [FINAL FIX] Starting email confirmation process...')
         console.log('📍 Current URL:', window.location.href)
-        console.log('🔍 Full search params:', window.location.search)
-        console.log('🔗 Full hash:', window.location.hash)
         
-        // SIMPLE FIX: Just check if user is already authenticated with confirmed email
-        console.log('🔍 [SIMPLE CHECK] Checking if user is already authenticated...')
-        const { data: { user: quickUser } } = await supabase.auth.getUser()
-        console.log('👤 [SIMPLE CHECK] Quick user check:', {
-          hasUser: !!quickUser,
-          email: quickUser?.email,
-          emailConfirmed: quickUser?.email_confirmed_at,
-          isConfirmed: !!quickUser?.email_confirmed_at
-        })
-        
-        if (quickUser && quickUser.email_confirmed_at) {
-          console.log('✅ [SIMPLE CHECK] User already authenticated and confirmed - showing success!')
-          setStatus('success')
-          setMessage('Email muvaffaqiyatli tasdiqlandi!')
-          setTimeout(() => {
-            console.log('🔄 Redirecting to home page...')
-            window.location.href = '/'
-          }, 2000)
-          return // Exit early - we're done!
-        }
-        
-        // Check if we're coming from Supabase redirect after verification
-        const urlParams = new URLSearchParams(window.location.search)
-        const hashParams = new URLSearchParams(window.location.hash.substring(1))
-        
-        // Log all parameters for debugging
-        console.log('📋 All query params:')
-        for (let [key, value] of urlParams.entries()) {
-          console.log(`  ${key}: ${value}`)
-        }
-        console.log('📋 All hash params:')
-        for (let [key, value] of hashParams.entries()) {
-          console.log(`  ${key}: ${value}`)
-        }
-        
-        // Check for error parameters from Supabase redirect
-        const error = urlParams.get('error') || hashParams.get('error')
-        const errorDescription = urlParams.get('error_description') || hashParams.get('error_description')
-        
-        // Check for success indicators
-        const accessToken = urlParams.get('access_token') || hashParams.get('access_token')
-        const refreshToken = urlParams.get('refresh_token') || hashParams.get('refresh_token')
-        
-        console.log('📊 Redirect params summary:', { 
-          hasError: !!error, 
-          hasAccessToken: !!accessToken,
-          hasRefreshToken: !!refreshToken,
-          error,
-          errorDescription,
-          queryParamCount: urlParams.size,
-          hashParamCount: hashParams.size
-        })
-        
-        if (error) {
-          // Supabase redirected with an error
-          console.error('❌ Supabase verification failed:', error, errorDescription)
-          setStatus('error')
-          setMessage(`Tasdiqlashda xatolik: ${errorDescription || error}`)
-        } else if (accessToken) {
-          // Supabase verification was successful - tokens provided
-          console.log('✅ Email verification successful - access token received')
-          setStatus('success')
-          setMessage('Email muvaffaqiyatli tasdiqlandi!')
-          setTimeout(() => {
-            console.log('🔄 Redirecting to home page...')
-            window.location.href = '/'
-          }, 2000)
-        } else {
-          // Check current auth state - user might already be logged in
-          console.log('🔍 Checking current auth state...')
-          const { data: { user }, error: userError } = await supabase.auth.getUser()
+        // ROBUST AUTH CHECK: Check multiple times with different intervals
+        const checkAuthAndRedirect = async (attempt = 1) => {
+          console.log(`🔍 [AUTH CHECK ${attempt}] Checking authentication state...`)
           
-          console.log('👤 Current user state:', { 
-            hasUser: !!user, 
+          const { data: { user }, error } = await supabase.auth.getUser()
+          console.log(`👤 [AUTH CHECK ${attempt}] User state:`, {
+            hasUser: !!user,
             email: user?.email,
             emailConfirmed: user?.email_confirmed_at,
-            userError: userError?.message
+            isConfirmed: !!user?.email_confirmed_at,
+            error: error?.message
           })
           
-          if (user) {
-            if (user.email_confirmed_at) {
-              console.log('✅ User is authenticated and email confirmed')
+          if (user && user.email_confirmed_at) {
+            console.log(`✅ [AUTH CHECK ${attempt}] SUCCESS - User authenticated and confirmed!`)
+            setStatus('success')
+            setMessage('Email muvaffaqiyatli tasdiqlandi!')
+            setTimeout(() => {
+              console.log('🔄 [REDIRECT] Navigating to home page...')
+              window.location.href = '/'
+            }, 1500)
+            return true // Success
+          }
+          
+          return false // Not ready yet
+        }
+        
+        // Try immediate check
+        if (await checkAuthAndRedirect(1)) return
+        
+        // Try again after 500ms (auth might be loading)
+        setTimeout(async () => {
+          if (await checkAuthAndRedirect(2)) return
+          
+          // Try again after 1500ms (final attempt)
+          setTimeout(async () => {
+            if (await checkAuthAndRedirect(3)) return
+            
+            // If still no success, check for Supabase redirect params
+            console.log('🔍 [FALLBACK] Checking URL parameters...')
+            const urlParams = new URLSearchParams(window.location.search)
+            const hashParams = new URLSearchParams(window.location.hash.substring(1))
+            
+            const error = urlParams.get('error') || hashParams.get('error')
+            const accessToken = urlParams.get('access_token') || hashParams.get('access_token')
+            
+            if (error) {
+              console.error('❌ [FALLBACK] Supabase error:', error)
+              setStatus('error')
+              setMessage(`Tasdiqlashda xatolik: ${error}`)
+            } else if (accessToken) {
+              console.log('✅ [FALLBACK] Access token found - success!')
               setStatus('success')
               setMessage('Email muvaffaqiyatli tasdiqlandi!')
-              setTimeout(() => {
-                console.log('🔄 Redirecting to home page...')
-                window.location.href = '/'
-              }, 2000)
+              setTimeout(() => window.location.href = '/', 1500)
             } else {
-              console.log('⚠️ User authenticated but email not confirmed yet')
+              console.log('❌ [FALLBACK] No success indicators found')
               setStatus('error')
-              setMessage('Email hali tasdiqlanmagan. Iltimos, biroz kuting yoki qaytadan urinib ko\'ring.')
+              setMessage('Tasdiqlash jarayoni tugallanmadi. Iltimos, qaytadan urinib ko\'ring.')
             }
-          } else {
-            console.log('❌ No user authenticated')
-            
-            // One more attempt - wait a bit and check again (auth might be loading)
-            setTimeout(async () => {
-              const { data: { user: retryUser } } = await supabase.auth.getUser()
-              console.log('🔄 Retry check - user:', retryUser?.email, 'confirmed:', retryUser?.email_confirmed_at)
-              
-              if (retryUser && retryUser.email_confirmed_at) {
-                console.log('✅ User found on retry - showing success')
-                setStatus('success')
-                setMessage('Email muvaffaqiyatli tasdiqlandi!')
-                setTimeout(() => window.location.href = '/', 2000)
-              } else {
-                setStatus('error')
-                setMessage('Tasdiqlash jarayoni tugallanmadi. Iltimos, qaytadan urinib ko\'ring.')
-              }
-            }, 1000)
-          }
-        }
+          }, 1500)
+        }, 500)
       } catch (error) {
         console.error('💥 Unexpected error during email confirmation:', error)
         setStatus('error')
