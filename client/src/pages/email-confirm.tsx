@@ -19,23 +19,26 @@ export default function EmailConfirmPage() {
 
         // First, try query parameters (traditional approach)
         urlParams = new URLSearchParams(window.location.search)
-        token_hash = urlParams.get('token_hash')
+        token_hash = urlParams.get('token_hash') || urlParams.get('token') // Support both formats
         type = urlParams.get('type')
 
         // If not found in query, check hash fragment (Supabase default)
         if (!token_hash || !type) {
           const hashString = window.location.hash.substring(1) // Remove the # character
           urlParams = new URLSearchParams(hashString)
-          token_hash = urlParams.get('token_hash')
+          token_hash = urlParams.get('token_hash') || urlParams.get('token') // Support both formats
           type = urlParams.get('type')
         }
 
         console.log('🔍 Email confirmation params:', { token_hash: token_hash?.substring(0, 10) + '...', type })
         
-        if (type === 'email' && token_hash) {
+        // Handle different type formats: 'email', 'signup', 'email_confirmation'
+        const isValidType = type === 'email' || type === 'signup' || type === 'email_confirmation'
+        
+        if (isValidType && token_hash) {
           const { error } = await supabase.auth.verifyOtp({
             token_hash,
-            type: 'email'
+            type: type === 'signup' ? 'email' : type as any
           })
           
           if (error) {
