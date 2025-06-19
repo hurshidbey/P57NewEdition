@@ -12,9 +12,25 @@ export default function EmailConfirmPage() {
   useEffect(() => {
     const handleEmailConfirmation = async () => {
       try {
-        const urlParams = new URLSearchParams(window.location.search)
-        const token_hash = urlParams.get('token_hash')
-        const type = urlParams.get('type')
+        // Check both query params (?token_hash=) and hash params (#token_hash=)
+        let urlParams: URLSearchParams
+        let token_hash: string | null = null
+        let type: string | null = null
+
+        // First, try query parameters (traditional approach)
+        urlParams = new URLSearchParams(window.location.search)
+        token_hash = urlParams.get('token_hash')
+        type = urlParams.get('type')
+
+        // If not found in query, check hash fragment (Supabase default)
+        if (!token_hash || !type) {
+          const hashString = window.location.hash.substring(1) // Remove the # character
+          urlParams = new URLSearchParams(hashString)
+          token_hash = urlParams.get('token_hash')
+          type = urlParams.get('type')
+        }
+
+        console.log('🔍 Email confirmation params:', { token_hash: token_hash?.substring(0, 10) + '...', type })
         
         if (type === 'email' && token_hash) {
           const { error } = await supabase.auth.verifyOtp({
@@ -23,18 +39,22 @@ export default function EmailConfirmPage() {
           })
           
           if (error) {
+            console.error('❌ Email verification error:', error)
             setStatus('error')
-            setMessage(error.message)
+            setMessage(`Tasdiqlashda xatolik: ${error.message}`)
           } else {
+            console.log('✅ Email verified successfully')
             setStatus('success')
             setMessage('Email muvaffaqiyatli tasdiqlandi!')
             setTimeout(() => window.location.href = '/', 2000)
           }
         } else {
+          console.error('❌ Missing or invalid parameters:', { token_hash: !!token_hash, type })
           setStatus('error')
-          setMessage('Noto\'g\'ri tasdiqlash havolasi')
+          setMessage('Noto\'g\'ri tasdiqlash havolasi yoki parametrlar topilmadi')
         }
       } catch (error) {
+        console.error('❌ Email confirmation error:', error)
         setStatus('error')
         setMessage('Tasdiqlash jarayonida xatolik yuz berdi')
       }
