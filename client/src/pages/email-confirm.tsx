@@ -12,54 +12,82 @@ export default function EmailConfirmPage() {
   useEffect(() => {
     const handleEmailConfirmation = async () => {
       try {
-        // Check both query params (?token_hash=) and hash params (#token_hash=)
+        console.log('🚀 Starting email confirmation process...')
+        console.log('📍 Current URL:', window.location.href)
+        console.log('🔍 Query string:', window.location.search)
+        console.log('🔗 Hash fragment:', window.location.hash)
+        
+        // Check both query params (?token=) and hash params (#token_hash=)
         let urlParams: URLSearchParams
-        let token_hash: string | null = null
+        let token: string | null = null
         let type: string | null = null
 
-        // First, try query parameters (traditional approach)
+        // First, try query parameters (most common for email links)
         urlParams = new URLSearchParams(window.location.search)
-        token_hash = urlParams.get('token_hash') || urlParams.get('token') // Support both formats
+        token = urlParams.get('token') || urlParams.get('token_hash')
         type = urlParams.get('type')
+        
+        console.log('📝 Query params extracted:', { token: token?.substring(0, 10) + '...', type })
 
-        // If not found in query, check hash fragment (Supabase default)
-        if (!token_hash || !type) {
-          const hashString = window.location.hash.substring(1) // Remove the # character
-          urlParams = new URLSearchParams(hashString)
-          token_hash = urlParams.get('token_hash') || urlParams.get('token') // Support both formats
-          type = urlParams.get('type')
+        // If not found in query, check hash fragment (Supabase sometimes uses this)
+        if (!token || !type) {
+          const hashString = window.location.hash.substring(1)
+          if (hashString) {
+            urlParams = new URLSearchParams(hashString)
+            token = token || urlParams.get('token') || urlParams.get('token_hash')
+            type = type || urlParams.get('type')
+            console.log('📝 Hash params extracted:', { token: token?.substring(0, 10) + '...', type })
+          }
         }
 
-        console.log('🔍 Email confirmation params:', { token_hash: token_hash?.substring(0, 10) + '...', type })
+        console.log('🔑 Final params:', { 
+          hasToken: !!token, 
+          tokenLength: token?.length,
+          type: type,
+          tokenPreview: token?.substring(0, 15) + '...'
+        })
         
-        // Handle different type formats: 'email', 'signup', 'email_confirmation'
+        // Handle different type formats
         const isValidType = type === 'email' || type === 'signup' || type === 'email_confirmation'
         
-        if (isValidType && token_hash) {
-          const { error } = await supabase.auth.verifyOtp({
-            token_hash,
+        if (isValidType && token) {
+          console.log('✅ Valid parameters found, attempting verification...')
+          
+          const { data, error } = await supabase.auth.verifyOtp({
+            token_hash: token,
             type: type === 'signup' ? 'email' : type as any
           })
           
+          console.log('📊 Verification result:', { data, error })
+          
           if (error) {
-            console.error('❌ Email verification error:', error)
+            console.error('❌ Email verification failed:', error.message)
             setStatus('error')
             setMessage(`Tasdiqlashda xatolik: ${error.message}`)
           } else {
-            console.log('✅ Email verified successfully')
+            console.log('✅ Email verified successfully!')
+            console.log('👤 User data:', data)
             setStatus('success')
             setMessage('Email muvaffaqiyatli tasdiqlandi!')
-            setTimeout(() => window.location.href = '/', 2000)
+            setTimeout(() => {
+              console.log('🔄 Redirecting to home page...')
+              window.location.href = '/'
+            }, 2000)
           }
         } else {
-          console.error('❌ Missing or invalid parameters:', { token_hash: !!token_hash, type })
+          console.error('❌ Invalid or missing parameters:', { 
+            hasToken: !!token, 
+            type: type, 
+            isValidType: isValidType,
+            allParams: Object.fromEntries(new URLSearchParams(window.location.search))
+          })
           setStatus('error')
           setMessage('Noto\'g\'ri tasdiqlash havolasi yoki parametrlar topilmadi')
         }
       } catch (error) {
-        console.error('❌ Email confirmation error:', error)
+        console.error('💥 Unexpected error during email confirmation:', error)
         setStatus('error')
-        setMessage('Tasdiqlash jarayonida xatolik yuz berdi')
+        setMessage('Tasdiqlash jarayonida kutilmagan xatolik yuz berdi')
       }
     }
 
