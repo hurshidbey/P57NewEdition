@@ -818,7 +818,8 @@ export class HybridStorage implements IStorage {
       protocolId,
       completedAt: new Date(),
       practiceCount: 1,
-      lastScore: score
+      lastScore: score,
+      accessedProtocolsCount: 0
     };
   }
 }

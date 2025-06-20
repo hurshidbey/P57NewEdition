@@ -1,0 +1,223 @@
+# Engineering Tasks: Authentication System Overhaul
+
+Based on the comprehensive audit of the current authentication system, here is the breakdown of tasks required to implement a clean, tier-based access control system with proper free/premium user management.
+
+---
+
+## Phase 1: Cleanup & Foundation
+
+### 🧹 Remove Telegram Authentication System
+- [ ] **1.1 Backend Cleanup:** Remove Telegram auth routes and logic
+  - [ ] Delete `server/routes/telegram-auth.ts` file
+  - [ ] Delete `server/routes/telegram-auth-v2.ts` file  
+  - [ ] Remove Telegram auth route registrations from `server/routes.ts` (lines 117, 120)
+  - [ ] Remove Telegram-related environment variables from documentation
+
+- [ ] **1.2 Frontend Cleanup:** Remove Telegram UI components and logic
+  - [ ] Delete `client/src/components/auth/telegram-login-button.tsx` file
+  - [ ] Remove Telegram auth logic from `client/src/contexts/auth-context.tsx` (lines 33-49, 94-106, 114-124)
+  - [ ] Remove `signInWithTelegram` method from auth context
+  - [ ] Clean up localStorage Telegram token handling
+
+- [ ] **1.3 Auth Context Simplification:** Streamline to Google OAuth + email/password only
+  - [ ] Update `AuthContextType` interface in `client/src/contexts/auth-context.tsx` (remove `signInWithTelegram`)
+  - [ ] Remove `TelegramUser` import and type from `client/src/lib/auth.ts`
+  - [ ] Simplify auth flow to focus on Supabase-only authentication
+
+---
+
+## Phase 2: Database Schema & Tier System Foundation
+
+### 🗄️ Database Schema Updates
+- [ ] **2.1 User Progress Tracking Enhancement:** Update user progress schema
+  - [ ] Add `accessedProtocolsCount` field to `userProgress` table in `shared/schema.ts`
+  - [ ] Create migration script to add new column: `ALTER TABLE user_progress ADD COLUMN accessed_protocols_count INTEGER DEFAULT 0;`
+
+- [ ] **2.2 Premium Prompts Table:** Create new prompts system
+  - [ ] Add `prompts` table definition to `shared/schema.ts`:
+    ```typescript
+    export const prompts = pgTable("prompts", {
+      id: serial("id").primaryKey(),
+      title: text("title").notNull(),
+      content: text("content").notNull(),
+      description: text("description"),
+      category: text("category").notNull(),
+      isPremium: boolean("is_premium").notNull().default(false),
+      isPublic: boolean("is_public").notNull().default(true),
+      createdAt: timestamp("created_at").defaultNow(),
+      updatedAt: timestamp("updated_at").defaultNow(),
+    });
+    ```
+  - [ ] Add TypeScript types for prompts (`Prompt`, `InsertPrompt`)
+  - [ ] Create database migration script for prompts table
+
+- [ ] **2.3 User Tier Enforcement:** Ensure proper tier defaults
+  - [ ] Verify `users.tier` defaults to 'free' in `shared/schema.ts` (line 9)
+  - [ ] Create migration to set existing users without tier to 'free'
+
+---
+
+## Phase 3: Tier System Implementation
+
+### 🎯 Free Tier Limits Implementation
+- [ ] **3.1 Protocol Access Limits:** Implement 3 protocol limit for free users
+  - [ ] Update `useUserTier` hook in `client/src/hooks/use-user-tier.ts`:
+    - [ ] Add `getAccessedProtocolsCount()` method
+    - [ ] Add `canAccessNewProtocol()` method (checks if < 3 for free users)
+    - [ ] Update `canAccessProtocol()` to include count-based restrictions
+
+- [ ] **3.2 AI Evaluation Limits:** Change from 500 to 3 daily evaluations for free users
+  - [ ] Update `DAILY_LIMIT` in `client/src/hooks/use-prompt-usage.ts` from 500 to tier-based limits
+  - [ ] Modify hook to accept user tier and return appropriate limits:
+    ```typescript
+    const getDailyLimit = (tier: UserTier) => tier === 'paid' ? Infinity : 3;
+    ```
+  - [ ] Update `canUsePrompt()` method to use tier-based limits
+
+- [ ] **3.3 Protocol Access Counter:** Track accessed protocols per user
+  - [ ] Update `useProgress` hook in `client/src/hooks/use-progress.ts`:
+    - [ ] Add `incrementAccessedProtocols()` method
+    - [ ] Track protocol views in localStorage and server
+    - [ ] Implement `getAccessedProtocolsCount()` method
+
+### 🔒 Access Control Middleware
+- [ ] **3.4 Route Protection:** Create tier-based route protection
+  - [ ] Create `ProtectedRoute` component in `client/src/components/auth/protected-route.tsx`
+  - [ ] Implement tier checking and redirect logic to upgrade page
+  - [ ] Add loading states and error handling
+
+- [ ] **3.5 Protocol Detail Access Control:** Update protocol detail page
+  - [ ] Modify `client/src/pages/protocol-detail.tsx`:
+    - [ ] Add tier checking before showing protocol content
+    - [ ] Show upgrade CTA for locked protocols
+    - [ ] Track protocol access when viewed by free users
+    - [ ] Display "X of 3 free protocols used" counter
+
+---
+
+## Phase 4: Premium Prompts System
+
+### 📝 Prompts API & Backend
+- [ ] **4.1 Prompts API Endpoints:** Create prompts management API
+  - [ ] Add prompts routes to `server/routes.ts`:
+    - [ ] `GET /api/prompts` - list prompts (filtered by user tier)
+    - [ ] `GET /api/prompts/:id` - get single prompt (with tier validation)
+    - [ ] `POST /api/prompts` - create prompt (admin only)
+    - [ ] `PUT /api/prompts/:id` - update prompt (admin only)
+    - [ ] `DELETE /api/prompts/:id` - delete prompt (admin only)
+
+- [ ] **4.2 Prompts Storage Integration:** Add prompts to storage layer
+  - [ ] Update `server/storage.ts` to include prompts CRUD operations
+  - [ ] Update `server/supabase-storage.ts` with prompts table operations
+  - [ ] Add prompts seeding data and migration
+
+### 🎨 Premium Prompts Frontend
+- [ ] **4.3 Premium Prompts Page:** Create new prompts page
+  - [ ] Create `client/src/pages/premium-prompts.tsx`:
+    - [ ] List view with public/premium categorization
+    - [ ] Tier-based access control (show premium prompts only to paid users)
+    - [ ] Upgrade CTA for free users viewing premium prompts
+    - [ ] Search and filtering functionality
+
+- [ ] **4.4 Prompts Components:** Create reusable prompt components
+  - [ ] Create `client/src/components/prompt-card.tsx`
+  - [ ] Create `client/src/components/premium-prompt-lock.tsx` (upgrade CTA)
+  - [ ] Add prompt detail modal/page
+  - [ ] Implement copy-to-clipboard functionality
+
+- [ ] **4.5 Navigation Updates:** Add prompts to main navigation
+  - [ ] Update `client/src/components/app-header.tsx` to include "Premium Prompts" link
+  - [ ] Add route to `client/src/App.tsx` for `/premium-prompts`
+
+---
+
+## Phase 5: UI/UX Enhancements
+
+### 💡 Tier-Based Messaging & CTAs
+- [ ] **5.1 Upgrade CTAs:** Create upgrade prompts throughout app
+  - [ ] Create `client/src/components/upgrade-cta.tsx` component
+  - [ ] Add upgrade prompts to protocol detail pages (when limit reached)
+  - [ ] Add upgrade prompts to AI evaluation component (when limit reached)
+  - [ ] Add upgrade banner to premium prompts page
+
+- [ ] **5.2 Usage Indicators:** Show tier limits and usage
+  - [ ] Update `client/src/components/progress-dashboard.tsx`:
+    - [ ] Add "Protocols accessed: X/3" for free users
+    - [ ] Add "AI evaluations today: X/3" for free users
+    - [ ] Add tier badge display
+  - [ ] Create usage indicator in header/sidebar
+
+- [ ] **5.3 Tier Status Components:** Enhance tier display
+  - [ ] Update `client/src/hooks/use-user-tier.ts` features descriptions:
+    - [ ] Free tier: "3 protokol, 3 AI baholash/kun, Ommaviy promptlar"
+    - [ ] Premium tier: "Barcha protokollar, Cheksiz AI baholash, Premium promptlar"
+
+### 🔧 Component Updates
+- [ ] **5.4 Protocol Card Updates:** Add tier indicators to protocol cards
+  - [ ] Update `client/src/components/protocol-card.tsx`:
+    - [ ] Add lock icon for premium protocols when viewed by free users
+    - [ ] Add "Premium" badge for premium-only protocols
+    - [ ] Show upgrade CTA on hover/click for locked protocols
+
+---
+
+## Phase 6: Testing & Deployment
+
+### 🧪 Testing Implementation
+- [ ] **6.1 Unit Tests:** Test tier logic and access control
+  - [ ] Write tests for `useUserTier` hook functionality
+  - [ ] Write tests for prompts API endpoints
+  - [ ] Write tests for access control middleware
+  - [ ] Write tests for protocol access limits
+
+- [ ] **6.2 Integration Tests:** Test full user flows
+  - [ ] Test free user protocol access (up to 3 protocols)
+  - [ ] Test free user AI evaluation limits (3 per day)
+  - [ ] Test premium user unlimited access
+  - [ ] Test premium prompts access control
+
+- [ ] **6.3 End-to-End Testing:** Test complete user journeys
+  - [ ] Test free user signup → protocol access → limit reached → upgrade flow
+  - [ ] Test premium user access to all features
+  - [ ] Test tier changes (free → premium) and immediate access updates
+
+### 🚀 Deployment & Data Migration
+- [ ] **6.4 Database Migration:** Run production migrations
+  - [ ] Execute prompts table creation
+  - [ ] Migrate existing users to have proper tier defaults
+  - [ ] Seed initial prompts data (3-5 public, 10-15 premium)
+
+- [ ] **6.5 Feature Deployment:** Staged rollout
+  - [ ] Deploy backend changes first (API endpoints, access control)
+  - [ ] Deploy frontend changes with feature flags
+  - [ ] Monitor tier enforcement and user behavior
+  - [ ] Full rollout after validation
+
+### 📊 Success Validation
+- [ ] **6.6 Metrics Implementation:** Track tier system effectiveness
+  - [ ] Implement analytics for protocol access patterns
+  - [ ] Track free user upgrade conversion rates
+  - [ ] Monitor premium prompts usage
+  - [ ] Track authentication flow success rates (post-Telegram removal)
+
+---
+
+## Dependencies & Critical Path
+
+**Blocking Dependencies:**
+- Phase 1 (Cleanup) must complete before Phase 3 (Tier Implementation)
+- Phase 2 (Database) must complete before Phase 4 (Premium Prompts)
+- Phase 3 & 4 must complete before Phase 5 (UI/UX)
+
+**Critical Path Items:**
+1. Remove Telegram auth system (high risk of conflicts)
+2. Database schema updates (requires careful migration)
+3. Tier limit enforcement (core business logic)
+4. Premium prompts system (new revenue feature)
+
+**Success Criteria:**
+- ✅ Zero Telegram authentication code remaining
+- ✅ Free users limited to 3 protocols and 3 AI evaluations/day
+- ✅ Premium prompts page functional with tier-based access
+- ✅ Clean upgrade flow for free users
+- ✅ All existing functionality preserved for premium users

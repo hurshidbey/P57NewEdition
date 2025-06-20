@@ -5,8 +5,6 @@ import { insertProtocolSchema, users } from "@shared/schema";
 import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
-import telegramAuthRouter from "./routes/telegram-auth";
-import telegramAuthV2Router from "./routes/telegram-auth-v2";
 import { eq } from "drizzle-orm";
 
 // Helper function to format uptime
@@ -112,12 +110,6 @@ const setupAuth = (app: Express) => {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
-  
-  // Set up Telegram authentication routes
-  app.use('/api/auth', telegramAuthRouter);
-  
-  // Use v2 Telegram auth
-  app.use('/api/auth', telegramAuthV2Router);
   
   // Set up ATMOS payment routes
   app.use('/api', setupAtmosRoutes());

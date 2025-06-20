@@ -1,15 +1,6 @@
 import { supabase } from './supabase'
 import type { User } from '@supabase/supabase-js';
 
-export interface TelegramUser {
-  id: number;
-  first_name: string;
-  last_name?: string;
-  username?: string;
-  photo_url?: string;
-  auth_date: number;
-  hash: string;
-}
 
 export interface AuthUser {
   id: string
@@ -116,59 +107,6 @@ export const authService = {
     
     console.log('✅ Signin successful:', data.user?.email)
     return data
-  },
-
-  async signInWithTelegram(user: TelegramUser) {
-    console.log('🔐 TELEGRAM AUTH v7.0 - Custom JWT auth');
-    console.log('👤 User:', user.id, user.first_name);
-    
-    try {
-      // Send to our new v2 endpoint directly
-      const response = await fetch('/api/auth/telegram-v2', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        console.error('❌ Server auth error:', data);
-        throw new Error(data.error || 'Telegram orqali kirishda xatolik');
-      }
-
-      console.log('✅ Server auth successful, storing tokens...');
-      
-      // Store tokens and user data in localStorage
-      localStorage.setItem('protokol57_telegram_token', data.access_token);
-      localStorage.setItem('protokol57_telegram_refresh', data.refresh_token);
-      localStorage.setItem('protokol57_telegram_user', JSON.stringify(data.user));
-      
-      // Return in a format compatible with existing code
-      return {
-        user: {
-          id: data.user.id,
-          email: `telegram_${data.user.telegram_id}@protokol57.app`, // Fake email for compatibility
-          user_metadata: {
-            name: `${data.user.first_name} ${data.user.last_name || ''}`.trim(),
-            telegram_id: data.user.telegram_id,
-            username: data.user.username,
-            avatar_url: data.user.photo_url
-          }
-        },
-        session: {
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
-          expires_in: data.expires_in
-        }
-      };
-      
-    } catch (error: any) {
-      console.error('❌ Telegram auth error:', error);
-      throw error;
-    }
   },
 
   async signInWithGoogle() {
