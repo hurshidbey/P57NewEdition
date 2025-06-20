@@ -1,0 +1,32 @@
+Build a lightweight learning app called “Protokol 57”. Users will login, have access to protocols. Log out.
+
+Tech stack • Next.js ^15 (app router, TypeScript, server components) • TailwindCSS + shadcn/ui (init with npx shadcn-ui@latest init) • Supabase (Postgres + Row-Level Security) for data + auth
+
+Design • Pure black-and-white theme (#000 / #FFF) plus one accent color — default 
+#FF4F30, swappable via tailwind.config → theme.extend.colors.accent • Clean typography: User Inter from Google fonts (Black 900) for headers, other weights for other text hierarchy. generous whitespace, mobile-first • Only shadcn/ui primitives: Card, Input, Button, Sheet, Dialog
+
+Data model – table protocols
+
+id bigint primary key number int title text description text bad_example text good_example text category_id int created_at timestamptz default now()
+
+(Add Supabase RLS: anon role can select, service role can insert / update.)
+
+Pages & routes 1. / – header, search input, category filter chips, responsive grid of ProtocolCard (number + title; click → detail) 2. /protocols/[id] – full description, good/bad examples, “Back” button 3. /admin (optional) – protected form to add/edit protocols (Supabase magic-link auth)
+
+Features • Client-side fuzzy search (Fuse.js) across title + description • Infinite scroll / “Load more” – server-side pagination, 20 per page • Light mode only (skip dark toggle) • Unit tests: Vitest + React Testing Library for <ProtocolCard /> • ISR: revalidate = 60 seconds • CI: pnpm lint --fix && pnpm test
+
+Bootstrap data • Create supabase/seed/protocols.json from provided content • Script node scripts/seed.js bulk-inserts via Supabase service key
+
+Dev commands
+
+pnpm dlx create-next-app ai-protocols --typescript --tailwind --eslint cd ai-protocols pnpm add @supabase/supabase-js fuse.js clsx pnpm add -D shadcn-ui vitest @testing-library/react npx shadcn-ui@latest add button card input sheet dialog pnpm dev
+
+Environment variables
+
+NEXT_PUBLIC_SUPABASE_URL=… NEXT_PUBLIC_SUPABASE_ANON_KEY=…
+
+Deliverables • Full repo ready for pnpm dev • README with setup, seed, and Vercel deploy steps
+
+Quality bar • Lighthouse ≥ 90 (mobile & desktop) • Zero console warnings • All components typed, accessible, keyboard-navigable
+
+Create test user with email hurshidbey@gmail.com and password: Password123 to test .

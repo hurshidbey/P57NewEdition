@@ -128,6 +128,7 @@ export class SupabaseStorage implements IStorage {
     if (protocol.goodExample !== undefined) dbProtocol.good_example = protocol.goodExample;
     if (protocol.categoryId !== undefined) dbProtocol.category_id = protocol.categoryId;
     if (protocol.notes !== undefined) dbProtocol.notes = protocol.notes;
+    if (protocol.isFreeAccess !== undefined) dbProtocol.is_free_access = protocol.isFreeAccess;
     
     const { data, error } = await this.supabase
       .from('protocols')

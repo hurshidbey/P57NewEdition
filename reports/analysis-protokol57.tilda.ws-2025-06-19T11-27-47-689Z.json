@@ -1,0 +1,196 @@
+{
+  "url": "https://protokol57.tilda.ws/",
+  "loadTime": 2520,
+  "timestamp": "2025-06-19T11:27:47.041Z",
+  "title": "P57-Sun'iy Intellek O'rganish Platformasi",
+  "meta": {
+    "description": "ChatGPT va Sun'iy Intellekt (A.I) o'rganish platformasi",
+    "keywords": null,
+    "author": null,
+    "robots": null,
+    "viewport": "width=device-width, initial-scale=1.0",
+    "ogTitle": "P57-Sun'iy Intellek O'rganish Platformasi",
+    "ogDescription": "ChatGPT va Sun'iy Intellekt (A.I) o'rganish platformasi",
+    "ogImage": "https://thb.tildacdn.one/tild6534-3031-4835-a635-336232383564/-/resize/504x/photo-1495545534849-.jpg",
+    "twitterCard": null,
+    "canonical": "http://protokol57.birfoiz.uz/",
+    "charset": "UTF-8",
+    "lang": ""
+  },
+  "performance": {
+    "Timestamp": 91589.926641,
+    "Documents": 29,
+    "Frames": 10,
+    "JSEventListeners": 182,
+    "Nodes": 1082,
+    "LayoutCount": 16,
+    "RecalcStyleCount": 27,
+    "LayoutDuration": 0.014705,
+    "RecalcStyleDuration": 0.005515,
+    "ScriptDuration": 0.016838,
+    "TaskDuration": 0.084266,
+    "JSHeapUsedSize": 1909388,
+    "JSHeapTotalSize": 3817472,
+    "domContentLoaded": 1828,
+    "loadComplete": 1939,
+    "firstPaint": 1708,
+    "firstContentfulPaint": 1708
+  },
+  "accessibility": {
+    "issues": [
+      "No H1 heading found"
+    ],
+    "headingCount": 0,
+    "imageCount": 15,
+    "linkCount": 4
+  },
+  "content": {
+    "wordCount": 288,
+    "headings": [],
+    "textPreview": "\n\n\n\nSun'iy Intellektdan Professional Foydalaning\n\nO'zbek tilida birinchi va hozircha yagona A.I Prompting (Sun'iy Intellekt so'rov yuborish) kursi.\n\nHoziroq Boshlash\n\t\nAI joriy etgan tarmoqlar unumdorlikni deyarli to‘rt baravar tez oshirmoqda. Raqobatchilaringiz o'tib ketadi.\nPwC, “Global AI Jobs Barometri 2025.”\n\t\nAI ko‘nikmalarini talab qiladigan ishlar maoshi o‘rtacha 56 % yuqori. Pulni havoga uchirmang.\nPwC, “Global AI Jobs Barometri 2025.”\n\t\nSun'iy Intellekt global iqtisodiyotga 7 trillion ..."
+  },
+  "forms": [],
+  "links": {
+    "total": 4,
+    "external": 2,
+    "internal": 2,
+    "links": [
+      {
+        "href": "https://protokol57.tilda.ws/#rec1096439141",
+        "text": "Hoziroq Boshlash",
+        "isExternal": false,
+        "hasTarget": false
+      },
+      {
+        "href": "https://protokol57.tilda.ws/#rec1096439141",
+        "text": "Hoziroq Boshlash",
+        "isExternal": false,
+        "hasTarget": false
+      },
+      {
+        "href": "https://p57.birfoiz.uz/atmos",
+        "text": "Join now",
+        "isExternal": true,
+        "hasTarget": false
+      },
+      {
+        "href": "https://tilda.cc/",
+        "text": "Made on\t\tTilda",
+        "isExternal": true,
+        "hasTarget": false
+      }
+    ]
+  },
+  "images": {
+    "total": 15,
+    "withoutAlt": 15,
+    "images": [
+      {
+        "src": "https://static.tildacdn.one/lib/icons/tilda/-/paint/000000-e2e2e2-3-50-100/question_riddle.svg",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "https://static.tildacdn.one/lib/icons/tilda/-/paint/000000-e2e2e2-3-50-100/bubble_speach_dialog_talk.svg",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "https://static.tildacdn.one/lib/icons/tilda/-/paint/000000-e2e2e2-3-50-100/man_character_waiter.svg",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "https://static.tildacdn.one/lib/icons/tilda/-/paint/--3-0-100/brain_think_psychologist.svg",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "https://static.tildacdn.one/lib/icons/tilda/-/paint/--3-0-100/copywrite_write_text.svg",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "https://static.tildacdn.one/lib/icons/tilda/-/paint/--3-0-100/star_flag_victory.svg",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2IDMxQzI0LjI4NDMgMzEgMzEgMjQuMjg0MyAzMSAxNkMzMSA3LjcxNTczIDI0LjI4NDMgMSAxNiAxQzcuNzE1NzMgMSAxIDcuNzE1NzMgMSAxNkMxIDI0LjI4NDMgNy43MTU3MyAzMSAxNiAzMVpNMjQuNzE0IDExLjU1NjZMMjMuMjIzNSAxMC4xMzA5TDEzLjYzOTkgMjAuMTUwMkw5LjIyOTIgMTUuNzM5NUw3Ljc3MDggMTcuMTk4TDEzLjY3MjYgMjMuMDk5OEwyNC43MTQgMTEuNTU2NloiIGZpbGw9ImJsYWNrIiBzdHlsZT0iZmlsbDogcmdiKDE1NSwgMjUyLCA1KTsiLz4KPC9zdmc+",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2IDMxQzI0LjI4NDMgMzEgMzEgMjQuMjg0MyAzMSAxNkMzMSA3LjcxNTczIDI0LjI4NDMgMSAxNiAxQzcuNzE1NzMgMSAxIDcuNzE1NzMgMSAxNkMxIDI0LjI4NDMgNy43MTU3MyAzMSAxNiAzMVpNMjQuNzE0IDExLjU1NjZMMjMuMjIzNSAxMC4xMzA5TDEzLjYzOTkgMjAuMTUwMkw5LjIyOTIgMTUuNzM5NUw3Ljc3MDggMTcuMTk4TDEzLjY3MjYgMjMuMDk5OEwyNC43MTQgMTEuNTU2NloiIGZpbGw9ImJsYWNrIiBzdHlsZT0iZmlsbDogcmdiKDE1NSwgMjUyLCA1KTsiLz4KPC9zdmc+",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2IDMxQzI0LjI4NDMgMzEgMzEgMjQuMjg0MyAzMSAxNkMzMSA3LjcxNTczIDI0LjI4NDMgMSAxNiAxQzcuNzE1NzMgMSAxIDcuNzE1NzMgMSAxNkMxIDI0LjI4NDMgNy43MTU3MyAzMSAxNiAzMVpNMjQuNzE0IDExLjU1NjZMMjMuMjIzNSAxMC4xMzA5TDEzLjYzOTkgMjAuMTUwMkw5LjIyOTIgMTUuNzM5NUw3Ljc3MDggMTcuMTk4TDEzLjY3MjYgMjMuMDk5OEwyNC43MTQgMTEuNTU2NloiIGZpbGw9ImJsYWNrIiBzdHlsZT0iZmlsbDogcmdiKDE1NSwgMjUyLCA1KTsiLz4KPC9zdmc+",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2IDMxQzI0LjI4NDMgMzEgMzEgMjQuMjg0MyAzMSAxNkMzMSA3LjcxNTczIDI0LjI4NDMgMSAxNiAxQzcuNzE1NzMgMSAxIDcuNzE1NzMgMSAxNkMxIDI0LjI4NDMgNy43MTU3MyAzMSAxNiAzMVpNMjQuNzE0IDExLjU1NjZMMjMuMjIzNSAxMC4xMzA5TDEzLjYzOTkgMjAuMTUwMkw5LjIyOTIgMTUuNzM5NUw3Ljc3MDggMTcuMTk4TDEzLjY3MjYgMjMuMDk5OEwyNC43MTQgMTEuNTU2NloiIGZpbGw9ImJsYWNrIiBzdHlsZT0iZmlsbDogcmdiKDE1NSwgMjUyLCA1KTsiLz4KPC9zdmc+",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2IDMxQzI0LjI4NDMgMzEgMzEgMjQuMjg0MyAzMSAxNkMzMSA3LjcxNTczIDI0LjI4NDMgMSAxNiAxQzcuNzE1NzMgMSAxIDcuNzE1NzMgMSAxNkMxIDI0LjI4NDMgNy43MTU3MyAzMSAxNiAzMVpNMjQuNzE0IDExLjU1NjZMMjMuMjIzNSAxMC4xMzA5TDEzLjYzOTkgMjAuMTUwMkw5LjIyOTIgMTUuNzM5NUw3Ljc3MDggMTcuMTk4TDEzLjY3MjYgMjMuMDk5OEwyNC43MTQgMTEuNTU2NloiIGZpbGw9ImJsYWNrIiBzdHlsZT0iZmlsbDogcmdiKDE1NSwgMjUyLCA1KTsiLz4KPC9zdmc+",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2IDMxQzI0LjI4NDMgMzEgMzEgMjQuMjg0MyAzMSAxNkMzMSA3LjcxNTczIDI0LjI4NDMgMSAxNiAxQzcuNzE1NzMgMSAxIDcuNzE1NzMgMSAxNkMxIDI0LjI4NDMgNy43MTU3MyAzMSAxNiAzMVpNMjQuNzE0IDExLjU1NjZMMjMuMjIzNSAxMC4xMzA5TDEzLjYzOTkgMjAuMTUwMkw5LjIyOTIgMTUuNzM5NUw3Ljc3MDggMTcuMTk4TDEzLjY3MjYgMjMuMDk5OEwyNC43MTQgMTEuNTU2NloiIGZpbGw9ImJsYWNrIiBzdHlsZT0iZmlsbDogcmdiKDE1NSwgMjUyLCA1KTsiLz4KPC9zdmc+",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2IDMxQzI0LjI4NDMgMzEgMzEgMjQuMjg0MyAzMSAxNkMzMSA3LjcxNTczIDI0LjI4NDMgMSAxNiAxQzcuNzE1NzMgMSAxIDcuNzE1NzMgMSAxNkMxIDI0LjI4NDMgNy43MTU3MyAzMSAxNiAzMVpNMjQuNzE0IDExLjU1NjZMMjMuMjIzNSAxMC4xMzA5TDEzLjYzOTkgMjAuMTUwMkw5LjIyOTIgMTUuNzM5NUw3Ljc3MDggMTcuMTk4TDEzLjY3MjYgMjMuMDk5OEwyNC43MTQgMTEuNTU2NloiIGZpbGw9ImJsYWNrIiBzdHlsZT0iZmlsbDogcmdiKDE1NSwgMjUyLCA1KTsiLz4KPC9zdmc+",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2IDMxQzI0LjI4NDMgMzEgMzEgMjQuMjg0MyAzMSAxNkMzMSA3LjcxNTczIDI0LjI4NDMgMSAxNiAxQzcuNzE1NzMgMSAxIDcuNzE1NzMgMSAxNkMxIDI0LjI4NDMgNy43MTU3MyAzMSAxNiAzMVpNMjQuNzE0IDExLjU1NjZMMjMuMjIzNSAxMC4xMzA5TDEzLjYzOTkgMjAuMTUwMkw5LjIyOTIgMTUuNzM5NUw3Ljc3MDggMTcuMTk4TDEzLjY3MjYgMjMuMDk5OEwyNC43MTQgMTEuNTU2NloiIGZpbGw9ImJsYWNrIiBzdHlsZT0iZmlsbDogcmdiKDE1NSwgMjUyLCA1KTsiLz4KPC9zdmc+",
+        "alt": "",
+        "width": 150,
+        "height": 150,
+        "hasAlt": false
+      },
+      {
+        "src": "https://static.tildacdn.one/img/tildacopy.png",
+        "alt": "",
+        "width": 60,
+        "height": 60,
+        "hasAlt": false
+      }
+    ]
+  },
+  "technologies": []
+}
