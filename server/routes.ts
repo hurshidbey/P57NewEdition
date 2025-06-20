@@ -108,8 +108,11 @@ const setupAuth = (app: Express) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  console.log(`[routes] Starting to register API routes...`);
+  
   // Set up authentication routes
   setupAuth(app);
+  console.log(`[routes] Auth setup complete`);
   
   // Set up ATMOS payment routes
   app.use('/api', setupAtmosRoutes());
@@ -821,6 +824,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
+  console.log(`[routes] All API routes registered successfully!`);
   const httpServer = createServer(app);
+  console.log(`[routes] HTTP server created, returning...`);
   return httpServer;
 }
