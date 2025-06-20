@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-context';
+import { useProgress } from '@/hooks/use-progress';
 
 export type UserTier = 'free' | 'paid';
 

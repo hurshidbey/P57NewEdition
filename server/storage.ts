@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { users, protocols, categories, userProgress, type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress } from "@shared/schema";
+import { users, protocols, categories, userProgress, prompts, type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt } from "@shared/schema";
 import { eq, ilike, or, desc, and } from "drizzle-orm";
 
 export interface IStorage {
@@ -19,6 +19,14 @@ export interface IStorage {
   
   getUserProgress(userId: string): Promise<UserProgress[]>;
   updateProtocolProgress(userId: string, protocolId: number, score: number): Promise<UserProgress>;
+  
+  // Prompts methods
+  getPrompts(userTier: string): Promise<Prompt[]>;
+  getAllPrompts(): Promise<Prompt[]>;
+  getPrompt(id: number): Promise<Prompt | undefined>;
+  createPrompt(prompt: InsertPrompt): Promise<Prompt>;
+  updatePrompt(id: number, prompt: Partial<InsertPrompt>): Promise<Prompt | undefined>;
+  deletePrompt(id: number): Promise<boolean>;
 }
 
 // Database connection with fallback and retry logic
@@ -821,6 +829,99 @@ export class HybridStorage implements IStorage {
       lastScore: score,
       accessedProtocolsCount: 0
     };
+  }
+
+  // Prompts methods
+  async getPrompts(userTier: string): Promise<Prompt[]> {
+    if (isDatabaseConnected && db) {
+      try {
+        let whereClause;
+        if (userTier === 'free') {
+          // Free users see only public, non-premium prompts
+          whereClause = and(eq(prompts.isPublic, true), eq(prompts.isPremium, false));
+        } else {
+          // Paid users see all public prompts (premium and non-premium)
+          whereClause = eq(prompts.isPublic, true);
+        }
+        
+        return await db.select().from(prompts).where(whereClause).orderBy(desc(prompts.createdAt));
+      } catch (error) {
+        console.error("Error fetching prompts from database:", error);
+      }
+    }
+    
+    // Fallback: return empty array for now
+    return [];
+  }
+
+  async getAllPrompts(): Promise<Prompt[]> {
+    if (isDatabaseConnected && db) {
+      try {
+        return await db.select().from(prompts).orderBy(desc(prompts.createdAt));
+      } catch (error) {
+        console.error("Error fetching all prompts from database:", error);
+      }
+    }
+    
+    return [];
+  }
+
+  async getPrompt(id: number): Promise<Prompt | undefined> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.select().from(prompts).where(eq(prompts.id, id));
+        return result[0];
+      } catch (error) {
+        console.error("Error fetching prompt from database:", error);
+      }
+    }
+    
+    return undefined;
+  }
+
+  async createPrompt(prompt: InsertPrompt): Promise<Prompt> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.insert(prompts).values(prompt).returning();
+        return result[0];
+      } catch (error) {
+        console.error("Error creating prompt in database:", error);
+        throw error;
+      }
+    }
+    
+    throw new Error("Database not available for prompt creation");
+  }
+
+  async updatePrompt(id: number, prompt: Partial<InsertPrompt>): Promise<Prompt | undefined> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.update(prompts)
+          .set({ ...prompt, updatedAt: new Date() })
+          .where(eq(prompts.id, id))
+          .returning();
+        return result[0];
+      } catch (error) {
+        console.error("Error updating prompt in database:", error);
+        throw error;
+      }
+    }
+    
+    return undefined;
+  }
+
+  async deletePrompt(id: number): Promise<boolean> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.delete(prompts).where(eq(prompts.id, id)).returning();
+        return result.length > 0;
+      } catch (error) {
+        console.error("Error deleting prompt from database:", error);
+        throw error;
+      }
+    }
+    
+    return false;
   }
 }
 
