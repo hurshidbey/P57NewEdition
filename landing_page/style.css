@@ -1,4 +1,4 @@
-/* Vercel-Style Design System */
+/* Vercel-Style Design System - Updated 1734648000 */
 :root {
     /* Colors - Vercel Inspired */
     --primary-color: #000000;
@@ -95,7 +95,7 @@ main {
 }
 
 section {
-    padding: var(--space-10) 0;
+    padding: var(--space-8) 0;
 }
 
 h1, h2, h3 {
@@ -146,7 +146,7 @@ header {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-color);
-    padding: var(--space-4) 0;
+    padding: var(--space-3) 0;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -250,7 +250,7 @@ header nav a.btn:hover {
 
 /* Hero Section - Grid Layout */
 .hero {
-    padding: var(--space-12) 0;
+    padding: var(--space-8) 0;
     position: relative;
 }
 
@@ -268,25 +268,22 @@ header nav a.btn:hover {
 }
 
 .hero-content h1 {
-    font-size: clamp(var(--font-3xl), 5vw, 4rem);
-    line-height: 1.1;
-    font-weight: 800;
-    margin-bottom: var(--space-6);
-    letter-spacing: -0.04em;
-    background: linear-gradient(135deg, #000000 0%, #333333 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    max-width: 75ch;
+    font-size: clamp(var(--font-2xl), 4vw, 2.75rem);
+    line-height: 1.2;
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    max-width: 24ch;
 }
 
 .hero-content p {
-    font-size: clamp(var(--font-lg), 2vw, var(--font-2xl));
+    font-size: clamp(var(--font-base), 1.5vw, var(--font-lg));
     color: var(--text-secondary);
-    margin: 0 0 var(--space-8) 0;
+    margin: 0 0 var(--space-6) 0;
     line-height: var(--leading-relaxed);
     font-weight: 400;
-    max-width: 65ch;
+    max-width: 45ch;
 }
 
 .hero-image {
@@ -304,7 +301,7 @@ header nav a.btn:hover {
 .logo-cloud {
     background: var(--background-color);
     overflow: hidden;
-    padding: var(--space-4) 0;
+    padding: var(--space-6) 0;
 }
 
 .logo-cloud-content {
@@ -450,7 +447,7 @@ header nav a.btn:hover {
 
 /* Facts Section - Card Grid Style */
 .facts {
-    padding: var(--space-12) 0;
+    padding: var(--space-8) 0;
     background: var(--background-color);
 }
 
@@ -458,7 +455,7 @@ header nav a.btn:hover {
     position: relative;
     z-index: 10;
     max-width: 600px;
-    margin: 0 auto var(--space-12);
+    margin: 0 auto var(--space-8);
     text-align: center;
 }
 
@@ -679,8 +676,8 @@ header nav a.btn:hover {
 
 /* Solutions Section */
 .solution {
-    padding: var(--space-12) 0;
-    margin-top: var(--space-8);
+    padding: var(--space-8) 0;
+    margin-top: var(--space-6);
     border-top: 1px solid var(--border-color);
 }
 
@@ -765,14 +762,14 @@ header nav a.btn:hover {
 
 /* Pricing Section - Clean Grid Style */
 .pricing {
-    padding: var(--space-12) 0;
+    padding: var(--space-8) 0;
     background: var(--background-color);
     border-top: 1px solid var(--border-color);
 }
 
 .pricing-intro {
     text-align: center;
-    margin-bottom: var(--space-10);
+    margin-bottom: var(--space-8);
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
@@ -945,8 +942,8 @@ footer p {
     }
     
     .hero-content h1 {
-        font-size: clamp(var(--font-4xl), 6vw, 120px);
-        line-height: 0.95;
+        font-size: clamp(var(--font-2xl), 4vw, 2.75rem);
+        line-height: 1.2;
     }
     
     .hero-content p {
@@ -978,7 +975,7 @@ footer p {
     }
     
     .hero-content h1 {
-        font-size: clamp(var(--font-4xl), 6vw, 100px);
+        font-size: clamp(var(--font-2xl), 4vw, 2.75rem);
     }
     
     .hero-content p {
@@ -1007,7 +1004,7 @@ footer p {
     }
     
     .hero-content h1 {
-        font-size: clamp(var(--font-3xl), 5vw, var(--font-4xl));
+        font-size: clamp(var(--font-xl), 3vw, var(--font-2xl));
     }
     
     .logo-cloud-content {

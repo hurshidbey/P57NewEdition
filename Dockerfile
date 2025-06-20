@@ -32,6 +32,10 @@ COPY . .
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Copy assets to public directory before build
+RUN mkdir -p client/public/attached_assets
+RUN cp -r attached_assets/* client/public/attached_assets/
+
 # Build the application with embedded VITE variables
 RUN npm run build
 
