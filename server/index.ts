@@ -65,8 +65,9 @@ app.use((req, res, next) => {
 
 (async () => {
   console.log(`[server] Registering API routes...`);
+  let server;
   try {
-    const server = await registerRoutes(app);
+    server = await registerRoutes(app);
     console.log(`[server] API routes registered successfully`);
   } catch (error) {
     console.error(`[server] ERROR: Failed to register API routes:`, error);
