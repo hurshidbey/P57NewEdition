@@ -10,7 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Trash2, Edit, Plus } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Trash2, Edit, Plus, Lock, Unlock, Crown, Users } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/auth-context";
@@ -53,6 +56,15 @@ export default function Admin() {
 
   const { data: protocols } = useQuery<Protocol[]>({
     queryKey: ["/api/protocols", { limit: 1000 }],
+  });
+
+  const { data: freeStatus } = useQuery<{
+    freeCount: number;
+    maxFreeAllowed: number;
+    freeProtocols: Array<{ id: number; number: number; title: string }>;
+  }>({
+    queryKey: ["/api/admin/protocols/free-status"],
+    enabled: !!user && user.email === 'hurshidbey@gmail.com'
   });
 
   const { data: categories } = useQuery<Category[]>({
@@ -139,6 +151,22 @@ export default function Admin() {
     },
   });
 
+  const toggleFreeMutation = useMutation({
+    mutationFn: async ({ id, isFreeAccess }: { id: number; isFreeAccess: boolean }) => {
+      const response = await apiRequest("PATCH", `/api/admin/protocols/${id}/toggle-free`, { isFreeAccess });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/protocols"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/protocols/free-status"] });
+      toast({ title: "Protokol dostupnosti muvaffaqiyatli o'zgartirildi" });
+    },
+    onError: (error: any) => {
+      const message = error.message || "Protokol dostupnostini o'zgartirishda xatolik";
+      toast({ title: message, variant: "destructive" });
+    },
+  });
+
   const onSubmit = (data: FormData) => {
     if (editingProtocol) {
       updateMutation.mutate({ id: editingProtocol.id, data });
@@ -170,6 +198,11 @@ export default function Admin() {
     form.reset();
   };
 
+  const handleToggleFree = (protocol: Protocol) => {
+    const newValue = !protocol.isFreeAccess;
+    toggleFreeMutation.mutate({ id: protocol.id, isFreeAccess: newValue });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <AppHeader />
@@ -179,6 +212,51 @@ export default function Admin() {
           <h1 className="text-4xl font-black text-foreground mb-2">Boshqaruv paneli</h1>
           <p className="text-muted-foreground">Protokollar va kategoriyalarni boshqaring</p>
         </div>
+
+        {/* Free Protocols Management */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3">
+              <Crown className="w-5 h-5 text-accent" />
+              Bepul protokollar boshqaruvi
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-semibold">Hozirgi holat</h3>
+                  <p className="text-sm text-muted-foreground">Bepul foydalanuvchilar uchun ochiq protokollar</p>
+                </div>
+                <Badge variant="outline" className="text-lg px-3 py-1">
+                  {freeStatus?.freeCount || 0} / 3
+                </Badge>
+              </div>
+              
+              {freeStatus?.freeCount === 3 && (
+                <Alert className="mb-4">
+                  <AlertDescription>
+                    Maksimal bepul protokollar soni (3) ga yetdi. Yangi protokolni bepul qilish uchun avval boshqa protokolni premium qiling.
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              {freeStatus?.freeProtocols && freeStatus.freeProtocols.length > 0 && (
+                <div className="mb-4">
+                  <h4 className="font-medium mb-2">Hozirgi bepul protokollar:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {freeStatus.freeProtocols.map((protocol: any) => (
+                      <Badge key={protocol.id} variant="secondary" className="flex items-center gap-1">
+                        <Unlock className="w-3 h-3" />
+                        #{protocol.number} - {protocol.title.slice(0, 30)}...
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Protocol Form */}
@@ -420,7 +498,16 @@ export default function Admin() {
           {/* Protocols List */}
           <Card>
             <CardHeader>
-              <CardTitle>Mavjud protokollar</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Mavjud protokollar</CardTitle>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Users className="w-4 h-4" />
+                  <span>Bepul: {protocols?.filter(p => p.isFreeAccess).length || 0}</span>
+                  <span>•</span>
+                  <Crown className="w-4 h-4" />
+                  <span>Premium: {protocols?.filter(p => !p.isFreeAccess).length || 0}</span>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="h-[600px] overflow-hidden">
               <div className="space-y-4 h-full overflow-y-auto pr-2">
@@ -432,6 +519,16 @@ export default function Admin() {
                           {protocol.number}
                         </span>
                         <h3 className="font-semibold truncate">{protocol.title}</h3>
+                        
+                        {/* Free/Paid Badge */}
+                        <Badge variant={protocol.isFreeAccess ? "default" : "secondary"} className="flex items-center gap-1">
+                          {protocol.isFreeAccess ? (
+                            <><Unlock className="w-3 h-3" /> Bepul</>
+                          ) : (
+                            <><Lock className="w-3 h-3" /> Premium</>
+                          )}
+                        </Badge>
+                        
                         {/* Difficulty Level Badge */}
                         <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
                           protocol.number >= 1 && protocol.number <= 20
@@ -456,6 +553,22 @@ export default function Admin() {
                         {protocol.difficultyLevel && <span className="bg-muted px-2 py-1 rounded">Daraja: {protocol.difficultyLevel}</span>}
                         {protocol.levelOrder && <span className="bg-muted px-2 py-1 rounded">Tartib: {protocol.levelOrder}</span>}
                         {protocol.notes && <span className="bg-muted px-2 py-1 rounded">Eslatma: {protocol.notes.substring(0, 20)}...</span>}
+                      </div>
+                      
+                      {/* Free Access Toggle */}
+                      <div className="flex items-center gap-2 mt-3 pt-2 border-t">
+                        <label htmlFor={`free-toggle-${protocol.id}`} className="text-sm font-medium">
+                          Bepul kirish:
+                        </label>
+                        <Switch
+                          id={`free-toggle-${protocol.id}`}
+                          checked={protocol.isFreeAccess}
+                          onCheckedChange={() => handleToggleFree(protocol)}
+                          disabled={toggleFreeMutation.isPending || (!protocol.isFreeAccess && (freeStatus?.freeCount || 0) >= 3)}
+                        />
+                        {!protocol.isFreeAccess && (freeStatus?.freeCount || 0) >= 3 && (
+                          <span className="text-xs text-orange-600">Limit: 3/3</span>
+                        )}
                       </div>
                     </div>
                     <div className="flex flex-col space-y-2 flex-shrink-0">

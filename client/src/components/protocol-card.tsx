@@ -1,9 +1,10 @@
 import { Protocol } from "@shared/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Lock, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { useProgress } from "@/hooks/use-progress";
+import { useProtocolAccess } from "@/hooks/use-user-tier";
 
 interface ProtocolCardProps {
   protocol: Protocol;
@@ -11,6 +12,7 @@ interface ProtocolCardProps {
 
 export default function ProtocolCard({ protocol }: ProtocolCardProps) {
   const { isProtocolCompleted, getProtocolProgress, markProtocolCompleted } = useProgress();
+  const { canAccess, isLocked, requiresUpgrade } = useProtocolAccess(protocol.id, protocol.isFreeAccess);
   const isCompleted = isProtocolCompleted(protocol.id);
   const progress = getProtocolProgress(protocol.id);
 
@@ -20,25 +22,37 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
     markProtocolCompleted(protocol.id, 70);
   };
   
+  const getCardStyles = () => {
+    if (isLocked) {
+      return 'border-gray-300 bg-gray-50/50 hover:border-gray-400 hover:shadow-md dark:border-gray-600 dark:bg-gray-800/30';
+    }
+    if (isCompleted) {
+      return 'border-green-400 hover:border-green-500 shadow-sm dark:border-green-500/50 dark:hover:border-green-400';
+    }
+    return 'border-border hover:border-accent hover:shadow-lg';
+  };
+
   return (
-    <Card className={`bg-card border-2 transition-all duration-200 group h-full ${
-      isCompleted 
-        ? 'border-green-400 hover:border-green-500 shadow-sm dark:border-green-500/50 dark:hover:border-green-400' 
-        : 'border-border hover:border-accent hover:shadow-lg'
-    }`}>
+    <Card className={`bg-card border-2 transition-all duration-200 group h-full ${getCardStyles()}`}>
       <CardContent className="p-6 relative">
-        {/* Progress indicator */}
-        {isCompleted && (
-          <div className="absolute top-4 right-4">
+        {/* Lock or Progress indicator */}
+        <div className="absolute top-4 right-4">
+          {isLocked ? (
+            <div className="flex items-center gap-1">
+              <Lock className="w-5 h-5 text-gray-500" />
+            </div>
+          ) : isCompleted ? (
             <CheckCircle className="w-5 h-5 text-green-600" />
-          </div>
-        )}
+          ) : null}
+        </div>
         
-        <Link href={`/protocols/${protocol.id}`} className="block">
+        <Link href={isLocked ? '#' : `/protocols/${protocol.id}`} className={`block ${isLocked ? 'pointer-events-none' : ''}`}>
           {/* Protocol Number */}
           <div className="mb-4">
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center font-black text-lg shadow-sm ${
-              isCompleted 
+              isLocked
+                ? 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+                : isCompleted 
                 ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' 
                 : 'bg-accent text-accent-foreground'
             }`}>
@@ -63,42 +77,71 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
           )}
           
           {/* Title - 8pt grid spacing */}
-          <h3 className="text-lg font-bold text-foreground mb-3 leading-tight pr-6 line-height-[1.4]">
+          <h3 className={`text-lg font-bold mb-3 leading-tight pr-6 line-height-[1.4] ${
+            isLocked ? 'text-gray-500 dark:text-gray-400' : 'text-foreground'
+          }`}>
             {protocol.title}
           </h3>
           
           {/* Problem Statement - 8pt grid spacing */}
-          <p className="text-muted-foreground leading-relaxed line-clamp-3 mb-4 text-sm line-height-[1.5]">
-            {protocol.problemStatement || protocol.description}
+          <p className={`leading-relaxed line-clamp-3 mb-4 text-sm line-height-[1.5] ${
+            isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-muted-foreground'
+          }`}>
+            {isLocked ? 'Premium protokol - to\'liq kirish uchun obuna bo\'ling' : (protocol.problemStatement || protocol.description)}
           </p>
         </Link>
         
         {/* Action buttons - 8pt grid spacing */}
         <div className="flex items-center gap-2 pt-2">
-          {!isCompleted ? (
-            <Button 
-              onClick={handleMarkCompleted}
-              size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-600 px-3 py-1.5 h-7 text-xs font-medium"
-            >
-              O'rgandim
-            </Button>
+          {isLocked ? (
+            <>
+              <Link href="/atmos-payment" className="flex-1">
+                <Button 
+                  size="sm"
+                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground px-3 py-1.5 h-7 text-xs font-medium"
+                >
+                  Premium uchun
+                  <ArrowRight className="w-3 h-3 ml-1" />
+                </Button>
+              </Link>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                disabled 
+                className="px-3 py-1.5 h-7 text-xs font-medium opacity-50"
+              >
+                <Lock className="w-3 h-3 mr-1" />
+                Yopiq
+              </Button>
+            </>
           ) : (
-            <Button 
-              onClick={handleMarkCompleted}
-              size="sm"
-              variant="outline"
-              className="border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-400 dark:hover:bg-green-900/20 px-3 py-1.5 h-7 text-xs font-medium"
-            >
-              Qayta mashq qilish
-            </Button>
+            <>
+              {!isCompleted ? (
+                <Button 
+                  onClick={handleMarkCompleted}
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-600 px-3 py-1.5 h-7 text-xs font-medium"
+                >
+                  O'rgandim
+                </Button>
+              ) : (
+                <Button 
+                  onClick={handleMarkCompleted}
+                  size="sm"
+                  variant="outline"
+                  className="border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-400 dark:hover:bg-green-900/20 px-3 py-1.5 h-7 text-xs font-medium"
+                >
+                  Qayta mashq qilish
+                </Button>
+              )}
+              
+              <Link href={`/protocols/${protocol.id}`}>
+                <Button size="sm" variant="outline" className="px-3 py-1.5 h-7 text-xs font-medium">
+                  Ko'rish
+                </Button>
+              </Link>
+            </>
           )}
-          
-          <Link href={`/protocols/${protocol.id}`}>
-            <Button size="sm" variant="outline" className="px-3 py-1.5 h-7 text-xs font-medium">
-              Ko'rish
-            </Button>
-          </Link>
         </div>
         
       </CardContent>

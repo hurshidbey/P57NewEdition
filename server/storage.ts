@@ -338,9 +338,9 @@ export class HybridStorage implements IStorage {
 
     // Initialize protocols with all 57 protocols from the attached file
     const allProtocols = [
-      { id: 1, number: 1, title: "So'z miqdorini belgilang va hajmni nazorat qiling", description: "Aniq so'z soni belgilash javoblar hajmini boshqaradi. Model ko'rsatilgan miqdorga qat'iy rioya qilishga intiladi. Qisqa javoblar uchun kam, chuqur tahlil uchun ko'proq so'z talab qiling. Muhim narsalarni o'sha \"chegaraga\" sig'diradi va ortiqcha narsalar bilan boshingizni og'ritmaydi. Vaqtiz tejaladi.", badExample: "Sedana haqida menga ko'proq ma'lumot ber.", goodExample: "Sedana haqida 350 ta so'z qatnashgan maqola tayyorlab ber.", categoryId: 4, notes: null, createdAt: new Date() },
-      { id: 2, number: 2, title: "Raqamlangan ro'yxat talab qiling. Oson bo'ladi", description: "Raqamlangan ro'yxatlar ma'lumotni oson o'qish va eslab qolish imkonini beradi. Sub (qo'shimcha kichik) bandlar qo'shish strukturani yanada mustahkamlaydi. Murakkab tushunchalarni aniq qadamlarga ajratadi. O'quvchiga har bir nuqtani ketma-ket o'rganish imkonini beradi.", badExample: "Marketing strategiyasini tushuntir", goodExample: "Marketing strategiyasini 7 ta alohida band shaklida taqdim et, har bir band a, b, c kabi kichik bandlarga bo'linsin.", categoryId: 4, notes: null, createdAt: new Date() },
-      { id: 3, number: 3, title: "Noaniq iboralarni taqiqlang. Kerak emas!", description: "Noaniq iboralar javoblarni sust va ishonchsiz qiladi. Ularni taqiqlash modelni aniq pozitsiya egallashiga majbur qiladi. Natijada keskin, aniq va foydalanish uchun qulay ma'lumot olasiz. Munozarali mavzularda ham aniq fikr bildiriladi.", badExample: "Bu masala bo'yicha fikringni bilsam bo'ladimi?", goodExample: "Bu masala bo'yicha fikringni 200 ta so'z bilan xulosala, \"balki\", \"ehtimol\" kabi noaniq jumlalarni qo'llama.", categoryId: 6, notes: null, createdAt: new Date() },
+      { id: 1, number: 1, title: "So'z miqdorini belgilang va hajmni nazorat qiling", description: "Aniq so'z soni belgilash javoblar hajmini boshqaradi. Model ko'rsatilgan miqdorga qat'iy rioya qilishga intiladi. Qisqa javoblar uchun kam, chuqur tahlil uchun ko'proq so'z talab qiling. Muhim narsalarni o'sha \"chegaraga\" sig'diradi va ortiqcha narsalar bilan boshingizni og'ritmaydi. Vaqtiz tejaladi.", badExample: "Sedana haqida menga ko'proq ma'lumot ber.", goodExample: "Sedana haqida 350 ta so'z qatnashgan maqola tayyorlab ber.", categoryId: 4, notes: null, createdAt: new Date(), isFreeAccess: true },
+      { id: 2, number: 2, title: "Raqamlangan ro'yxat talab qiling. Oson bo'ladi", description: "Raqamlangan ro'yxatlar ma'lumotni oson o'qish va eslab qolish imkonini beradi. Sub (qo'shimcha kichik) bandlar qo'shish strukturani yanada mustahkamlaydi. Murakkab tushunchalarni aniq qadamlarga ajratadi. O'quvchiga har bir nuqtani ketma-ket o'rganish imkonini beradi.", badExample: "Marketing strategiyasini tushuntir", goodExample: "Marketing strategiyasini 7 ta alohida band shaklida taqdim et, har bir band a, b, c kabi kichik bandlarga bo'linsin.", categoryId: 4, notes: null, createdAt: new Date(), isFreeAccess: true },
+      { id: 3, number: 3, title: "Noaniq iboralarni taqiqlang. Kerak emas!", description: "Noaniq iboralar javoblarni sust va ishonchsiz qiladi. Ularni taqiqlash modelni aniq pozitsiya egallashiga majbur qiladi. Natijada keskin, aniq va foydalanish uchun qulay ma'lumot olasiz. Munozarali mavzularda ham aniq fikr bildiriladi.", badExample: "Bu masala bo'yicha fikringni bilsam bo'ladimi?", goodExample: "Bu masala bo'yicha fikringni 200 ta so'z bilan xulosala, \"balki\", \"ehtimol\" kabi noaniq jumlalarni qo'llama.", categoryId: 6, notes: null, createdAt: new Date(), isFreeAccess: true },
       { id: 4, number: 4, title: "Mutaxassislik darajasini belgilang!", description: "Fikr murakkabligi auditoriyaga mos bo'lishi zarur. Daraja ko'rsatilsa, model termin va misollarni shunga moslaydi. Haddan ortiq ilmiy tildan qochish yoki aksincha chuqurroq kirish shu yerda hal qilinadi. O'quvchi o'z saviyasida tushunadi, vaqtini tejaydi.", badExample: "\"Yaxshi tushuntir\" yoki \"sodda qilib ayt\"", goodExample: "\"Iqtsodiyot doktoranti sifatida batafsil tahlil qil\" yoki \"9-sinflik o'quvchiga tushunarli qilib yoz\"", categoryId: 1, notes: null, createdAt: new Date() },
       { id: 5, number: 5, title: "Vaqt chegarasini o'rnating!", description: "Vaqt chegarasi modelga tezkor, lo'nda va eng muhim faktlarga asoslangan javobni berishga undaydi. Ortiqcha batafsil ma'lumotlar qisqaradi. Eng asosiy nuqtalar aniq va tez yetkaziladi. Vaqt chegarasi qo'yilganda, model \"muhim ma'lumotlarni\" ajratadi.", badExample: "Suv filtrlari qanday ishlaydi? Iltimos, aytib yuboring.", goodExample: "Suv filtrlari qanday ishlaydi? Huddi 30 sekund vaqting bordek javob ber.", categoryId: 1, notes: null, createdAt: new Date() },
       { id: 6, number: 6, title: "Dalil turlarini talab qiling!", description: "Aniq dalil turlari ko'rsatilganda, model shunchaki fikr emas, asoslangan ma'lumot beradi. Ilmiy maqolalar, statistika, ekspert fikrlari – bular javobga ishonchni oshiradi. Har bir fikr ortida mustahkam asos paydo bo'ladi. Sifatsiz ma'lumotlar chiqarib tashlanadi.", badExample: "Dalillar keltiring.", goodExample: "Har bir fikrni bitta tekshirilgan ilmiy tadqiqot va bitta real hayotiy misol bilan asosla.", categoryId: 5, notes: null, createdAt: new Date() },
@@ -364,6 +364,10 @@ export class HybridStorage implements IStorage {
     ];
 
     allProtocols.forEach((protocol: any) => {
+      // Add isFreeAccess field if not present (default to false except first 3)
+      if (protocol.isFreeAccess === undefined) {
+        protocol.isFreeAccess = protocol.id <= 3;
+      }
       this.memoryProtocols.set(protocol.id, protocol);
       this.currentProtocolId = Math.max(this.currentProtocolId, protocol.id + 1);
     });
@@ -508,7 +512,12 @@ export class HybridStorage implements IStorage {
     }
     
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      tier: 'free', // Default tier for new users
+      paidAt: null
+    };
     this.memoryUsers.set(id, user);
     return user;
   }
@@ -607,7 +616,8 @@ export class HybridStorage implements IStorage {
       whyExplanation: null,
       solutionApproach: null,
       difficultyLevel: null,
-      levelOrder: null
+      levelOrder: null,
+      isFreeAccess: protocol.isFreeAccess ?? false
     };
     this.memoryProtocols.set(id, newProtocol);
     return newProtocol;

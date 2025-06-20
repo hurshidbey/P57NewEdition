@@ -146,6 +146,15 @@ export default function AtmosPayment() {
           message: 'To\'lov muvaffaqiyatli amalga oshirildi!'
         });
         
+        // Update user tier in localStorage for immediate effect
+        // In a real implementation, this would be handled by the backend
+        const user = JSON.parse(localStorage.getItem('protokol57_user') || '{}');
+        if (user) {
+          user.tier = 'paid';
+          user.paidAt = new Date().toISOString();
+          localStorage.setItem('protokol57_user', JSON.stringify(user));
+        }
+        
         // Redirect to home after 3 seconds
         setTimeout(() => {
           setLocation('/');

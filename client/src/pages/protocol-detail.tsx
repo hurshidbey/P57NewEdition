@@ -2,12 +2,14 @@ import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Protocol } from "@shared/types";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CheckCircle, XCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, CheckCircle, XCircle, Lock, Crown, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import PromptPractice from "@/components/prompt-practice";
 import { useProgress } from "@/hooks/use-progress";
+import { useProtocolAccess } from "@/hooks/use-user-tier";
 
 // Helper function to parse the combined description into separate components
 function parseProtocolDescription(description: string) {
@@ -74,6 +76,13 @@ export default function ProtocolDetail() {
     enabled: !!id,
   });
 
+  // Access control
+  const protocolId = id ? parseInt(id) : 0;
+  const { canAccess, isLocked, requiresUpgrade } = useProtocolAccess(
+    protocolId, 
+    protocol?.isFreeAccess || false
+  );
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -136,6 +145,80 @@ export default function ProtocolDetail() {
             </div>
           </section>
         </main>
+      </div>
+    );
+  }
+
+  // Show access denied page if user doesn't have access
+  if (protocol && isLocked) {
+    return (
+      <div className="min-h-screen bg-background">
+        <AppHeader />
+        <main className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8">
+          <section className="pt-16 pb-16">
+            <div className="text-center max-w-2xl mx-auto">
+              <div className="mb-8">
+                <Lock className="w-20 h-20 text-gray-400 mx-auto mb-6" />
+                <h1 className="text-4xl font-black text-foreground mb-4">
+                  Premium Protokol
+                </h1>
+                <p className="text-xl text-muted-foreground mb-6">
+                  Bu protokol Premium foydalanuvchilar uchun mo'ljallangan
+                </p>
+              </div>
+              
+              {/* Protocol Preview Card */}
+              <Card className="mb-8 opacity-75">
+                <CardContent className="p-8">
+                  <div className="flex items-start gap-6 mb-6">
+                    <div className="w-16 h-16 bg-gray-200 text-gray-500 rounded-xl flex items-center justify-center font-black text-xl">
+                      {protocol.number.toString().padStart(2, '0')}
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h2 className="text-2xl font-bold text-gray-600 mb-2">
+                        {protocol.title}
+                      </h2>
+                      <p className="text-gray-500">
+                        Protokol №{protocol.number}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-100 rounded-lg p-4 text-gray-500">
+                    <p>Bu protokolni ko'rish uchun Premium obunaga ega bo'lishingiz kerak...</p>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Upgrade CTA */}
+              <div className="space-y-4">
+                <Link href="/atmos-payment">
+                  <Button 
+                    size="lg"
+                    className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-4 text-lg font-semibold"
+                  >
+                    <Crown className="w-5 h-5 mr-2" />
+                    Premium olish (5,000 UZS)
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <div className="text-sm text-muted-foreground">
+                  Barcha 57 protokolga cheksiz kirish + AI baholash
+                </div>
+              </div>
+              
+              {/* Back button */}
+              <div className="mt-8">
+                <Link href="/">
+                  <Button variant="outline">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Protokollarga qaytish
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </section>
+        </main>
+        <AppFooter />
       </div>
     );
   }
