@@ -43,6 +43,19 @@ export const userProgress = pgTable("user_progress", {
   completedAt: timestamp("completed_at").defaultNow(),
   practiceCount: integer("practice_count").default(1),
   lastScore: integer("last_score"),
+  accessedProtocolsCount: integer("accessed_protocols_count").default(0),
+});
+
+export const prompts = pgTable("prompts", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  description: text("description"),
+  category: text("category").notNull(),
+  isPremium: boolean("is_premium").notNull().default(false),
+  isPublic: boolean("is_public").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -64,6 +77,12 @@ export const insertUserProgressSchema = createInsertSchema(userProgress).omit({
   completedAt: true,
 });
 
+export const insertPromptSchema = createInsertSchema(prompts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Protocol = typeof protocols.$inferSelect;
@@ -72,3 +91,5 @@ export type Category = typeof categories.$inferSelect;
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type UserProgress = typeof userProgress.$inferSelect;
 export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
+export type Prompt = typeof prompts.$inferSelect;
+export type InsertPrompt = z.infer<typeof insertPromptSchema>;
