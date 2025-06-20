@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
 import { useUserTier } from "@/hooks/use-user-tier";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { Crown, Star } from "lucide-react";
+import { Crown, Star, FileText } from "lucide-react";
 
 export default function AppHeader() {
   const { user, signOut, isAuthenticated } = useAuth();
@@ -53,6 +53,19 @@ export default function AppHeader() {
                 className="text-sm font-medium text-muted-foreground hover:text-foreground"
               >
                 O'rganish
+              </Button>
+            </Link>
+            
+            <Link href="/premium-prompts">
+              <Button 
+                variant="ghost" 
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
+                <FileText className="w-4 h-4 mr-1" />
+                Promptlar
+                {tier === 'free' && (
+                  <Crown className="w-3 h-3 ml-1 text-orange-600" />
+                )}
               </Button>
             </Link>
             
