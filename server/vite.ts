@@ -107,8 +107,13 @@ export function serveStatic(app: Express) {
   }));
   console.log(`[serveStatic] Express static middleware configured for: ${distPath}`);
 
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (req, res, next) => {
+  // fall through to index.html if the file doesn't exist, but NOT for API routes
+  app.use((req, res, next) => {
+    // Skip this catch-all for API routes
+    if (req.originalUrl.startsWith('/api/')) {
+      return next();
+    }
+    
     const indexPath = path.resolve(distPath, "index.html");
     console.log(`[serveStatic] Fallback route hit for: ${req.originalUrl}`);
     
