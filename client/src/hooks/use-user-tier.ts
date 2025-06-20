@@ -8,6 +8,8 @@ interface UserTierData {
   tier: UserTier;
   loading: boolean;
   canAccessProtocol: (protocolId: number, isFreeAccess: boolean) => boolean;
+  getAccessedProtocolsCount: () => number;
+  canAccessNewProtocol: () => boolean;
   getTierStatus: () => {
     tier: UserTier;
     displayName: string;
@@ -18,6 +20,7 @@ interface UserTierData {
 
 export function useUserTier(): UserTierData {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { getProgressData } = useProgress();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,13 +32,36 @@ export function useUserTier(): UserTierData {
   // Get tier directly from auth context
   const tier = (user?.tier as UserTier) || 'free';
 
+  // Get count of accessed protocols for free tier limits
+  const getAccessedProtocolsCount = (): number => {
+    if (tier === 'paid') return 0; // No limit for paid users
+    
+    const progressData = getProgressData(57); // Total protocols = 57
+    return progressData.completedProtocols.size;
+  };
+
+  // Check if free user can access a new protocol (max 3 protocols)
+  const canAccessNewProtocol = (): boolean => {
+    if (tier === 'paid') return true; // Paid users unlimited
+    
+    const accessedCount = getAccessedProtocolsCount();
+    return accessedCount < 3;
+  };
+
   const canAccessProtocol = (protocolId: number, isFreeAccess: boolean): boolean => {
     if (tier === 'paid') {
       return true; // Paid users can access all protocols
     }
     
     if (tier === 'free') {
-      return isFreeAccess; // Free users can only access free protocols
+      // For free users, check both free access AND protocol count limit
+      if (!isFreeAccess) return false; // Must be a free protocol
+      
+      const progressData = getProgressData(57);
+      const hasCompletedThisProtocol = progressData.completedProtocols.has(protocolId);
+      
+      // Can access if already completed this protocol OR if under limit
+      return hasCompletedThisProtocol || canAccessNewProtocol();
     }
     
     return false;
@@ -74,6 +100,8 @@ export function useUserTier(): UserTierData {
     tier,
     loading: loading || authLoading,
     canAccessProtocol,
+    getAccessedProtocolsCount,
+    canAccessNewProtocol,
     getTierStatus
   };
 }

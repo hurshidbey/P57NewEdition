@@ -18,6 +18,7 @@ import LandingPage from "@/pages/landing";
 import LandingSimple from "@/pages/landing-simple";
 import LandingConversion from "@/pages/landing-conversion";
 import LandingTildaNew from "@/pages/landing-tilda-new";
+import PremiumPrompts from "@/pages/premium-prompts";
 
 function AppContent() {
   const { isAuthenticated, loading, user } = useAuth();
@@ -63,6 +64,9 @@ function AppContent() {
       </Route>
       <Route path="/onboarding">
         {isAuthenticated ? <Onboarding /> : <AuthPage />}
+      </Route>
+      <Route path="/premium-prompts">
+        {isAuthenticated ? <PremiumPrompts /> : <AuthPage />}
       </Route>
       <Route path="/atmos-payment" component={AtmosPayment} />
       <Route path="/">

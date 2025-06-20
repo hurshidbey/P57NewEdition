@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useUserTier, type UserTier } from '@/hooks/use-user-tier';
 
 const STORAGE_KEY = 'protokol57_prompt_usage';
-const DAILY_LIMIT = 500;
+
+// Tier-based daily limits
+const getDailyLimit = (tier: UserTier): number => {
+  return tier === 'paid' ? Infinity : 3; // Free users: 3, Paid users: unlimited
+};
 
 interface PromptUsage {
   count: number;
@@ -10,11 +15,14 @@ interface PromptUsage {
 }
 
 export function usePromptUsage() {
+  const { tier } = useUserTier();
   const [usage, setUsage] = useState<PromptUsage>({
     count: 0,
     date: new Date().toDateString(),
     lastReset: new Date().toDateString()
   });
+
+  const dailyLimit = getDailyLimit(tier);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -62,19 +70,19 @@ export function usePromptUsage() {
   const canUsePrompt = () => {
     const today = new Date().toDateString();
     const currentCount = usage.date === today ? usage.count : 0;
-    return currentCount < DAILY_LIMIT;
+    return currentCount < dailyLimit;
   };
 
   const getRemainingUsage = () => {
     const today = new Date().toDateString();
     const currentCount = usage.date === today ? usage.count : 0;
-    return Math.max(0, DAILY_LIMIT - currentCount);
+    return dailyLimit === Infinity ? Infinity : Math.max(0, dailyLimit - currentCount);
   };
 
   const getUsagePercentage = () => {
     const today = new Date().toDateString();
     const currentCount = usage.date === today ? usage.count : 0;
-    return Math.min(100, (currentCount / DAILY_LIMIT) * 100);
+    return dailyLimit === Infinity ? 0 : Math.min(100, (currentCount / dailyLimit) * 100);
   };
 
   const resetUsage = () => {
@@ -90,11 +98,12 @@ export function usePromptUsage() {
 
   return {
     usage: usage.date === new Date().toDateString() ? usage.count : 0,
-    limit: DAILY_LIMIT,
+    limit: dailyLimit,
     canUsePrompt,
     getRemainingUsage,
     getUsagePercentage,
     incrementUsage,
-    resetUsage
+    resetUsage,
+    tier // Include tier for display purposes
   };
 }

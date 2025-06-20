@@ -9,7 +9,7 @@ import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import PromptPractice from "@/components/prompt-practice";
 import { useProgress } from "@/hooks/use-progress";
-import { useProtocolAccess } from "@/hooks/use-user-tier";
+import { useProtocolAccess, useUserTier } from "@/hooks/use-user-tier";
 
 // Helper function to parse the combined description into separate components
 function parseProtocolDescription(description: string) {
@@ -66,6 +66,7 @@ function parseProtocolDescription(description: string) {
 export default function ProtocolDetail() {
   const { id } = useParams<{ id: string }>();
   const { isProtocolCompleted, markProtocolCompleted } = useProgress();
+  const { tier, getAccessedProtocolsCount, canAccessNewProtocol } = useUserTier();
 
   const {
     data: protocol,
@@ -82,6 +83,29 @@ export default function ProtocolDetail() {
     protocolId, 
     protocol?.isFreeAccess || false
   );
+
+  // Enhanced access control for tier limits
+  const hasCompletedThis = isProtocolCompleted(protocolId);
+  const accessedCount = getAccessedProtocolsCount();
+  const canAccessNewOne = canAccessNewProtocol();
+  
+  // Show upgrade reason specific to tier limits
+  const getUpgradeReason = () => {
+    if (tier === 'paid') return '';
+    
+    if (!protocol?.isFreeAccess) {
+      return 'Bu protokol Premium foydalanuvchilar uchun';
+    }
+    
+    if (!canAccessNewOne && !hasCompletedThis) {
+      return `Siz maksimal ${accessedCount}/3 bepul protokolga kirdingiz`;
+    }
+    
+    return '';
+  };
+
+  const upgradeReason = getUpgradeReason();
+  const shouldShowUpgrade = tier === 'free' && upgradeReason && !hasCompletedThis;
 
   if (isLoading) {
     return (
@@ -189,9 +213,24 @@ export default function ProtocolDetail() {
                   <h1 className="font-inter text-3xl font-black text-foreground leading-tight mb-3">
                     {protocol.title}
                   </h1>
-                  <span className="font-inter text-base text-muted-foreground font-medium">
-                    Protokol №{protocol.number}
-                  </span>
+                  <div className="flex items-center gap-4">
+                    <span className="font-inter text-base text-muted-foreground font-medium">
+                      Protokol №{protocol.number}
+                    </span>
+                    {tier === 'free' && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                          {accessedCount}/3 protokol ishlatilgan
+                        </span>
+                        {!protocol.isFreeAccess && (
+                          <span className="text-sm bg-orange-100 text-orange-800 px-2 py-1 rounded-full flex items-center gap-1">
+                            <Crown className="w-3 h-3" />
+                            Premium
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               
@@ -234,7 +273,7 @@ export default function ProtocolDetail() {
               
               return (
                 <>
-                  <div className={`bg-card border-2 border-accent rounded-2xl p-8 space-y-8 ${isLocked ? 'filter blur-sm' : ''}`}>
+                  <div className={`bg-card border-2 border-accent rounded-2xl p-8 space-y-8 ${shouldShowUpgrade ? 'filter blur-sm' : ''}`}>
                     {parsedContent.problemStatement && (
                       <div>
                         <h2 className="font-inter text-xl font-bold text-foreground mb-4">
@@ -266,26 +305,60 @@ export default function ProtocolDetail() {
                     )}
                   </div>
                   
-                  {/* Premium Overlay for Locked Content */}
-                  {isLocked && (
+                  {/* Enhanced Premium Overlay for Locked Content */}
+                  {shouldShowUpgrade && (
                     <div className="absolute inset-0 bg-black/20 rounded-2xl flex items-center justify-center">
                       <div className="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-md text-center shadow-xl">
-                        <Lock className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-xl font-bold text-foreground mb-2">Premium Protokol</h3>
-                        <p className="text-muted-foreground mb-6">
-                          Bu protokolni to'liq ko'rish uchun Premium obunaga ega bo'lishingiz kerak
+                        {accessedCount >= 3 ? (
+                          <Lock className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+                        ) : (
+                          <Crown className="w-16 h-16 text-orange-400 mx-auto mb-4" />
+                        )}
+                        <h3 className="text-xl font-bold text-foreground mb-2">
+                          {accessedCount >= 3 ? 'Limit tugadi' : 'Premium protokol'}
+                        </h3>
+                        <p className="text-muted-foreground mb-4">
+                          {upgradeReason}
                         </p>
-                        <Link href="/atmos-payment">
+                        
+                        {tier === 'free' && (
+                          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 mb-6">
+                            <p className="text-sm text-blue-800 dark:text-blue-400">
+                              <strong>Hozirgi holat:</strong> {accessedCount}/3 bepul protokol ishlatilgan
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="space-y-3">
+                          <p className="text-sm font-medium text-foreground">Premium rejada:</p>
+                          <ul className="text-sm text-muted-foreground space-y-1">
+                            <li>• Barcha 57 protokolga kirish</li>
+                            <li>• Cheksiz AI baholash</li>
+                            <li>• Premium promptlar</li>
+                            <li>• Progress tracking</li>
+                          </ul>
+                        </div>
+
+                        <div className="flex gap-2 mt-6">
+                          <Link href="/atmos-payment" className="flex-1">
+                            <Button 
+                              size="lg"
+                              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 text-sm font-semibold w-full"
+                            >
+                              <Crown className="w-4 h-4 mr-2" />
+                              Premium olish
+                            </Button>
+                          </Link>
                           <Button 
-                            size="lg"
-                            className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 text-lg font-semibold w-full"
+                            variant="outline" 
+                            onClick={() => window.history.back()}
+                            className="px-4"
                           >
-                            <Crown className="w-5 h-5 mr-2" />
-                            Premium olish (5,000 UZS)
+                            Orqaga
                           </Button>
-                        </Link>
+                        </div>
                         <p className="text-xs text-muted-foreground mt-3">
-                          Barcha 57 protokolga cheksiz kirish
+                          5,000 UZS/oy - Har qanday vaqt bekor qilishingiz mumkin
                         </p>
                       </div>
                     </div>
@@ -296,7 +369,7 @@ export default function ProtocolDetail() {
           </div>
 
           {/* Examples Section */}
-          <section className={`space-y-6 mb-16 ${isLocked ? 'filter blur-sm' : ''}`}>
+          <section className={`space-y-6 mb-16 ${shouldShowUpgrade ? 'filter blur-sm' : ''}`}>
             
             {/* Bad Example */}
             {protocol.badExample && (
@@ -328,7 +401,7 @@ export default function ProtocolDetail() {
           </section>
 
           {/* Practice Section */}
-          <section>
+          <section className={shouldShowUpgrade ? 'filter blur-sm pointer-events-none' : ''}>
             <PromptPractice protocol={protocol} />
           </section>
 
