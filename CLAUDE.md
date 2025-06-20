@@ -193,6 +193,130 @@ echo "dist" >> .dockerignore
 echo ".git" >> .dockerignore
 ```
 
+## 🚀 Landing Page Management (`/landing_page/`)
+
+**CRITICAL: Landing page is separate from main application and has different deployment process!**
+
+### Landing Page Architecture
+- **Location**: `/landing_page/` directory (standalone HTML/CSS)
+- **Live URLs**: 
+  - https://p57.uz (primary landing page)
+  - https://srv852801.hstgr.cloud (backup domain)
+- **Technology**: Pure HTML5 + CSS3 + Vanilla JavaScript (NO React/Vite)
+- **Container**: Separate nginx container (`landing_page-p57-landing-1`)
+
+### Landing Page Deployment (FAST Method)
+
+**✅ CORRECT Deployment Process:**
+```bash
+# 1. Copy files to server temp directory
+scp -i ~/.ssh/protokol57_ed25519 /Users/xb21/P57/landing_page/index.html root@69.62.126.73:/tmp/index_new.html
+scp -i ~/.ssh/protokol57_ed25519 /Users/xb21/P57/landing_page/style.css root@69.62.126.73:/tmp/style_new.css
+
+# 2. Copy files directly into nginx container
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "docker cp /tmp/index_new.html landing_page-p57-landing-1:/usr/share/nginx/html/index.html && docker cp /tmp/style_new.css landing_page-p57-landing-1:/usr/share/nginx/html/style.css"
+
+# 3. Changes are LIVE immediately (no restart needed)
+```
+
+### Landing Page Cache Management
+
+**CSS Cache Busting** (when updating styles):
+```html
+<!-- Update version number in index.html -->
+<link rel="stylesheet" href="style.css?v=12&FIXED=1734648200">
+```
+
+**Force Cache Clear** (if browser caching issues):
+```bash
+# Add timestamp to CSS URL
+<link rel="stylesheet" href="style.css?v=13&t=$(date +%s)">
+```
+
+### Landing Page Design System
+
+**Professional Typography Standards:**
+- **Hero Title**: `clamp(var(--font-2xl), 4vw, 2.75rem)` (44px max on desktop)
+- **Body Text**: `clamp(var(--font-base), 1.5vw, var(--font-lg))` (18px max)
+- **Reading Width**: Max 24ch for headlines, 45ch for body text
+- **Line Height**: 1.2 for headlines, 1.5-1.75 for body
+
+**Spacing Standards (8pt Grid):**
+- **Header Padding**: `var(--space-3)` (12px)
+- **Section Padding**: `var(--space-8)` (48px)
+- **Hero Section**: `var(--space-8) 0` (48px top/bottom)
+- **Content Gaps**: `var(--space-6)` to `var(--space-8)` (32px-48px)
+
+### Landing Page Responsive Breakpoints
+
+```css
+/* Desktop Large (1440px+) */
+@media (min-width: 1440px) { /* Enhanced spacing and larger containers */ }
+
+/* Desktop Standard (1024px-1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) { /* Standard desktop */ }
+
+/* Tablet (769px-1023px) */
+@media (min-width: 769px) and (max-width: 1023px) { /* Tablet layouts */ }
+
+/* Mobile (≤768px) */
+@media (max-width: 768px) { /* Mobile-first base styles */ }
+```
+
+### Landing Page Troubleshooting
+
+#### ❌ "Changes not showing on live site"
+**Root Cause**: CSS cache or missing file deployment
+
+**Solution**:
+```bash
+# 1. Check what's actually live
+curl -s "https://p57.uz/style.css?v=X" | head -20
+
+# 2. Update cache buster version
+# Edit index.html: style.css?v=X to style.css?v=X+1
+
+# 3. Deploy with new filenames
+scp files -> copy to container -> verify live
+```
+
+#### ❌ "404 Error or broken symlinks"
+**Root Cause**: Wrong Docker cp command (never use stdin pipes!)
+
+**Solution**:
+```bash
+# NEVER do this: docker cp /dev/stdin container:/path
+# ALWAYS do this:
+scp file server:/tmp/filename
+docker cp /tmp/filename container:/path
+```
+
+#### ❌ "Desktop typography too large"
+**Root Cause**: Conflicting media query rules overriding base styles
+
+**Solution**: Check ALL media queries for font-size overrides:
+```bash
+# Find conflicting rules
+curl -s "https://p57.uz/style.css" | grep -A 5 -B 5 "hero-content h1"
+```
+
+#### ❌ "Main platform (p57.birfoiz.uz) down after landing page work"
+**Root Cause**: Accidentally stopped wrong Docker container
+
+**Solution**:
+```bash
+# Restart main platform container
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && docker compose up -d"
+```
+
+### Landing Page vs Main Platform
+
+**CRITICAL DISTINCTION:**
+- **Landing Page**: `p57.uz` → nginx container → `/landing_page/` files
+- **Main Platform**: `p57.birfoiz.uz` → protokol57 container → React app
+
+**Never confuse these two!** They are completely separate systems.
+
 ## Development Tools
 
 - **Containerization**: Docker + docker-compose for all environments
