@@ -1,10 +1,12 @@
+import React from "react";
 import { Protocol } from "@shared/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Lock, ArrowRight, Crown } from "lucide-react";
 import { Link } from "wouter";
 import { useProgress } from "@/hooks/use-progress";
-import { useProtocolAccess } from "@/hooks/use-user-tier";
+import { useProtocolAccess, useUserTier } from "@/hooks/use-user-tier";
+import { trackTierSystemEvent } from "@/utils/analytics";
 
 interface ProtocolCardProps {
   protocol: Protocol;
@@ -13,14 +15,36 @@ interface ProtocolCardProps {
 export default function ProtocolCard({ protocol }: ProtocolCardProps) {
   const { isProtocolCompleted, getProtocolProgress, markProtocolCompleted } = useProgress();
   const { canAccess, isLocked, requiresUpgrade } = useProtocolAccess(protocol.id, protocol.isFreeAccess);
+  const { tier } = useUserTier();
   const isCompleted = isProtocolCompleted(protocol.id);
   const progress = getProtocolProgress(protocol.id);
+
+  // Track protocol access attempt
+  React.useEffect(() => {
+    if (isLocked) {
+      const reason = !protocol.isFreeAccess ? 'premium_only' : 'limit_reached';
+      trackTierSystemEvent.protocolBlocked(protocol.id, reason);
+    } else {
+      trackTierSystemEvent.protocolAccess(protocol.id, tier, true);
+    }
+  }, [protocol.id, isLocked, protocol.isFreeAccess, tier]);
 
   const handleMarkCompleted = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     markProtocolCompleted(protocol.id, 70);
   };
+
+  const handleUpgradeClick = () => {
+    trackTierSystemEvent.upgradePromptClicked('protocol_card');
+  };
+
+  // Track upgrade prompt shown when locked protocol is displayed
+  React.useEffect(() => {
+    if (isLocked) {
+      trackTierSystemEvent.upgradePromptShown('protocol_card');
+    }
+  }, [isLocked]);
   
   const getCardStyles = () => {
     if (isLocked) {
@@ -99,6 +123,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
                 <Button 
                   size="sm"
                   className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 h-8 text-xs font-medium"
+                  onClick={handleUpgradeClick}
                 >
                   <Crown className="w-3 h-3 mr-1" />
                   Premium olish
