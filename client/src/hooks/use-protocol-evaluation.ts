@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUserTier, type UserTier } from '@/hooks/use-user-tier';
+import { trackTierSystemEvent } from '@/utils/analytics';
 
 const STORAGE_KEY = 'protokol57_protocol_evaluations';
 
@@ -36,16 +37,30 @@ export function useProtocolEvaluation(protocolId: number) {
   }, []);
 
   const incrementEvaluation = () => {
+    const currentCount = evaluations[protocolKey]?.count || 0;
+    
+    // Don't increment if already at limit
+    if (currentCount >= evaluationLimit) {
+      trackTierSystemEvent.evaluationLimitHit(protocolId, tier);
+      return;
+    }
+    
     const now = new Date().toISOString();
+    const newCount = currentCount + 1;
     const newEvaluations = {
       ...evaluations,
       [protocolKey]: {
-        count: (evaluations[protocolKey]?.count || 0) + 1,
+        count: newCount,
         lastEvaluated: now
       }
     };
     
     setEvaluations(newEvaluations);
+    
+    // Track if user just hit the limit
+    if (newCount >= evaluationLimit) {
+      trackTierSystemEvent.evaluationLimitHit(protocolId, tier);
+    }
     
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newEvaluations));

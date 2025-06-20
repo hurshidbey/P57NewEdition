@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Crown, ArrowRight, Lock, Zap } from 'lucide-react';
 import { Link } from 'wouter';
+import { trackTierSystemEvent } from '@/utils/analytics';
 
 interface UpgradeCTAProps {
   variant?: 'banner' | 'modal' | 'card' | 'inline';
@@ -21,6 +22,18 @@ export function UpgradeCTA({
   showFeatures = true,
   className = ''
 }: UpgradeCTAProps) {
+  
+  // Track when upgrade CTA is shown
+  React.useEffect(() => {
+    const context = variant === 'modal' ? 'protocol_detail' : 
+                   variant === 'banner' ? 'banner' : 'evaluation_limit';
+    trackTierSystemEvent.upgradePromptShown(context as any);
+  }, [variant]);
+
+  const handleUpgradeClick = () => {
+    const context = `upgrade_cta_${variant}`;
+    trackTierSystemEvent.upgradePromptClicked(context);
+  };
   
   const features = [
     'Barcha 57 protokolga kirish',
@@ -82,7 +95,10 @@ export function UpgradeCTA({
               </div>
             </div>
             <Link href="/atmos-payment">
-              <Button className="bg-orange-600 hover:bg-orange-700 text-white">
+              <Button 
+                className="bg-orange-600 hover:bg-orange-700 text-white"
+                onClick={handleUpgradeClick}
+              >
                 Premium olish
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -127,6 +143,7 @@ export function UpgradeCTA({
             <Button 
               size="lg"
               className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 text-sm font-semibold w-full"
+              onClick={handleUpgradeClick}
             >
               <Crown className="w-4 h-4 mr-2" />
               Premium olish
@@ -155,7 +172,11 @@ export function UpgradeCTA({
           )}
         </div>
         <Link href="/atmos-payment">
-          <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
+          <Button 
+            size="sm" 
+            className="bg-orange-600 hover:bg-orange-700 text-white"
+            onClick={handleUpgradeClick}
+          >
             Upgrade
           </Button>
         </Link>
@@ -194,7 +215,10 @@ export function UpgradeCTA({
         )}
 
         <Link href="/atmos-payment">
-          <Button className="bg-orange-600 hover:bg-orange-700 text-white w-full">
+          <Button 
+            className="bg-orange-600 hover:bg-orange-700 text-white w-full"
+            onClick={handleUpgradeClick}
+          >
             <Crown className="w-4 h-4 mr-2" />
             Premium olish
           </Button>
