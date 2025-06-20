@@ -13,7 +13,6 @@ import EmailConfirmPage from "@/pages/email-confirm";
 import AuthCallback from "@/pages/auth-callback";
 import NotFound from "@/pages/not-found";
 import Onboarding from "@/pages/onboarding";
-import PaymentPage from "@/pages/payment";
 import AtmosPayment from "@/pages/atmos-payment";
 import LandingPage from "@/pages/landing";
 import LandingSimple from "@/pages/landing-simple";
@@ -66,9 +65,6 @@ function AppContent() {
         {isAuthenticated ? <Onboarding /> : <AuthPage />}
       </Route>
       <Route path="/atmos-payment" component={AtmosPayment} />
-      <Route path="/payment">
-        {isAuthenticated ? <PaymentPage /> : <AuthPage />}
-      </Route>
       <Route path="/">
         {isAuthenticated ? <Home /> : <AuthPage />}
       </Route>

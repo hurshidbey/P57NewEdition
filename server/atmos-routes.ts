@@ -177,11 +177,40 @@ export function setupAtmosRoutes(): Router {
 
       // Check if transaction was successful
       if (result.store_transaction?.confirmed) {
-        // TODO: Upgrade user tier to 'paid' after successful payment
-        // This will be implemented when user tier management is added to Supabase
-        // For now, the tier upgrade will be handled through user metadata
+        console.log('💳 Payment successful - upgrading user to paid tier');
         
-        console.log('💳 Payment successful - user should be upgraded to paid tier');
+        // Upgrade user tier to 'paid' after successful payment
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          try {
+            const token = authHeader.split(' ')[1];
+            const { createClient } = await import('@supabase/supabase-js');
+            const supabase = createClient(
+              'https://bazptglwzqstppwlvmvb.supabase.co',
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+            );
+            
+            const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+            if (user && !userError) {
+              // Update user metadata with paid tier
+              const { error: updateError } = await supabase.auth.updateUser({
+                data: {
+                  ...user.user_metadata,
+                  tier: 'paid',
+                  paidAt: new Date().toISOString()
+                }
+              });
+              
+              if (updateError) {
+                console.error('Failed to upgrade user tier:', updateError);
+              } else {
+                console.log('✅ User tier upgraded to paid for:', user.email);
+              }
+            }
+          } catch (error) {
+            console.error('Error upgrading user tier:', error);
+          }
+        }
         
         res.json({
           success: true,

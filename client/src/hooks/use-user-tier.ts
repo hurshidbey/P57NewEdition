@@ -16,30 +16,17 @@ interface UserTierData {
 }
 
 export function useUserTier(): UserTierData {
-  const { user, isAuthenticated } = useAuth();
-  const [tier, setTier] = useState<UserTier>('free');
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setTier('free');
-      setLoading(false);
-      return;
-    }
-
-    // For now, check user metadata for tier information
-    // In the future, this could be a separate API call
-    const userTier = user?.tier || 'paid'; // Existing users are considered paid for now
+    if (authLoading) return; // Wait for auth to finish loading
     
-    // TODO: Implement proper tier detection once payment system is fully integrated
-    // This could check:
-    // 1. User metadata from Supabase
-    // 2. Payment history from ATMOS
-    // 3. Database tier field
-    
-    setTier(userTier as UserTier);
     setLoading(false);
-  }, [user, isAuthenticated]);
+  }, [user, isAuthenticated, authLoading]);
+  
+  // Get tier directly from auth context
+  const tier = (user?.tier as UserTier) || 'free';
 
   const canAccessProtocol = (protocolId: number, isFreeAccess: boolean): boolean => {
     if (tier === 'paid') {
@@ -84,7 +71,7 @@ export function useUserTier(): UserTierData {
 
   return {
     tier,
-    loading,
+    loading: loading || authLoading,
     canAccessProtocol,
     getTierStatus
   };

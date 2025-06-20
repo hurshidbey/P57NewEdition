@@ -62,13 +62,16 @@ export class SupabaseStorage implements IStorage {
       .range(offset, offset + limit - 1);
     
     if (error) throw error;
-    return (data || []).map((item: any) => ({
-      ...item,
-      categoryId: item.category_id,
-      badExample: item.bad_example,
-      goodExample: item.good_example,
-      createdAt: item.created_at
-    }));
+    return (data || []).map((item: any) => {
+      return {
+        ...item,
+        categoryId: item.category_id,
+        badExample: item.bad_example,
+        goodExample: item.good_example,
+        createdAt: item.created_at,
+        isFreeAccess: item.is_free_access || false
+      };
+    });
   }
 
   async getProtocol(id: number): Promise<Protocol | undefined> {
@@ -86,7 +89,8 @@ export class SupabaseStorage implements IStorage {
       categoryId: data.category_id,
       badExample: data.bad_example,
       goodExample: data.good_example,
-      createdAt: data.created_at
+      createdAt: data.created_at,
+      isFreeAccess: data.is_free_access || false
     };
   }
 
@@ -99,7 +103,8 @@ export class SupabaseStorage implements IStorage {
       bad_example: protocol.badExample,
       good_example: protocol.goodExample,
       category_id: protocol.categoryId,
-      notes: protocol.notes
+      notes: protocol.notes,
+      is_free_access: protocol.isFreeAccess || false
     };
     
     const { data, error } = await this.supabase
@@ -114,11 +119,18 @@ export class SupabaseStorage implements IStorage {
       categoryId: data.category_id,
       badExample: data.bad_example,
       goodExample: data.good_example,
-      createdAt: data.created_at
+      createdAt: data.created_at,
+      isFreeAccess: data.is_free_access || false
     };
   }
 
   async updateProtocol(id: number, protocol: Partial<InsertProtocol>): Promise<Protocol | undefined> {
+    console.log('Updating protocol:', id, 'with data:', protocol);
+    
+    // Get current protocol to preserve existing data
+    const current = await this.getProtocol(id);
+    if (!current) return undefined;
+    
     // Map camelCase fields to snake_case for database
     const dbProtocol: any = {};
     if (protocol.number !== undefined) dbProtocol.number = protocol.number;
@@ -127,9 +139,17 @@ export class SupabaseStorage implements IStorage {
     if (protocol.badExample !== undefined) dbProtocol.bad_example = protocol.badExample;
     if (protocol.goodExample !== undefined) dbProtocol.good_example = protocol.goodExample;
     if (protocol.categoryId !== undefined) dbProtocol.category_id = protocol.categoryId;
-    if (protocol.notes !== undefined) dbProtocol.notes = protocol.notes;
-    if (protocol.isFreeAccess !== undefined) dbProtocol.is_free_access = protocol.isFreeAccess;
     
+    // Handle notes and isFreeAccess separately
+    if (protocol.isFreeAccess !== undefined) {
+      dbProtocol.is_free_access = protocol.isFreeAccess;
+    }
+    
+    if (protocol.notes !== undefined) {
+      dbProtocol.notes = protocol.notes;
+    }
+    
+    // Update the database
     const { data, error } = await this.supabase
       .from('protocols')
       .update(dbProtocol)
@@ -137,7 +157,11 @@ export class SupabaseStorage implements IStorage {
       .select()
       .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error('Error updating protocol in Supabase:', error);
+      throw error;
+    }
+    
     if (!data) return undefined;
     
     return {
@@ -145,7 +169,8 @@ export class SupabaseStorage implements IStorage {
       categoryId: data.category_id,
       badExample: data.bad_example,
       goodExample: data.good_example,
-      createdAt: data.created_at
+      createdAt: data.created_at,
+      isFreeAccess: data.is_free_access || false
     };
   }
 

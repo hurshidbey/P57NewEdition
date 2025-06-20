@@ -124,9 +124,23 @@ export default function AtmosPayment() {
         throw new Error('SMS kod 6 raqamdan iborat bo\'lishi kerak');
       }
 
+      // Get auth token for user tier upgrade
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+
       const response = await fetch('/api/atmos/confirm', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           transactionId: paymentState.transactionId,
           otpCode
@@ -146,18 +160,24 @@ export default function AtmosPayment() {
           message: 'To\'lov muvaffaqiyatli amalga oshirildi!'
         });
         
-        // Update user tier in localStorage for immediate effect
-        // In a real implementation, this would be handled by the backend
-        const user = JSON.parse(localStorage.getItem('protokol57_user') || '{}');
-        if (user) {
-          user.tier = 'paid';
-          user.paidAt = new Date().toISOString();
-          localStorage.setItem('protokol57_user', JSON.stringify(user));
+        // Force refresh user data from Supabase to get updated tier
+        try {
+          const { createClient } = await import('@supabase/supabase-js');
+          const supabase = createClient(
+            import.meta.env.VITE_SUPABASE_URL!,
+            import.meta.env.VITE_SUPABASE_ANON_KEY!
+          );
+          
+          // Refresh user session to get updated metadata
+          await supabase.auth.refreshSession();
+          console.log('✅ User session refreshed after payment');
+        } catch (error) {
+          console.error('Failed to refresh user session:', error);
         }
         
-        // Redirect to home after 3 seconds
+        // Redirect to home after 3 seconds with payment success flag
         setTimeout(() => {
-          setLocation('/');
+          setLocation('/?payment=success');
         }, 3000);
       } else {
         throw new Error(result.message || 'To\'lovni tasdiqlashda xatolik');

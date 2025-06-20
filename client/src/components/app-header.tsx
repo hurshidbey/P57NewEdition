@@ -56,8 +56,8 @@ export default function AppHeader() {
               </Button>
             </Link>
             
-            {/* Conditional Premium/Upgrade button */}
-            {tier === 'free' ? (
+            {/* Upgrade button for free tier only */}
+            {tier === 'free' && (
               <Link href="/atmos-payment">
                 <Button 
                   variant="default" 
@@ -66,15 +66,6 @@ export default function AppHeader() {
                 >
                   <Crown className="w-3 h-3 mr-1" />
                   Upgrade
-                </Button>
-              </Link>
-            ) : (
-              <Link href="/payment">
-                <Button 
-                  variant="ghost" 
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground"
-                >
-                  Premium
                 </Button>
               </Link>
             )}
