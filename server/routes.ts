@@ -225,7 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
   
-  // Get all protocols with pagination
+  // Get all protocols with pagination and tier-based filtering
   app.get("/api/protocols", async (req, res) => {
     try {
       const limit = parseInt(req.query.limit as string) || 20;
@@ -251,6 +251,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Apply tier-based filtering
+      const authHeader = req.headers.authorization;
+      let userTier = 'free'; // Default to free tier
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split(' ')[1];
+          const { createClient } = await import('@supabase/supabase-js');
+          const supabase = createClient(
+            'https://bazptglwzqstppwlvmvb.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+          );
+          
+          const { data: { user }, error } = await supabase.auth.getUser(token);
+          if (user && !error) {
+            // Check user tier from metadata or assume paid for now (will be updated with tier management)
+            userTier = user.user_metadata?.tier || 'paid'; // Existing users are paid
+          }
+        } catch (error) {
+          console.log('Error checking user tier:', error);
+        }
+      }
+      
+      // Filter protocols based on user tier
+      if (userTier === 'free') {
+        protocols = protocols.filter(p => p.isFreeAccess === true);
+      }
+      // Paid users see all protocols (no additional filtering)
+
       // Apply pagination after filtering
       if (difficulty) {
         protocols = protocols.slice(offset, offset + limit);
@@ -262,7 +291,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get single protocol
+  // Get single protocol with tier-based access control
   app.get("/api/protocols/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -270,6 +299,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!protocol) {
         return res.status(404).json({ message: "Protocol not found" });
+      }
+      
+      // Check user tier for access control
+      const authHeader = req.headers.authorization;
+      let userTier = 'free'; // Default to free tier
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split(' ')[1];
+          const { createClient } = await import('@supabase/supabase-js');
+          const supabase = createClient(
+            'https://bazptglwzqstppwlvmvb.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+          );
+          
+          const { data: { user }, error } = await supabase.auth.getUser(token);
+          if (user && !error) {
+            userTier = user.user_metadata?.tier || 'paid'; // Existing users are paid
+          }
+        } catch (error) {
+          console.log('Error checking user tier:', error);
+        }
+      }
+      
+      // Check if free user is trying to access paid content
+      if (userTier === 'free' && !protocol.isFreeAccess) {
+        return res.status(403).json({ 
+          message: "Access denied. Upgrade to premium to access this protocol.",
+          requiresUpgrade: true,
+          protocolId: id
+        });
       }
       
       res.json(protocol);
@@ -325,6 +385,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Protocol deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete protocol" });
+    }
+  });
+
+  // Toggle protocol free access status (Admin only)
+  app.patch("/api/admin/protocols/:id/toggle-free", isSupabaseAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { isFreeAccess } = req.body;
+      
+      if (typeof isFreeAccess !== 'boolean') {
+        return res.status(400).json({ message: "isFreeAccess must be a boolean" });
+      }
+      
+      // If setting to free, check current count of free protocols
+      if (isFreeAccess) {
+        const allProtocols = await storage.getProtocols(1000, 0);
+        const currentFreeCount = allProtocols.filter(p => p.isFreeAccess && p.id !== id).length;
+        
+        if (currentFreeCount >= 3) {
+          return res.status(400).json({ 
+            message: "Maximum 3 protocols can be free. Please remove free access from another protocol first.",
+            currentFreeCount
+          });
+        }
+      }
+      
+      const updated = await storage.updateProtocol(id, { isFreeAccess });
+      
+      if (!updated) {
+        return res.status(404).json({ message: "Protocol not found" });
+      }
+      
+      res.json(updated);
+    } catch (error) {
+      console.error('Error toggling protocol free access:', error);
+      res.status(500).json({ message: "Failed to update protocol free access" });
+    }
+  });
+
+  // Get free protocols count and list (Admin only)
+  app.get("/api/admin/protocols/free-status", isSupabaseAdmin, async (req, res) => {
+    try {
+      const allProtocols = await storage.getProtocols(1000, 0);
+      const freeProtocols = allProtocols.filter(p => p.isFreeAccess);
+      
+      res.json({
+        freeCount: freeProtocols.length,
+        maxFreeAllowed: 3,
+        freeProtocols: freeProtocols.map(p => ({
+          id: p.id,
+          number: p.number,
+          title: p.title
+        }))
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch free protocols status" });
     }
   });
 

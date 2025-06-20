@@ -6,6 +6,8 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  tier: text("tier").notNull().default('free'), // 'free' | 'paid'
+  paidAt: timestamp("paid_at"),
 });
 
 export const protocols = pgTable("protocols", {
@@ -24,6 +26,8 @@ export const protocols = pgTable("protocols", {
   solutionApproach: text("solution_approach"),
   difficultyLevel: text("difficulty_level"),
   levelOrder: integer("level_order"),
+  // Free tier access control
+  isFreeAccess: boolean("is_free_access").notNull().default(false),
 });
 
 export const categories = pgTable("categories", {
