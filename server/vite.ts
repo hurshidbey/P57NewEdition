@@ -111,6 +111,7 @@ export function serveStatic(app: Express) {
   app.use((req, res, next) => {
     // Skip this catch-all for API routes
     if (req.originalUrl.startsWith('/api/')) {
+      console.log(`[serveStatic] SKIPPING catch-all for API route: ${req.originalUrl}`);
       return next();
     }
     
