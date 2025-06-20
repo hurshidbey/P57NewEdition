@@ -149,79 +149,7 @@ export default function ProtocolDetail() {
     );
   }
 
-  // Show access denied page if user doesn't have access
-  if (protocol && isLocked) {
-    return (
-      <div className="min-h-screen bg-background">
-        <AppHeader />
-        <main className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8">
-          <section className="pt-16 pb-16">
-            <div className="text-center max-w-2xl mx-auto">
-              <div className="mb-8">
-                <Lock className="w-20 h-20 text-gray-400 mx-auto mb-6" />
-                <h1 className="text-4xl font-black text-foreground mb-4">
-                  Premium Protokol
-                </h1>
-                <p className="text-xl text-muted-foreground mb-6">
-                  Bu protokol Premium foydalanuvchilar uchun mo'ljallangan
-                </p>
-              </div>
-              
-              {/* Protocol Preview Card */}
-              <Card className="mb-8 opacity-75">
-                <CardContent className="p-8">
-                  <div className="flex items-start gap-6 mb-6">
-                    <div className="w-16 h-16 bg-gray-200 text-gray-500 rounded-xl flex items-center justify-center font-black text-xl">
-                      {protocol.number.toString().padStart(2, '0')}
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h2 className="text-2xl font-bold text-gray-600 mb-2">
-                        {protocol.title}
-                      </h2>
-                      <p className="text-gray-500">
-                        Protokol №{protocol.number}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="bg-gray-100 rounded-lg p-4 text-gray-500">
-                    <p>Bu protokolni ko'rish uchun Premium obunaga ega bo'lishingiz kerak...</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Upgrade CTA */}
-              <div className="space-y-4">
-                <Link href="/atmos-payment">
-                  <Button 
-                    size="lg"
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-4 text-lg font-semibold"
-                  >
-                    <Crown className="w-5 h-5 mr-2" />
-                    Premium olish (5,000 UZS)
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-                <div className="text-sm text-muted-foreground">
-                  Barcha 57 protokolga cheksiz kirish + AI baholash
-                </div>
-              </div>
-              
-              {/* Back button */}
-              <div className="mt-8">
-                <Link href="/">
-                  <Button variant="outline">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Protokollarga qaytish
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </section>
-        </main>
-        <AppFooter />
-      </div>
-    );
-  }
+  // Don't block access - show everything but blur locked content
 
   return (
     <div className="min-h-screen bg-background">
@@ -293,7 +221,7 @@ export default function ProtocolDetail() {
         <div className="max-w-4xl mx-auto pb-20">
           
           {/* Single Combined Card */}
-          <div className="mb-16">
+          <div className="mb-16 relative">
             {(() => {
               // Parse the description if separate fields are not available
               const parsedContent = protocol.problemStatement && protocol.whyExplanation && protocol.solutionApproach
@@ -305,43 +233,70 @@ export default function ProtocolDetail() {
                 : parseProtocolDescription(protocol.description || '');
               
               return (
-                <div className="bg-card border-2 border-accent rounded-2xl p-8 space-y-8">
-                  {parsedContent.problemStatement && (
-                    <div>
-                      <h2 className="font-inter text-xl font-bold text-foreground mb-4">
-                        {parsedContent.problemStatement}
-                      </h2>
-                    </div>
-                  )}
+                <>
+                  <div className={`bg-card border-2 border-accent rounded-2xl p-8 space-y-8 ${isLocked ? 'filter blur-sm' : ''}`}>
+                    {parsedContent.problemStatement && (
+                      <div>
+                        <h2 className="font-inter text-xl font-bold text-foreground mb-4">
+                          {parsedContent.problemStatement}
+                        </h2>
+                      </div>
+                    )}
 
-                  {parsedContent.whyExplanation && (
-                    <div>
-                      <h3 className="font-inter text-lg font-semibold text-foreground mb-3">
-                        Nega bunday bo'ladi?
-                      </h3>
-                      <p className="font-inter text-base text-muted-foreground leading-relaxed">
-                        {parsedContent.whyExplanation}
-                      </p>
-                    </div>
-                  )}
+                    {parsedContent.whyExplanation && (
+                      <div>
+                        <h3 className="font-inter text-lg font-semibold text-foreground mb-3">
+                          Nega bunday bo'ladi?
+                        </h3>
+                        <p className="font-inter text-base text-muted-foreground leading-relaxed">
+                          {parsedContent.whyExplanation}
+                        </p>
+                      </div>
+                    )}
 
-                  {parsedContent.solutionApproach && (
-                    <div>
-                      <h3 className="font-inter text-lg font-semibold text-foreground mb-3">
-                        Yechim.
-                      </h3>
-                      <p className="font-inter text-base text-muted-foreground leading-relaxed">
-                        {parsedContent.solutionApproach}
-                      </p>
+                    {parsedContent.solutionApproach && (
+                      <div>
+                        <h3 className="font-inter text-lg font-semibold text-foreground mb-3">
+                          Yechim.
+                        </h3>
+                        <p className="font-inter text-base text-muted-foreground leading-relaxed">
+                          {parsedContent.solutionApproach}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Premium Overlay for Locked Content */}
+                  {isLocked && (
+                    <div className="absolute inset-0 bg-black/20 rounded-2xl flex items-center justify-center">
+                      <div className="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-md text-center shadow-xl">
+                        <Lock className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-xl font-bold text-foreground mb-2">Premium Protokol</h3>
+                        <p className="text-muted-foreground mb-6">
+                          Bu protokolni to'liq ko'rish uchun Premium obunaga ega bo'lishingiz kerak
+                        </p>
+                        <Link href="/atmos-payment">
+                          <Button 
+                            size="lg"
+                            className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 text-lg font-semibold w-full"
+                          >
+                            <Crown className="w-5 h-5 mr-2" />
+                            Premium olish (5,000 UZS)
+                          </Button>
+                        </Link>
+                        <p className="text-xs text-muted-foreground mt-3">
+                          Barcha 57 protokolga cheksiz kirish
+                        </p>
+                      </div>
                     </div>
                   )}
-                </div>
+                </>
               );
             })()}
           </div>
 
           {/* Examples Section */}
-          <section className="space-y-6 mb-16">
+          <section className={`space-y-6 mb-16 ${isLocked ? 'filter blur-sm' : ''}`}>
             
             {/* Bad Example */}
             {protocol.badExample && (
