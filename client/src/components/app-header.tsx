@@ -1,13 +1,19 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
+import { useUserTier } from "@/hooks/use-user-tier";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Crown, Star } from "lucide-react";
 
 export default function AppHeader() {
   const { user, signOut, isAuthenticated } = useAuth();
+  const { tier, getTierStatus } = useUserTier();
   
   // Check if current user is admin
   const isAdmin = user?.email === 'hurshidbey@gmail.com';
+  
+  const tierStatus = getTierStatus();
 
   if (!isAuthenticated) {
     return null;
@@ -27,9 +33,20 @@ export default function AppHeader() {
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground hidden sm:block">
-              Salom, {user?.name || user?.email}
-            </span>
+            {/* User greeting and tier badge */}
+            <div className="hidden sm:flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">
+                Salom, {user?.name || user?.email}
+              </span>
+              <Badge className={`${tierStatus.color} text-xs font-medium`}>
+                {tier === 'paid' ? (
+                  <><Crown className="w-3 h-3 mr-1" /> {tierStatus.displayName}</>
+                ) : (
+                  <><Star className="w-3 h-3 mr-1" /> {tierStatus.displayName}</>
+                )}
+              </Badge>
+            </div>
+            
             <Link href="/onboarding">
               <Button 
                 variant="ghost" 
@@ -38,14 +55,29 @@ export default function AppHeader() {
                 O'rganish
               </Button>
             </Link>
-            <Link href="/payment">
-              <Button 
-                variant="ghost" 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground"
-              >
-                Premium
-              </Button>
-            </Link>
+            
+            {/* Conditional Premium/Upgrade button */}
+            {tier === 'free' ? (
+              <Link href="/atmos-payment">
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground text-xs font-medium"
+                >
+                  <Crown className="w-3 h-3 mr-1" />
+                  Upgrade
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/payment">
+                <Button 
+                  variant="ghost" 
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                >
+                  Premium
+                </Button>
+              </Link>
+            )}
             {isAdmin && (
               <Link href="/admin">
                 <Button 

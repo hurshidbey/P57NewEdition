@@ -3,6 +3,8 @@ export interface User {
   id: number;
   username: string;
   password: string;
+  tier: string;
+  paidAt: Date | null;
 }
 
 export interface Protocol {
@@ -20,6 +22,7 @@ export interface Protocol {
   solutionApproach: string | null;
   difficultyLevel: string | null;
   levelOrder: number | null;
+  isFreeAccess: boolean;
 }
 
 export interface Category {
