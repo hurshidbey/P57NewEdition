@@ -1,7 +1,7 @@
 import { Protocol } from "@shared/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Lock, ArrowRight } from "lucide-react";
+import { CheckCircle, Lock, ArrowRight, Crown } from "lucide-react";
 import { Link } from "wouter";
 import { useProgress } from "@/hooks/use-progress";
 import { useProtocolAccess } from "@/hooks/use-user-tier";
@@ -76,70 +76,67 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
             </div>
           )}
           
-          {/* Title - 8pt grid spacing */}
+          {/* Title - Hide for free users to prevent revealing protocol content */}
           <h3 className={`text-lg font-bold mb-3 leading-tight pr-6 line-height-[1.4] ${
             isLocked ? 'text-gray-500 dark:text-gray-400' : 'text-foreground'
           }`}>
-            {protocol.title}
+            {isLocked ? 'Premium Protokol' : protocol.title}
           </h3>
           
-          {/* Problem Statement - 8pt grid spacing */}
+          {/* Problem Statement - Hide content for free users */}
           <p className={`leading-relaxed line-clamp-3 mb-4 text-sm line-height-[1.5] ${
             isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-muted-foreground'
           }`}>
-            {isLocked ? 'Premium protokol - to\'liq kirish uchun obuna bo\'ling' : (protocol.problemStatement || protocol.description)}
+            {isLocked ? 'Bu protokol Premium foydalanuvchilar uchun mo\'ljallangan. Barcha 57 protokolga kirish uchun Premium obuna oling.' : (protocol.problemStatement || protocol.description)}
           </p>
         </Link>
         
-        {/* Action buttons - 8pt grid spacing */}
-        <div className="flex items-center gap-2 pt-2">
+        {/* Action buttons - Fixed layout and spacing */}
+        <div className="flex flex-col gap-2 pt-2">
           {isLocked ? (
             <>
-              <Link href="/atmos-payment" className="flex-1">
+              <Link href="/atmos-payment" className="w-full">
                 <Button 
                   size="sm"
-                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground px-3 py-1.5 h-7 text-xs font-medium"
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 h-8 text-xs font-medium"
                 >
-                  Premium uchun
-                  <ArrowRight className="w-3 h-3 ml-1" />
+                  <Crown className="w-3 h-3 mr-1" />
+                  Premium olish
                 </Button>
               </Link>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                disabled 
-                className="px-3 py-1.5 h-7 text-xs font-medium opacity-50"
-              >
-                <Lock className="w-3 h-3 mr-1" />
-                Yopiq
-              </Button>
+              <div className="flex items-center justify-center gap-1 py-1 text-xs text-gray-500">
+                <Lock className="w-3 h-3" />
+                <span>Premium protokol</span>
+              </div>
             </>
           ) : (
             <>
-              {!isCompleted ? (
-                <Button 
-                  onClick={handleMarkCompleted}
-                  size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-600 px-3 py-1.5 h-7 text-xs font-medium"
-                >
-                  O'rgandim
-                </Button>
-              ) : (
-                <Button 
-                  onClick={handleMarkCompleted}
-                  size="sm"
-                  variant="outline"
-                  className="border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-400 dark:hover:bg-green-900/20 px-3 py-1.5 h-7 text-xs font-medium"
-                >
-                  Qayta mashq qilish
-                </Button>
-              )}
-              
-              <Link href={`/protocols/${protocol.id}`}>
-                <Button size="sm" variant="outline" className="px-3 py-1.5 h-7 text-xs font-medium">
-                  Ko'rish
-                </Button>
-              </Link>
+              <div className="flex gap-2">
+                {!isCompleted ? (
+                  <Button 
+                    onClick={handleMarkCompleted}
+                    size="sm"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 h-8 text-xs font-medium"
+                  >
+                    O'rgandim
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleMarkCompleted}
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-400 dark:hover:bg-green-900/20 px-3 py-2 h-8 text-xs font-medium"
+                  >
+                    Qayta mashq
+                  </Button>
+                )}
+                
+                <Link href={`/protocols/${protocol.id}`} className="flex-1">
+                  <Button size="sm" variant="outline" className="w-full px-3 py-2 h-8 text-xs font-medium">
+                    Ko'rish
+                  </Button>
+                </Link>
+              </div>
             </>
           )}
         </div>
