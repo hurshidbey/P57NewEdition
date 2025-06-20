@@ -10,6 +10,7 @@ interface AuthContextType {
   signInWithTelegram: (user: TelegramUser) => Promise<void>
   signUp: (email: string, password: string, name?: string) => Promise<void>
   signOut: () => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -17,6 +18,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
+  
+  // Function to refresh user data from Supabase
+  const refreshUser = async () => {
+    try {
+      const currentUser = await authService.getCurrentUser()
+      setUser(currentUser)
+    } catch (error) {
+      console.error('Failed to refresh user:', error)
+    }
+  }
 
   useEffect(() => {
     // Check for Telegram user first (using localStorage directly)
@@ -27,7 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser({
           id: telegramUser.id,
           email: `telegram_${telegramUser.telegram_id}@protokol57.app`,
-          name: `${telegramUser.first_name} ${telegramUser.last_name || ''}`.trim()
+          name: `${telegramUser.first_name} ${telegramUser.last_name || ''}`.trim(),
+          tier: 'free' // Default tier for Telegram users
         });
         setLoading(false);
         return;
@@ -50,6 +62,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => subscription.subscription.unsubscribe()
   }, [])
+  
+  // Listen for URL changes (like payment success) to refresh user
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('payment') === 'success') {
+      console.log('🔄 Payment success detected, refreshing user data...')
+      setTimeout(() => {
+        refreshUser()
+      }, 1000) // Small delay to ensure backend has processed the update
+    }
+  }, [window.location.search])
 
   const signIn = async (email: string, password: string) => {
     const { user } = await authService.signIn(email, password)
@@ -57,7 +80,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser({
         id: user.id,
         email: user.email!,
-        name: user.user_metadata?.name || user.email?.split('@')[0]
+        name: user.user_metadata?.name || user.email?.split('@')[0],
+        tier: user.user_metadata?.tier || 'free'
       })
     }
   }
@@ -75,7 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser({
         id: result.user.id,
         email: result.user.email!,
-        name: result.user.user_metadata?.name || result.user.email?.split('@')[0]
+        name: result.user.user_metadata?.name || result.user.email?.split('@')[0],
+        tier: result.user.user_metadata?.tier || 'free'
       })
     }
   }
@@ -119,7 +144,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signInWithGoogle,
     signInWithTelegram,
     signUp,
-    signOut
+    signOut,
+    refreshUser
   }
 
   return (

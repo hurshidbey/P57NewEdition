@@ -266,19 +266,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           const { data: { user }, error } = await supabase.auth.getUser(token);
           if (user && !error) {
-            // Check user tier from metadata or assume paid for now (will be updated with tier management)
-            userTier = user.user_metadata?.tier || 'paid'; // Existing users are paid
+            // Check user tier from metadata - new users default to free tier
+            userTier = user.user_metadata?.tier || 'free'; // New users are free by default
           }
         } catch (error) {
           console.log('Error checking user tier:', error);
         }
       }
       
-      // Filter protocols based on user tier
-      if (userTier === 'free') {
-        protocols = protocols.filter(p => p.isFreeAccess === true);
-      }
-      // Paid users see all protocols (no additional filtering)
+      // Free users see ALL protocols, but some are marked as locked
+      // Paid users see all protocols unlocked
+      // No filtering here - the frontend will handle lock/unlock UI
 
       // Apply pagination after filtering
       if (difficulty) {
@@ -316,21 +314,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           const { data: { user }, error } = await supabase.auth.getUser(token);
           if (user && !error) {
-            userTier = user.user_metadata?.tier || 'paid'; // Existing users are paid
+            userTier = user.user_metadata?.tier || 'free'; // New users are free by default
           }
         } catch (error) {
           console.log('Error checking user tier:', error);
         }
       }
       
-      // Check if free user is trying to access paid content
-      if (userTier === 'free' && !protocol.isFreeAccess) {
-        return res.status(403).json({ 
-          message: "Access denied. Upgrade to premium to access this protocol.",
-          requiresUpgrade: true,
-          protocolId: id
-        });
-      }
+      // Add user tier info to response so frontend can handle locking
+      protocol.userTier = userTier;
       
       res.json(protocol);
     } catch (error) {

@@ -40,7 +40,8 @@ export const authService = {
       options: {
         emailRedirectTo: `${window.location.origin}/auth/confirm`,
         data: {
-          name: name || email.split('@')[0]
+          name: name || email.split('@')[0],
+          tier: 'free' // New users start with free tier
         }
       }
     })
@@ -211,7 +212,9 @@ export const authService = {
     return {
       id: userId,
       email: user.email!,
-      name: user.user_metadata?.name || user.email?.split('@')[0]
+      name: user.user_metadata?.name || user.email?.split('@')[0],
+      tier: user.user_metadata?.tier || 'free',
+      paidAt: user.user_metadata?.paidAt
     }
   },
 
@@ -229,7 +232,9 @@ export const authService = {
         const authUser: AuthUser = {
           id: userId,
           email: session.user.email!,
-          name: session.user.user_metadata?.name || session.user.email?.split('@')[0]
+          name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
+          tier: session.user.user_metadata?.tier || 'free',
+          paidAt: session.user.user_metadata?.paidAt
         }
         callback(authUser)
       } else {
