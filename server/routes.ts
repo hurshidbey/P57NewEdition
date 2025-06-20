@@ -438,6 +438,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get prompts (filtered by user tier)
+  app.get("/api/prompts", async (req, res) => {
+    try {
+      const { userTier = 'free' } = req.query;
+      const prompts = await storage.getPrompts(userTier as string);
+      res.json(prompts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch prompts" });
+    }
+  });
+
+  // Get single prompt (with tier validation)
+  app.get("/api/prompts/:id", async (req, res) => {
+    try {
+      const promptId = parseInt(req.params.id);
+      const { userTier = 'free' } = req.query;
+      
+      const prompt = await storage.getPrompt(promptId);
+      if (!prompt) {
+        return res.status(404).json({ message: "Prompt not found" });
+      }
+      
+      // Check access permissions
+      if (prompt.is_premium && userTier === 'free') {
+        return res.status(403).json({ message: "Premium prompt requires paid tier" });
+      }
+      
+      if (!prompt.is_public && userTier === 'free') {
+        return res.status(403).json({ message: "Private prompt not accessible" });
+      }
+      
+      res.json(prompt);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch prompt" });
+    }
+  });
+
+  // Admin: Create new prompt
+  app.post("/api/admin/prompts", isSupabaseAdmin, async (req, res) => {
+    try {
+      const { title, content, description, category, is_premium = false, is_public = true } = req.body;
+      
+      if (!title || !content || !category) {
+        return res.status(400).json({ message: "Title, content, and category are required" });
+      }
+      
+      const newPrompt = await storage.createPrompt({
+        title,
+        content,
+        description,
+        category,
+        is_premium,
+        is_public
+      });
+      
+      res.status(201).json(newPrompt);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create prompt" });
+    }
+  });
+
+  // Admin: Update prompt
+  app.put("/api/admin/prompts/:id", isSupabaseAdmin, async (req, res) => {
+    try {
+      const promptId = parseInt(req.params.id);
+      const { title, content, description, category, is_premium, is_public } = req.body;
+      
+      const updatedPrompt = await storage.updatePrompt(promptId, {
+        title,
+        content,
+        description,
+        category,
+        is_premium,
+        is_public
+      });
+      
+      if (!updatedPrompt) {
+        return res.status(404).json({ message: "Prompt not found" });
+      }
+      
+      res.json(updatedPrompt);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update prompt" });
+    }
+  });
+
+  // Admin: Delete prompt
+  app.delete("/api/admin/prompts/:id", isSupabaseAdmin, async (req, res) => {
+    try {
+      const promptId = parseInt(req.params.id);
+      
+      const deleted = await storage.deletePrompt(promptId);
+      if (!deleted) {
+        return res.status(404).json({ message: "Prompt not found" });
+      }
+      
+      res.json({ message: "Prompt deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete prompt" });
+    }
+  });
+
+  // Admin: Get all prompts (no filtering)
+  app.get("/api/admin/prompts", isSupabaseAdmin, async (req, res) => {
+    try {
+      const prompts = await storage.getAllPrompts();
+      res.json(prompts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch prompts" });
+    }
+  });
+
   // Evaluate user prompt against a protocol
   app.post("/api/protocols/:id/evaluate", async (req, res) => {
     try {
