@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 import { PromptCard, type Prompt } from '@/components/prompt-card';
+import { UpgradeCTA } from '@/components/upgrade-cta';
 import { Search, Crown, ArrowRight } from 'lucide-react';
 import { Link } from 'wouter';
 
@@ -124,7 +125,13 @@ export default function PremiumPrompts() {
             </p>
 
             {/* Show upgrade banner for free users */}
-            {tier === 'free' && <UpgradeBanner />}
+            {tier === 'free' && (
+              <UpgradeCTA 
+                variant="banner" 
+                title="Premium Promptlarga kirish"
+                description="Maxsus tayyorlangan premium promptlar bilan ishlash samaradorligingizni oshiring"
+              />
+            )}
           </div>
         </section>
 
