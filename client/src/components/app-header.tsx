@@ -33,18 +33,16 @@ export default function AppHeader() {
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            {/* User greeting and tier badge */}
+            {/* User greeting and tier badge - only show premium badge for premium users */}
             <div className="hidden sm:flex items-center gap-3">
               <span className="text-sm text-muted-foreground">
                 Salom, {user?.name || user?.email}
               </span>
-              <Badge className={`${tierStatus.color} text-xs font-medium`}>
-                {tier === 'paid' ? (
-                  <><Crown className="w-3 h-3 mr-1" /> {tierStatus.displayName}</>
-                ) : (
-                  <><Star className="w-3 h-3 mr-1" /> {tierStatus.displayName}</>
-                )}
-              </Badge>
+              {tier === 'paid' && (
+                <Badge className={`${tierStatus.color} text-xs font-medium`}>
+                  <Crown className="w-3 h-3 mr-1" /> {tierStatus.displayName}
+                </Badge>
+              )}
             </div>
             
             <Link href="/onboarding">
@@ -63,9 +61,6 @@ export default function AppHeader() {
               >
                 <FileText className="w-4 h-4 mr-1" />
                 Promptlar
-                {tier === 'free' && (
-                  <Crown className="w-3 h-3 ml-1 text-orange-600" />
-                )}
               </Button>
             </Link>
             

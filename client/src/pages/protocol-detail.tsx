@@ -8,6 +8,7 @@ import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import PromptPractice from "@/components/prompt-practice";
+import { UpgradeCTA } from "@/components/upgrade-cta";
 import { useProgress } from "@/hooks/use-progress";
 import { useProtocolAccess, useUserTier } from "@/hooks/use-user-tier";
 
@@ -308,59 +309,13 @@ export default function ProtocolDetail() {
                   {/* Enhanced Premium Overlay for Locked Content */}
                   {shouldShowUpgrade && (
                     <div className="absolute inset-0 bg-black/20 rounded-2xl flex items-center justify-center">
-                      <div className="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-md text-center shadow-xl">
-                        {accessedCount >= 3 ? (
-                          <Lock className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-                        ) : (
-                          <Crown className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-                        )}
-                        <h3 className="text-xl font-bold text-foreground mb-2">
-                          {accessedCount >= 3 ? 'Limit tugadi' : 'Premium protokol'}
-                        </h3>
-                        <p className="text-muted-foreground mb-4">
-                          {upgradeReason}
-                        </p>
-                        
-                        {tier === 'free' && (
-                          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 mb-6">
-                            <p className="text-sm text-blue-800 dark:text-blue-400">
-                              <strong>Hozirgi holat:</strong> {accessedCount}/3 bepul protokol ishlatilgan
-                            </p>
-                          </div>
-                        )}
-
-                        <div className="space-y-3">
-                          <p className="text-sm font-medium text-foreground">Premium rejada:</p>
-                          <ul className="text-sm text-muted-foreground space-y-1">
-                            <li>• Barcha 57 protokolga kirish</li>
-                            <li>• Cheksiz AI baholash</li>
-                            <li>• Premium promptlar</li>
-                            <li>• Progress tracking</li>
-                          </ul>
-                        </div>
-
-                        <div className="flex gap-2 mt-6">
-                          <Link href="/atmos-payment" className="flex-1">
-                            <Button 
-                              size="lg"
-                              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 text-sm font-semibold w-full"
-                            >
-                              <Crown className="w-4 h-4 mr-2" />
-                              Premium olish
-                            </Button>
-                          </Link>
-                          <Button 
-                            variant="outline" 
-                            onClick={() => window.history.back()}
-                            className="px-4"
-                          >
-                            Orqaga
-                          </Button>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-3">
-                          5,000 UZS/oy - Har qanday vaqt bekor qilishingiz mumkin
-                        </p>
-                      </div>
+                      <UpgradeCTA
+                        variant="modal"
+                        title={accessedCount >= 3 ? 'Limit tugadi' : 'Premium protokol'}
+                        description={upgradeReason}
+                        reason={tier === 'free' ? `Hozirgi holat: ${accessedCount}/3 bepul protokol ishlatilgan` : undefined}
+                        showFeatures={true}
+                      />
                     </div>
                   )}
                 </>

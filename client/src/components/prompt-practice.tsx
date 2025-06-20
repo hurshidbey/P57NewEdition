@@ -9,8 +9,9 @@ import { Progress } from "@/components/ui/progress";
 import { Lightbulb, RefreshCw, Send, AlertTriangle } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { usePromptUsage } from "@/hooks/use-prompt-usage";
+import { useProtocolEvaluation } from "@/hooks/use-protocol-evaluation";
 import { useProgress } from "@/hooks/use-progress";
+import { useUserTier } from "@/hooks/use-user-tier";
 
 interface PromptEvaluation {
   score: number;
@@ -28,7 +29,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
   const [userPrompt, setUserPrompt] = useState("");
   const [evaluation, setEvaluation] = useState<PromptEvaluation | null>(null);
   const { toast } = useToast();
-  const { usage, limit, canUsePrompt, getRemainingUsage, getUsagePercentage, incrementUsage } = usePromptUsage();
+  const { evaluationCount, evaluationLimit, canEvaluate, getRemainingEvaluations, getUsagePercentage, incrementEvaluation, tier } = useProtocolEvaluation(protocol.id);
   const { markProtocolCompleted, getProtocolProgress } = useProgress();
   const protocolProgress = getProtocolProgress(protocol.id);
 
@@ -43,7 +44,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
     },
     onSuccess: (data) => {
       setEvaluation(data);
-      incrementUsage();
+      incrementEvaluation();
       
       // Mark protocol as completed if score is good enough (70+)
       if (data.score >= 70) {
@@ -66,10 +67,11 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
   });
 
   const handleSubmit = () => {
-    if (!canUsePrompt()) {
+    if (!canEvaluate()) {
+      const limitText = tier === 'paid' ? '5 marta' : '1 marta';
       toast({
-        title: "Kunlik limit tugadi",
-        description: `Siz bugun ${limit} ta promptni baholadingiz. Ertaga qaytadan urinib ko'ring.`,
+        title: "Baholash limiti tugadi",
+        description: `Har bir protokolni ${limitText} baholash mumkin. ${tier === 'free' ? 'Premium obuna oling va 5 marta baholang.' : 'Siz allaqachon maksimal baholash soniga yetdingiz.'}`,
         variant: "destructive",
       });
       return;
@@ -124,11 +126,16 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
               <Lightbulb className="h-5 w-5 text-accent" />
               Protokolni mashq qiling
             </div>
-            {protocolProgress && (
-              <Badge variant="secondary" className="font-normal">
-                O'rganilgan
+            <div className="flex items-center gap-2">
+              {protocolProgress && (
+                <Badge variant="secondary" className="font-normal">
+                  O'rganilgan
+                </Badge>
+              )}
+              <Badge variant="outline" className="text-xs">
+                {evaluationCount}/{evaluationLimit} baholash
               </Badge>
-            )}
+            </div>
           </CardTitle>
           <CardDescription>
             Ushbu protokol asosida o'z promptingizni yozing va AI baholashini oling
