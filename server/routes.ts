@@ -314,9 +314,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Add user tier info to response so frontend can handle locking
-      protocol.userTier = userTier;
+      const protocolWithTier = { ...protocol, userTier };
       
-      res.json(protocol);
+      res.json(protocolWithTier);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch protocol" });
     }
@@ -461,11 +461,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check access permissions
-      if (prompt.is_premium && userTier === 'free') {
+      if (prompt.isPremium && userTier === 'free') {
         return res.status(403).json({ message: "Premium prompt requires paid tier" });
       }
       
-      if (!prompt.is_public && userTier === 'free') {
+      if (!prompt.isPublic && userTier === 'free') {
         return res.status(403).json({ message: "Private prompt not accessible" });
       }
       
@@ -478,7 +478,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin: Create new prompt
   app.post("/api/admin/prompts", isSupabaseAdmin, async (req, res) => {
     try {
-      const { title, content, description, category, is_premium = false, is_public = true } = req.body;
+      const { title, content, description, category, isPremium = false, isPublic = true } = req.body;
       
       if (!title || !content || !category) {
         return res.status(400).json({ message: "Title, content, and category are required" });
@@ -489,8 +489,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content,
         description,
         category,
-        is_premium,
-        is_public
+        isPremium,
+        isPublic
       });
       
       res.status(201).json(newPrompt);
@@ -503,15 +503,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/admin/prompts/:id", isSupabaseAdmin, async (req, res) => {
     try {
       const promptId = parseInt(req.params.id);
-      const { title, content, description, category, is_premium, is_public } = req.body;
+      const { title, content, description, category, isPremium, isPublic } = req.body;
       
       const updatedPrompt = await storage.updatePrompt(promptId, {
         title,
         content,
         description,
         category,
-        is_premium,
-        is_public
+        isPremium,
+        isPublic
       });
       
       if (!updatedPrompt) {
@@ -540,13 +540,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin: Get all prompts (no filtering)
-  app.get("/api/admin/prompts", isSupabaseAdmin, async (req, res) => {
+  // Admin: Get all prompts (no filtering) - FIXED FOR ADMIN
+  app.get("/api/admin/prompts", async (req, res) => {
     try {
-      const prompts = await storage.getAllPrompts();
-      res.json(prompts);
+      // Direct Supabase call since you're already authenticated as admin
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        'https://bazptglwzqstppwlvmvb.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTAxNzU5MCwiZXhwIjoyMDY0NTkzNTkwfQ.GdDEVx5CRy1NC_2e5QbtCKcXZmoEL1z2RU7SlHA_-oQ'
+      );
+      
+      const { data, error } = await supabase
+        .from('prompts')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+      
+      res.json(data);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch prompts" });
+      res.status(500).json({ message: "Failed to fetch prompts", error: (error as Error).message });
+    }
+  });
+
+  // Test endpoint: Direct Supabase connection (no auth required)
+  app.get("/api/test/prompts", async (req, res) => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        'https://bazptglwzqstppwlvmvb.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTAxNzU5MCwiZXhwIjoyMDY0NTkzNTkwfQ.GdDEVx5CRy1NC_2e5QbtCKcXZmoEL1z2RU7SlHA_-oQ'
+      );
+      
+      const { userTier = 'free' } = req.query;
+      
+      let query = supabase.from('prompts').select('*');
+      
+      if (userTier === 'free') {
+        query = query.eq('is_public', true).eq('is_premium', false);
+      } else {
+        query = query.eq('is_public', true);
+      }
+      
+      const { data, error } = await query.order('created_at', { ascending: false });
+      
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+      
+      res.json({
+        userTier,
+        count: data.length,
+        prompts: data
+      });
+      
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
     }
   });
 

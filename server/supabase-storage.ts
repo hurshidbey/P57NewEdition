@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress } from "@shared/schema";
+import { type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt } from "@shared/schema";
 import { type IStorage } from './storage';
 
 export class SupabaseStorage implements IStorage {
@@ -278,5 +278,89 @@ export class SupabaseStorage implements IStorage {
         lastScore: data.last_score
       };
     }
+  }
+
+  // Prompts methods
+  async getPrompts(userTier: string): Promise<Prompt[]> {
+    let query = this.supabase.from('prompts').select('*');
+    
+    if (userTier === 'free') {
+      query = query.eq('is_public', true).eq('is_premium', false);
+    } else {
+      query = query.eq('is_public', true);
+    }
+    
+    const { data, error } = await query.order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  }
+
+  async getAllPrompts(): Promise<Prompt[]> {
+    const { data, error } = await this.supabase
+      .from('prompts')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  }
+
+  async getPrompt(id: number): Promise<Prompt | undefined> {
+    const { data, error } = await this.supabase
+      .from('prompts')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  async createPrompt(prompt: InsertPrompt): Promise<Prompt> {
+    const { data, error } = await this.supabase
+      .from('prompts')
+      .insert({
+        title: prompt.title,
+        content: prompt.content,
+        description: prompt.description,
+        category: prompt.category,
+        is_premium: prompt.isPremium,
+        is_public: prompt.isPublic
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  async updatePrompt(id: number, prompt: Partial<InsertPrompt>): Promise<Prompt | undefined> {
+    const updateData: any = {};
+    if (prompt.title !== undefined) updateData.title = prompt.title;
+    if (prompt.content !== undefined) updateData.content = prompt.content;
+    if (prompt.description !== undefined) updateData.description = prompt.description;
+    if (prompt.category !== undefined) updateData.category = prompt.category;
+    if (prompt.isPremium !== undefined) updateData.is_premium = prompt.isPremium;
+    if (prompt.isPublic !== undefined) updateData.is_public = prompt.isPublic;
+    updateData.updated_at = new Date().toISOString();
+
+    const { data, error } = await this.supabase
+      .from('prompts')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  async deletePrompt(id: number): Promise<boolean> {
+    const { error } = await this.supabase
+      .from('prompts')
+      .delete()
+      .eq('id', id);
+    
+    return !error;
   }
 }
