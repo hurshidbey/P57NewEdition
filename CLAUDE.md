@@ -322,3 +322,7 @@ ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && docker
 - **Containerization**: Docker + docker-compose for all environments
 - **Build System**: Vite for frontend, esbuild for backend
 - **Process Management**: Docker containers (not PM2)
+```
+
+**Memories**:
+- **WHY THE FUCK YOU SHUOLD SAY SOMETHING LIVE WHEN IT IS NOT!**

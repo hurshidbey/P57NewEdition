@@ -140,7 +140,7 @@ export class SupabaseStorage implements IStorage {
     if (protocol.goodExample !== undefined) dbProtocol.good_example = protocol.goodExample;
     if (protocol.categoryId !== undefined) dbProtocol.category_id = protocol.categoryId;
     
-    // Handle notes and isFreeAccess separately
+    // Handle notes and isFreeAccess properly
     if (protocol.isFreeAccess !== undefined) {
       dbProtocol.is_free_access = protocol.isFreeAccess;
     }
