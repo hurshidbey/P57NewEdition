@@ -565,6 +565,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Simple test endpoint to verify API routing works
+  app.get("/api/test", (req, res) => {
+    res.json({ 
+      message: "API routes are working!", 
+      timestamp: new Date().toISOString(),
+      route: "/api/test" 
+    });
+  });
+
   // Test endpoint: Direct Supabase connection (no auth required)
   app.get("/api/test/prompts", async (req, res) => {
     try {

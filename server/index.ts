@@ -64,7 +64,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  console.log(`[server] Registering API routes...`);
   const server = await registerRoutes(app);
+  console.log(`[server] API routes registered successfully`);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -99,7 +101,10 @@ app.use((req, res, next) => {
     await setupVite(app, server);
   } else {
     console.log(`[server] Setting up static file serving`);
+    console.log(`[server] Current middleware stack before static serving:`);
+    console.log(`[server] - Registered ${app._router.stack.length} middleware/routes so far`);
     serveStatic(app);
+    console.log(`[server] Static serving setup complete`);
   }
 
   // ALWAYS serve the app on port 5000
