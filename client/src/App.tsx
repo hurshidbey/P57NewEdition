@@ -18,6 +18,7 @@ import AtmosPayment from "@/pages/atmos-payment";
 import LandingPage from "@/pages/landing";
 import LandingSimple from "@/pages/landing-simple";
 import LandingConversion from "@/pages/landing-conversion";
+import LandingTildaNew from "@/pages/landing-tilda-new";
 
 function AppContent() {
   const { isAuthenticated, loading, user } = useAuth();
@@ -50,6 +51,7 @@ function AppContent() {
     <Switch>
       <Route path="/landing" component={LandingPage} />
       <Route path="/landing-conversion" component={LandingConversion} />
+      <Route path="/landing-tilda" component={LandingTildaNew} />
       <Route path="/test" component={LandingSimple} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/auth/confirm" component={EmailConfirmPage} />
