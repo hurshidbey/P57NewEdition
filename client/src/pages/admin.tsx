@@ -55,7 +55,8 @@ export default function Admin() {
   }
 
   const { data: protocols } = useQuery<Protocol[]>({
-    queryKey: ["/api/protocols", { limit: 1000 }],
+    queryKey: ["/api/admin/protocols"],
+    enabled: !!user && user.email === 'hurshidbey@gmail.com'
   });
 
   const { data: freeStatus } = useQuery<{

@@ -29,8 +29,9 @@ export function useUserTier(): UserTierData {
     setLoading(false);
   }, [user, isAuthenticated, authLoading]);
   
-  // Get tier directly from auth context
-  const tier = (user?.tier as UserTier) || 'free';
+  // CRITICAL FIX: Check if user is admin first, then get tier
+  const isAdmin = user?.email === 'hurshidbey@gmail.com';
+  const tier = isAdmin ? 'paid' : ((user?.tier as UserTier) || 'free');
 
   // Get count of accessed protocols for free tier limits
   const getAccessedProtocolsCount = (): number => {
@@ -42,6 +43,8 @@ export function useUserTier(): UserTierData {
 
   // Check if free user can access a new protocol (max 3 protocols)
   const canAccessNewProtocol = (): boolean => {
+    // CRITICAL FIX: Admin users have unlimited access
+    if (isAdmin) return true; // Admin users unlimited
     if (tier === 'paid') return true; // Paid users unlimited
     
     const accessedCount = getAccessedProtocolsCount();
@@ -49,6 +52,11 @@ export function useUserTier(): UserTierData {
   };
 
   const canAccessProtocol = (protocolId: number, isFreeAccess: boolean): boolean => {
+    // CRITICAL FIX: Admin users have unlimited access to all protocols
+    if (isAdmin) {
+      return true; // Admin can access all protocols regardless of tier
+    }
+    
     if (tier === 'paid') {
       return true; // Paid users can access all protocols
     }
@@ -68,6 +76,22 @@ export function useUserTier(): UserTierData {
   };
 
   const getTierStatus = () => {
+    // CRITICAL FIX: Show special admin status
+    if (isAdmin) {
+      return {
+        tier: 'paid' as UserTier, // Admin treated as paid tier
+        displayName: 'Admin',
+        color: 'text-purple-600 bg-purple-100',
+        features: [
+          'Barcha 57 protokolga kirish',
+          'Admin panel kirish',
+          'Cheksiz AI baholash',
+          'Protokollarni boshqarish',
+          'Full system access'
+        ]
+      };
+    }
+    
     switch (tier) {
       case 'paid':
         return {

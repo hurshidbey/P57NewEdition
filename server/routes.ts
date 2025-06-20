@@ -261,8 +261,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           const { data: { user }, error } = await supabase.auth.getUser(token);
           if (user && !error) {
-            // Check user tier from metadata - new users default to free tier
-            userTier = user.user_metadata?.tier || 'free'; // New users are free by default
+            // CRITICAL FIX: Check if user is admin first
+            if (user.email === 'hurshidbey@gmail.com') {
+              userTier = 'admin'; // Special tier for admin
+            } else {
+              // Check user tier from metadata - new users default to free tier
+              userTier = user.user_metadata?.tier || 'free'; // New users are free by default
+            }
           }
         } catch (error) {
           console.log('Error checking user tier:', error);
@@ -309,7 +314,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           const { data: { user }, error } = await supabase.auth.getUser(token);
           if (user && !error) {
-            userTier = user.user_metadata?.tier || 'free'; // New users are free by default
+            // CRITICAL FIX: Check if user is admin first
+            if (user.email === 'hurshidbey@gmail.com') {
+              userTier = 'admin'; // Special tier for admin
+            } else {
+              userTier = user.user_metadata?.tier || 'free'; // New users are free by default
+            }
           }
         } catch (error) {
           console.log('Error checking user tier:', error);
@@ -408,6 +418,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error toggling protocol free access:', error);
       res.status(500).json({ message: "Failed to update protocol free access" });
+    }
+  });
+
+  // Get all protocols for admin (no filtering) - CRITICAL FIX
+  app.get("/api/admin/protocols", isSupabaseAdmin, async (req, res) => {
+    try {
+      const protocols = await storage.getProtocols(1000, 0); // Get all protocols without any filtering
+      res.json(protocols);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch protocols for admin" });
     }
   });
 
