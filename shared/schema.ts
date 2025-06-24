@@ -58,6 +58,17 @@ export const prompts = pgTable("prompts", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const payments = pgTable("payments", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  userEmail: text("user_email").notNull(),
+  amount: integer("amount").notNull(),
+  transactionId: text("transaction_id").notNull(),
+  status: text("status").notNull().default('pending'), // 'pending' | 'completed' | 'failed'
+  atmosData: text("atmos_data"), // JSON string of ATMOS response
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -83,6 +94,10 @@ export const insertPromptSchema = createInsertSchema(prompts).omit({
   updatedAt: true,
 });
 
+export const insertPaymentSchema = createInsertSchema(payments).omit({
+  createdAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Protocol = typeof protocols.$inferSelect;
@@ -93,3 +108,5 @@ export type UserProgress = typeof userProgress.$inferSelect;
 export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
 export type Prompt = typeof prompts.$inferSelect;
 export type InsertPrompt = z.infer<typeof insertPromptSchema>;
+export type Payment = typeof payments.$inferSelect;
+export type InsertPayment = z.infer<typeof insertPaymentSchema>;
