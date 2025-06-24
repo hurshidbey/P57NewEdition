@@ -1,7 +1,8 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProtocolSchema, users } from "@shared/schema";
+import { hybridPromptsStorage } from "./hybrid-storage";
+import { insertProtocolSchema, insertPromptSchema, users } from "@shared/schema";
 import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
@@ -59,8 +60,8 @@ const isSupabaseAdmin = async (req: any, res: Response, next: NextFunction) => {
     const token = authHeader.split(' ')[1];
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(
-      'https://bazptglwzqstppwlvmvb.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!
     );
     
     const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -69,34 +70,32 @@ const isSupabaseAdmin = async (req: any, res: Response, next: NextFunction) => {
       return res.status(401).json({ error: 'Invalid token' });
     }
     
-    // Only allow admin user (hurshidbey@gmail.com)
-    if (user.email !== 'hurshidbey@gmail.com') {
+    // Only allow admin user
+    if (user.email !== process.env.ADMIN_EMAIL) {
       return res.status(403).json({ error: 'Access denied - admin only' });
     }
     
     req.user = user;
     next();
   } catch (error: any) {
-    console.error('Admin auth middleware error:', error);
+
     res.status(500).json({ error: 'Authentication failed' });
   }
 };
 
 // Admin middleware function to check if user is an admin (legacy session-based)
 const isAdmin = (req: any, res: Response, next: NextFunction) => {
-  console.log("Admin auth check - user:", req.session?.user ? `ID: ${req.session.user.id}, Role: ${req.session.user.role}` : 'No user');
-  
+
   if (!req.session?.user) {
-    console.log("Admin auth failed - not authenticated");
+
     return res.status(401).json({ message: "Not authenticated" });
   }
   
   if (req.session.user.role !== "admin") {
-    console.log(`Admin auth failed - wrong role: ${req.session.user.role}`);
+
     return res.status(403).json({ message: "Not authorized" });
   }
-  
-  console.log("Admin auth success");
+
   next();
 };
 
@@ -104,16 +103,14 @@ const isAdmin = (req: any, res: Response, next: NextFunction) => {
 const setupAuth = (app: Express) => {
   // Session middleware setup would go here
   // For now, this is a placeholder that can be enhanced with passport.js or similar
-  console.log("Auth setup initialized - basic session-based auth");
+
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  console.log(`[routes] Starting to register API routes...`);
-  
+
   // Set up authentication routes
   setupAuth(app);
-  console.log(`[routes] Auth setup complete`);
-  
+
   // Set up ATMOS payment routes
   app.use('/api', setupAtmosRoutes());
   
@@ -270,7 +267,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
         } catch (error) {
-          console.log('Error checking user tier:', error);
+
         }
       }
       
@@ -322,7 +319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
         } catch (error) {
-          console.log('Error checking user tier:', error);
+
         }
       }
       
@@ -416,7 +413,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(updated);
     } catch (error) {
-      console.error('Error toggling protocol free access:', error);
+
       res.status(500).json({ message: "Failed to update protocol free access" });
     }
   });
@@ -461,130 +458,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get prompts (filtered by user tier)
+  // Get prompts (filtered by user tier) - Fast JSON reads
   app.get("/api/prompts", async (req, res) => {
     try {
       const { userTier = 'free' } = req.query;
-      const prompts = await storage.getPrompts(userTier as string);
+      const prompts = await hybridPromptsStorage.getPrompts(userTier as string);
       res.json(prompts);
     } catch (error) {
+
       res.status(500).json({ message: "Failed to fetch prompts" });
     }
   });
 
-  // Get single prompt (with tier validation)
+  // Get single prompt (with tier validation) - Fast JSON reads
   app.get("/api/prompts/:id", async (req, res) => {
     try {
       const promptId = parseInt(req.params.id);
       const { userTier = 'free' } = req.query;
       
-      const prompt = await storage.getPrompt(promptId);
+      if (isNaN(promptId)) {
+        return res.status(400).json({ message: "Invalid prompt ID" });
+      }
+      
+      const prompt = await hybridPromptsStorage.getPrompt(promptId, userTier as string);
+      
       if (!prompt) {
         return res.status(404).json({ message: "Prompt not found" });
       }
       
-      // Check access permissions
-      if (prompt.isPremium && userTier === 'free') {
-        return res.status(403).json({ message: "Premium prompt requires paid tier" });
-      }
-      
-      if (!prompt.isPublic && userTier === 'free') {
-        return res.status(403).json({ message: "Private prompt not accessible" });
-      }
-      
       res.json(prompt);
     } catch (error) {
+
       res.status(500).json({ message: "Failed to fetch prompt" });
     }
   });
 
-  // Admin: Create new prompt
+  // Admin: Create prompt - Database + JSON sync
   app.post("/api/admin/prompts", isSupabaseAdmin, async (req, res) => {
     try {
-      const { title, content, description, category, isPremium = false, isPublic = true } = req.body;
+      const validatedData = insertPromptSchema.parse(req.body);
       
-      if (!title || !content || !category) {
-        return res.status(400).json({ message: "Title, content, and category are required" });
-      }
+      const prompt = await hybridPromptsStorage.createPrompt(validatedData);
       
-      const newPrompt = await storage.createPrompt({
-        title,
-        content,
-        description,
-        category,
-        isPremium,
-        isPublic
-      });
-      
-      res.status(201).json(newPrompt);
+      res.status(201).json(prompt);
     } catch (error) {
+
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
       res.status(500).json({ message: "Failed to create prompt" });
     }
   });
 
-  // Admin: Update prompt
+  // Admin: Update prompt - Database + JSON sync
   app.put("/api/admin/prompts/:id", isSupabaseAdmin, async (req, res) => {
     try {
       const promptId = parseInt(req.params.id);
-      const { title, content, description, category, isPremium, isPublic } = req.body;
       
-      const updatedPrompt = await storage.updatePrompt(promptId, {
-        title,
-        content,
-        description,
-        category,
-        isPremium,
-        isPublic
-      });
+      if (isNaN(promptId)) {
+        return res.status(400).json({ message: "Invalid prompt ID" });
+      }
       
-      if (!updatedPrompt) {
+      const validatedData = insertPromptSchema.partial().parse(req.body);
+      
+      const prompt = await hybridPromptsStorage.updatePrompt(promptId, validatedData);
+      
+      if (!prompt) {
         return res.status(404).json({ message: "Prompt not found" });
       }
       
-      res.json(updatedPrompt);
+      res.json(prompt);
     } catch (error) {
+
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
       res.status(500).json({ message: "Failed to update prompt" });
     }
   });
 
-  // Admin: Delete prompt
+  // Admin: Delete prompt - Database + JSON sync
   app.delete("/api/admin/prompts/:id", isSupabaseAdmin, async (req, res) => {
     try {
       const promptId = parseInt(req.params.id);
       
-      const deleted = await storage.deletePrompt(promptId);
-      if (!deleted) {
+      if (isNaN(promptId)) {
+        return res.status(400).json({ message: "Invalid prompt ID" });
+      }
+      
+      const success = await hybridPromptsStorage.deletePrompt(promptId);
+      
+      if (!success) {
         return res.status(404).json({ message: "Prompt not found" });
       }
       
       res.json({ message: "Prompt deleted successfully" });
     } catch (error) {
+
       res.status(500).json({ message: "Failed to delete prompt" });
     }
   });
 
-  // Admin: Get all prompts (no filtering) - FIXED FOR ADMIN
-  app.get("/api/admin/prompts", async (req, res) => {
+  // Admin: Get all prompts (no filtering) - Fresh database data
+  app.get("/api/admin/prompts", isSupabaseAdmin, async (req, res) => {
     try {
-      // Direct Supabase call since you're already authenticated as admin
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        'https://bazptglwzqstppwlvmvb.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTAxNzU5MCwiZXhwIjoyMDY0NTkzNTkwfQ.GdDEVx5CRy1NC_2e5QbtCKcXZmoEL1z2RU7SlHA_-oQ'
-      );
-      
-      const { data, error } = await supabase
-        .from('prompts')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
-      
-      res.json(data);
+      const prompts = await hybridPromptsStorage.getAllPrompts();
+      res.json(prompts);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch prompts", error: (error as Error).message });
+
+      res.status(500).json({ message: "Failed to fetch prompts" });
     }
   });
 
@@ -655,7 +637,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const evaluation = await evaluatePrompt(prompt.trim(), protocol);
       res.json(evaluation);
     } catch (error) {
-      console.error("Evaluation error:", error);
+
       res.status(500).json({ message: "Failed to evaluate prompt" });
     }
   });
@@ -698,7 +680,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString()
       });
     } catch (error: any) {
-      console.error('OpenAI test error:', error);
+
       res.status(500).json({
         connected: false,
         error: error.message,
@@ -739,7 +721,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await storage.getUserProgress(userId);
       res.json(result);
     } catch (error: any) {
-      console.error('Error fetching user progress:', error);
+
       res.status(500).json({ error: error.message });
     }
   });
@@ -782,7 +764,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(result);
     } catch (error: any) {
-      console.error('Error updating protocol progress:', error);
+
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Get all users
+  app.get("/api/admin/users", isSupabaseAdmin, async (req, res) => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_KEY!
+      );
+      
+      const { data: users, error } = await supabase.auth.admin.listUsers();
+      
+      if (error) throw error;
+      
+      // Format users with tier information
+      const formattedUsers = users.users.map(user => ({
+        id: user.id,
+        email: user.email || '',
+        tier: user.user_metadata?.tier || 'free',
+        createdAt: user.created_at
+      }));
+      
+      res.json(formattedUsers);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Get all payments
+  app.get("/api/admin/payments", isSupabaseAdmin, async (req, res) => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_KEY!
+      );
+      
+      // Get payments from the database
+      const { data: payments, error } = await supabase
+        .from('payments')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error && error.code !== 'PGRST116') { // Ignore table not found error
+        throw error;
+      }
+      
+      // If no payments table, return empty array
+      if (!payments) {
+        res.json([]);
+        return;
+      }
+      
+      res.json(payments);
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   });
@@ -810,7 +850,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
         } catch (dbError) {
-          console.error('Database error, using fallback IDs:', dbError);
+
           // Fallback to consistent IDs if DB fails
           // Create a consistent hash-based ID for users when DB is unavailable
           const hashCode = username.split('').reduce((hash: number, char: string) => {
@@ -843,9 +883,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
-  console.log(`[routes] All API routes registered successfully!`);
   const httpServer = createServer(app);
-  console.log(`[routes] HTTP server created, returning...`);
+
   return httpServer;
 }

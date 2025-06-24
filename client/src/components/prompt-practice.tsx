@@ -62,7 +62,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
         description: "Promptni baholashda xatolik. Qaytadan urinib ko'ring.",
         variant: "destructive",
       });
-      console.error("Evaluation error:", error);
+
     },
   });
 

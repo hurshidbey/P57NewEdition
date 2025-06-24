@@ -1,7 +1,6 @@
 import { supabase } from './supabase'
 import type { User } from '@supabase/supabase-js';
 
-
 export interface AuthUser {
   id: string
   email: string
@@ -12,8 +11,7 @@ export interface AuthUser {
 
 export const authService = {
   async signUp(email: string, password: string, name?: string) {
-    console.log('🔐 Attempting signup for:', email)
-    
+
     // Check if user recently attempted signup to prevent rate limiting
     const lastAttempt = localStorage.getItem(`signup_attempt_${email}`)
     const now = Date.now()
@@ -38,8 +36,7 @@ export const authService = {
     })
     
     if (error) {
-      console.error('❌ Signup error:', error)
-      
+
       // Handle specific rate limiting errors
       if (error.message.includes('rate') || error.message.includes('limit') || error.message.includes('too many')) {
         throw new Error('Juda ko\'p urinish. Iltimos, bir necha daqiqa kutib qayta urinib ko\'ring.')
@@ -59,17 +56,12 @@ export const authService = {
       
       throw new Error('Ro\'yxatdan o\'tishda xatolik: ' + error.message)
     }
-    
-    console.log('✅ Signup response:', data)
-    console.log('User created:', data.user?.email)
-    console.log('Email confirmed:', data.user?.email_confirmed_at)
-    
+
     return data
   },
 
   async signIn(email: string, password: string) {
-    console.log('🔐 Attempting signin for:', email)
-    
+
     // Check if user recently attempted signin to prevent rate limiting
     const lastAttempt = localStorage.getItem(`signin_attempt_${email}`)
     const now = Date.now()
@@ -87,8 +79,7 @@ export const authService = {
     })
     
     if (error) {
-      console.error('❌ Signin error:', error)
-      
+
       // Handle specific errors
       if (error.message.includes('rate') || error.message.includes('limit') || error.message.includes('too many')) {
         throw new Error('Juda ko\'p urinish. Iltimos, bir necha daqiqa kutib qayta urinib ko\'ring.')
@@ -104,13 +95,12 @@ export const authService = {
       
       throw new Error('Kirishda xatolik: ' + error.message)
     }
-    
-    console.log('✅ Signin successful:', data.user?.email)
+
     return data
   },
 
   async signInWithGoogle() {
-    console.log('🔐 Attempting Google OAuth signin')
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -119,11 +109,10 @@ export const authService = {
     })
     
     if (error) {
-      console.error('❌ Google OAuth error:', error)
+
       throw error
     }
-    
-    console.log('✅ Google OAuth initiated:', data)
+
     return data
   },
 
@@ -136,9 +125,7 @@ export const authService = {
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) return null
-    
-    console.log('Current user check:', user.email, 'confirmed:', user.email_confirmed_at)
-    
+
     // 🔧 FIX: Create email-based user ID for Google OAuth users
     // This ensures different Google accounts get different user IDs
     const userId = user.app_metadata?.provider === 'google' 
@@ -158,7 +145,7 @@ export const authService = {
 
   onAuthStateChange(callback: (user: AuthUser | null) => void) {
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email)
+
       if (session?.user && session?.user?.email_confirmed_at) {
         // 🔧 FIX: Create email-based user ID for Google OAuth users
         const userId = session.user.app_metadata?.provider === 'google' 

@@ -75,8 +75,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         setLocation("/")
       }, 500)
     } catch (error: any) {
-      console.error('Login error:', error)
-      
+
       toast({
         title: "Xatolik",
         description: error.message || "Kirish jarayonida xatolik yuz berdi",

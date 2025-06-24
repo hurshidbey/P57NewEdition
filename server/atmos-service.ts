@@ -41,7 +41,6 @@ export class AtmosService {
       throw new Error('ATMOS credentials not configured');
     }
 
-    console.log('ATMOS Service initialized for store:', this.storeId);
   }
 
   // Helper function to make HTTPS requests
@@ -123,11 +122,10 @@ export class AtmosService {
       this.accessToken = data.access_token;
       // Set expiry to 55 minutes (5 minutes before actual expiry for safety)
       this.tokenExpiry = Date.now() + (55 * 60 * 1000);
-      
-      console.log('✅ ATMOS access token obtained');
+
       return this.accessToken;
     } catch (error) {
-      console.error('❌ ATMOS token error:', error);
+
       throw new Error(`Failed to get ATMOS access token: ${error}`);
     }
   }
@@ -151,8 +149,7 @@ export class AtmosService {
       
       // Check if response is XML (fault response)
       if (responseText.startsWith('<')) {
-        console.error('ATMOS API returned XML fault:', responseText);
-        
+
         // Try to extract error message from XML
         const faultMatch = responseText.match(/<faultstring[^>]*>([^<]+)<\/faultstring>/);
         const errorMessage = faultMatch ? faultMatch[1] : 'ATMOS API returned XML fault response';
@@ -165,18 +162,18 @@ export class AtmosService {
       try {
         responseData = JSON.parse(responseText);
       } catch (parseError) {
-        console.error('Failed to parse ATMOS response:', responseText);
+
         throw new Error('Invalid response format from ATMOS API');
       }
 
       if (!response.ok) {
-        console.error('ATMOS API Error:', responseData);
+
         throw new Error(responseData.result?.description || `API request failed: ${response.status}`);
       }
 
       return responseData;
     } catch (error) {
-      console.error('ATMOS API Request Error:', error);
+
       throw error;
     }
   }
@@ -195,14 +192,12 @@ export class AtmosService {
       transactionData.terminal_id = terminalId;
     }
 
-    console.log('Creating ATMOS transaction:', transactionData);
-
     try {
       const result = await this.apiRequest('/merchant/pay/create', transactionData);
-      console.log('✅ ATMOS transaction created:', result);
+
       return result;
     } catch (error) {
-      console.error('❌ ATMOS create transaction error:', error);
+
       throw error;
     }
   }
@@ -216,14 +211,12 @@ export class AtmosService {
       store_id: this.storeId
     };
 
-    console.log('Pre-applying ATMOS transaction:', { transaction_id: transactionId, store_id: this.storeId });
-
     try {
       const result = await this.apiRequest('/merchant/pay/pre-apply', preApplyData);
-      console.log('✅ ATMOS transaction pre-applied, OTP sent');
+
       return result;
     } catch (error) {
-      console.error('❌ ATMOS pre-apply error:', error);
+
       throw error;
     }
   }
@@ -236,15 +229,14 @@ export class AtmosService {
       store_id: this.storeId
     };
 
-    console.log('Applying ATMOS transaction:', { transaction_id: transactionId, store_id: this.storeId });
     console.log('Apply data:', JSON.stringify(applyData, null, 2));
 
     try {
       const result = await this.apiRequest('/merchant/pay/confirm', applyData);
-      console.log('✅ ATMOS transaction applied:', result);
+
       return result;
     } catch (error) {
-      console.error('❌ ATMOS apply error:', error);
+
       throw error;
     }
   }
@@ -256,14 +248,12 @@ export class AtmosService {
       transaction_id: transactionId
     };
 
-    console.log('Getting ATMOS transaction:', { transaction_id: transactionId });
-
     try {
       const result = await this.apiRequest('/merchant/pay/get', data);
-      console.log('✅ ATMOS transaction details:', result);
+
       return result;
     } catch (error) {
-      console.error('❌ ATMOS get transaction error:', error);
+
       throw error;
     }
   }
@@ -275,14 +265,12 @@ export class AtmosService {
       reason: reason || 'User requested cancellation'
     };
 
-    console.log('Reversing ATMOS transaction:', { transaction_id: successTransId });
-
     try {
       const result = await this.apiRequest('/merchant/pay/reverse', reverseData);
-      console.log('✅ ATMOS transaction reversed:', result);
+
       return result;
     } catch (error) {
-      console.error('❌ ATMOS reverse error:', error);
+
       throw error;
     }
   }
@@ -293,14 +281,12 @@ export class AtmosService {
       transaction_id: transactionId
     };
 
-    console.log('Resending OTP for transaction:', transactionId);
-
     try {
       const result = await this.apiRequest('/merchant/pay/otp-resend', data);
-      console.log('✅ OTP resent successfully');
+
       return result;
     } catch (error) {
-      console.error('❌ ATMOS resend OTP error:', error);
+
       throw error;
     }
   }
@@ -312,14 +298,12 @@ export class AtmosService {
       expiry: expiry // Format: YYMM
     };
 
-    console.log('Initiating card binding');
-
     try {
       const result = await this.apiRequest('/partner/bind-card/init', bindData);
-      console.log('✅ Card binding initiated:', result);
+
       return result;
     } catch (error) {
-      console.error('❌ Card binding init error:', error);
+
       throw error;
     }
   }
@@ -331,14 +315,12 @@ export class AtmosService {
       otp: otp
     };
 
-    console.log('Confirming card binding:', { transaction_id: transactionId });
-
     try {
       const result = await this.apiRequest('/partner/bind-card/confirm', confirmData);
-      console.log('✅ Card binding confirmed:', result);
+
       return result;
     } catch (error) {
-      console.error('❌ Card binding confirm error:', error);
+
       throw error;
     }
   }
@@ -361,14 +343,13 @@ export class AtmosService {
 
     try {
       const preApplyResult = await this.apiRequest('/merchant/pay/pre-apply', preApplyData);
-      console.log('✅ Bound card transaction pre-applied');
-      
+
       // For bound cards, we can directly apply with OTP 111111
       const applyResult = await this.applyTransaction(createResult.transaction_id, '111111');
       
       return applyResult;
     } catch (error) {
-      console.error('❌ Bound card transaction error:', error);
+
       throw error;
     }
   }

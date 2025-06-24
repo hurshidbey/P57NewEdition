@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
     } catch (error) {
-      console.error('Failed to refresh user:', error)
+
     }
   }
 
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     if (urlParams.get('payment') === 'success') {
-      console.log('🔄 Payment success detected, refreshing user data...')
+
       setTimeout(() => {
         refreshUser()
       }, 1000) // Small delay to ensure backend has processed the update
@@ -82,11 +82,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // 🔧 FIX: Clear all progress localStorage keys on logout
     // This prevents cross-user contamination when switching Google accounts
-    console.log('🧹 Clearing all progress data on logout...');
+
     const allKeys = Object.keys(localStorage);
     const progressKeys = allKeys.filter(key => key.startsWith('protokol57_progress_'));
     progressKeys.forEach(key => {
-      console.log(`🗑️ Removing progress key: ${key}`);
+
       localStorage.removeItem(key);
     });
     

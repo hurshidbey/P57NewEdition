@@ -16,7 +16,6 @@ export function log(message: string, source = "express") {
     hour12: true,
   });
 
-  console.log(`${formattedTime} [${source}] ${message}`);
 }
 
 export async function setupVite(app: Express, server: Server) {
@@ -77,23 +76,21 @@ export async function setupVite(app: Express, server: Server) {
 
 export function serveStatic(app: Express) {
   const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
-  
-  console.log(`[serveStatic] Looking for static files in: ${distPath}`);
+
   console.log(`[serveStatic] Directory exists: ${fs.existsSync(distPath)}`);
   
   // List contents if directory exists
   if (fs.existsSync(distPath)) {
     try {
       const files = fs.readdirSync(distPath);
-      console.log(`[serveStatic] Files in dist directory:`, files);
+
     } catch (err) {
-      console.log(`[serveStatic] Error reading directory:`, err);
+
     }
   }
 
   if (!fs.existsSync(distPath)) {
-    console.error(`[serveStatic] Build directory not found: ${distPath}`);
-    console.error(`[serveStatic] Make sure to build the client first with: npm run build`);
+
     throw new Error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`,
     );
@@ -105,27 +102,25 @@ export function serveStatic(app: Express) {
     etag: true,
     lastModified: true
   }));
-  console.log(`[serveStatic] Express static middleware configured for: ${distPath}`);
 
   // fall through to index.html if the file doesn't exist, but NOT for API routes
   app.use((req, res, next) => {
     // Skip this catch-all for API routes
     if (req.originalUrl.startsWith('/api/')) {
-      console.log(`[serveStatic] SKIPPING catch-all for API route: ${req.originalUrl}`);
+
       return next();
     }
     
     const indexPath = path.resolve(distPath, "index.html");
-    console.log(`[serveStatic] Fallback route hit for: ${req.originalUrl}`);
-    
+
     if (!fs.existsSync(indexPath)) {
-      console.error(`[serveStatic] index.html not found at: ${indexPath}`);
+
       return res.status(500).json({ error: 'Application not built properly' });
     }
     
     res.sendFile(indexPath, (err) => {
       if (err) {
-        console.error(`[serveStatic] Error serving index.html:`, err);
+
         next(err);
       }
     });

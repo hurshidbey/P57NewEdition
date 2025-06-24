@@ -68,7 +68,7 @@ class AnalyticsTracker {
         this.metrics = { ...this.metrics, ...JSON.parse(storedMetrics) }
       }
     } catch (error) {
-      console.warn('Failed to load analytics metrics from storage:', error)
+
     }
   }
 
@@ -76,7 +76,7 @@ class AnalyticsTracker {
     try {
       localStorage.setItem('p57_analytics_metrics', JSON.stringify(this.metrics))
     } catch (error) {
-      console.warn('Failed to save analytics metrics to storage:', error)
+
     }
   }
 
@@ -101,7 +101,7 @@ class AnalyticsTracker {
 
     // Send to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.log('📊 Analytics Event:', analyticsEvent)
+
     }
   }
 

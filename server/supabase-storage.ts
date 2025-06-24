@@ -125,8 +125,7 @@ export class SupabaseStorage implements IStorage {
   }
 
   async updateProtocol(id: number, protocol: Partial<InsertProtocol>): Promise<Protocol | undefined> {
-    console.log('Updating protocol:', id, 'with data:', protocol);
-    
+
     // Get current protocol to preserve existing data
     const current = await this.getProtocol(id);
     if (!current) return undefined;
@@ -158,7 +157,7 @@ export class SupabaseStorage implements IStorage {
       .single();
     
     if (error) {
-      console.error('Error updating protocol in Supabase:', error);
+
       throw error;
     }
     
@@ -183,7 +182,6 @@ export class SupabaseStorage implements IStorage {
     if (error) throw error;
     return true;
   }
-
 
   async getCategories(): Promise<Category[]> {
     const { data, error } = await this.supabase
@@ -292,7 +290,19 @@ export class SupabaseStorage implements IStorage {
     
     const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw error;
-    return data || [];
+    
+    // Map database field names (snake_case) to TypeScript interface (camelCase)
+    return (data || []).map(item => ({
+      id: item.id,
+      title: item.title,
+      content: item.content,
+      description: item.description,
+      category: item.category,
+      isPremium: item.is_premium,
+      isPublic: item.is_public,
+      createdAt: item.created_at,
+      updatedAt: item.updated_at,
+    }));
   }
 
   async getAllPrompts(): Promise<Prompt[]> {
@@ -302,7 +312,19 @@ export class SupabaseStorage implements IStorage {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    
+    // Map database field names (snake_case) to TypeScript interface (camelCase)
+    return (data || []).map(item => ({
+      id: item.id,
+      title: item.title,
+      content: item.content,
+      description: item.description,
+      category: item.category,
+      isPremium: item.is_premium,
+      isPublic: item.is_public,
+      createdAt: item.created_at,
+      updatedAt: item.updated_at,
+    }));
   }
 
   async getPrompt(id: number): Promise<Prompt | undefined> {

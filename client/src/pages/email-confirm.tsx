@@ -13,35 +13,25 @@ export default function EmailConfirmPage() {
   useEffect(() => {
     // Prevent multiple executions due to auth context re-renders
     if (hasRun.current) {
-      console.log('⏭️ Email confirmation already ran, skipping...')
+
       return
     }
     hasRun.current = true
 
     const handleEmailConfirmation = async () => {
       try {
-        console.log('🚀 [FINAL FIX] Starting email confirmation process...')
-        console.log('📍 Current URL:', window.location.href)
-        
+
         // ROBUST AUTH CHECK: Check multiple times with different intervals
         const checkAuthAndRedirect = async (attempt = 1) => {
-          console.log(`🔍 [AUTH CHECK ${attempt}] Checking authentication state...`)
-          
+
           const { data: { user }, error } = await supabase.auth.getUser()
-          console.log(`👤 [AUTH CHECK ${attempt}] User state:`, {
-            hasUser: !!user,
-            email: user?.email,
-            emailConfirmed: user?.email_confirmed_at,
-            isConfirmed: !!user?.email_confirmed_at,
-            error: error?.message
-          })
-          
+
           if (user && user.email_confirmed_at) {
-            console.log(`✅ [AUTH CHECK ${attempt}] SUCCESS - User authenticated and confirmed!`)
+
             setStatus('success')
             setMessage('Email muvaffaqiyatli tasdiqlandi!')
             setTimeout(() => {
-              console.log('🔄 [REDIRECT] Navigating to home page...')
+
               window.location.href = '/'
             }, 1500)
             return true // Success
@@ -62,7 +52,7 @@ export default function EmailConfirmPage() {
             if (await checkAuthAndRedirect(3)) return
             
             // If still no success, check for Supabase redirect params
-            console.log('🔍 [FALLBACK] Checking URL parameters...')
+
             const urlParams = new URLSearchParams(window.location.search)
             const hashParams = new URLSearchParams(window.location.hash.substring(1))
             
@@ -70,23 +60,23 @@ export default function EmailConfirmPage() {
             const accessToken = urlParams.get('access_token') || hashParams.get('access_token')
             
             if (error) {
-              console.error('❌ [FALLBACK] Supabase error:', error)
+
               setStatus('error')
               setMessage(`Tasdiqlashda xatolik: ${error}`)
             } else if (accessToken) {
-              console.log('✅ [FALLBACK] Access token found - success!')
+
               setStatus('success')
               setMessage('Email muvaffaqiyatli tasdiqlandi!')
               setTimeout(() => window.location.href = '/', 1500)
             } else {
-              console.log('❌ [FALLBACK] No success indicators found')
+
               setStatus('error')
               setMessage('Tasdiqlash jarayoni tugallanmadi. Iltimos, qaytadan urinib ko\'ring.')
             }
           }, 1500)
         }, 500)
       } catch (error) {
-        console.error('💥 Unexpected error during email confirmation:', error)
+
         setStatus('error')
         setMessage('Tasdiqlash jarayonida kutilmagan xatolik yuz berdi')
       }

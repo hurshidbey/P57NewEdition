@@ -2,6 +2,7 @@ import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { registerRoutes } from "./routes";
+import { hybridPromptsStorage } from "./hybrid-storage";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Set to true in production with HTTPS
+    secure: process.env.NODE_ENV === 'production', // Enable secure cookies in production
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
@@ -64,13 +65,20 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  console.log(`[server] Registering API routes...`);
+
+  try {
+    await hybridPromptsStorage.initialize();
+
+  } catch (error) {
+
+  }
+
   let server;
   try {
     server = await registerRoutes(app);
-    console.log(`[server] API routes registered successfully`);
+
   } catch (error) {
-    console.error(`[server] ERROR: Failed to register API routes:`, error);
+
     throw error;
   }
 
@@ -79,9 +87,9 @@ app.use((req, res, next) => {
     const message = err.message || "Internal Server Error";
     
     // Log the error for debugging
-    console.error(`[ERROR] ${status}: ${message}`);
+
     if (err.stack) {
-      console.error(`[ERROR] Stack trace:`, err.stack);
+
     }
 
     res.status(status).json({ 
@@ -99,18 +107,14 @@ app.use((req, res, next) => {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   const env = app.get("env");
-  console.log(`[server] Environment detected: ${env}`);
-  console.log(`[server] NODE_ENV: ${process.env.NODE_ENV}`);
-  
+
   if (env === "development") {
-    console.log(`[server] Setting up Vite development server`);
+
     await setupVite(app, server);
   } else {
-    console.log(`[server] Setting up static file serving`);
-    console.log(`[server] Current middleware stack before static serving:`);
-    console.log(`[server] - Registered ${app._router.stack.length} middleware/routes so far`);
+
     serveStatic(app);
-    console.log(`[server] Static serving setup complete`);
+
   }
 
   // ALWAYS serve the app on port 5000
