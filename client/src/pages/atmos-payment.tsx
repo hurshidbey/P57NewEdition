@@ -160,7 +160,9 @@ export default function AtmosPayment() {
           message: 'To\'lov muvaffaqiyatli amalga oshirildi!'
         });
         
-        // Force refresh user data from Supabase to get updated tier
+        // CRITICAL: Force complete session refresh after payment
+        console.log('🎯 Payment successful - forcing complete session refresh...');
+        
         try {
           const { createClient } = await import('@supabase/supabase-js');
           const supabase = createClient(
@@ -168,23 +170,49 @@ export default function AtmosPayment() {
             import.meta.env.VITE_SUPABASE_ANON_KEY!
           );
           
-          // Wait a moment for backend to complete tier update
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          // Wait longer for backend to complete tier update
+          await new Promise(resolve => setTimeout(resolve, 3000));
           
-          // Refresh user session to get updated metadata
-          const { error: refreshError } = await supabase.auth.refreshSession();
-          if (refreshError) {
-            console.error('❌ Failed to refresh session after payment:', refreshError);
-          } else {
-            console.log('✅ User session refreshed after payment');
+          // Multiple refresh attempts to ensure updated metadata
+          for (let i = 0; i < 3; i++) {
+            console.log(`🔄 Session refresh attempt ${i + 1}/3`);
             
-            // Trigger auth context refresh
-            localStorage.setItem('tier_upgrade_trigger', Date.now().toString());
-            localStorage.removeItem('tier_upgrade_trigger'); // Remove immediately to trigger event
+            const { data, error: refreshError } = await supabase.auth.refreshSession();
+            if (!refreshError && data.session?.user) {
+              console.log(`✅ Session refreshed - User tier: ${data.session.user.user_metadata?.tier || 'unknown'}`);
+              
+              // If tier is now 'paid', break out of loop
+              if (data.session.user.user_metadata?.tier === 'paid') {
+                console.log('✅ Tier upgrade confirmed in session!');
+                break;
+              }
+            } else if (refreshError) {
+              console.error(`❌ Refresh attempt ${i + 1} failed:`, refreshError);
+            }
+            
+            // Wait between attempts
+            if (i < 2) await new Promise(resolve => setTimeout(resolve, 1000));
           }
+          
+          // Force auth context to refresh
+          localStorage.setItem('tier_upgrade_trigger', Date.now().toString());
+          // Dispatch storage event manually since same window won't trigger automatically
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: 'tier_upgrade_trigger',
+            newValue: Date.now().toString()
+          }));
+          
+          // Also reload the page to ensure fresh data
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
 
         } catch (error) {
-          console.error('❌ Error refreshing user data after payment:', error);
+          console.error('❌ Error in session refresh process:', error);
+          // Fallback: reload page
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
         }
         
         // Redirect to home after 3 seconds with payment success flag
