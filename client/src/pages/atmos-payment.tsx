@@ -170,9 +170,9 @@ export default function AtmosPayment() {
           
           // Refresh user session to get updated metadata
           await supabase.auth.refreshSession();
-          console.log('✅ User session refreshed after payment');
+
         } catch (error) {
-          console.error('Failed to refresh user session:', error);
+
         }
         
         // Redirect to home after 3 seconds with payment success flag

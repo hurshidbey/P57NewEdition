@@ -72,23 +72,23 @@ async function initializeDatabase() {
         ]);
         
         // CRITICAL: Create user_progress table using SupabaseStorage
-        console.log("[DB] Creating user_progress table via Supabase...");
+
         await createSupabaseTable(supabaseStorage);
         
         // Use Supabase storage globally
         (global as any).supabaseStorage = supabaseStorage;
         isDatabaseConnected = true;
-        console.log("[DB] ✅ Supabase REST API connected successfully");
+
         return;
       } catch (error) {
         console.log(`[DB] ❌ Supabase connection attempt ${attempt} failed:`, (error as Error).message);
         if (attempt < MAX_RETRIES) {
-          console.log(`[DB] Waiting ${RETRY_DELAY}ms before retry...`);
+
           await sleep(RETRY_DELAY);
         }
       }
     }
-    console.log(`[DB] All Supabase connection attempts failed, trying direct database connection...`);
+
   }
 
   // Fall back to direct database connection
@@ -97,7 +97,7 @@ async function initializeDatabase() {
   if (!connectionString) {
     const dbPassword = process.env.SUPABASE_DB_PASSWORD;
     if (!dbPassword) {
-      console.log("No Supabase credentials or DATABASE_URL provided, using in-memory storage");
+
       return;
     }
     connectionString = `postgresql://postgres:${dbPassword}@db.bazptglwzqstppwlvmvb.supabase.co:5432/postgres`;
@@ -124,18 +124,17 @@ async function initializeDatabase() {
       ]);
       
       isDatabaseConnected = true;
-      console.log("[DB] ✅ Direct database connected successfully");
+
       return;
     } catch (error) {
       console.log(`[DB] ❌ Database connection attempt ${attempt} failed:`, (error as Error).message);
       if (attempt < MAX_RETRIES) {
-        console.log(`[DB] Waiting ${RETRY_DELAY}ms before retry...`);
+
         await sleep(RETRY_DELAY);
       }
     }
   }
-  
-  console.log("[DB] ⚠️ All database connection attempts failed, using in-memory storage");
+
   isDatabaseConnected = false;
 }
 
@@ -148,16 +147,14 @@ async function createSupabaseTable(supabaseStorage: any) {
       .limit(1);
     
     if (!testError) {
-      console.log("✅ user_progress table already exists and working!");
+
       return;
     }
     
     // Table doesn't exist, create it using direct HTTP request with service role key
     const supabaseUrl = process.env.SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
-    console.log("🔨 Creating user_progress table via direct SQL execution...");
-    
+
     // Create table using a stored procedure approach
     const createTableSQL = `
       DO $$
@@ -190,13 +187,12 @@ async function createSupabaseTable(supabaseStorage: any) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.log("❌ Direct SQL failed:", errorText);
-      
+
       // Try alternative: Force table creation by attempting operations
-      console.log("🔄 Attempting alternative table creation...");
+
       await forceCreateTable(supabaseStorage);
     } else {
-      console.log("✅ user_progress table created successfully!");
+
     }
     
   } catch (error) {
@@ -208,8 +204,7 @@ async function createSupabaseTable(supabaseStorage: any) {
 async function forceCreateTable(supabaseStorage: any) {
   try {
     // Create a temporary function in Supabase that will create our table
-    console.log("🔨 Creating table via INSERT attempt...");
-    
+
     // This will fail but might give us info about schema
     const { error } = await supabaseStorage.supabase
       .from('user_progress')
@@ -221,8 +216,7 @@ async function forceCreateTable(supabaseStorage: any) {
     
     if (error) {
       console.log("📋 Expected error (table doesn't exist):", error.message);
-      console.log("🚨 USER_PROGRESS TABLE MUST BE CREATED MANUALLY IN SUPABASE DASHBOARD!");
-      console.log("📋 SQL to run in Supabase SQL Editor:");
+
       console.log(`
         CREATE TABLE user_progress (
           id SERIAL PRIMARY KEY,
@@ -300,7 +294,6 @@ async function createTables() {
       CREATE INDEX IF NOT EXISTS idx_user_progress_protocol_id ON user_progress(protocol_id)
     `);
 
-    console.log("Tables created successfully");
   } catch (error) {
     console.log("Tables may already exist:", (error as Error).message);
   }
@@ -379,9 +372,7 @@ export class HybridStorage implements IStorage {
       this.memoryProtocols.set(protocol.id, protocol);
       this.currentProtocolId = Math.max(this.currentProtocolId, protocol.id + 1);
     });
-    
-    console.log(`[DB] ✅ Loaded ${allProtocols.length} protocols into memory storage`);
-    console.log(`[DB] ✅ Loaded ${defaultCategories.length} categories into memory storage`);
+
   }
 
   private async seedDatabaseData() {
@@ -450,11 +441,10 @@ export class HybridStorage implements IStorage {
   
   // Error handling and recovery methods
   private scheduleReconnect(operation: string): void {
-    console.log(`[DB] ⚠️ Database error in ${operation}, scheduling reconnection...`);
-    
+
     // Try to reconnect after a short delay (don't block current request)
     setTimeout(async () => {
-      console.log(`[DB] 🔄 Attempting to reconnect after ${operation} failure...`);
+
       try {
         await initializeDatabase();
       } catch (error) {
@@ -491,7 +481,7 @@ export class HybridStorage implements IStorage {
         const result = await db.select().from(users).where(eq(users.id, id));
         return result[0];
       } catch (error) {
-        console.error("Error getting user:", error);
+
       }
     }
     return this.memoryUsers.get(id);
@@ -503,7 +493,7 @@ export class HybridStorage implements IStorage {
         const result = await db.select().from(users).where(eq(users.username, username));
         return result[0];
       } catch (error) {
-        console.error("Error getting user by username:", error);
+
       }
     }
     return Array.from(this.memoryUsers.values()).find(user => user.username === username);
@@ -515,7 +505,7 @@ export class HybridStorage implements IStorage {
         const result = await db.insert(users).values(insertUser).returning();
         return result[0];
       } catch (error) {
-        console.error("Error creating user:", error);
+
       }
     }
     
@@ -561,7 +551,7 @@ export class HybridStorage implements IStorage {
     }
     
     // Fall back to memory storage
-    console.log("[DB] ⚠️ Using in-memory storage for getProtocols");
+
     const allProtocols = Array.from(this.memoryProtocols.values())
       .sort((a, b) => a.number - b.number);
     return allProtocols.slice(offset, offset + limit);
@@ -588,8 +578,7 @@ export class HybridStorage implements IStorage {
         this.scheduleReconnect('getProtocol');
       }
     }
-    
-    console.log("[DB] ⚠️ Using in-memory storage for getProtocol");
+
     return this.memoryProtocols.get(id);
   }
 
@@ -599,7 +588,7 @@ export class HybridStorage implements IStorage {
       try {
         return await (global as any).supabaseStorage.createProtocol(protocol);
       } catch (error) {
-        console.error("Error creating protocol in Supabase:", error);
+
       }
     }
     
@@ -608,7 +597,7 @@ export class HybridStorage implements IStorage {
         const result = await db.insert(protocols).values(protocol).returning();
         return result[0];
       } catch (error) {
-        console.error("Error creating protocol in database:", error);
+
       }
     }
     
@@ -637,7 +626,7 @@ export class HybridStorage implements IStorage {
       try {
         return await (global as any).supabaseStorage.updateProtocol(id, protocol);
       } catch (error) {
-        console.error("Error updating protocol in Supabase:", error);
+
       }
     }
     
@@ -649,7 +638,7 @@ export class HybridStorage implements IStorage {
           .returning();
         return result[0];
       } catch (error) {
-        console.error("Error updating protocol in database:", error);
+
       }
     }
     
@@ -667,7 +656,7 @@ export class HybridStorage implements IStorage {
       try {
         return await (global as any).supabaseStorage.deleteProtocol(id);
       } catch (error) {
-        console.error("Error deleting protocol in Supabase:", error);
+
       }
     }
     
@@ -676,14 +665,13 @@ export class HybridStorage implements IStorage {
         await db.delete(protocols).where(eq(protocols.id, id));
         return true;
       } catch (error) {
-        console.error("Error deleting protocol in database:", error);
+
         return false;
       }
     }
     
     return this.memoryProtocols.delete(id);
   }
-
 
   // Category methods
   async getCategories(): Promise<Category[]> {
@@ -710,7 +698,7 @@ export class HybridStorage implements IStorage {
     }
     
     // Fall back to memory storage
-    console.log("[DB] ⚠️ Using in-memory storage for getCategories");
+
     return Array.from(this.memoryCategories.values());
   }
 
@@ -720,7 +708,7 @@ export class HybridStorage implements IStorage {
       try {
         return await (global as any).supabaseStorage.getCategory(id);
       } catch (error) {
-        console.error("Error getting category from Supabase:", error);
+
       }
     }
     
@@ -730,7 +718,7 @@ export class HybridStorage implements IStorage {
         const result = await db.select().from(categories).where(eq(categories.id, id));
         return result[0];
       } catch (error) {
-        console.error("Error getting category from database:", error);
+
       }
     }
     
@@ -745,7 +733,7 @@ export class HybridStorage implements IStorage {
       try {
         return await (global as any).supabaseStorage.getUserProgress(userId);
       } catch (error) {
-        console.error("Error getting user progress from Supabase:", error);
+
       }
     }
     
@@ -755,7 +743,7 @@ export class HybridStorage implements IStorage {
         const result = await db.select().from(userProgress).where(eq(userProgress.userId, userId));
         return result;
       } catch (error) {
-        console.error("Error getting user progress from database:", error);
+
       }
     }
     
@@ -769,7 +757,7 @@ export class HybridStorage implements IStorage {
       try {
         return await (global as any).supabaseStorage.updateProtocolProgress(userId, protocolId, score);
       } catch (error) {
-        console.error("Error updating protocol progress in Supabase:", error);
+
         throw error;
       }
     }
@@ -814,7 +802,7 @@ export class HybridStorage implements IStorage {
           return newProgress[0];
         }
       } catch (error) {
-        console.error("Error updating protocol progress in database:", error);
+
         throw error;
       }
     }
@@ -846,7 +834,7 @@ export class HybridStorage implements IStorage {
         
         return await db.select().from(prompts).where(whereClause).orderBy(desc(prompts.createdAt));
       } catch (error) {
-        console.error("Error fetching prompts from database:", error);
+
       }
     }
     
@@ -859,7 +847,7 @@ export class HybridStorage implements IStorage {
       try {
         return await db.select().from(prompts).orderBy(desc(prompts.createdAt));
       } catch (error) {
-        console.error("Error fetching all prompts from database:", error);
+
       }
     }
     
@@ -872,7 +860,7 @@ export class HybridStorage implements IStorage {
         const result = await db.select().from(prompts).where(eq(prompts.id, id));
         return result[0];
       } catch (error) {
-        console.error("Error fetching prompt from database:", error);
+
       }
     }
     
@@ -885,7 +873,7 @@ export class HybridStorage implements IStorage {
         const result = await db.insert(prompts).values(prompt).returning();
         return result[0];
       } catch (error) {
-        console.error("Error creating prompt in database:", error);
+
         throw error;
       }
     }
@@ -902,7 +890,7 @@ export class HybridStorage implements IStorage {
           .returning();
         return result[0];
       } catch (error) {
-        console.error("Error updating prompt in database:", error);
+
         throw error;
       }
     }
@@ -916,7 +904,7 @@ export class HybridStorage implements IStorage {
         const result = await db.delete(prompts).where(eq(prompts.id, id)).returning();
         return result.length > 0;
       } catch (error) {
-        console.error("Error deleting prompt from database:", error);
+
         throw error;
       }
     }

@@ -46,7 +46,7 @@ export function usePromptUsage() {
         }
       }
     } catch (error) {
-      console.error('Failed to load prompt usage data:', error);
+
     }
   }, []);
 
@@ -63,7 +63,7 @@ export function usePromptUsage() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newUsage));
     } catch (error) {
-      console.error('Failed to save prompt usage data:', error);
+
     }
   };
 

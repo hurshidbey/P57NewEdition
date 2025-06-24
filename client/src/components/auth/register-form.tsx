@@ -119,8 +119,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       
       onRegistered()
     } catch (error: any) {
-      console.error('Registration error:', error)
-      
+
       toast({
         title: "Xatolik",
         description: error.message || "Ro'yxatdan o'tishda xatolik yuz berdi",

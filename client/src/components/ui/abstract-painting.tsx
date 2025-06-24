@@ -382,10 +382,6 @@ function createShaderProgram(
   gl.shaderSource(fragmentShader, fsSource);
   gl.compileShader(fragmentShader);
   if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-    console.error(
-      "Fragment shader error:",
-      gl.getShaderInfoLog(fragmentShader)
-    );
     gl.deleteShader(vertexShader);
     gl.deleteShader(fragmentShader);
     return null;
@@ -403,10 +399,6 @@ function createShaderProgram(
   gl.linkProgram(program);
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error(
-      "Could not link WebGL program:",
-      gl.getProgramInfoLog(program)
-    );
     gl.deleteShader(vertexShader);
     gl.deleteShader(fragmentShader);
     gl.deleteProgram(program);
@@ -433,7 +425,7 @@ export function AbstractPainting() {
 
     const gl = canvas.getContext("webgl2", { alpha: true });
     if (!gl) {
-      console.error("WebGL2 is not supported by your browser.");
+
       return;
     }
 
@@ -450,7 +442,7 @@ export function AbstractPainting() {
 
     const program = createShaderProgram(gl, vertexShaderSource, fsSource);
     if (!program) {
-      console.error("Failed to create shader program.");
+
       return;
     }
 
