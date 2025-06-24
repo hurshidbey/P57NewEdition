@@ -177,18 +177,33 @@ export function setupAtmosRoutes(): Router {
           try {
             const token = authHeader.split(' ')[1];
             const { createClient } = await import('@supabase/supabase-js');
-            const supabase = createClient(
+            
+            // CRITICAL FIX: Get user info from token and update with admin client
+            const userSupabase = createClient(
               process.env.SUPABASE_URL!,
-              process.env.SUPABASE_SERVICE_ROLE_KEY!
+              process.env.SUPABASE_ANON_KEY!,
+              {
+                global: {
+                  headers: {
+                    Authorization: `Bearer ${token}`
+                  }
+                }
+              }
             );
             
-            const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+            // Get user info from their token
+            const { data: { user }, error: userError } = await userSupabase.auth.getUser();
             if (user && !userError) {
               console.log(`🎯 [PAYMENT] Upgrading user tier: ${user.email} (${user.id})`);
               
-              // Update user metadata with paid tier
-              const { error: updateError } = await supabase.auth.updateUser({
-                data: {
+              // Use admin client to update user metadata
+              const adminSupabase = createClient(
+                process.env.SUPABASE_URL!,
+                process.env.SUPABASE_SERVICE_ROLE_KEY!
+              );
+              
+              const { error: updateError } = await adminSupabase.auth.admin.updateUserById(user.id, {
+                user_metadata: {
                   ...user.user_metadata,
                   tier: 'paid',
                   paidAt: new Date().toISOString()
@@ -199,7 +214,7 @@ export function setupAtmosRoutes(): Router {
                 console.error(`❌ [PAYMENT] Failed to upgrade user tier for ${user.email}:`, updateError);
                 // Still continue - don't fail the payment
               } else {
-                console.log(`✅ [PAYMENT] Successfully upgraded user tier for ${user.email}`);
+                console.log(`✅ [PAYMENT] Successfully upgraded user tier for ${user.email} - OLD TIER: ${user.user_metadata?.tier || 'free'} -> NEW TIER: paid`);
                 
                 // Store payment record for admin tracking
                 try {
