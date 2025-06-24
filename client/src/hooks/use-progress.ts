@@ -61,9 +61,7 @@ export function useProgress() {
       try {
         const response = await apiRequest('GET', `/api/progress/${user.id}`);
         const serverProgress: ServerProgress[] = await response.json();
-        
-        console.log(`🔍 [DEBUG] Server progress response for ${user.id}:`, serverProgress);
-        
+
         // Only update if server has data
         if (serverProgress && serverProgress.length > 0) {
           const progressMap = new Map<number, ProtocolProgress>();
@@ -87,7 +85,7 @@ export function useProgress() {
           calculateStreak(progressMap);
         }
       } catch (error) {
-        console.warn('Server progress unavailable, using localStorage:', error instanceof Error ? error.message : 'Unknown error');
+
         // localStorage already loaded above, so we're good
       } finally {
         setLoading(false);
@@ -103,7 +101,7 @@ export function useProgress() {
       // Remove the old shared storage key if it exists
       const oldSharedKey = 'protokol57_progress';
       if (localStorage.getItem(oldSharedKey)) {
-        console.log('Cleaning up old shared progress data');
+
         localStorage.removeItem(oldSharedKey);
       }
     }
@@ -116,24 +114,19 @@ export function useProgress() {
       const saved = localStorage.getItem(storageKey);
       
       // 🔍 Debug logging
-      console.log(`🔍 [DEBUG] loadFromLocalStorage for user: ${user?.id || 'anonymous'}`);
-      console.log(`🔍 [DEBUG] Using storage key: ${storageKey}`);
-      console.log(`🔍 [DEBUG] Found localStorage data:`, saved ? 'YES' : 'NO');
-      
+
       if (saved) {
         const data: StoredProgress = JSON.parse(saved);
         const progressMap = new Map(
           data.completed.map(p => [p.protocolId, p])
         );
-        
-        console.log(`🔍 [DEBUG] Loaded ${data.completed.length} completed protocols from localStorage`);
-        
+
         setProtocolProgress(progressMap);
         setLastStudiedDate(data.lastStudiedDate || null);
         setCurrentStreak(data.currentStreak || 0);
       }
     } catch (error) {
-      console.error('Failed to load progress data from localStorage:', error);
+
     }
   };
 
@@ -151,7 +144,7 @@ export function useProgress() {
       
       localStorage.setItem(storageKey, JSON.stringify(dataToStore));
     } catch (error) {
-      console.error('Failed to save progress data to localStorage:', error);
+
     }
   }, [protocolProgress, lastStudiedDate, currentStreak, loading, user?.id]);
 
@@ -186,8 +179,7 @@ export function useProgress() {
 
   const markProtocolCompleted = async (protocolId: number, score: number = 70) => {
     // 🔍 Debug logging
-    console.log(`🔍 [DEBUG] markProtocolCompleted - User: ${user?.id || 'anonymous'}, Protocol: ${protocolId}, Score: ${score}`);
-    
+
     // Create the new progress entry
     const newProgress: ProtocolProgress = {
       protocolId,
@@ -208,7 +200,7 @@ export function useProgress() {
         existingProgress = data.completed || [];
       }
     } catch (error) {
-      console.error('Failed to read existing progress:', error);
+
     }
 
     // Merge new progress with existing (avoiding duplicates)
@@ -244,10 +236,10 @@ export function useProgress() {
     
     try {
       const storageKey = getStorageKey(user?.id || null);
-      console.log(`🔍 [DEBUG] Saving progress to localStorage key: ${storageKey} for user: ${user?.id || 'anonymous'}`);
+
       localStorage.setItem(storageKey, JSON.stringify(dataToStore));
     } catch (error) {
-      console.error('Failed to save progress to localStorage:', error);
+
     }
 
     // Update React state
@@ -260,7 +252,7 @@ export function useProgress() {
       try {
         await apiRequest('POST', `/api/progress/${user.id}/${protocolId}`, { score });
       } catch (error) {
-        console.error('Failed to sync progress to server:', error);
+
         // Progress is already saved locally, so this is okay
       }
     }

@@ -11,20 +11,19 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        console.log('🔐 Handling OAuth callback...');
-        
+
         // Get the session from the URL hash
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error('❌ Auth callback error:', error);
+
           setStatus('error');
           setMessage('Kirishda xatolik yuz berdi');
           return;
         }
 
         if (data.session) {
-          console.log('✅ OAuth session established:', data.session.user.email);
+
           setStatus('success');
           setMessage('Muvaffaqiyatli kirildi!');
           
@@ -33,11 +32,11 @@ export default function AuthCallback() {
             setLocation('/');
           }, 2000);
         } else {
-          console.log('ℹ️ No session found, redirecting to auth...');
+
           setLocation('/auth');
         }
       } catch (err) {
-        console.error('❌ Unexpected error:', err);
+
         setStatus('error');
         setMessage('Kutilmagan xatolik yuz berdi');
       }

@@ -1,0 +1,654 @@
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Protocol, Category, InsertProtocol } from "@shared/types";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Trash2, Edit, Plus, Lock, Unlock, Crown, Users, BarChart3 } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-context";
+import AppHeader from "@/components/app-header";
+import AppFooter from "@/components/app-footer";
+import { AnalyticsDashboard } from "@/components/analytics-dashboard";
+
+type FormData = {
+  number: number;
+  title: string;
+  description: string;
+  badExample: string;
+  goodExample: string;
+  categoryId: number;
+  notes?: string;
+  problemStatement?: string;
+  whyExplanation?: string;
+  solutionApproach?: string;
+  difficultyLevel?: string;
+  levelOrder?: number;
+};
+
+export default function Admin() {
+  const { user } = useAuth();
+  const [editingProtocol, setEditingProtocol] = useState<Protocol | null>(null);
+  const [activeTab, setActiveTab] = useState<'protocols' | 'analytics'>('protocols');
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // CRITICAL SECURITY CHECK: Only hurshidbey@gmail.com can access admin
+  if (user?.email !== 'hurshidbey@gmail.com') {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-black text-red-600 mb-4">Ruxsat berilmagan</h1>
+          <p className="text-muted-foreground mb-4">Bu sahifaga kirish huquqingiz yo'q.</p>
+          <p className="text-sm text-muted-foreground/70">Faqat admin foydalanuvchi kira oladi.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { data: protocols } = useQuery<Protocol[]>({
+    queryKey: ["/api/admin/protocols"],
+    enabled: !!user && user.email === 'hurshidbey@gmail.com'
+  });
+
+  const { data: freeStatus } = useQuery<{
+    freeCount: number;
+    maxFreeAllowed: number;
+    freeProtocols: Array<{ id: number; number: number; title: string }>;
+  }>({
+    queryKey: ["/api/admin/protocols/free-status"],
+    enabled: !!user && user.email === 'hurshidbey@gmail.com'
+  });
+
+  const { data: categories } = useQuery<Category[]>({
+    queryKey: ["/api/categories"],
+  });
+
+  const protocolSchema = z.object({
+    number: z.number(),
+    title: z.string(),
+    description: z.string(),
+    badExample: z.string().optional(),
+    goodExample: z.string().optional(),
+    categoryId: z.number(),
+    notes: z.string().optional(),
+    problemStatement: z.string().optional(),
+    whyExplanation: z.string().optional(),
+    solutionApproach: z.string().optional(),
+    difficultyLevel: z.string().optional(),
+    levelOrder: z.number().optional(),
+  });
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(protocolSchema.extend({
+      badExample: z.string().optional(),
+      goodExample: z.string().optional(),
+    })),
+    defaultValues: {
+      number: 1,
+      title: "",
+      description: "",
+      badExample: "",
+      goodExample: "",
+      categoryId: 1,
+      notes: "",
+      problemStatement: "",
+      whyExplanation: "",
+      solutionApproach: "",
+      difficultyLevel: "",
+      levelOrder: 1,
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      const response = await apiRequest("POST", "/api/protocols", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/protocols"] });
+      toast({ title: "Protokol muvaffaqiyatli yaratildi" });
+      form.reset();
+    },
+    onError: () => {
+      toast({ title: "Protokol yaratishda xatolik", variant: "destructive" });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: FormData }) => {
+      const response = await apiRequest("PUT", `/api/protocols/${id}`, data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/protocols"] });
+      toast({ title: "Protokol muvaffaqiyatli yangilandi" });
+      setEditingProtocol(null);
+      form.reset();
+    },
+    onError: () => {
+      toast({ title: "Protokolni yangilashda xatolik", variant: "destructive" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/protocols/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/protocols"] });
+      toast({ title: "Protokol muvaffaqiyatli o'chirildi" });
+    },
+    onError: () => {
+      toast({ title: "Protokolni o'chirishda xatolik", variant: "destructive" });
+    },
+  });
+
+  const toggleFreeMutation = useMutation({
+    mutationFn: async ({ id, isFreeAccess }: { id: number; isFreeAccess: boolean }) => {
+      const response = await apiRequest("PATCH", `/api/admin/protocols/${id}/toggle-free`, { isFreeAccess });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/protocols"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/protocols/free-status"] });
+      toast({ title: "Protokol dostupnosti muvaffaqiyatli o'zgartirildi" });
+    },
+    onError: (error: any) => {
+      const message = error.message || "Protokol dostupnostini o'zgartirishda xatolik";
+      toast({ title: message, variant: "destructive" });
+    },
+  });
+
+  const onSubmit = (data: FormData) => {
+    if (editingProtocol) {
+      updateMutation.mutate({ id: editingProtocol.id, data });
+    } else {
+      createMutation.mutate(data);
+    }
+  };
+
+  const handleEdit = (protocol: Protocol) => {
+    setEditingProtocol(protocol);
+    form.reset({
+      number: protocol.number,
+      title: protocol.title,
+      description: protocol.description,
+      badExample: protocol.badExample || "",
+      goodExample: protocol.goodExample || "",
+      categoryId: protocol.categoryId,
+      notes: protocol.notes || "",
+      problemStatement: protocol.problemStatement || "",
+      whyExplanation: protocol.whyExplanation || "",
+      solutionApproach: protocol.solutionApproach || "",
+      difficultyLevel: protocol.difficultyLevel || "",
+      levelOrder: protocol.levelOrder || 1,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProtocol(null);
+    form.reset();
+  };
+
+  const handleToggleFree = (protocol: Protocol) => {
+    const newValue = !protocol.isFreeAccess;
+    toggleFreeMutation.mutate({ id: protocol.id, isFreeAccess: newValue });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <AppHeader />
+      
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-black text-foreground mb-2">Boshqaruv paneli</h1>
+          <p className="text-muted-foreground">Protokollar va kategoriyalarni boshqaring</p>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="mb-8">
+          <div className="flex space-x-1 bg-muted p-1 rounded-lg">
+            <button
+              onClick={() => setActiveTab('protocols')}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'protocols'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              Protokollar
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'analytics'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4" />
+              Analytics
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'protocols' && (
+          <div className="space-y-8">
+            <div className="text-center p-8">
+              <h2 className="text-2xl font-bold mb-4">Protocols Management</h2>
+              <p className="text-muted-foreground">Admin interface for managing protocols (under construction)</p>
+            </div>
+          </div>
+        )}
+
+        {/* COMMENTED OUT FOR NOW */}
+        {false && (
+          <div className="space-y-8">
+            {/* Free Protocols Management */}
+            <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3">
+              <Crown className="w-5 h-5 text-accent" />
+              Bepul protokollar boshqaruvi
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-semibold">Hozirgi holat</h3>
+                  <p className="text-sm text-muted-foreground">Bepul foydalanuvchilar uchun ochiq protokollar</p>
+                </div>
+                <Badge variant="outline" className="text-lg px-3 py-1">
+                  {freeStatus?.freeCount || 0} / 3
+                </Badge>
+              </div>
+              
+              {freeStatus?.freeCount === 3 && (
+                <Alert className="mb-4">
+                  <AlertDescription>
+                    Maksimal bepul protokollar soni (3) ga yetdi. Yangi protokolni bepul qilish uchun avval boshqa protokolni premium qiling.
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              {freeStatus?.freeProtocols && freeStatus.freeProtocols.length > 0 && (
+                <div className="mb-4">
+                  <h4 className="font-medium mb-2">Hozirgi bepul protokollar:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {freeStatus.freeProtocols.map((protocol: any) => (
+                      <Badge key={protocol.id} variant="secondary" className="flex items-center gap-1">
+                        <Unlock className="w-3 h-3" />
+                        #{protocol.number} - {protocol.title.slice(0, 30)}...
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          {/* Protocol Form */}
+          <Card className="h-fit">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Plus className="w-5 h-5 mr-2" />
+                {editingProtocol ? "Protokolni tahrirlash" : "Yangi protokol qo'shish"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="max-h-[600px] overflow-y-auto">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="number"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Protokol raqami</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sarlavha</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tavsif</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} rows={4} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="badExample"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Yomon misol</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="goodExample"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Yaxshi misol</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="categoryId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Kategoriya</FormLabel>
+                        <Select 
+                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          value={field.value.toString()}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {categories?.map((category) => (
+                              <SelectItem key={category.id} value={category.id.toString()}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="notes"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Eslatmalar (ixtiyoriy)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} rows={2} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="problemStatement"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Muammo bayoni (ixtiyoriy)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} rows={3} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="whyExplanation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nima uchun tushuntirish (ixtiyoriy)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} rows={3} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="solutionApproach"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Yechim yondashuvi (ixtiyoriy)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} rows={3} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="difficultyLevel"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Qiyinchilik darajasi (ixtiyoriy)</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Daraja tanlang" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Boshlang'ich">🟢 Boshlang'ich</SelectItem>
+                            <SelectItem value="O'rta daraja">🟡 O'rta daraja</SelectItem>
+                            <SelectItem value="Yuqori daraja">🔴 Yuqori daraja</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="levelOrder"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Daraja tartibi (ixtiyoriy)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex space-x-4 pt-4">
+                    <Button
+                      type="submit"
+                      className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
+                      {editingProtocol ? "Protokolni yangilash" : "Protokol yaratish"}
+                    </Button>
+                    {editingProtocol && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleCancelEdit}
+                      >
+                        Bekor qilish
+                      </Button>
+                    )}
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+
+          {/* Protocols List */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Mavjud protokollar</CardTitle>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Users className="w-4 h-4" />
+                  <span>Bepul: {protocols?.filter(p => p.isFreeAccess).length || 0}</span>
+                  <span>•</span>
+                  <Crown className="w-4 h-4" />
+                  <span>Premium: {protocols?.filter(p => !p.isFreeAccess).length || 0}</span>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="h-[600px] overflow-hidden">
+              <div className="space-y-4 h-full overflow-y-auto pr-2">
+                {protocols?.map((protocol) => (
+                  <div key={protocol.id} className="flex items-start justify-between p-4 border rounded-lg min-h-[120px]">
+                    <div className="flex-1 min-w-0 pr-4">
+                      <div className="flex items-center space-x-2 mb-2 flex-wrap">
+                        <span className="w-8 h-8 bg-accent text-accent-foreground rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0">
+                          {protocol.number}
+                        </span>
+                        <h3 className="font-semibold truncate">{protocol.title}</h3>
+                        
+                        {/* Free/Paid Badge */}
+                        <Badge variant={protocol.isFreeAccess ? "default" : "secondary"} className="flex items-center gap-1">
+                          {protocol.isFreeAccess ? (
+                            <><Unlock className="w-3 h-3" /> Bepul</>
+                          ) : (
+                            <><Lock className="w-3 h-3" /> Premium</>
+                          )}
+                        </Badge>
+                        
+                        {/* Difficulty Level Badge */}
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                          protocol.number >= 1 && protocol.number <= 20
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                            : protocol.number >= 21 && protocol.number <= 40
+                            ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
+                            : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                        }`}>
+                          {protocol.number >= 1 && protocol.number <= 20
+                            ? '🟢 Boshlang\'ich'
+                            : protocol.number >= 21 && protocol.number <= 40
+                            ? '🟡 O\'rta daraja'
+                            : '🔴 Yuqori daraja'
+                          }
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                        {protocol.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                        <span className="bg-muted px-2 py-1 rounded">Kategoriya: {categories?.find(c => c.id === protocol.categoryId)?.name}</span>
+                        {protocol.difficultyLevel && <span className="bg-muted px-2 py-1 rounded">Daraja: {protocol.difficultyLevel}</span>}
+                        {protocol.levelOrder && <span className="bg-muted px-2 py-1 rounded">Tartib: {protocol.levelOrder}</span>}
+                        {protocol.notes && <span className="bg-muted px-2 py-1 rounded">Eslatma: {protocol.notes.substring(0, 20)}...</span>}
+                      </div>
+                      
+                      {/* Free Access Toggle */}
+                      <div className="flex items-center gap-2 mt-3 pt-2 border-t">
+                        <label htmlFor={`free-toggle-${protocol.id}`} className="text-sm font-medium">
+                          Bepul kirish:
+                        </label>
+                        <Switch
+                          id={`free-toggle-${protocol.id}`}
+                          checked={protocol.isFreeAccess}
+                          onCheckedChange={() => handleToggleFree(protocol)}
+                          disabled={toggleFreeMutation.isPending || (!protocol.isFreeAccess && (freeStatus?.freeCount || 0) >= 3)}
+                        />
+                        {!protocol.isFreeAccess && (freeStatus?.freeCount || 0) >= 3 && (
+                          <span className="text-xs text-orange-600">Limit: 3/3</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col space-y-2 flex-shrink-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEdit(protocol)}
+                        className="w-10 h-10 p-0"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => deleteMutation.mutate(protocol.id)}
+                        disabled={deleteMutation.isPending}
+                        className="w-10 h-10 p-0"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <AnalyticsDashboard />
+        )}
+      </main>
+      <AppFooter />
+    </div>
+  );
+}
+

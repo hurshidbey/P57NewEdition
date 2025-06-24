@@ -20,7 +20,7 @@ export function setupAtmosRoutes(): Router {
       });
 
     } catch (error: any) {
-      console.error('❌ ATMOS test error:', error);
+
       res.status(500).json({
         success: false,
         message: error.message,
@@ -53,8 +53,6 @@ export function setupAtmosRoutes(): Router {
         throw new Error(result.result.description || 'Transaction creation failed');
       }
 
-      console.log('✅ ATMOS transaction created:', result.transaction_id);
-
       res.json({
         success: true,
         result: result.result,
@@ -63,7 +61,7 @@ export function setupAtmosRoutes(): Router {
       });
 
     } catch (error: any) {
-      console.error('❌ ATMOS create transaction error:', error);
+
       res.status(500).json({
         success: false,
         message: error.message || 'Failed to create transaction'
@@ -112,8 +110,6 @@ export function setupAtmosRoutes(): Router {
         throw new Error(result.result.description || 'Pre-apply failed');
       }
 
-      console.log('✅ ATMOS transaction pre-applied, OTP sent');
-
       res.json({
         success: true,
         result: result.result,
@@ -121,8 +117,7 @@ export function setupAtmosRoutes(): Router {
       });
 
     } catch (error: any) {
-      console.error('❌ ATMOS pre-apply error:', error);
-      
+
       // Handle specific ATMOS errors
       let message = 'Karta ma\'lumotlarini tekshirishda xatolik';
       const errorMsg = error.message?.toLowerCase() || '';
@@ -173,12 +168,9 @@ export function setupAtmosRoutes(): Router {
         throw new Error(result.result.description || 'Transaction confirmation failed');
       }
 
-      console.log('✅ ATMOS transaction confirmed:', transactionId);
-
       // Check if transaction was successful
       if (result.store_transaction?.confirmed) {
-        console.log('💳 Payment successful - upgrading user to paid tier');
-        
+
         // Upgrade user tier to 'paid' after successful payment
         const authHeader = req.headers.authorization;
         if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -202,13 +194,13 @@ export function setupAtmosRoutes(): Router {
               });
               
               if (updateError) {
-                console.error('Failed to upgrade user tier:', updateError);
+
               } else {
-                console.log('✅ User tier upgraded to paid for:', user.email);
+
               }
             }
           } catch (error) {
-            console.error('Error upgrading user tier:', error);
+
           }
         }
         
@@ -224,8 +216,7 @@ export function setupAtmosRoutes(): Router {
       }
 
     } catch (error: any) {
-      console.error('❌ ATMOS confirm error:', error);
-      
+
       // Handle specific OTP errors
       let message = 'SMS kodni tasdiqlashda xatolik';
       const errorMsg = error.message?.toLowerCase() || '';
@@ -267,7 +258,7 @@ export function setupAtmosRoutes(): Router {
       });
 
     } catch (error: any) {
-      console.error('❌ ATMOS get transaction error:', error);
+
       res.status(500).json({
         success: false,
         message: 'Failed to get transaction details',
@@ -301,7 +292,7 @@ export function setupAtmosRoutes(): Router {
       });
 
     } catch (error: any) {
-      console.error('❌ ATMOS resend OTP error:', error);
+
       res.status(500).json({
         success: false,
         message: 'SMS kodni qayta yuborishda xatolik',
@@ -339,7 +330,7 @@ export function setupAtmosRoutes(): Router {
       });
 
     } catch (error: any) {
-      console.error('❌ Card binding init error:', error);
+
       res.status(500).json({
         success: false,
         message: 'Kartani ulashda xatolik',
@@ -377,7 +368,7 @@ export function setupAtmosRoutes(): Router {
       });
 
     } catch (error: any) {
-      console.error('❌ Card binding confirm error:', error);
+
       res.status(500).json({
         success: false,
         message: 'Kartani tasdiqlashda xatolik',
@@ -396,6 +387,5 @@ export function setupAtmosRoutes(): Router {
     res.redirect('/?payment=error&method=atmos');
   });
 
-  console.log('✅ ATMOS routes configured');
   return router;
 }

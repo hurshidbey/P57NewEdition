@@ -17,7 +17,7 @@ export function GoogleOAuthButton({ className, children }: GoogleOAuthButtonProp
       setLoading(true);
       await signInWithGoogle();
     } catch (error) {
-      console.error('Google sign-in error:', error);
+
       setLoading(false);
     }
   };

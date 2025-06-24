@@ -103,8 +103,7 @@ MUHIM: Har bir taklif konkret bo'lishi va promptni qanday o'zgartirish kerakligi
     }
 
   } catch (error) {
-    console.error('OpenAI evaluation error:', error);
-    
+
     // Return a fallback evaluation if API fails
     return {
       score: 50,
@@ -125,7 +124,7 @@ export async function testOpenAIConnection(): Promise<boolean> {
     });
     return response.choices.length > 0;
   } catch (error) {
-    console.error('OpenAI connection test failed:', error);
+
     return false;
   }
 }

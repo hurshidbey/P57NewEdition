@@ -32,7 +32,7 @@ export function useProtocolEvaluation(protocolId: number) {
         setEvaluations(data);
       }
     } catch (error) {
-      console.error('Failed to load protocol evaluation data:', error);
+
     }
   }, []);
 
@@ -65,7 +65,7 @@ export function useProtocolEvaluation(protocolId: number) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newEvaluations));
     } catch (error) {
-      console.error('Failed to save protocol evaluation data:', error);
+
     }
   };
 
