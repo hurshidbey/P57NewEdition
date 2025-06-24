@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { users, protocols, categories, userProgress, prompts, type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt } from "@shared/schema";
+import { users, protocols, categories, userProgress, prompts, payments, type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt, type Payment, type InsertPayment } from "@shared/schema";
 import { eq, ilike, or, desc, and } from "drizzle-orm";
 
 export interface IStorage {
@@ -27,6 +27,11 @@ export interface IStorage {
   createPrompt(prompt: InsertPrompt): Promise<Prompt>;
   updatePrompt(id: number, prompt: Partial<InsertPrompt>): Promise<Prompt | undefined>;
   deletePrompt(id: number): Promise<boolean>;
+  
+  // Payment methods
+  storePayment(payment: InsertPayment): Promise<Payment>;
+  getPayments(): Promise<Payment[]>;
+  getUserPayments(userId: string): Promise<Payment[]>;
 }
 
 // Database connection with fallback and retry logic
@@ -292,6 +297,28 @@ async function createTables() {
     `);
     await db.execute(`
       CREATE INDEX IF NOT EXISTS idx_user_progress_protocol_id ON user_progress(protocol_id)
+    `);
+
+    // Create payments table
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS payments (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        user_email TEXT NOT NULL,
+        amount INTEGER NOT NULL,
+        transaction_id TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        atmos_data TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    // Create indexes for payments table
+    await db.execute(`
+      CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id)
+    `);
+    await db.execute(`
+      CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status)
     `);
 
   } catch (error) {
@@ -910,6 +937,48 @@ export class HybridStorage implements IStorage {
     }
     
     return false;
+  }
+
+  // Payment methods
+  async storePayment(payment: InsertPayment): Promise<Payment> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.insert(payments).values(payment).returning();
+        console.log(`💾 [STORAGE] Payment record stored:`, result[0]);
+        return result[0];
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to store payment:`, error);
+        throw error;
+      }
+    }
+    
+    throw new Error("Database not available for payment storage");
+  }
+
+  async getPayments(): Promise<Payment[]> {
+    if (isDatabaseConnected && db) {
+      try {
+        return await db.select().from(payments).orderBy(desc(payments.createdAt));
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to get payments:`, error);
+      }
+    }
+    
+    return [];
+  }
+
+  async getUserPayments(userId: string): Promise<Payment[]> {
+    if (isDatabaseConnected && db) {
+      try {
+        return await db.select().from(payments)
+          .where(eq(payments.userId, userId))
+          .orderBy(desc(payments.createdAt));
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to get user payments for ${userId}:`, error);
+      }
+    }
+    
+    return [];
   }
 }
 

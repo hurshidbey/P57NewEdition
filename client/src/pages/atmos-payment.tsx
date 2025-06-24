@@ -168,11 +168,23 @@ export default function AtmosPayment() {
             import.meta.env.VITE_SUPABASE_ANON_KEY!
           );
           
+          // Wait a moment for backend to complete tier update
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
           // Refresh user session to get updated metadata
-          await supabase.auth.refreshSession();
+          const { error: refreshError } = await supabase.auth.refreshSession();
+          if (refreshError) {
+            console.error('❌ Failed to refresh session after payment:', refreshError);
+          } else {
+            console.log('✅ User session refreshed after payment');
+            
+            // Trigger auth context refresh
+            localStorage.setItem('tier_upgrade_trigger', Date.now().toString());
+            localStorage.removeItem('tier_upgrade_trigger'); // Remove immediately to trigger event
+          }
 
         } catch (error) {
-
+          console.error('❌ Error refreshing user data after payment:', error);
         }
         
         // Redirect to home after 3 seconds with payment success flag

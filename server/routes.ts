@@ -799,30 +799,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin: Get all payments
   app.get("/api/admin/payments", isSupabaseAdmin, async (req, res) => {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        process.env.SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_KEY!
-      );
-      
-      // Get payments from the database
-      const { data: payments, error } = await supabase
-        .from('payments')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error && error.code !== 'PGRST116') { // Ignore table not found error
-        throw error;
-      }
-      
-      // If no payments table, return empty array
-      if (!payments) {
-        res.json([]);
-        return;
-      }
-      
+      const payments = await storage.getPayments();
+      console.log(`📊 [ADMIN] Retrieved ${payments.length} payment records`);
       res.json(payments);
     } catch (error: any) {
+      console.error(`❌ [ADMIN] Failed to get payments:`, error);
       res.status(500).json({ error: error.message });
     }
   });
