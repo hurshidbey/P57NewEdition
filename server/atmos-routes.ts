@@ -178,12 +178,14 @@ export function setupAtmosRoutes(): Router {
             const token = authHeader.split(' ')[1];
             const { createClient } = await import('@supabase/supabase-js');
             const supabase = createClient(
-              'https://bazptglwzqstppwlvmvb.supabase.co',
-              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+              process.env.SUPABASE_URL!,
+              process.env.SUPABASE_SERVICE_ROLE_KEY!
             );
             
             const { data: { user }, error: userError } = await supabase.auth.getUser(token);
             if (user && !userError) {
+              console.log(`🎯 [PAYMENT] Upgrading user tier: ${user.email} (${user.id})`);
+              
               // Update user metadata with paid tier
               const { error: updateError } = await supabase.auth.updateUser({
                 data: {
@@ -194,14 +196,40 @@ export function setupAtmosRoutes(): Router {
               });
               
               if (updateError) {
-
+                console.error(`❌ [PAYMENT] Failed to upgrade user tier for ${user.email}:`, updateError);
+                // Still continue - don't fail the payment
               } else {
-
+                console.log(`✅ [PAYMENT] Successfully upgraded user tier for ${user.email}`);
+                
+                // Store payment record for admin tracking
+                try {
+                  const paymentRecord = {
+                    id: `payment_${transactionId}_${Date.now()}`,
+                    userId: user.id,
+                    userEmail: user.email || 'unknown@email.com',
+                    amount: 5000, // 5,000 UZS
+                    transactionId: transactionId.toString(),
+                    status: 'completed',
+                    atmosData: JSON.stringify(result.store_transaction || {})
+                  };
+                  
+                  // Store in database for admin panel
+                  const { storage } = await import('./storage');
+                  await storage.storePayment(paymentRecord);
+                  console.log(`💾 [PAYMENT] Payment record stored for admin tracking`);
+                } catch (dbError) {
+                  console.error(`⚠️ [PAYMENT] Failed to store payment record (payment still successful):`, dbError);
+                }
               }
+            } else {
+              console.error(`❌ [PAYMENT] Failed to get user from token:`, userError);
             }
           } catch (error) {
-
+            console.error(`❌ [PAYMENT] Critical error in tier upgrade:`, error);
+            // Don't fail the payment for backend errors
           }
+        } else {
+          console.error(`❌ [PAYMENT] No authorization header provided for tier upgrade`);
         }
         
         res.json({

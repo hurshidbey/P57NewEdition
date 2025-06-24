@@ -48,12 +48,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     if (urlParams.get('payment') === 'success') {
-
+      console.log('🎯 Payment success detected in URL, refreshing user data...')
       setTimeout(() => {
         refreshUser()
       }, 1000) // Small delay to ensure backend has processed the update
     }
   }, [window.location.search])
+  
+  // Listen for storage events to refresh user when tier might have changed
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'tier_upgrade_trigger') {
+        console.log('🎯 Tier upgrade trigger detected, refreshing user...')
+        refreshUser()
+      }
+    }
+    
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
 
   const signIn = async (email: string, password: string) => {
     const { user } = await authService.signIn(email, password)

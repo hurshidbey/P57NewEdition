@@ -67,12 +67,19 @@ export default function Admin() {
   const loadData = async () => {
     setLoading(true);
     try {
+      // Import supabase client
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      
       // Get auth token
-      const session = await (window as any).supabase?.auth.getSession();
-      const token = session?.data?.session?.access_token;
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
       
       if (!token) {
-        throw new Error('No auth token');
+        throw new Error('No auth token - please login first');
       }
 
       const headers = {
@@ -137,8 +144,13 @@ export default function Admin() {
 
   const toggleProtocolAccess = async (protocolId: number, currentAccess: boolean) => {
     try {
-      const session = await (window as any).supabase?.auth.getSession();
-      const token = session?.data?.session?.access_token;
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
       
       const res = await fetch(`/api/admin/protocols/${protocolId}/access`, {
         method: 'PATCH',
