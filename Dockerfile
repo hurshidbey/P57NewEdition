@@ -27,6 +27,7 @@ RUN npm ci
 
 # Copy source code
 COPY . .
+COPY .env.development .env
 
 # Copy and set permissions for entrypoint before user switch
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
