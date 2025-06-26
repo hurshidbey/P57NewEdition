@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CreditCard, Loader2, CheckCircle, XCircle, RefreshCw, Shield, Info } from 'lucide-react';
+import { CreditCard, Loader2, CheckCircle, XCircle, RefreshCw, Shield, Info, AlertCircle } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
 
 interface AtmosPaymentStep {
   step: 'card-details' | 'otp' | 'processing' | 'success' | 'error';
@@ -15,9 +16,18 @@ interface AtmosPaymentStep {
 
 export default function AtmosPayment() {
   const [, setLocation] = useLocation();
+  const { user, loading: authLoading } = useAuth();
   const [paymentState, setPaymentState] = useState<AtmosPaymentStep>({ step: 'card-details' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      console.warn('🚫 Payment page accessed without authentication');
+      setLocation('/auth/login?redirect=/atmos-payment');
+    }
+  }, [user, authLoading, setLocation]);
   
   // Form data
   const [cardNumber, setCardNumber] = useState('');
@@ -417,6 +427,40 @@ export default function AtmosPayment() {
     </div>
   );
 
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex flex-col items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin mb-4" />
+            <p className="text-muted-foreground">Autentifikatsiya tekshirilmoqda...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show error if user is not authenticated (backup check)
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex flex-col items-center justify-center py-8">
+            <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Autentifikatsiya talab qilinadi</h3>
+            <p className="text-muted-foreground text-center mb-4">
+              To'lovni amalga oshirish uchun tizimga kiring
+            </p>
+            <Button onClick={() => setLocation('/auth/login?redirect=/atmos-payment')}>
+              Tizimga kirish
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -441,6 +485,11 @@ export default function AtmosPayment() {
               <p className="text-xs text-blue-600 mt-1">
                 UzCard va Humo kartalari qabul qilinadi
               </p>
+              {user && (
+                <p className="text-xs text-green-600 mt-1 font-medium">
+                  Foydalanuvchi: {user.email}
+                </p>
+              )}
             </div>
           </CardHeader>
 
