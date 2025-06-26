@@ -6,7 +6,7 @@
     "description": "Korporativ AI tizimlarini loyihalash va joriy etish bo'yicha ilg'or strategiya. Faqat premium foydalanuvchilar uchun.",
     "category": "Korporativ AI",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-21T05:43:00.911026",
     "updatedAt": "2025-06-21T05:43:00.911026"
   },
@@ -29,7 +29,7 @@
     "description": "Korporativ AI tizimlarini loyihalash va joriy etish bo'yicha ilg'or strategiya. Faqat premium foydalanuvchilar uchun.",
     "category": "Korporativ AI",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-20T12:03:20.45127",
     "updatedAt": "2025-06-20T12:03:20.45127"
   },
@@ -52,7 +52,7 @@
     "description": "Bitta mavzuni 5 xil nuqtai nazardan ko'rib, yangi tushunchalar yaratish texnikasi. Faqat premium foydalanuvchilar uchun.",
     "category": "Strategik Kontent",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -63,7 +63,7 @@
     "description": "Yangi muammolarni topib, turli auditoriyalar uchun yechimlar yaratish. Faqat premium foydalanuvchilar uchun.",
     "category": "Strategik Kontent",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -74,7 +74,7 @@
     "description": "Murakkab tushunchalarni oddiy metaforalar orqali tushuntirish san'ati. Faqat premium foydalanuvchilar uchun.",
     "category": "Strategik Kontent",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -85,7 +85,7 @@
     "description": "Muvaffaqiyatsizliklardan hikoya yaratib, ishonch qozonish texnikasi. Faqat premium foydalanuvchilar uchun.",
     "category": "Hikoya va Voqealar",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -96,7 +96,7 @@
     "description": "O'tmishdagi tajribalardan kelajak uchun qimmatli saboqlar olish. Faqat premium foydalanuvchilar uchun.",
     "category": "Hikoya va Voqealar",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -107,7 +107,7 @@
     "description": "Kontentni hujjatli film dramaturrgiyasi asosida qurish. Faqat premium foydalanuvchilar uchun.",
     "category": "Hikoya va Voqealar",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -118,7 +118,7 @@
     "description": "Sun'iy cheklovlar orqali ijodkorlikni oshirish texnikasi. Faqat premium foydalanuvchilar uchun.",
     "category": "Ijodiy G'oyalar",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -129,7 +129,7 @@
     "description": "Ikki bog'liq bo'lmagan sohani birlashtirib yangi g'oyalar yaratish. Faqat premium foydalanuvchilar uchun.",
     "category": "Ijodiy G'oyalar",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -140,7 +140,7 @@
     "description": "Teskari yondashув orqali to'g'ri yo'lni o'rgatish. Faqat premium foydalanuvchilar uchun.",
     "category": "Ijodiy G'oyalar",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -151,7 +151,7 @@
     "description": "Eksklyuzivlik hissi orqali auditoriyani jalb qilish. Faqat premium foydalanuvchilar uchun.",
     "category": "Auditoriya Jalb Qilish",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -162,7 +162,7 @@
     "description": "Fikr-mulohazalarni qo'zg'atuvchi munozarali kontent yaratish. Faqat premium foydalanuvchilar uchun.",
     "category": "Auditoriya Jalb Qilish",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -173,7 +173,7 @@
     "description": "Shaxsiylashtirilgan kontent tajribasi yaratish. Faqat premium foydalanuvchilar uchun.",
     "category": "Auditoriya Jalb Qilish",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -184,7 +184,7 @@
     "description": "Kelajak perspektivasidan hozirgi trendlarni tahlil qilish. Faqat premium foydalanuvchilar uchun.",
     "category": "Innovatsiya va Tushuncha",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -195,7 +195,7 @@
     "description": "Yuzaki mavzularning chuqur qatlamlarini ochib berish. Faqat premium foydalanuvchilar uchun.",
     "category": "Innovatsiya va Tushuncha",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -206,7 +206,7 @@
     "description": "Boshqa sohalardan innovatsion yechimlarni ko'chirish. Faqat premium foydalanuvchilar uchun.",
     "category": "Innovatsiya va Tushuncha",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -217,7 +217,7 @@
     "description": "Aniq bashoratlar orqali ekspertlik va ishonch qurish. Faqat premium foydalanuvchilar uchun.",
     "category": "Obro' Qurish",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -228,7 +228,7 @@
     "description": "Noto'g'ri e'tiqodlarni buzib, haqiqatni ochib berish. Faqat premium foydalanuvchilar uchun.",
     "category": "Obro' Qurish",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -239,7 +239,7 @@
     "description": "Jarayonning haqiqiy, tartibsiz tomonlarini ko'rsatish orqali ishonch qozonish. Faqat premium foydalanuvchilar uchun.",
     "category": "Obro' Qurish",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -250,7 +250,7 @@
     "description": "Muammolarni hal qilish uchun o'z ramkangizni yaratish. Faqat premium foydalanuvchilar uchun.",
     "category": "Tizimli Fikrlash",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   },
@@ -261,7 +261,7 @@
     "description": "Eski lekin qimmatli g'oyalarni qayta kashf etish va yangilash. Faqat premium foydalanuvchilar uchun.",
     "category": "Tizimli Fikrlash",
     "isPremium": true,
-    "isPublic": false,
+    "isPublic": true,
     "createdAt": "2025-06-26T10:00:00.000Z",
     "updatedAt": "2025-06-26T10:00:00.000Z"
   }

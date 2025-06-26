@@ -404,6 +404,18 @@ export class HybridStorage implements IStorage {
 
   private async seedDatabaseData() {
     try {
+      // If using Supabase, skip seeding as data already exists
+      if ((global as any).supabaseStorage) {
+        console.log("[DB] Using Supabase - skipping seed (data already exists in Supabase)");
+        return;
+      }
+
+      // Only seed if using direct database connection
+      if (!db) {
+        console.log("[DB] Database not initialized, skipping seed");
+        return;
+      }
+
       // Check if categories exist
       const existingCategories = await db.select().from(categories);
       if (existingCategories.length === 0) {
