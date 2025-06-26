@@ -212,23 +212,20 @@ export default function AtmosPayment() {
             newValue: Date.now().toString()
           }));
           
-          // Also reload the page to ensure fresh data
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          // Don't reload here - we'll redirect instead
+          console.log('✅ Session refresh complete, preparing redirect...');
 
         } catch (error) {
           console.error('❌ Error in session refresh process:', error);
-          // Fallback: reload page
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+          // Continue with redirect anyway - user can refresh later
         }
         
-        // Redirect to home after 3 seconds with payment success flag
+        // Redirect to home after 2 seconds with payment success flag
         setTimeout(() => {
-          setLocation('/?payment=success');
-        }, 3000);
+          console.log('🚀 Redirecting to home page...');
+          // Use window.location for a full page refresh to ensure new session is loaded
+          window.location.href = '/?payment=success';
+        }, 2000);
       } else {
         throw new Error(result.message || 'To\'lovni tasdiqlashda xatolik');
       }
@@ -409,7 +406,10 @@ export default function AtmosPayment() {
       <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
       <h3 className="text-xl font-semibold text-green-700">Muvaffaqiyat!</h3>
       <p className="text-muted-foreground">{paymentState.message}</p>
-      <p className="text-sm text-muted-foreground">3 soniyadan keyin bosh sahifaga yo'naltirilasiz...</p>
+      <p className="text-sm text-muted-foreground">2 soniyadan keyin bosh sahifaga yo'naltirilasiz...</p>
+      <div className="mt-4">
+        <Loader2 className="mx-auto h-6 w-6 animate-spin text-green-500" />
+      </div>
     </div>
   );
 
