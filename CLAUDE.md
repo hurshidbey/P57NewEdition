@@ -144,6 +144,35 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 2. **Access**: http://localhost:5001
 3. **Stop**: `docker-compose down`
 
+### ⚠️ CRITICAL FIX: Traefik Gateway Timeout (504 Error)
+
+**Problem**: Site returns 504 Gateway Timeout even though app is running fine inside container
+
+**Root Cause**: Traefik and app containers are on DIFFERENT Docker networks and can't communicate
+
+**Solution**: Add app container to traefik's network in docker-compose.yml:
+```yaml
+services:
+  protokol57:
+    networks:
+      - protokol-network  # app's own network
+      - default          # traefik's network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.protokol57-main.rule=Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`)"
+      - "traefik.http.routers.protokol57-main.entrypoints=web,websecure"
+      - "traefik.http.routers.protokol57-main.tls=true"
+      - "traefik.http.routers.protokol57-main.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.protokol57-main.loadbalancer.server.port=5000"
+
+networks:
+  protokol-network:
+    driver: bridge
+  default:
+    external:
+      name: root_default  # Connect to traefik's network
+```
+
 ### ⚠️ CRITICAL FIX: Docker Using Old Environment Variables
 
 **Problem**: Docker keeps using old environment variables even after updating .env.production

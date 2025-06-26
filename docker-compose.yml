@@ -27,6 +27,14 @@ services:
     tty: true
     networks:
       - protokol-network
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.protokol57-main.rule=Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`)"
+      - "traefik.http.routers.protokol57-main.entrypoints=web,websecure"
+      - "traefik.http.routers.protokol57-main.tls=true"
+      - "traefik.http.routers.protokol57-main.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.protokol57-main.loadbalancer.server.port=5000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 30s
@@ -37,3 +45,6 @@ services:
 networks:
   protokol-network:
     driver: bridge
+  default:
+    external:
+      name: root_default
