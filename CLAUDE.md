@@ -144,6 +144,29 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 2. **Access**: http://localhost:5001
 3. **Stop**: `docker-compose down`
 
+### ⚠️ CRITICAL FIX: Docker Using Old Environment Variables
+
+**Problem**: Docker keeps using old environment variables even after updating .env.production
+
+**Root Cause**: Dockerfile was copying .env.development instead of using .env.production
+
+**Solution Applied**:
+1. Removed `COPY .env.development .env` from Dockerfile (line 30)
+2. Docker Compose already configured to use `.env.production` via `env_file` directive
+
+**Correct Deployment Process**:
+```bash
+# 1. Update .env.production on your local machine
+# 2. Copy updated .env.production to server
+scp -i ~/.ssh/protokol57_ed25519 /Users/xb21/P57/.env.production root@69.62.126.73:/opt/protokol57/.env.production
+
+# 3. SSH to server and rebuild with fresh environment
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && git pull && docker compose down && docker compose build --no-cache && docker compose up -d"
+
+# 4. Verify environment variables are loaded correctly
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "docker exec protokol57-protokol57-1 printenv | grep OPENAI"
+```
+
 ### Troubleshooting:
 
 #### ❌ "Uncaught Error: supabaseUrl is required"
