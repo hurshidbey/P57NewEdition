@@ -864,6 +864,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin: Get all users
+  app.get("/api/admin/users", isSupabaseAdmin, async (req, res) => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      
+      const { data: users, error } = await supabase.auth.admin.listUsers();
+      if (error) throw error;
+      
+      const formattedUsers = users.users.map(user => ({
+        id: user.id,
+        email: user.email,
+        tier: user.user_metadata?.tier || 'free',
+        createdAt: user.created_at,
+        paidAt: user.user_metadata?.paidAt || null
+      }));
+      
+      res.json(formattedUsers);
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // Admin: Get all payments
+  app.get("/api/admin/payments", isSupabaseAdmin, async (req, res) => {
+    try {
+      const payments = await storage.getPayments();
+      res.json(payments || []);
+    } catch (error) {
+      console.error('Failed to fetch payments:', error);
+      res.status(500).json({ message: "Failed to fetch payments" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
