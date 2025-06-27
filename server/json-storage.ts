@@ -45,7 +45,7 @@ export class JsonPromptsStorage {
       if (!prompt.isPublic) return false;
       
       if (userTier === 'free') {
-        return prompt.isFreeAccess === true; // Free users: only prompts marked as free
+        return !prompt.isPremium; // Free users: only non-premium prompts
       } else {
         return true; // Premium users: all public prompts
       }
