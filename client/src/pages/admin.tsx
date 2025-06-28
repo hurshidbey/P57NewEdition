@@ -97,7 +97,9 @@ export default function Admin() {
   const [promptForm, setPromptForm] = useState<Partial<Prompt>>({});
 
   // Check if user is admin
-  const isAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL || user?.email === 'hurshidbey@gmail.com';
+  const isAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL || 
+                  user?.email === 'hurshidbey@gmail.com' || 
+                  user?.email === 'mustafaabdurahmonov7777@gmail.com';
 
   useEffect(() => {
     if (isAuthenticated && isAdmin) {
