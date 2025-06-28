@@ -53,7 +53,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                 {prompt.category}
               </Badge>
               {prompt.isPremium && (
-                <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200 text-xs">
+                <Badge className="bg-accent/20 text-accent hover:bg-accent/30 text-xs">
                   <Crown className="w-2 h-2 mr-1" />
                   Premium
                 </Badge>
@@ -99,13 +99,13 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
 
   if (variant === 'featured') {
     return (
-      <Card className="relative bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
+      <Card className="relative bg-accent/5 border-accent/20">
         <CardHeader>
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <Crown className="w-5 h-5 text-orange-600" />
-                <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">
+                <Crown className="w-5 h-5 text-accent" />
+                <Badge className="bg-accent/20 text-accent hover:bg-accent/30">
                   Tavsiya etiladi
                 </Badge>
               </div>
@@ -126,7 +126,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
 
         <CardContent>
           <div className="relative">
-            <div className={`bg-white/80 rounded-lg p-4 ${!canAccess ? 'filter blur-sm' : ''}`}>
+            <div className={`bg-background/80 rounded-lg p-4 ${!canAccess ? 'filter blur-sm' : ''}`}>
               <pre className="text-sm text-foreground whitespace-pre-wrap font-mono line-clamp-3">
                 {prompt.content}
               </pre>
@@ -134,11 +134,11 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
 
             {!canAccess && (
               <div className="absolute inset-0 bg-black/10 rounded-lg flex items-center justify-center">
-                <div className="bg-white rounded-lg p-4 text-center shadow-lg">
-                  <Lock className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+                <div className="bg-background rounded-lg p-4 text-center shadow-lg">
+                  <Lock className="w-8 h-8 text-accent mx-auto mb-2" />
                   <p className="text-sm font-medium text-foreground mb-2">Premium prompt</p>
                   <Link href="/atmos-payment">
-                    <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
+                    <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                       <Crown className="w-3 h-3 mr-1" />
                       Premium olish
                     </Button>
@@ -156,7 +156,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                   variant="outline"
                   size="sm"
                   onClick={copyToClipboard}
-                  className="gap-2 bg-white/80"
+                  className="gap-2 bg-background/80"
                 >
                   {copied ? (
                     <>
@@ -198,7 +198,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
               {prompt.category}
             </Badge>
             {prompt.isPremium && (
-              <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">
+              <Badge className="bg-accent/20 text-accent hover:bg-accent/30">
                 <Crown className="w-3 h-3 mr-1" />
                 Premium
               </Badge>
@@ -236,14 +236,14 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
 
           {!canAccess && showContent && (
             <div className="absolute inset-0 bg-black/10 rounded-lg flex items-center justify-center">
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 text-center shadow-lg">
-                <Lock className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+              <div className="bg-background dark:bg-gray-900 rounded-lg p-4 text-center shadow-lg">
+                <Lock className="w-8 h-8 text-accent mx-auto mb-2" />
                 <p className="text-sm font-medium text-foreground mb-2">Premium prompt</p>
                 <p className="text-xs text-muted-foreground mb-3">
                   Bu promptni ko'rish uchun Premium obuna kerak
                 </p>
                 <Link href="/atmos-payment">
-                  <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
+                  <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                     <Crown className="w-3 h-3 mr-1" />
                     Premium olish
                   </Button>
