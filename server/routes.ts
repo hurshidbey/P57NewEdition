@@ -70,8 +70,14 @@ const isSupabaseAdmin = async (req: any, res: Response, next: NextFunction) => {
       return res.status(401).json({ error: 'Invalid token' });
     }
     
-    // Only allow admin user
-    if (user.email !== process.env.ADMIN_EMAIL) {
+    // Only allow admin users
+    const adminEmails = [
+      process.env.ADMIN_EMAIL,
+      'hurshidbey@gmail.com',
+      'mustafaabdurahmonov7777@gmail.com'
+    ].filter(Boolean); // Remove any undefined values
+    
+    if (!adminEmails.includes(user.email)) {
       return res.status(403).json({ error: 'Access denied - admin only' });
     }
     

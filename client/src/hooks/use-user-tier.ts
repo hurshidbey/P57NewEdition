@@ -30,7 +30,7 @@ export function useUserTier(): UserTierData {
   }, [user, isAuthenticated, authLoading]);
   
   // CRITICAL FIX: Check if user is admin first, then get tier
-  const isAdmin = user?.email === 'hurshidbey@gmail.com';
+  const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
   const tier = isAdmin ? 'paid' : ((user?.tier as UserTier) || 'free');
 
   // Get count of accessed protocols for free tier limits
