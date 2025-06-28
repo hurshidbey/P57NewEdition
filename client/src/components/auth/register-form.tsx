@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
 import { User, Mail, Lock, CheckCircle, ArrowRight } from "lucide-react"
 import { GoogleOAuthButton } from "./google-oauth-button"
+import { SimpleCaptcha } from "./simple-captcha"
 
 interface RegisterFormProps {
   onToggleMode: () => void
@@ -20,6 +21,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [lastSubmit, setLastSubmit] = useState<number>(0)
+  const [captchaValid, setCaptchaValid] = useState(false)
   const { signUp } = useAuth()
   const { toast } = useToast()
 
@@ -95,6 +97,16 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       toast({
         title: "Xatolik",
         description: "Parol juda zaif. Harf, raqam va belgilarni aralashtiring.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    // Check captcha validation
+    if (!captchaValid) {
+      toast({
+        title: "Xatolik",
+        description: "Iltimos matematik masalani to'g'ri yeching",
         variant: "destructive"
       })
       return
@@ -279,6 +291,16 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
+      >
+        <SimpleCaptcha 
+          onValidationChange={setCaptchaValid}
+        />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
         className="bg-muted/50 rounded-lg p-4 border border-border"
       >
         <p className="text-xs text-muted-foreground">
@@ -290,12 +312,12 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
+        transition={{ delay: 0.7 }}
       >
         <Button 
           type="submit" 
           className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-medium text-base transition-all duration-300 hover-lift group"
-          disabled={loading || !email || !password || !name || password !== confirmPassword}
+          disabled={loading || !email || !password || !name || password !== confirmPassword || !captchaValid}
         >
           {loading ? (
             <div className="flex items-center gap-2">
@@ -314,7 +336,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
+        transition={{ delay: 0.8 }}
         className="relative"
       >
         <div className="absolute inset-0 flex items-center">
@@ -328,7 +350,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 0.9 }}
         className="space-y-4"
       >
         <GoogleOAuthButton>
@@ -339,7 +361,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       <motion.p 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.9 }}
+        transition={{ delay: 1.0 }}
         className="text-center text-sm text-muted-foreground"
       >
         Hisobingiz bormi?{" "}
