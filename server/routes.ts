@@ -448,6 +448,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin: Create protocol
+  app.post("/api/admin/protocols", isSupabaseAdmin, async (req, res) => {
+    try {
+      const validatedData = insertProtocolSchema.parse(req.body);
+      
+      const protocol = await storage.createProtocol(validatedData);
+      
+      res.status(201).json(protocol);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create protocol" });
+    }
+  });
+
+  // Admin: Update protocol
+  app.put("/api/admin/protocols/:id", isSupabaseAdmin, async (req, res) => {
+    try {
+      const protocolId = parseInt(req.params.id);
+      
+      if (isNaN(protocolId)) {
+        return res.status(400).json({ message: "Invalid protocol ID" });
+      }
+      
+      const validatedData = insertProtocolSchema.partial().parse(req.body);
+      
+      const protocol = await storage.updateProtocol(protocolId, validatedData);
+      
+      if (!protocol) {
+        return res.status(404).json({ message: "Protocol not found" });
+      }
+      
+      res.json(protocol);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update protocol" });
+    }
+  });
+
+  // Admin: Delete protocol
+  app.delete("/api/admin/protocols/:id", isSupabaseAdmin, async (req, res) => {
+    try {
+      const protocolId = parseInt(req.params.id);
+      
+      if (isNaN(protocolId)) {
+        return res.status(400).json({ message: "Invalid protocol ID" });
+      }
+      
+      const success = await storage.deleteProtocol(protocolId);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Protocol not found" });
+      }
+      
+      res.json({ message: "Protocol deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete protocol" });
+    }
+  });
+
   // Get all categories
   app.get("/api/categories", async (req, res) => {
     try {

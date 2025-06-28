@@ -11,15 +11,46 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
-import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText, Edit, Trash2, Plus } from 'lucide-react';
 import AnalyticsDashboard from '@/components/analytics-dashboard';
 
 interface Protocol {
   id: number;
   number: number;
   title: string;
+  description: string;
+  badExample?: string;
+  goodExample?: string;
   categoryId: number;
+  notes?: string;
+  problemStatement?: string;
+  whyExplanation?: string;
+  solutionApproach?: string;
+  difficultyLevel?: string;
+  levelOrder?: number;
   isFreeAccess: boolean;
+  createdAt?: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+interface Prompt {
+  id: number;
+  title: string;
+  content: string;
+  description?: string;
+  category: string;
+  isPremium: boolean;
+  isPublic: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface Payment {
@@ -42,6 +73,8 @@ export default function Admin() {
   const { user, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
   const [protocols, setProtocols] = useState<Protocol[]>([]);
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [activeTab, setActiveTab] = useState('protocols');
@@ -52,6 +85,16 @@ export default function Admin() {
     totalProtocols: 0,
     freeProtocols: 0
   });
+
+  // Dialog states
+  const [protocolDialogOpen, setProtocolDialogOpen] = useState(false);
+  const [promptDialogOpen, setPromptDialogOpen] = useState(false);
+  const [editingProtocol, setEditingProtocol] = useState<Protocol | null>(null);
+  const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
+
+  // Form states
+  const [protocolForm, setProtocolForm] = useState<Partial<Protocol>>({});
+  const [promptForm, setPromptForm] = useState<Partial<Prompt>>({});
 
   // Check if user is admin
   const isAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL || user?.email === 'hurshidbey@gmail.com';
@@ -100,6 +143,20 @@ export default function Admin() {
           totalProtocols: data.length,
           freeProtocols: freeCount
         }));
+      }
+
+      // Load categories
+      const categoriesRes = await fetch('/api/categories', { headers });
+      if (categoriesRes.ok) {
+        const data = await categoriesRes.json();
+        setCategories(data);
+      }
+
+      // Load prompts
+      const promptsRes = await fetch('/api/admin/prompts', { headers });
+      if (promptsRes.ok) {
+        const data = await promptsRes.json();
+        setPrompts(data);
       }
 
       // Load users
@@ -174,6 +231,277 @@ export default function Admin() {
       toast({
         title: 'Error',
         description: 'Failed to update protocol access',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  // Protocol CRUD functions
+  const openProtocolDialog = (protocol?: Protocol) => {
+    if (protocol) {
+      setEditingProtocol(protocol);
+      setProtocolForm(protocol);
+    } else {
+      setEditingProtocol(null);
+      setProtocolForm({
+        number: protocols.length + 1,
+        title: '',
+        description: '',
+        categoryId: 1,
+        isFreeAccess: false
+      });
+    }
+    setProtocolDialogOpen(true);
+  };
+
+  const saveProtocol = async () => {
+    // Validation
+    if (!protocolForm.title?.trim()) {
+      toast({
+        title: 'Xatolik',
+        description: 'Protokol nomi kiritilishi shart',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (!protocolForm.description?.trim()) {
+      toast({
+        title: 'Xatolik',
+        description: 'Protokol tavsifi kiritilishi shart',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (!protocolForm.categoryId) {
+      toast({
+        title: 'Xatolik',
+        description: 'Kategoriya tanlanishi shart',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      if (!token) {
+        throw new Error('Autentifikatsiya xatosi - iltimos qaytadan kiring');
+      }
+
+      const url = editingProtocol 
+        ? `/api/admin/protocols/${editingProtocol.id}`
+        : '/api/admin/protocols';
+      
+      const method = editingProtocol ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(protocolForm)
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Muvaffaqiyat',
+          description: `Protokol ${editingProtocol ? 'yangilandi' : 'yaratildi'}`
+        });
+        setProtocolDialogOpen(false);
+        setProtocolForm({});
+        setEditingProtocol(null);
+        loadData();
+      } else {
+        const error = await res.json();
+        throw new Error(error.message || 'Protokolni saqlashda xatolik yuz berdi');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Xatolik',
+        description: error.message || 'Protokolni saqlashda xatolik yuz berdi',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const deleteProtocol = async (protocolId: number) => {
+    if (!confirm('Ushbu protokolni o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.')) return;
+
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await fetch(`/api/admin/protocols/${protocolId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Success',
+          description: 'Protocol deleted successfully'
+        });
+        loadData();
+      } else {
+        throw new Error('Failed to delete');
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete protocol',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  // Prompt CRUD functions
+  const openPromptDialog = (prompt?: Prompt) => {
+    if (prompt) {
+      setEditingPrompt(prompt);
+      setPromptForm(prompt);
+    } else {
+      setEditingPrompt(null);
+      setPromptForm({
+        title: '',
+        content: '',
+        description: '',
+        category: 'General',
+        isPremium: false,
+        isPublic: true
+      });
+    }
+    setPromptDialogOpen(true);
+  };
+
+  const savePrompt = async () => {
+    // Validation
+    if (!promptForm.title?.trim()) {
+      toast({
+        title: 'Xatolik',
+        description: 'Prompt nomi kiritilishi shart',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (!promptForm.content?.trim()) {
+      toast({
+        title: 'Xatolik',
+        description: 'Prompt matni kiritilishi shart',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (!promptForm.category?.trim()) {
+      toast({
+        title: 'Xatolik',
+        description: 'Kategoriya kiritilishi shart',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      if (!token) {
+        throw new Error('Autentifikatsiya xatosi - iltimos qaytadan kiring');
+      }
+
+      const url = editingPrompt 
+        ? `/api/admin/prompts/${editingPrompt.id}`
+        : '/api/admin/prompts';
+      
+      const method = editingPrompt ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(promptForm)
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Muvaffaqiyat',
+          description: `Prompt ${editingPrompt ? 'yangilandi' : 'yaratildi'}`
+        });
+        setPromptDialogOpen(false);
+        setPromptForm({});
+        setEditingPrompt(null);
+        loadData();
+      } else {
+        const error = await res.json();
+        throw new Error(error.message || 'Promptni saqlashda xatolik yuz berdi');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Xatolik',
+        description: error.message || 'Promptni saqlashda xatolik yuz berdi',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const deletePrompt = async (promptId: number) => {
+    if (!confirm('Ushbu promptni o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.')) return;
+
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await fetch(`/api/admin/prompts/${promptId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Success',
+          description: 'Prompt deleted successfully'
+        });
+        loadData();
+      } else {
+        throw new Error('Failed to delete');
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete prompt',
         variant: 'destructive'
       });
     }
@@ -263,8 +591,9 @@ export default function Admin() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="protocols">Protokollar</TabsTrigger>
+            <TabsTrigger value="prompts">Promptlar</TabsTrigger>
             <TabsTrigger value="users">Foydalanuvchilar</TabsTrigger>
             <TabsTrigger value="payments">To'lovlar</TabsTrigger>
             <TabsTrigger value="analytics">Analitika</TabsTrigger>
@@ -273,9 +602,15 @@ export default function Admin() {
           {/* Protocols Tab */}
           <TabsContent value="protocols">
             <Card>
-              <CardHeader>
-                <CardTitle>Protokollarni boshqarish</CardTitle>
-                <CardDescription>Protokollarning kirish darajasini o'zgartiring</CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Protokollarni boshqarish</CardTitle>
+                  <CardDescription>Protokollarni yaratish, tahrirlash va boshqarish</CardDescription>
+                </div>
+                <Button onClick={() => openProtocolDialog()}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Yangi protokol
+                </Button>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -285,15 +620,18 @@ export default function Admin() {
                       <TableHead>Nomi</TableHead>
                       <TableHead>Kategoriya</TableHead>
                       <TableHead>Kirish</TableHead>
-                      <TableHead>Harakat</TableHead>
+                      <TableHead>Yaratilgan</TableHead>
+                      <TableHead>Harakatlar</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {protocols.map((protocol) => (
                       <TableRow key={protocol.id}>
                         <TableCell>{protocol.number}</TableCell>
-                        <TableCell>{protocol.title}</TableCell>
-                        <TableCell>{protocol.categoryId}</TableCell>
+                        <TableCell className="font-medium">{protocol.title}</TableCell>
+                        <TableCell>
+                          {categories.find(c => c.id === protocol.categoryId)?.name || protocol.categoryId}
+                        </TableCell>
                         <TableCell>
                           <Badge variant={protocol.isFreeAccess ? 'default' : 'secondary'}>
                             {protocol.isFreeAccess ? (
@@ -304,10 +642,98 @@ export default function Admin() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Switch
-                            checked={protocol.isFreeAccess}
-                            onCheckedChange={() => toggleProtocolAccess(protocol.id, protocol.isFreeAccess)}
-                          />
+                          {protocol.createdAt ? new Date(protocol.createdAt).toLocaleDateString('uz-UZ') : '-'}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={protocol.isFreeAccess}
+                              onCheckedChange={() => toggleProtocolAccess(protocol.id, protocol.isFreeAccess)}
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openProtocolDialog(protocol)}
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => deleteProtocol(protocol.id)}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Prompts Tab */}
+          <TabsContent value="prompts">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Promptlarni boshqarish</CardTitle>
+                  <CardDescription>Promptlarni yaratish, tahrirlash va boshqarish</CardDescription>
+                </div>
+                <Button onClick={() => openPromptDialog()}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Yangi prompt
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nomi</TableHead>
+                      <TableHead>Kategoriya</TableHead>
+                      <TableHead>Turi</TableHead>
+                      <TableHead>Holat</TableHead>
+                      <TableHead>Yaratilgan</TableHead>
+                      <TableHead>Harakatlar</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {prompts.map((prompt) => (
+                      <TableRow key={prompt.id}>
+                        <TableCell className="font-medium">{prompt.title}</TableCell>
+                        <TableCell>{prompt.category}</TableCell>
+                        <TableCell>
+                          <Badge variant={prompt.isPremium ? 'secondary' : 'default'}>
+                            {prompt.isPremium ? 'Premium' : 'Bepul'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={prompt.isPublic ? 'default' : 'outline'}>
+                            {prompt.isPublic ? 'Ommaviy' : 'Yashirin'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {prompt.createdAt ? new Date(prompt.createdAt).toLocaleDateString('uz-UZ') : '-'}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openPromptDialog(prompt)}
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => deletePrompt(prompt.id)}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -392,6 +818,189 @@ export default function Admin() {
             <AnalyticsDashboard />
           </TabsContent>
         </Tabs>
+
+        {/* Protocol Dialog */}
+        <Dialog open={protocolDialogOpen} onOpenChange={setProtocolDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {editingProtocol ? 'Protokolni tahrirlash' : 'Yangi protokol yaratish'}
+              </DialogTitle>
+              <DialogDescription>
+                Protokol ma'lumotlarini kiriting yoki tahrirlang
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="number" className="text-right">Raqam</Label>
+                <Input
+                  id="number"
+                  type="number"
+                  value={protocolForm.number || ''}
+                  onChange={(e) => setProtocolForm({...protocolForm, number: parseInt(e.target.value)})}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="title" className="text-right">Nomi</Label>
+                <Input
+                  id="title"
+                  value={protocolForm.title || ''}
+                  onChange={(e) => setProtocolForm({...protocolForm, title: e.target.value})}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="category" className="text-right">Kategoriya</Label>
+                <Select
+                  value={protocolForm.categoryId?.toString()}
+                  onValueChange={(value) => setProtocolForm({...protocolForm, categoryId: parseInt(value)})}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Kategoriyani tanlang" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id.toString()}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="description" className="text-right mt-2">Tavsif</Label>
+                <Textarea
+                  id="description"
+                  value={protocolForm.description || ''}
+                  onChange={(e) => setProtocolForm({...protocolForm, description: e.target.value})}
+                  className="col-span-3"
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="badExample" className="text-right mt-2">Yomon misol</Label>
+                <Textarea
+                  id="badExample"
+                  value={protocolForm.badExample || ''}
+                  onChange={(e) => setProtocolForm({...protocolForm, badExample: e.target.value})}
+                  className="col-span-3"
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="goodExample" className="text-right mt-2">Yaxshi misol</Label>
+                <Textarea
+                  id="goodExample"
+                  value={protocolForm.goodExample || ''}
+                  onChange={(e) => setProtocolForm({...protocolForm, goodExample: e.target.value})}
+                  className="col-span-3"
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="notes" className="text-right mt-2">Izohlar</Label>
+                <Textarea
+                  id="notes"
+                  value={protocolForm.notes || ''}
+                  onChange={(e) => setProtocolForm({...protocolForm, notes: e.target.value})}
+                  className="col-span-3"
+                  rows={2}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="isFreeAccess" className="text-right">Bepul kirish</Label>
+                <Switch
+                  id="isFreeAccess"
+                  checked={protocolForm.isFreeAccess || false}
+                  onCheckedChange={(checked) => setProtocolForm({...protocolForm, isFreeAccess: checked})}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" onClick={saveProtocol}>
+                {editingProtocol ? 'Saqlash' : 'Yaratish'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Prompt Dialog */}
+        <Dialog open={promptDialogOpen} onOpenChange={setPromptDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {editingPrompt ? 'Promptni tahrirlash' : 'Yangi prompt yaratish'}
+              </DialogTitle>
+              <DialogDescription>
+                Prompt ma'lumotlarini kiriting yoki tahrirlang
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="promptTitle" className="text-right">Nomi</Label>
+                <Input
+                  id="promptTitle"
+                  value={promptForm.title || ''}
+                  onChange={(e) => setPromptForm({...promptForm, title: e.target.value})}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="promptCategory" className="text-right">Kategoriya</Label>
+                <Input
+                  id="promptCategory"
+                  value={promptForm.category || ''}
+                  onChange={(e) => setPromptForm({...promptForm, category: e.target.value})}
+                  className="col-span-3"
+                  placeholder="Masalan: AI, Development, Marketing"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="promptDescription" className="text-right mt-2">Tavsif</Label>
+                <Textarea
+                  id="promptDescription"
+                  value={promptForm.description || ''}
+                  onChange={(e) => setPromptForm({...promptForm, description: e.target.value})}
+                  className="col-span-3"
+                  rows={2}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="promptContent" className="text-right mt-2">Prompt matni</Label>
+                <Textarea
+                  id="promptContent"
+                  value={promptForm.content || ''}
+                  onChange={(e) => setPromptForm({...promptForm, content: e.target.value})}
+                  className="col-span-3"
+                  rows={8}
+                  placeholder="Prompt matnini kiriting..."
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="isPremium" className="text-right">Premium</Label>
+                <Switch
+                  id="isPremium"
+                  checked={promptForm.isPremium || false}
+                  onCheckedChange={(checked) => setPromptForm({...promptForm, isPremium: checked})}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="isPublic" className="text-right">Ommaviy</Label>
+                <Switch
+                  id="isPublic"
+                  checked={promptForm.isPublic !== false}
+                  onCheckedChange={(checked) => setPromptForm({...promptForm, isPublic: checked})}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" onClick={savePrompt}>
+                {editingPrompt ? 'Saqlash' : 'Yaratish'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </main>
       <AppFooter />
     </div>
