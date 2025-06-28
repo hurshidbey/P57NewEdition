@@ -61,6 +61,9 @@ function AppContent() {
       <Route path="/premium-prompts">
         {isAuthenticated ? <PremiumPrompts /> : <AuthPage />}
       </Route>
+      <Route path="/prompts">
+        {isAuthenticated ? <PremiumPrompts /> : <AuthPage />}
+      </Route>
       <Route path="/atmos-payment" component={AtmosPayment} />
       <Route path="/">
         {isAuthenticated ? <Home /> : <AuthPage />}
