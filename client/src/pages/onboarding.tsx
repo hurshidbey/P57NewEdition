@@ -58,22 +58,22 @@ function FlipCard({ term, definition, icon, examples }: FlipCardProps) {
       }`}>
         {/* Front */}
         <div className="absolute inset-0 w-full h-full backface-hidden">
-          <Card className="h-full border-2 border-gray-100 hover:border-accent transition-all shadow-medium hover:shadow-strong">
+          <Card className="h-full border-2 border-border hover:border-accent transition-all shadow-medium hover:shadow-strong">
             <CardContent className="h-full flex flex-col items-center justify-center text-center p-6">
               {icon && <div className="mb-4 text-accent">{icon}</div>}
-              <h3 className="text-xl font-bold text-black mb-2">{term}</h3>
-              <p className="text-sm text-gray-500">Bosing ko'rish uchun</p>
+              <h3 className="text-xl font-bold text-foreground mb-2">{term}</h3>
+              <p className="text-sm text-muted-foreground">Bosing ko'rish uchun</p>
             </CardContent>
           </Card>
         </div>
         
         {/* Back */}
         <div className="absolute inset-0 w-full h-full rotate-y-180 backface-hidden">
-          <Card className="h-full bg-gradient-to-br from-accent to-gray-800 text-white border-2 border-accent overflow-y-auto shadow-strong">
+          <Card className="h-full bg-accent text-accent-foreground border-2 border-accent overflow-y-auto shadow-strong">
             <CardContent className="h-full flex flex-col justify-center p-6">
               <p className="text-base leading-relaxed mb-4">{definition}</p>
               {examples && examples.length > 0 && (
-                <div className="mt-auto pt-4 border-t border-white/20">
+                <div className="mt-auto pt-4 border-t border-accent-foreground/20">
                   <p className="text-xs opacity-80 mb-2">Misollar:</p>
                   {examples.map((example, idx) => (
                     <p key={idx} className="text-xs opacity-90">• {example}</p>
@@ -107,7 +107,7 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
   };
 
   return (
-    <Card className="border-2 border-gray-100 shadow-soft hover:shadow-medium transition-all">
+    <Card className="border-2 border-border shadow-soft hover:shadow-medium transition-all">
       <CardContent className="p-6">
         <h4 className="font-semibold text-lg mb-4">{question}</h4>
         <div className="space-y-3">
@@ -123,7 +123,7 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
                   ? 'border-green-500 bg-green-50'
                   : showResult && index === selected && index !== correctAnswer
                   ? 'border-red-500 bg-red-50'
-                  : 'border-gray-200 hover:border-accent'
+                  : 'border-border hover:border-accent'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -163,7 +163,7 @@ function InteractiveExample({ title, badPrompt, goodPrompt, explanation }: Inter
   const [showGood, setShowGood] = useState(false);
 
   return (
-    <Card className="border-2 border-gray-200">
+    <Card className="border-2 border-border">
       <CardContent className="p-6">
         <h4 className="font-semibold text-lg mb-4">{title}</h4>
         
@@ -175,7 +175,7 @@ function InteractiveExample({ title, badPrompt, goodPrompt, explanation }: Inter
               <span className="text-sm font-medium text-red-600">Yomon misol</span>
             </div>
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-sm font-mono text-gray-800">{badPrompt}</p>
+              <p className="text-sm font-mono text-foreground">{badPrompt}</p>
             </div>
           </div>
 
@@ -199,7 +199,7 @@ function InteractiveExample({ title, badPrompt, goodPrompt, explanation }: Inter
               <span className="text-sm font-medium text-green-600">Yaxshi misol</span>
             </div>
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <p className="text-sm font-mono text-gray-800">{goodPrompt}</p>
+              <p className="text-sm font-mono text-foreground">{goodPrompt}</p>
             </div>
           </div>
 
@@ -233,7 +233,7 @@ function TryItYourself({ task, hints, sampleSolution }: TryItYourselfProps) {
           <h4 className="font-semibold text-lg">O'zingiz sinab ko'ring!</h4>
         </div>
         
-        <p className="text-gray-700 mb-4">{task}</p>
+        <p className="text-muted-foreground mb-4">{task}</p>
         
         <Textarea
           value={userInput}
@@ -273,9 +273,9 @@ function TryItYourself({ task, hints, sampleSolution }: TryItYourselfProps) {
         )}
 
         {showSolution && (
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-gray-600 mb-2">Namuna yechim:</p>
-            <p className="text-sm font-mono text-gray-800 whitespace-pre-wrap">{sampleSolution}</p>
+          <div className="bg-background border border-border rounded-lg p-4">
+            <p className="text-sm font-medium text-muted-foreground mb-2">Namuna yechim:</p>
+            <p className="text-sm font-mono text-foreground whitespace-pre-wrap">{sampleSolution}</p>
           </div>
         )}
       </CardContent>
@@ -316,23 +316,23 @@ export default function Onboarding() {
             <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">
               Yangi boshlanish
             </Badge>
-            <h1 className="text-5xl font-black text-black mb-6 leading-tight">
+            <h1 className="text-5xl font-black text-foreground mb-6 leading-tight">
               ChatGPT bilan to'g'ri ishlashni o'rganing
             </h1>
-            <p className="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
               Bu qo'llanma ChatGPT bilan muloyim gaplashishni o'rgatmaydi. 
-              <span className="font-bold text-black"> Bu yerda faqat natija muhim.</span>
+              <span className="font-bold text-foreground"> Bu yerda faqat natija muhim.</span>
             </p>
           </motion.div>
           
           {/* Why This Matters - New Section */}
-          <Card className="border-2 border-gray-200 overflow-hidden">
+          <Card className="border-2 border-border overflow-hidden">
             <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6">
-              <h3 className="text-xl font-bold text-black mb-4">Nima uchun bu muhim?</h3>
+              <h3 className="text-xl font-bold text-foreground mb-4">Nima uchun bu muhim?</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-semibold mb-2">Bugunga qadar:</h4>
-                  <ul className="space-y-2 text-gray-600">
+                  <ul className="space-y-2 text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <span className="text-red-500 mt-1">→</span>
                       <span>AI'dan 10% foydalanish</span>
@@ -349,7 +349,7 @@ export default function Onboarding() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-2">O'rganganingizdan keyin:</h4>
-                  <ul className="space-y-2 text-gray-600">
+                  <ul className="space-y-2 text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <span className="text-green-500 mt-1">→</span>
                       <span>AI imkoniyatlaridan 90% foydalanish</span>
@@ -370,27 +370,27 @@ export default function Onboarding() {
 
           {/* Key Points Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="border-2 border-gray-100 hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
+            <Card className="border-2 border-border hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
               <CardContent className="p-6 text-center">
                 <Zap className="w-12 h-12 text-accent mx-auto mb-4" />
-                <h3 className="font-bold text-lg mb-2">Robot, inson emas</h3>
-                <p className="text-gray-600 text-sm">ChatGPT sizning kayfiyatingizni tushunmaydi</p>
+                <h3 className="font-bold text-lg mb-2 text-foreground">Robot, inson emas</h3>
+                <p className="text-muted-foreground text-sm">ChatGPT sizning kayfiyatingizni tushunmaydi</p>
               </CardContent>
             </Card>
             
-            <Card className="border-2 border-gray-100 hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
+            <Card className="border-2 border-border hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
               <CardContent className="p-6 text-center">
                 <Target className="w-12 h-12 text-accent mx-auto mb-4" />
-                <h3 className="font-bold text-lg mb-2">Buyruqlar asosida</h3>
-                <p className="text-gray-600 text-sm">Aniq ko'rsatmalar = yaxshi natijalar</p>
+                <h3 className="font-bold text-lg mb-2 text-foreground">Buyruqlar asosida</h3>
+                <p className="text-muted-foreground text-sm">Aniq ko'rsatmalar = yaxshi natijalar</p>
               </CardContent>
             </Card>
             
-            <Card className="border-2 border-gray-100 hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
+            <Card className="border-2 border-border hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
               <CardContent className="p-6 text-center">
                 <Sparkles className="w-12 h-12 text-accent mx-auto mb-4" />
-                <h3 className="font-bold text-lg mb-2">100x natija</h3>
-                <p className="text-gray-600 text-sm">To'g'ri usul bilan 100 barobar ko'p foyda</p>
+                <h3 className="font-bold text-lg mb-2 text-foreground">100x natija</h3>
+                <p className="text-muted-foreground text-sm">To'g'ri usul bilan 100 barobar ko'p foyda</p>
               </CardContent>
             </Card>
           </div>
@@ -399,10 +399,10 @@ export default function Onboarding() {
           <Card className="border-2 border-accent/20 bg-gradient-to-r from-accent/5 to-accent/10 shadow-medium">
             <CardContent className="p-8">
               <blockquote className="space-y-4">
-                <p className="text-lg font-semibold text-black italic">
+                <p className="text-lg font-semibold text-foreground italic">
                   "Ishoning, sizdan aqlli bo'lmagan odamlar — ChatGPT'dan sizdan 100 karra ko'p foyda olyapti."
                 </p>
-                <p className="text-base text-gray-700">
+                <p className="text-base text-muted-foreground">
                   Sababi oddiy: ular qanday gapirishni, qanday buyruq berishni biladi.
                 </p>
                 <div className="pt-4 border-t border-accent/20">
@@ -415,8 +415,8 @@ export default function Onboarding() {
           </Card>
 
           {/* Learning Path Preview */}
-          <div className="bg-gray-50 rounded-xl p-6">
-            <h3 className="font-bold text-lg mb-4">Nimalarni o'rganasiz:</h3>
+          <div className="bg-muted rounded-xl p-6">
+            <h3 className="font-bold text-lg mb-4 text-foreground">Nimalarni o'rganasiz:</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 "AI va ChatGPT qanday ishlashini",
@@ -428,14 +428,14 @@ export default function Onboarding() {
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-700">{item}</span>
+                  <span className="text-muted-foreground">{item}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Author Info */}
-          <div className="text-center text-gray-600">
+          <div className="text-center text-muted-foreground">
             <p className="mb-2">- Xurshid Mo'roziqov</p>
             <p className="text-sm">t.me/birfoizbilim</p>
           </div>
@@ -452,21 +452,21 @@ export default function Onboarding() {
             <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">
               4 ta asos
             </Badge>
-            <h2 className="text-3xl font-bold text-black">
+            <h2 className="text-3xl font-bold text-foreground">
               ChatGPT bilan ishlashni boshlashdan oldin
             </h2>
           </div>
 
           {/* Deep Dive: What is AI Really? */}
-          <Card className="border-2 border-gray-200">
+          <Card className="border-2 border-border">
             <CardContent className="p-8">
-              <h3 className="text-xl font-bold mb-4">AI haqiqatda nima?</h3>
-              <div className="space-y-4 text-gray-700">
+              <h3 className="text-xl font-bold mb-4 text-foreground">AI haqiqatda nima?</h3>
+              <div className="space-y-4 text-muted-foreground">
                 <p>
                   Sun'iy intellekt — bu kompyuterlarni inson kabi "o'ylash"ga o'rgatish san'ati. 
                   Lekin bu "o'ylash" aslida nima?
                 </p>
-                <div className="bg-gray-50 p-6 rounded-lg">
+                <div className="bg-muted p-6 rounded-lg">
                   <h4 className="font-semibold mb-3">AI qanday "o'ylaydi":</h4>
                   <ol className="space-y-3">
                     <li className="flex gap-3">
@@ -561,24 +561,24 @@ export default function Onboarding() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <motion.div 
                   whileHover={{ scale: 1.02 }}
-                  className="text-center p-4 bg-white rounded-xl border-2 border-gray-100 shadow-soft hover:shadow-medium transition-all"
+                  className="text-center p-4 bg-background rounded-xl border-2 border-border shadow-soft hover:shadow-medium transition-all"
                 >
-                  <p className="text-sm text-gray-600 mb-1">Belgilar</p>
-                  <p className="text-2xl font-bold text-gray-800">{tokenText.length}</p>
+                  <p className="text-sm text-muted-foreground mb-1">Belgilar</p>
+                  <p className="text-2xl font-bold text-foreground">{tokenText.length}</p>
                 </motion.div>
                 <motion.div 
                   whileHover={{ scale: 1.02 }}
                   className="text-center p-4 bg-accent/10 rounded-xl border-2 border-accent/20 shadow-soft hover:shadow-medium transition-all"
                 >
-                  <p className="text-sm text-gray-600 mb-1">Taxminiy tokenlar</p>
+                  <p className="text-sm text-muted-foreground mb-1">Taxminiy tokenlar</p>
                   <p className="text-3xl font-bold text-accent">{calculateTokens(tokenText)}</p>
                 </motion.div>
                 <motion.div 
                   whileHover={{ scale: 1.02 }}
-                  className="text-center p-4 bg-white rounded-xl border-2 border-gray-100 shadow-soft hover:shadow-medium transition-all"
+                  className="text-center p-4 bg-background rounded-xl border-2 border-border shadow-soft hover:shadow-medium transition-all"
                 >
-                  <p className="text-sm text-gray-600 mb-1">Narxi (GPT-4)</p>
-                  <p className="text-2xl font-bold text-gray-800">${(calculateTokens(tokenText) * 0.00003).toFixed(4)}</p>
+                  <p className="text-sm text-muted-foreground mb-1">Narxi (GPT-4)</p>
+                  <p className="text-2xl font-bold text-foreground">${(calculateTokens(tokenText) * 0.00003).toFixed(4)}</p>
                 </motion.div>
               </div>
               
@@ -605,7 +605,7 @@ export default function Onboarding() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-semibold mb-2">AI nima qila olmaydi:</h4>
-                  <ul className="space-y-2 text-sm text-gray-700">
+                  <ul className="space-y-2 text-sm text-muted-foreground">
                     <li>❌ Haqiqiy tushunish va his-tuyg'u</li>
                     <li>❌ Real vaqtdagi ma'lumotlar (cutoff sanasidan keyin)</li>
                     <li>❌ 100% aniqlikda faktlar</li>
@@ -614,7 +614,7 @@ export default function Onboarding() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-2">AI nimada zo'r:</h4>
-                  <ul className="space-y-2 text-sm text-gray-700">
+                  <ul className="space-y-2 text-sm text-muted-foreground">
                     <li>✅ Matn generatsiya va tahrirlash</li>
                     <li>✅ Pattern tanish va tahlil</li>
                     <li>✅ Ko'p tildagi muloqot</li>
@@ -640,17 +640,17 @@ export default function Onboarding() {
             <h2 className="text-3xl font-bold text-black mb-4">
               Tanqidiy Fikrlash
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               O'ylash, tahlil qilish va tanqidiy qarash orqali haqiqatni bilishga intilish
             </p>
           </div>
 
           {/* Why Critical Thinking Matters for AI */}
-          <Card className="border-2 border-gray-200">
+          <Card className="border-2 border-border">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold mb-4">Nima uchun AI bilan ishlashda tanqidiy fikrlash muhim?</h3>
               <div className="space-y-4">
-                <p className="text-gray-700">
+                <p className="text-muted-foreground">
                   AI juda kuchli, lekin u har doim to'g'ri javob bermaydi. Tanqidiy fikrlash sizga:
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -658,21 +658,21 @@ export default function Onboarding() {
                     <CardContent className="p-4">
                       <Brain className="w-8 h-8 text-blue-600 mb-2" />
                       <h4 className="font-semibold mb-1">Savollarni to'g'ri shakllantirish</h4>
-                      <p className="text-sm text-gray-600">Aniq savol = aniq javob</p>
+                      <p className="text-sm text-muted-foreground">Aniq savol = aniq javob</p>
                     </CardContent>
                   </Card>
                   <Card className="bg-green-50 border-green-200">
                     <CardContent className="p-4">
                       <CheckCircle className="w-8 h-8 text-green-600 mb-2" />
                       <h4 className="font-semibold mb-1">Javoblarni tekshirish</h4>
-                      <p className="text-sm text-gray-600">AI hallucination'larini aniqlash</p>
+                      <p className="text-sm text-muted-foreground">AI hallucination'larini aniqlash</p>
                     </CardContent>
                   </Card>
                   <Card className="bg-purple-50 border-purple-200">
                     <CardContent className="p-4">
                       <Workflow className="w-8 h-8 text-purple-600 mb-2" />
                       <h4 className="font-semibold mb-1">Mantiqiy ketma-ketlik</h4>
-                      <p className="text-sm text-gray-600">Murakkab masalalarni bosqichma-bosqich yechish</p>
+                      <p className="text-sm text-muted-foreground">Murakkab masalalarni bosqichma-bosqich yechish</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -698,10 +698,10 @@ export default function Onboarding() {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-bold text-lg mb-2">Xabar qayerdan kelyapti?</h4>
-                    <p className="text-gray-600 mb-3">Manba ishonchli yoki yo'qmi? Kim yozgan? Qachon?</p>
-                    <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <p className="text-muted-foreground mb-3">Manba ishonchli yoki yo'qmi? Kim yozgan? Qachon?</p>
+                    <div className="bg-muted rounded-lg p-4 space-y-2">
                       <p className="text-sm font-medium">[manba]</p>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-muted-foreground">
                         <p><strong>Misol:</strong> AI "2024-yilda Nobel mukofoti" haqida gapirsa, lekin uning bilimi 2023-yilda tugagan bo'lsa — bu ma'lumot noto'g'ri.</p>
                       </div>
                     </div>
@@ -716,10 +716,10 @@ export default function Onboarding() {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-bold text-lg mb-2">Gapini tayini bormi?</h4>
-                    <p className="text-gray-600 mb-3">Mantiqiy asos mavjudmi? Dalillar keltirilganmi?</p>
-                    <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <p className="text-muted-foreground mb-3">Mantiqiy asos mavjudmi? Dalillar keltirilganmi?</p>
+                    <div className="bg-muted rounded-lg p-4 space-y-2">
                       <p className="text-sm font-medium">[mantiqiy asos]</p>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-muted-foreground">
                         <p><strong>Misol:</strong> "Bu kod 10x tezroq ishlaydi" — qanday test qilingan? Qaysi sharoitda? Benchmark bormi?</p>
                       </div>
                     </div>
@@ -734,10 +734,10 @@ export default function Onboarding() {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-bold text-lg mb-2">Axborot bilan reallik mosmi?</h4>
-                    <p className="text-gray-600 mb-3">Gapi-gapiga to'g'ri kelyaptimi? Qarama-qarshilik yo'qmi?</p>
-                    <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <p className="text-muted-foreground mb-3">Gapi-gapiga to'g'ri kelyaptimi? Qarama-qarshilik yo'qmi?</p>
+                    <div className="bg-muted rounded-lg p-4 space-y-2">
                       <p className="text-sm font-medium">[gapi-gapiga mosmi?]</p>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-muted-foreground">
                         <p><strong>Misol:</strong> AI bir joyda "Python eng tez til" desa, ikkinchi joyda "Python sekin til" desa — qarama-qarshilik bor.</p>
                       </div>
                     </div>
@@ -763,11 +763,11 @@ export default function Onboarding() {
                 Tanqidiy Fikrlash → Promptlash
               </h3>
               <div className="space-y-4">
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   Promptlash zamonaviy raqamli dunyoda, fikrlashga start beruvchi asosiy vositalardan biriga aylandi.
                 </p>
                 
-                <div className="bg-white rounded-lg p-6 space-y-4">
+                <div className="bg-background rounded-lg p-6 space-y-4">
                   <h4 className="font-semibold">Tanqidiy fikrlash promptingda qanday yordam beradi:</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex gap-3">
@@ -797,7 +797,7 @@ export default function Onboarding() {
                   </div>
                 </div>
                 
-                <Alert className="border-accent/20 bg-white">
+                <Alert className="border-accent/20 bg-background">
                   <Sparkles className="h-4 w-4 text-accent" />
                   <AlertDescription className="text-base">
                     <strong>Prompt</strong> — S.I. fikrlash jarayonini boshlash, yo'naltirish va kengaytirish uchun qo'llaniladigan sizning 'so'rovingiz'.
@@ -808,7 +808,7 @@ export default function Onboarding() {
           </Card>
 
           {/* Critical Thinking Techniques */}
-          <Card className="border-2 border-gray-200">
+          <Card className="border-2 border-border">
             <CardContent className="p-6">
               <h3 className="font-bold text-lg mb-4">5 ta tanqidiy fikrlash texnikasi</h3>
               <Tabs defaultValue="socratic" className="w-full">
@@ -819,7 +819,7 @@ export default function Onboarding() {
                 </TabsList>
                 <TabsContent value="socratic" className="space-y-4">
                   <h4 className="font-semibold">Sokrat usuli - Savol orqali o'rganish</h4>
-                  <p className="text-gray-600">Ketma-ket savollar orqali chuqur tushunishga erishish:</p>
+                  <p className="text-muted-foreground">Ketma-ket savollar orqali chuqur tushunishga erishish:</p>
                   <ul className="space-y-2 text-sm">
                     <li>• "Bu nima?"</li>
                     <li>• "Qanday ishlaydi?"</li>
@@ -829,7 +829,7 @@ export default function Onboarding() {
                 </TabsContent>
                 <TabsContent value="5why" className="space-y-4">
                   <h4 className="font-semibold">5 Nima uchun - Sababga yetish</h4>
-                  <p className="text-gray-600">Muammoning ildizini topish uchun 5 marta "Nima uchun?" deb so'rash:</p>
+                  <p className="text-muted-foreground">Muammoning ildizini topish uchun 5 marta "Nima uchun?" deb so'rash:</p>
                   <ol className="space-y-2 text-sm">
                     <li>1. Kod ishlamayapti — Nima uchun?</li>
                     <li>2. Sintaksis xato bor — Nima uchun?</li>
@@ -840,7 +840,7 @@ export default function Onboarding() {
                 </TabsContent>
                 <TabsContent value="devils" className="space-y-4">
                   <h4 className="font-semibold">Iblis advokati - Qarama-qarshi fikr</h4>
-                  <p className="text-gray-600">Ataylab qarama-qarshi pozitsiyani olish:</p>
+                  <p className="text-muted-foreground">Ataylab qarama-qarshi pozitsiyani olish:</p>
                   <ul className="space-y-2 text-sm">
                     <li>• "Bu g'oya ishlamasligi mumkin chunki..."</li>
                     <li>• "Eng yomon senariy nima?"</li>
@@ -882,28 +882,28 @@ export default function Onboarding() {
             <h2 className="text-3xl font-bold text-black mb-4">
               Prompting asoslari
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Prompting - bu sun'iy intellektga aniq ko'rsatmalar berib, kerakli natijani olish san'atidir.
             </p>
           </div>
 
           {/* The Science Behind Prompting */}
-          <Card className="border-2 border-gray-200">
+          <Card className="border-2 border-border">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold mb-4">Prompting ortidagi ilm</h3>
               <div className="space-y-4">
-                <p className="text-gray-700">
+                <p className="text-muted-foreground">
                   Prompting — bu oddiy savol berish emas. Bu AI'ning "miya"siga to'g'ri signal yuborish san'ati.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-blue-50 rounded-lg p-4">
                     <h4 className="font-semibold mb-2">Noto'g'ri yondashuv:</h4>
-                    <p className="text-sm text-gray-700 mb-2">"AI ga nima desam tushunadi"</p>
+                    <p className="text-sm text-muted-foreground mb-2">"AI ga nima desam tushunadi"</p>
                     <p className="text-sm text-red-600">❌ 30% samara</p>
                   </div>
                   <div className="bg-green-50 rounded-lg p-4">
                     <h4 className="font-semibold mb-2">To'g'ri yondashuv:</h4>
-                    <p className="text-sm text-gray-700 mb-2">"AI qanday signal kutayotganini bilaman"</p>
+                    <p className="text-sm text-muted-foreground mb-2">"AI qanday signal kutayotganini bilaman"</p>
                     <p className="text-sm text-green-600">✅ 90% samara</p>
                   </div>
                 </div>
@@ -990,7 +990,7 @@ export default function Onboarding() {
                 }
               }
             ].map((component) => (
-              <Card key={component.number} className="border-2 border-gray-200 hover:border-accent transition-all hover:shadow-lg overflow-hidden">
+              <Card key={component.number} className="border-2 border-border hover:border-accent transition-all hover:shadow-lg overflow-hidden">
                 <div className={`h-2 bg-gradient-to-r from-accent to-accent/60`} />
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
@@ -1001,12 +1001,12 @@ export default function Onboarding() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-sm font-bold text-gray-500">#{component.number}</span>
+                        <span className="text-sm font-bold text-muted-foreground">#{component.number}</span>
                         <h3 className="font-bold text-xl text-black">{component.title}</h3>
                       </div>
-                      <p className="text-gray-600 mb-4">{component.description}</p>
-                      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
-                        <code className="text-sm text-gray-800 font-mono">"{component.example}"</code>
+                      <p className="text-muted-foreground mb-4">{component.description}</p>
+                      <div className="bg-muted p-4 rounded-lg border border-border mb-4">
+                        <code className="text-sm text-foreground font-mono">"{component.example}"</code>
                       </div>
                       
                       {/* Deep Dive Section */}
@@ -1016,11 +1016,11 @@ export default function Onboarding() {
                           Chuqurroq o'rganish
                         </summary>
                         <div className="mt-4 space-y-3 pl-6 border-l-2 border-accent/20">
-                          <p className="text-sm text-gray-600 italic">{component.deepDive.why}</p>
+                          <p className="text-sm text-muted-foreground italic">{component.deepDive.why}</p>
                           <div className="space-y-2">
                             {component.deepDive.examples.map((ex, idx) => (
-                              <div key={idx} className="bg-white p-3 rounded border border-gray-100">
-                                <p className="text-xs text-gray-800">{ex}</p>
+                              <div key={idx} className="bg-background p-3 rounded border border-border">
+                                <p className="text-xs text-foreground">{ex}</p>
                               </div>
                             ))}
                           </div>
@@ -1076,7 +1076,7 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                   ].map((item, index) => (
                     <div key={index} className="group relative mb-2">
                       <div
-                        className={`p-4 rounded-lg border-2 ${item.color} font-medium text-gray-800 transition-all hover:scale-105 cursor-pointer`}
+                        className={`p-4 rounded-lg border-2 ${item.color} font-medium text-foreground transition-all hover:scale-105 cursor-pointer`}
                       >
                         {item.layer}
                       </div>
@@ -1086,7 +1086,7 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                     </div>
                   ))}
                 </div>
-                <p className="mt-6 text-gray-600">
+                <p className="mt-6 text-muted-foreground">
                   Har bir qatlam muhim. 57 ta protokol — sizning maxsus ziravorlaringiz!
                 </p>
               </div>
@@ -1120,9 +1120,9 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                     fix: "Sen tajribali o'qituvchisan. 10 yoshli bolaga tushuntir"
                   }
                 ].map((item, idx) => (
-                  <div key={idx} className="bg-white rounded-lg p-4 border border-red-200">
+                  <div key={idx} className="bg-background rounded-lg p-4 border border-red-200">
                     <h4 className="font-semibold text-red-700 mb-2">{item.mistake}</h4>
-                    <p className="text-sm text-gray-600 mb-1">❌ "{item.example}"</p>
+                    <p className="text-sm text-muted-foreground mb-1">❌ "{item.example}"</p>
                     <p className="text-sm text-green-600">✅ "{item.fix}"</p>
                   </div>
                 ))}
@@ -1162,13 +1162,13 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
             <h2 className="text-3xl font-bold text-black mb-4">
               Professional Prompting Texnikalari
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Zero-shot'dan Chain-of-Thought'gacha — AI'dan maksimal foyda olish usullari
             </p>
           </div>
 
           {/* Techniques Overview */}
-          <Card className="border-2 border-gray-200">
+          <Card className="border-2 border-border">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold mb-6">Prompting evolyutsiyasi</h3>
               <div className="relative">
@@ -1185,9 +1185,9 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                       <div className="w-16 h-16 bg-accent text-white rounded-full flex items-center justify-center font-bold z-10">
                         {item.year}
                       </div>
-                      <div className="flex-1 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <div className="flex-1 bg-muted rounded-lg p-4 border border-border">
                         <h4 className="font-semibold">{item.tech}</h4>
-                        <p className="text-sm text-gray-600">{item.desc}</p>
+                        <p className="text-sm text-muted-foreground">{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -1207,14 +1207,14 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                 </h3>
               </div>
               <CardContent className="p-6">
-                <p className="text-gray-700 mb-4">
+                <p className="text-muted-foreground mb-4">
                   <strong>Nima bu?</strong> Hech qanday misol bermasdan to'g'ridan-to'g'ri savol berish.
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
                     <h4 className="font-semibold mb-2 text-green-700">✅ Afzalliklari:</h4>
-                    <ul className="space-y-1 text-sm text-gray-600">
+                    <ul className="space-y-1 text-sm text-muted-foreground">
                       <li>• Tez va oddiy</li>
                       <li>• Kamroq token sarflaydi</li>
                       <li>• Umumiy savollar uchun ideal</li>
@@ -1222,7 +1222,7 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                   </div>
                   <div>
                     <h4 className="font-semibold mb-2 text-red-700">❌ Kamchiliklari:</h4>
-                    <ul className="space-y-1 text-sm text-gray-600">
+                    <ul className="space-y-1 text-sm text-muted-foreground">
                       <li>• Murakkab vazifalar uchun yaramaydi</li>
                       <li>• Format aniq bo'lmasligi mumkin</li>
                       <li>• Natija barqaror emas</li>
@@ -1248,22 +1248,22 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                 </h3>
               </div>
               <CardContent className="p-6">
-                <p className="text-gray-700 mb-4">
+                <p className="text-muted-foreground mb-4">
                   <strong>Nima bu?</strong> AI'ga bir necha misol ko'rsatib, keyin o'z vazifangizni berish.
                 </p>
                 
-                <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                <div className="bg-muted rounded-lg p-6 mb-6">
                   <h4 className="font-semibold mb-3">Qachon ishlatish kerak:</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white p-3 rounded border border-gray-200">
+                    <div className="bg-background p-3 rounded border border-border">
                       <FileText className="w-6 h-6 text-green-500 mb-2" />
                       <p className="text-sm">Maxsus format kerak bo'lganda</p>
                     </div>
-                    <div className="bg-white p-3 rounded border border-gray-200">
+                    <div className="bg-background p-3 rounded border border-border">
                       <GitBranch className="w-6 h-6 text-green-500 mb-2" />
                       <p className="text-sm">Murakkab pattern'lar uchun</p>
                     </div>
-                    <div className="bg-white p-3 rounded border border-gray-200">
+                    <div className="bg-background p-3 rounded border border-border">
                       <Target className="w-6 h-6 text-green-500 mb-2" />
                       <p className="text-sm">Aniq natija kerak bo'lganda</p>
                     </div>
@@ -1308,7 +1308,7 @@ Tahlil:`}
                 </h3>
               </div>
               <CardContent className="p-6">
-                <p className="text-gray-700 mb-4">
+                <p className="text-muted-foreground mb-4">
                   <strong>Nima bu?</strong> AI'ni bosqichma-bosqich fikrlashga undash. "Qadam-baqadam o'ylab ko'r" deyish.
                 </p>
                 
@@ -1336,11 +1336,11 @@ Tahlil:`}
                   </div>
                 </div>
 
-                <Card className="border border-purple-200 bg-white">
+                <Card className="border border-purple-200 bg-background">
                   <CardContent className="p-4">
                     <h4 className="font-semibold mb-3">Amaliy misol: Matematik masala</h4>
                     <div className="space-y-3 text-sm">
-                      <div className="bg-gray-50 p-3 rounded">
+                      <div className="bg-muted p-3 rounded">
                         <strong>Oddiy prompt:</strong> "3 ta olma va 5 ta nok bor. Jami nechta meva?"
                       </div>
                       <div className="bg-purple-50 p-3 rounded border border-purple-100">
@@ -1365,7 +1365,7 @@ Tahlil:`}
                 </h3>
               </div>
               <CardContent className="p-6">
-                <p className="text-gray-700 mb-4">
+                <p className="text-muted-foreground mb-4">
                   <strong>Nima bu?</strong> Bir xil savolni bir necha marta berib, eng ko'p takrorlangan javobni tanlash.
                 </p>
                 
@@ -1396,7 +1396,7 @@ Tahlil:`}
             </Card>
 
             {/* Advanced Techniques */}
-            <Card className="border-2 border-gray-200">
+            <Card className="border-2 border-border">
               <CardContent className="p-6">
                 <h3 className="font-bold text-xl mb-6">Ilg'or texnikalar</h3>
                 <Tabs defaultValue="tree" className="w-full">
@@ -1408,8 +1408,8 @@ Tahlil:`}
                   
                   <TabsContent value="tree" className="space-y-4">
                     <h4 className="font-semibold">Tree-of-Thought - Tarmoqli fikrlash</h4>
-                    <p className="text-gray-600">Bir necha yo'nalishda fikrlab, eng yaxshisini tanlash:</p>
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <p className="text-muted-foreground">Bir necha yo'nalishda fikrlab, eng yaxshisini tanlash:</p>
+                    <div className="bg-muted p-4 rounded-lg">
                       <pre className="text-sm whitespace-pre-wrap">
 {`"Bu masalani 3 xil yo'l bilan yeching:
 1-yo'l: [birinchi yondashuv]
@@ -1423,8 +1423,8 @@ Har bir yo'lni baholab, eng yaxshisini tanlang."`}
                   
                   <TabsContent value="react" className="space-y-4">
                     <h4 className="font-semibold">ReAct - Reasoning + Acting</h4>
-                    <p className="text-gray-600">Fikrlash va harakat qilishni birlashtirish:</p>
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <p className="text-muted-foreground">Fikrlash va harakat qilishni birlashtirish:</p>
+                    <div className="bg-muted p-4 rounded-lg">
                       <pre className="text-sm whitespace-pre-wrap">
 {`Fikr: Men bu masalani yechish uchun...
 Harakat: Birinchi qadamni bajaraman
@@ -1437,8 +1437,8 @@ Harakat: Ikkinchi qadamni bajaraman`}
                   
                   <TabsContent value="meta" className="space-y-4">
                     <h4 className="font-semibold">Meta-Prompting</h4>
-                    <p className="text-gray-600">AI'ga o'z promptini yaxshilashni buyurish:</p>
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <p className="text-muted-foreground">AI'ga o'z promptini yaxshilashni buyurish:</p>
+                    <div className="bg-muted p-4 rounded-lg">
                       <pre className="text-sm whitespace-pre-wrap">
 {`"Men [vazifa] qilmoqchiman. 
 Bu vazifa uchun eng yaxshi prompt qanday bo'ladi?
@@ -1452,7 +1452,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
           </div>
 
           {/* Comparison Table */}
-          <Card className="border-2 border-gray-200">
+          <Card className="border-2 border-border">
             <CardContent className="p-6">
               <h3 className="font-bold text-xl mb-4">Texnikalarni taqqoslash</h3>
               <div className="overflow-x-auto">
@@ -1467,28 +1467,28 @@ O'z javobingizga asoslanib vazifani bajaring."`}
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b hover:bg-gray-50">
+                    <tr className="border-b hover:bg-muted">
                       <td className="p-2 font-medium">Zero-shot</td>
                       <td className="text-center p-2">⭐</td>
                       <td className="text-center p-2">Kam</td>
                       <td className="text-center p-2">60-70%</td>
                       <td className="p-2">Oddiy savollar</td>
                     </tr>
-                    <tr className="border-b hover:bg-gray-50">
+                    <tr className="border-b hover:bg-muted">
                       <td className="p-2 font-medium">Few-shot</td>
                       <td className="text-center p-2">⭐⭐</td>
                       <td className="text-center p-2">O'rtacha</td>
                       <td className="text-center p-2">80-85%</td>
                       <td className="p-2">Format muhim bo'lganda</td>
                     </tr>
-                    <tr className="border-b hover:bg-gray-50">
+                    <tr className="border-b hover:bg-muted">
                       <td className="p-2 font-medium">Chain-of-Thought</td>
                       <td className="text-center p-2">⭐⭐⭐</td>
                       <td className="text-center p-2">Ko'p</td>
                       <td className="text-center p-2">90-95%</td>
                       <td className="p-2">Murakkab masalalar</td>
                     </tr>
-                    <tr className="border-b hover:bg-gray-50">
+                    <tr className="border-b hover:bg-muted">
                       <td className="p-2 font-medium">Self-Consistency</td>
                       <td className="text-center p-2">⭐⭐⭐</td>
                       <td className="text-center p-2">Juda ko'p</td>
@@ -1522,13 +1522,13 @@ O'z javobingizga asoslanib vazifani bajaring."`}
             <CardContent className="p-8 text-center">
               <Sparkles className="w-12 h-12 text-accent mx-auto mb-4" />
               <h3 className="text-2xl font-bold mb-4">Tabriklaymiz! 🎉</h3>
-              <p className="text-lg text-gray-700 mb-6">
+              <p className="text-lg text-muted-foreground mb-6">
                 Siz prompting asoslarini va ilg'or texnikalarni o'rgandingiz. 
                 Endi 57 ta maxsus protokol bilan tanishing!
               </p>
-              <div className="bg-white rounded-lg p-6 max-w-md mx-auto">
+              <div className="bg-background rounded-lg p-6 max-w-md mx-auto">
                 <h4 className="font-semibold mb-3">Nimalarni o'rgandingiz:</h4>
-                <ul className="text-left space-y-2 text-gray-700">
+                <ul className="text-left space-y-2 text-muted-foreground">
                   <li>✅ AI va ChatGPT qanday ishlashi</li>
                   <li>✅ Tanqidiy fikrlash asoslari</li>
                   <li>✅ Prompting komponentlari</li>
@@ -1559,7 +1559,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
   const totalProgress = ((completedSections.size) / sections.length) * 100;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <AppHeader />
       
       <main className="max-w-container-wide mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1567,21 +1567,21 @@ O'z javobingizga asoslanib vazifani bajaring."`}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-8 shadow-soft"
+          className="mb-8 bg-muted rounded-2xl p-8 shadow-soft"
         >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">O'rganish jarayoni</h2>
-              <p className="text-sm text-gray-600 mt-1">
+              <h2 className="text-xl font-bold text-foreground">O'rganish jarayoni</h2>
+              <p className="text-sm text-muted-foreground mt-1">
                 {completedSections.size} / {sections.length} bo'lim tugatildi
               </p>
             </div>
             <div className="text-right">
               <span className="text-4xl font-black text-accent">{Math.round(totalProgress)}%</span>
-              <p className="text-sm text-gray-600">bajarildi</p>
+              <p className="text-sm text-muted-foreground">bajarildi</p>
             </div>
           </div>
-          <Progress value={totalProgress} className="h-3 bg-gray-200" />
+          <Progress value={totalProgress} className="h-3 bg-muted" />
         </motion.div>
 
         {/* Section Navigation Tabs */}
@@ -1589,7 +1589,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="flex items-center justify-center gap-1 mb-12 bg-gray-100 rounded-2xl p-1 overflow-x-auto shadow-soft"
+          className="flex items-center justify-center gap-1 mb-12 bg-muted rounded-2xl p-1 overflow-x-auto shadow-soft"
         >
           {sections.map((section, index) => (
             <motion.button
@@ -1599,10 +1599,10 @@ O'z javobingizga asoslanib vazifani bajaring."`}
               whileTap={{ scale: 0.98 }}
               className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all flex-1 min-w-[140px] ${
                 index === currentSection 
-                  ? 'bg-accent text-white shadow-medium' 
+                  ? 'bg-accent text-accent-foreground shadow-medium' 
                   : completedSections.has(index)
-                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                  : 'bg-white text-gray-600 hover:bg-gray-50'
+                  ? 'bg-success/20 text-success-foreground hover:bg-success/30'
+                  : 'bg-background text-muted-foreground hover:bg-muted'
               }`}
             >
               <span className="hidden sm:flex">{section.icon}</span>
@@ -1633,7 +1633,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="flex items-center justify-between mt-16 pt-8 border-t border-gray-200"
+          className="flex items-center justify-between mt-16 pt-8 border-t border-border"
         >
           <Button
             onClick={handlePrevious}
@@ -1664,7 +1664,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
 
           {currentSection === sections.length - 1 ? (
             <Link href="/">
-              <Button className="bg-accent text-white hover:bg-gray-800 px-8 py-3 h-auto flex items-center gap-2 shadow-strong hover-lift group">
+              <Button className="bg-accent text-white hover:bg-accent/90 px-8 py-3 h-auto flex items-center gap-2 shadow-strong hover-lift group">
                 57 Protokolga o'tish
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
@@ -1672,7 +1672,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
           ) : (
             <Button
               onClick={handleNext}
-              className="bg-accent text-white hover:bg-gray-800 px-6 py-3 h-auto flex items-center gap-2 hover-lift group"
+              className="bg-accent text-white hover:bg-accent/90 px-6 py-3 h-auto flex items-center gap-2 hover-lift group"
             >
               Keyingi
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

@@ -48,10 +48,10 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
   
   const getCardStyles = () => {
     if (isLocked) {
-      return 'border-gray-300 bg-gray-50/50 hover:border-gray-400 hover:shadow-md dark:border-gray-600 dark:bg-gray-800/30';
+      return 'border-muted bg-muted/50 hover:border-muted-foreground hover:shadow-md';
     }
     if (isCompleted) {
-      return 'border-green-400 hover:border-green-500 shadow-sm dark:border-green-500/50 dark:hover:border-green-400';
+      return 'border-success hover:border-success shadow-sm';
     }
     return 'border-border hover:border-accent hover:shadow-lg';
   };
@@ -63,10 +63,10 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
         <div className="absolute top-4 right-4">
           {isLocked ? (
             <div className="flex items-center gap-1">
-              <Lock className="w-5 h-5 text-gray-500" />
+              <Lock className="w-5 h-5 text-muted-foreground" />
             </div>
           ) : isCompleted ? (
-            <CheckCircle className="w-5 h-5 text-green-600" />
+            <CheckCircle className="w-5 h-5 text-success" />
           ) : null}
         </div>
         
@@ -75,9 +75,9 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
           <div className="mb-4">
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center font-black text-lg shadow-sm ${
               isLocked
-                ? 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+                ? 'bg-muted text-muted-foreground'
                 : isCompleted 
-                ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' 
+                ? 'bg-success/20 text-success' 
                 : 'bg-accent text-accent-foreground'
             }`}>
               {protocol.number.toString().padStart(2, '0')}
@@ -89,10 +89,10 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
             <div className="mb-2">
               <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                 protocol.difficultyLevel === 'BEGINNER' 
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                  ? 'bg-success/20 text-success'
                   : protocol.difficultyLevel === 'O\'RTA DARAJA'
-                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-                  : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                  ? 'bg-warning/20 text-warning'
+                  : 'bg-destructive/20 text-destructive'
               }`}>
                 {protocol.difficultyLevel === 'BEGINNER' ? 'Boshlang\'ich' : 
                  protocol.difficultyLevel === 'O\'RTA DARAJA' ? 'O\'rta daraja' : 'Yuqori daraja'}
@@ -102,14 +102,14 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
           
           {/* Title - Hide for free users to prevent revealing protocol content */}
           <h3 className={`text-lg font-bold mb-3 leading-tight pr-6 line-height-[1.4] ${
-            isLocked ? 'text-gray-500 dark:text-gray-400' : 'text-foreground'
+            isLocked ? 'text-muted-foreground' : 'text-foreground'
           }`}>
             {isLocked ? 'Premium Protokol' : protocol.title}
           </h3>
           
           {/* Problem Statement - Hide content for free users */}
           <p className={`leading-relaxed line-clamp-3 mb-4 text-sm line-height-[1.5] ${
-            isLocked ? 'text-gray-400 dark:text-gray-500' : 'text-muted-foreground'
+            isLocked ? 'text-muted-foreground/60' : 'text-muted-foreground'
           }`}>
             {isLocked ? 'Bu protokol Premium foydalanuvchilar uchun mo\'ljallangan. Barcha 57 protokolga kirish uchun Premium obuna oling.' : (protocol.problemStatement || protocol.description)}
           </p>
@@ -122,14 +122,14 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               <Link href="/atmos-payment" className="w-full">
                 <Button 
                   size="sm"
-                  className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 h-8 text-xs font-medium"
+                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-2 h-8 text-xs font-medium"
                   onClick={handleUpgradeClick}
                 >
                   <Crown className="w-3 h-3 mr-1" />
                   Premium olish
                 </Button>
               </Link>
-              <div className="flex items-center justify-center gap-1 py-1 text-xs text-gray-500">
+              <div className="flex items-center justify-center gap-1 py-1 text-xs text-muted-foreground">
                 <Lock className="w-3 h-3" />
                 <span>Premium protokol</span>
               </div>
@@ -141,7 +141,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
                   <Button 
                     onClick={handleMarkCompleted}
                     size="sm"
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 h-8 text-xs font-medium"
+                    className="flex-1 bg-success hover:bg-success/90 text-success-foreground px-3 py-2 h-8 text-xs font-medium"
                   >
                     O'rgandim
                   </Button>
@@ -150,7 +150,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
                     onClick={handleMarkCompleted}
                     size="sm"
                     variant="outline"
-                    className="flex-1 border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-400 dark:hover:bg-green-900/20 px-3 py-2 h-8 text-xs font-medium"
+                    className="flex-1 border-success text-success hover:bg-success/20 px-3 py-2 h-8 text-xs font-medium"
                   >
                     Qayta mashq
                   </Button>

@@ -17,13 +17,21 @@
   --secondary-foreground: 0 0% 9%;
   --muted: 0 0% 96%;
   --muted-foreground: 0 0% 45%;
-  --accent: 0 0% 0%; /* Black */
+  --accent: 10 100% 59%; /* Brand Orange #FF4F30 */
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
   --border: 0 0% 89%;
   --input: 0 0% 89%;
-  --ring: 0 0% 4%;
+  --ring: 10 100% 59%;
+  
+  /* Semantic Colors */
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 9%;
+  --info: 221 83% 53%;
+  --info-foreground: 0 0% 98%;
   --radius: 0.75rem;
   
   /* 8pt Grid System */
@@ -86,13 +94,21 @@
   --secondary-foreground: 0 0% 98%;
   --muted: 0 0% 14.9%;
   --muted-foreground: 0 0% 63.9%;
-  --accent: 0 0% 14.9%;
+  --accent: 10 100% 59%; /* Brand Orange #FF4F30 - same in dark mode */
   --accent-foreground: 0 0% 98%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
   --border: 0 0% 14.9%;
   --input: 0 0% 14.9%;
-  --ring: 0 0% 83.1%;
+  --ring: 10 100% 59%;
+  
+  /* Semantic Colors - Dark Mode */
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 9%;
+  --info: 221 83% 53%;
+  --info-foreground: 0 0% 98%;
 }
 
 @layer base {

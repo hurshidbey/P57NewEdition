@@ -45,11 +45,11 @@ export function UpgradeCTA({
   const getIcon = () => {
     switch (variant) {
       case 'modal':
-        return <Lock className="w-16 h-16 text-orange-500 mx-auto mb-4" />;
+        return <Lock className="w-16 h-16 text-accent mx-auto mb-4" />;
       case 'banner':
-        return <Crown className="w-6 h-6 text-orange-600" />;
+        return <Crown className="w-6 h-6 text-accent" />;
       default:
-        return <Crown className="w-8 h-8 text-orange-500 mx-auto mb-3" />;
+        return <Crown className="w-8 h-8 text-accent mx-auto mb-3" />;
     }
   };
 
@@ -77,11 +77,11 @@ export function UpgradeCTA({
 
   if (variant === 'banner') {
     return (
-      <Card className={`bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200 ${className}`}>
+      <Card className={`bg-accent/5 border-accent/20 ${className}`}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-orange-100 rounded-full">
+              <div className="p-3 bg-accent/20 rounded-full">
                 {getIcon()}
               </div>
               <div>
@@ -90,13 +90,13 @@ export function UpgradeCTA({
                   {description || getDefaultDescription()}
                 </CardDescription>
                 {reason && (
-                  <p className="text-sm text-orange-700 mt-1 font-medium">{reason}</p>
+                  <p className="text-sm text-accent mt-1 font-medium">{reason}</p>
                 )}
               </div>
             </div>
             <Link href="/atmos-payment">
               <Button 
-                className="bg-orange-600 hover:bg-orange-700 text-white"
+                className="bg-accent hover:bg-accent/90 text-accent-foreground"
                 onClick={handleUpgradeClick}
               >
                 Premium olish
@@ -120,8 +120,8 @@ export function UpgradeCTA({
           {description || getDefaultDescription()}
         </p>
         {reason && (
-          <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 mb-6">
-            <p className="text-sm text-orange-800 dark:text-orange-400 font-medium">
+          <div className="bg-accent/10 rounded-lg p-3 mb-6">
+            <p className="text-sm text-accent font-medium">
               {reason}
             </p>
           </div>
@@ -142,7 +142,7 @@ export function UpgradeCTA({
           <Link href="/atmos-payment" className="flex-1">
             <Button 
               size="lg"
-              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 text-sm font-semibold w-full"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 text-sm font-semibold w-full"
               onClick={handleUpgradeClick}
             >
               <Crown className="w-4 h-4 mr-2" />
@@ -159,14 +159,14 @@ export function UpgradeCTA({
 
   if (variant === 'inline') {
     return (
-      <div className={`flex items-center gap-3 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800 ${className}`}>
-        <Crown className="w-5 h-5 text-orange-600 flex-shrink-0" />
+      <div className={`flex items-center gap-3 p-4 bg-accent/10 rounded-lg border border-accent/20 ${className}`}>
+        <Crown className="w-5 h-5 text-accent flex-shrink-0" />
         <div className="flex-1">
-          <p className="text-sm font-medium text-orange-900 dark:text-orange-100">
+          <p className="text-sm font-medium text-foreground">
             {title || 'Premium funksiya'}
           </p>
           {(description || reason) && (
-            <p className="text-xs text-orange-700 dark:text-orange-300">
+            <p className="text-xs text-muted-foreground">
               {description || reason}
             </p>
           )}
@@ -174,7 +174,7 @@ export function UpgradeCTA({
         <Link href="/atmos-payment">
           <Button 
             size="sm" 
-            className="bg-orange-600 hover:bg-orange-700 text-white"
+            className="bg-accent hover:bg-accent/90 text-accent-foreground"
             onClick={handleUpgradeClick}
           >
             Upgrade
@@ -196,8 +196,8 @@ export function UpgradeCTA({
           {description || getDefaultDescription()}
         </p>
         {reason && (
-          <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 mb-4">
-            <p className="text-sm text-orange-800 dark:text-orange-400 font-medium">
+          <div className="bg-accent/10 rounded-lg p-3 mb-4">
+            <p className="text-sm text-accent font-medium">
               {reason}
             </p>
           </div>
@@ -216,7 +216,7 @@ export function UpgradeCTA({
 
         <Link href="/atmos-payment">
           <Button 
-            className="bg-orange-600 hover:bg-orange-700 text-white w-full"
+            className="bg-accent hover:bg-accent/90 text-accent-foreground w-full"
             onClick={handleUpgradeClick}
           >
             <Crown className="w-4 h-4 mr-2" />
