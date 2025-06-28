@@ -11,7 +11,7 @@ export default function AppHeader() {
   const { tier, getTierStatus } = useUserTier();
   
   // Check if current user is admin
-  const isAdmin = user?.email === 'hurshidbey@gmail.com';
+  const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
   
   const tierStatus = getTierStatus();
 
