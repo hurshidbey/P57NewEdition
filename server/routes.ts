@@ -265,7 +265,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const { data: { user }, error } = await supabase.auth.getUser(token);
           if (user && !error) {
             // CRITICAL FIX: Check if user is admin first
-            if (user.email === 'hurshidbey@gmail.com') {
+            if (user.email === 'hurshidbey@gmail.com' || user.email === 'mustafaabdurahmonov7777@gmail.com') {
               userTier = 'admin'; // Special tier for admin
             } else {
               // Check user tier from metadata - new users default to free tier
@@ -318,7 +318,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const { data: { user }, error } = await supabase.auth.getUser(token);
           if (user && !error) {
             // CRITICAL FIX: Check if user is admin first
-            if (user.email === 'hurshidbey@gmail.com') {
+            if (user.email === 'hurshidbey@gmail.com' || user.email === 'mustafaabdurahmonov7777@gmail.com') {
               userTier = 'admin'; // Special tier for admin
             } else {
               userTier = user.user_metadata?.tier || 'free'; // New users are free by default
