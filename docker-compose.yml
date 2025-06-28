@@ -27,6 +27,7 @@ services:
     tty: true
     networks:
       - protokol-network
+      - default
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.protokol57-main.rule=Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`)"
@@ -44,3 +45,6 @@ services:
 networks:
   protokol-network:
     driver: bridge
+  default:
+    external:
+      name: root_default
