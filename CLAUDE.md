@@ -197,6 +197,45 @@ ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && git pu
 ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "docker exec protokol57-protokol57-1 printenv | grep OPENAI"
 ```
 
+### ⚠️ CRITICAL FIX: OpenAI API Key Not Loading in Production
+
+**Problem**: OpenAI API key environment variable not being picked up by Docker container, causing evaluation feature to fail
+
+**Root Cause**: Multiple potential issues with environment variable loading in Docker
+
+**✅ CORRECT Fix Process**:
+
+1. **Update .env.production on both local and server**:
+```bash
+# Local: Edit /Users/xb21/P57/.env.production
+OPENAI_API_KEY=YOUR_ACTUAL_OPENAI_API_KEY_HERE
+
+# Server: Update directly on production
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && sed -i 's/OPENAI_API_KEY=.*/OPENAI_API_KEY=YOUR_ACTUAL_OPENAI_API_KEY_HERE/' .env.production"
+```
+
+2. **Restart Docker containers** (environment variables only load at container startup):
+```bash
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && docker compose down && docker compose up -d"
+```
+
+3. **Verify environment variable is loaded**:
+```bash
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "docker exec protokol57-protokol57-1 printenv | grep OPENAI"
+# Should output: OPENAI_API_KEY=sk-proj-1-pgPwLC...
+```
+
+**Why This Happens**:
+- Docker Compose loads `.env.production` via `env_file` directive  
+- Environment variables are only read at container startup, not runtime
+- Container must be restarted (not just rebuilt) to pick up new env vars
+- Wrong API key was previously set during development
+
+**Prevention**:
+- Always verify API key after deployment: `docker exec protokol57-protokol57-1 printenv | grep OPENAI`
+- Test OpenAI integration immediately after deployment  
+- Keep .env.production in sync between local and server
+
 ### Troubleshooting:
 
 #### ❌ "Uncaught Error: supabaseUrl is required"

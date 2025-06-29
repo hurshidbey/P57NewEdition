@@ -83,6 +83,12 @@ export default function AppFooter() {
             © {new Date().getFullYear()} Protokol 57. Barcha huquqlar himoyalangan.
           </p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
+            <Link href="/oferta">
+              <span className="text-muted-foreground hover:text-accent text-sm transition-colors cursor-pointer">
+                Ommaviy Oferta
+              </span>
+            </Link>
+            <span className="text-muted-foreground text-sm">•</span>
             <span className="text-muted-foreground text-sm">
               AI bilan professional ishlash platformasi
             </span>
