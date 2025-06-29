@@ -149,15 +149,15 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
   // OAuth-first registration flow
   if (!showEmailForm) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 sm:space-y-8 px-2 sm:px-0">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-center space-y-4"
+          className="text-center space-y-3 sm:space-y-4"
         >
-          <h3 className="text-lg font-semibold text-foreground">Ro'yxatdan o'tish</h3>
-          <p className="text-muted-foreground text-sm">
+          <h3 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">Ro'yxatdan o'tish</h3>
+          <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-sm mx-auto">
             Tezkor ro'yxatdan o'tish uchun Google hisobingizni ishlating
           </p>
         </motion.div>
@@ -166,7 +166,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="space-y-4"
+          className="space-y-4 sm:space-y-5"
         >
           <GoogleOAuthButton>
             Google bilan ro'yxatdan o'tish
@@ -185,9 +185,9 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
             type="button"
             variant="outline"
             onClick={() => setShowEmailForm(true)}
-            className="w-full h-12 border-2 hover:bg-muted/50 transition-all duration-300"
+            className="w-full h-12 sm:h-14 border-2 hover:bg-muted/50 transition-all duration-300 text-sm sm:text-base"
           >
-            <Mail className="w-4 h-4 mr-2" />
+            <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
             Boshqa pochta bilan ro'yxatdan o'tish
           </Button>
         </motion.div>
@@ -196,7 +196,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-muted/50 rounded-lg p-4 border border-border"
+          className="bg-muted/50 rounded-lg p-4 sm:p-6 border border-border mx-2 sm:mx-0"
         >
           <p className="text-xs text-muted-foreground text-center">
             Ro'yxatdan o'tish orqali siz{" "}
@@ -217,7 +217,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="text-center text-sm text-muted-foreground"
+          className="text-center text-sm sm:text-base text-muted-foreground px-2 sm:px-0"
         >
           Hisobingiz bormi?{" "}
           <button
@@ -234,21 +234,21 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
 
   // Full email registration form (when user chooses email option)
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
+    <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6 px-2 sm:px-0" autoComplete="off">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between mb-4"
+        className="flex items-center justify-between mb-4 sm:mb-6"
       >
-        <h3 className="text-lg font-semibold text-foreground">Email bilan ro'yxatdan o'tish</h3>
+        <h3 className="text-lg sm:text-xl font-bold text-foreground">Email bilan ro'yxatdan o'tish</h3>
         <Button
           type="button"
           variant="ghost"
           size="sm"
           onClick={() => setShowEmailForm(false)}
-          className="text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground px-2 sm:px-3 py-1.5 sm:py-2"
         >
-          ← Orqaga
+          <span className="text-xs sm:text-sm">← Orqaga</span>
         </Button>
       </motion.div>
 
@@ -256,10 +256,10 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="space-y-2"
+        className="space-y-2 sm:space-y-3"
       >
-        <Label htmlFor="name" className="text-sm font-medium text-foreground flex items-center gap-2">
-          <User className="w-4 h-4" />
+        <Label htmlFor="name" className="text-sm sm:text-base font-medium text-foreground flex items-center gap-2">
+          <User className="w-4 h-4 sm:w-5 sm:h-5" />
           Ism
         </Label>
         <Input
@@ -268,7 +268,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Ismingizni kiriting"
-          className="h-12 px-4 text-base border-2 focus:border-accent transition-colors duration-200 focus-ring"
+          className="h-12 sm:h-14 px-4 sm:px-5 text-base sm:text-lg border-2 focus:border-accent transition-colors duration-200 focus-ring"
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="words"
@@ -281,10 +281,10 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="space-y-2"
+        className="space-y-2 sm:space-y-3"
       >
-        <Label htmlFor="email" className="text-sm font-medium text-foreground flex items-center gap-2">
-          <Mail className="w-4 h-4" />
+        <Label htmlFor="email" className="text-sm sm:text-base font-medium text-foreground flex items-center gap-2">
+          <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
           Email
         </Label>
         <Input
@@ -293,7 +293,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Emailingizni kiriting"
-          className="h-12 px-4 text-base border-2 focus:border-accent transition-colors duration-200 focus-ring"
+          className="h-12 sm:h-14 px-4 sm:px-5 text-base sm:text-lg border-2 focus:border-accent transition-colors duration-200 focus-ring"
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
@@ -306,10 +306,10 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="space-y-2"
+        className="space-y-2 sm:space-y-3"
       >
-        <Label htmlFor="password" className="text-sm font-medium text-foreground flex items-center gap-2">
-          <Lock className="w-4 h-4" />
+        <Label htmlFor="password" className="text-sm sm:text-base font-medium text-foreground flex items-center gap-2">
+          <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
           Parol
         </Label>
         <Input
@@ -318,7 +318,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Kuchli parol kiriting"
-          className="h-12 px-4 text-base border-2 focus:border-accent transition-colors duration-200 focus-ring"
+          className="h-12 sm:h-14 px-4 sm:px-5 text-base sm:text-lg border-2 focus:border-accent transition-colors duration-200 focus-ring"
           autoComplete="new-password"
           autoCorrect="off"
           autoCapitalize="off"
@@ -356,10 +356,10 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="space-y-2"
+        className="space-y-2 sm:space-y-3"
       >
-        <Label htmlFor="confirmPassword" className="text-sm font-medium text-foreground flex items-center gap-2">
-          <CheckCircle className="w-4 h-4" />
+        <Label htmlFor="confirmPassword" className="text-sm sm:text-base font-medium text-foreground flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           Parolni tasdiqlang
         </Label>
         <Input
@@ -368,7 +368,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           placeholder="Parolni qayta kiriting"
-          className={`h-12 px-4 text-base border-2 transition-colors duration-200 focus-ring ${
+          className={`h-12 sm:h-14 px-4 sm:px-5 text-base sm:text-lg border-2 transition-colors duration-200 focus-ring ${
             confirmPassword && password !== confirmPassword 
               ? "border-red-300 focus:border-red-500" 
               : confirmPassword && password === confirmPassword
@@ -411,18 +411,18 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       >
         <Button 
           type="submit" 
-          className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-medium text-base transition-all duration-300 hover-lift group"
+          className="w-full h-12 sm:h-14 bg-accent hover:bg-accent/90 text-accent-foreground font-medium text-base sm:text-lg transition-all duration-300 hover-lift group"
           disabled={loading || !email || !password || !name || password !== confirmPassword || !captchaValid}
         >
           {loading ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Ro'yxatdan o'tilmoqda...
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="text-sm sm:text-base">Ro'yxatdan o'tilmoqda...</span>
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-2">
-              Ro'yxatdan o'tish
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <div className="flex items-center justify-center gap-2 sm:gap-3">
+              <span className="text-sm sm:text-base">Ro'yxatdan o'tish</span>
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
             </div>
           )}
         </Button>
@@ -432,9 +432,9 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7 }}
-        className="bg-muted/50 rounded-lg p-4 border border-border"
+        className="bg-muted/50 rounded-lg p-4 sm:p-6 border border-border mx-2 sm:mx-0"
       >
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-xs sm:text-sm text-muted-foreground text-center leading-relaxed">
           Ro'yxatdan o'tish orqali siz{" "}
           <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
             Ommaviy Oferta shartlari
@@ -453,7 +453,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
-        className="text-center text-sm text-muted-foreground"
+        className="text-center text-sm sm:text-base text-muted-foreground px-2 sm:px-0"
       >
         Hisobingiz bormi?{" "}
         <button
