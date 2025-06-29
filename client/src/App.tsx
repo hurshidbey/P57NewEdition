@@ -19,6 +19,7 @@ import LandingSimple from "@/pages/landing-simple";
 import LandingConversion from "@/pages/landing-conversion";
 import LandingTildaNew from "@/pages/landing-tilda-new";
 import PremiumPrompts from "@/pages/premium-prompts";
+import TermsOfService from "@/pages/terms-of-service";
 
 function AppContent() {
   const { isAuthenticated, loading, user } = useAuth();
@@ -65,6 +66,8 @@ function AppContent() {
         {isAuthenticated ? <PremiumPrompts /> : <AuthPage />}
       </Route>
       <Route path="/atmos-payment" component={AtmosPayment} />
+      <Route path="/terms" component={TermsOfService} />
+      <Route path="/oferta" component={TermsOfService} />
       <Route path="/">
         {isAuthenticated ? <Home /> : <AuthPage />}
       </Route>
