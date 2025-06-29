@@ -22,7 +22,7 @@ export default function AppHeader() {
   return (
     <header className="border-b border-border bg-background sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 sm:h-20">
           <div className="flex items-center space-x-4">
             <Link href="/">
               <img 
@@ -48,7 +48,7 @@ export default function AppHeader() {
             <Link href="/onboarding">
               <Button 
                 variant="ghost" 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
               >
                 O'rganish
               </Button>
@@ -57,7 +57,7 @@ export default function AppHeader() {
             <Link href="/premium-prompts">
               <Button 
                 variant="ghost" 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
               >
                 <FileText className="w-4 h-4 mr-1" />
                 Promptlar
@@ -70,7 +70,7 @@ export default function AppHeader() {
                 <Button 
                   variant="default" 
                   size="sm"
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground text-xs font-medium"
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground text-sm font-medium min-h-[44px] px-4 touch-manipulation"
                 >
                   <Crown className="w-3 h-3 mr-1" />
                   Upgrade
@@ -81,7 +81,7 @@ export default function AppHeader() {
               <Link href="/admin">
                 <Button 
                   variant="ghost" 
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
                 >
                   Boshqaruv
                 </Button>
@@ -90,7 +90,7 @@ export default function AppHeader() {
             <ThemeToggle />
             <Button 
               variant="ghost" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
               onClick={signOut}
             >
               Chiqish

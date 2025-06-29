@@ -122,7 +122,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               <Link href="/atmos-payment" className="w-full">
                 <Button 
                   size="sm"
-                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-2 h-8 text-xs font-medium"
+                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-3 min-h-[44px] text-sm font-medium touch-manipulation"
                   onClick={handleUpgradeClick}
                 >
                   <Crown className="w-3 h-3 mr-1" />
@@ -141,7 +141,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
                   <Button 
                     onClick={handleMarkCompleted}
                     size="sm"
-                    className="flex-1 bg-success hover:bg-success/90 text-success-foreground px-3 py-2 h-8 text-xs font-medium"
+                    className="flex-1 bg-success hover:bg-success/90 text-success-foreground px-3 py-3 min-h-[44px] text-sm font-medium touch-manipulation"
                   >
                     O'rgandim
                   </Button>
@@ -150,14 +150,14 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
                     onClick={handleMarkCompleted}
                     size="sm"
                     variant="outline"
-                    className="flex-1 border-success text-success hover:bg-success/20 px-3 py-2 h-8 text-xs font-medium"
+                    className="flex-1 border-success text-success hover:bg-success/20 px-3 py-3 min-h-[44px] text-sm font-medium touch-manipulation"
                   >
                     Qayta mashq
                   </Button>
                 )}
                 
                 <Link href={`/protocols/${protocol.id}`} className="flex-1">
-                  <Button size="sm" variant="outline" className="w-full px-3 py-2 h-8 text-xs font-medium">
+                  <Button size="sm" variant="outline" className="w-full px-3 py-3 min-h-[44px] text-sm font-medium touch-manipulation">
                     Ko'rish
                   </Button>
                 </Link>
