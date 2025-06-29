@@ -8,9 +8,11 @@ import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import PromptPractice from "@/components/prompt-practice";
+import ProtocolNavigation from "@/components/protocol-navigation";
 import { UpgradeCTA } from "@/components/upgrade-cta";
 import { useProgress } from "@/hooks/use-progress";
 import { useProtocolAccess, useUserTier } from "@/hooks/use-user-tier";
+import { useConfetti } from "@/hooks/use-confetti";
 
 // Helper function to parse the combined description into separate components
 function parseProtocolDescription(description: string) {
@@ -68,6 +70,7 @@ export default function ProtocolDetail() {
   const { id } = useParams<{ id: string }>();
   const { isProtocolCompleted, markProtocolCompleted } = useProgress();
   const { tier, getAccessedProtocolsCount, canAccessNewProtocol } = useUserTier();
+  const { trigger: triggerConfetti, ConfettiRenderer } = useConfetti();
 
   const {
     data: protocol,
@@ -238,8 +241,11 @@ export default function ProtocolDetail() {
               <div className="flex-shrink-0">
                 {!isProtocolCompleted(protocol.id) ? (
                   <Button 
-                    onClick={() => markProtocolCompleted(protocol.id, 70)}
-                    className="bg-green-600 hover:bg-green-700 text-white font-inter font-semibold px-8 py-4 rounded-xl h-auto"
+                    onClick={() => {
+                      markProtocolCompleted(protocol.id, 70);
+                      triggerConfetti();
+                    }}
+                    className="bg-green-600 hover:bg-green-700 text-white font-inter font-semibold px-6 py-3 min-h-[44px] rounded-xl h-auto sm:px-8 sm:py-4 transition-colors touch-manipulation"
                   >
                     O'rgandim
                   </Button>
@@ -247,7 +253,7 @@ export default function ProtocolDetail() {
                   <Button 
                     onClick={() => markProtocolCompleted(protocol.id, 70)}
                     variant="outline"
-                    className="border-green-600 text-green-600 hover:bg-green-50 font-inter font-semibold px-8 py-4 rounded-xl h-auto"
+                    className="border-green-600 text-green-600 hover:bg-green-50 font-inter font-semibold px-6 py-3 min-h-[44px] rounded-xl h-auto sm:px-8 sm:py-4 transition-colors touch-manipulation"
                   >
                     Qayta mashq qilish
                   </Button>
@@ -368,11 +374,14 @@ export default function ProtocolDetail() {
             </section>
           )}
 
+          {/* Protocol Navigation */}
+          <ProtocolNavigation currentProtocolId={protocol.id} />
+
           {/* Back Button */}
-          <section className="text-center">
+          <section className="text-center mt-8 mb-8 px-4">
             <Link href="/">
-              <Button className="bg-muted text-muted-foreground hover:bg-muted/80 font-inter font-semibold px-8 py-4 rounded-xl">
-                <ArrowLeft className="w-4 h-4 mr-2" />
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 font-inter font-semibold px-6 py-3 min-h-[44px] rounded-xl sm:px-8 sm:py-4 transition-colors touch-manipulation">
+                <ArrowLeft className="w-4 h-4 mr-2 flex-shrink-0" />
                 Protokollarga qaytish
               </Button>
             </Link>
@@ -381,6 +390,7 @@ export default function ProtocolDetail() {
         </div>
       </main>
       <AppFooter />
+      <ConfettiRenderer />
     </div>
   );
 }

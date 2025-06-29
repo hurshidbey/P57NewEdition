@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useProtocolEvaluation } from "@/hooks/use-protocol-evaluation";
 import { useProgress } from "@/hooks/use-progress";
 import { useUserTier } from "@/hooks/use-user-tier";
+import { useConfetti } from "@/hooks/use-confetti";
 import { Link } from "wouter";
 
 interface PromptEvaluation {
@@ -33,6 +34,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
   const { evaluationCount, evaluationLimit, canEvaluate, getRemainingEvaluations, getUsagePercentage, incrementEvaluation, tier } = useProtocolEvaluation(protocol.id);
   const { markProtocolCompleted, getProtocolProgress } = useProgress();
   const protocolProgress = getProtocolProgress(protocol.id);
+  const { trigger: triggerConfetti, ConfettiRenderer } = useConfetti();
   
   const isLimitReached = !canEvaluate() && tier === 'free';
   const shouldBlur = isLimitReached && !evaluation;
@@ -53,11 +55,14 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
       // Mark protocol as completed if score is good enough (70+)
       if (data.score >= 70) {
         markProtocolCompleted(protocol.id, data.score);
+        // Trigger confetti for excellent scores!
+        triggerConfetti();
       }
       
       toast({
         title: "Prompt baholandi!",
         description: `Sizning ball: ${data.score}/100`,
+        duration: data.score >= 70 ? 5000 : 3000, // Show longer for good scores
       });
     },
     onError: (error) => {
@@ -254,6 +259,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
           </CardContent>
         </Card>
       )}
+      <ConfettiRenderer />
     </div>
   );
 }
