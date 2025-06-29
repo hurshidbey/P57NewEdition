@@ -6,12 +6,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Lightbulb, RefreshCw, Send, AlertTriangle } from "lucide-react";
+import { Lightbulb, RefreshCw, Send, AlertTriangle, Crown, Lock } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useProtocolEvaluation } from "@/hooks/use-protocol-evaluation";
 import { useProgress } from "@/hooks/use-progress";
 import { useUserTier } from "@/hooks/use-user-tier";
+import { Link } from "wouter";
 
 interface PromptEvaluation {
   score: number;
@@ -32,6 +33,9 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
   const { evaluationCount, evaluationLimit, canEvaluate, getRemainingEvaluations, getUsagePercentage, incrementEvaluation, tier } = useProtocolEvaluation(protocol.id);
   const { markProtocolCompleted, getProtocolProgress } = useProgress();
   const protocolProgress = getProtocolProgress(protocol.id);
+  
+  const isLimitReached = !canEvaluate() && tier === 'free';
+  const shouldBlur = isLimitReached && !evaluation;
 
   const evaluationMutation = useMutation({
     mutationFn: async (prompt: string) => {
@@ -68,7 +72,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
 
   const handleSubmit = () => {
     if (!canEvaluate()) {
-      const limitText = tier === 'paid' ? '5 marta' : '3 marta';
+      const limitText = tier === 'paid' ? '5 marta' : '1 marta';
       toast({
         title: "Baholash limiti tugadi",
         description: `Har bir protokolni ${limitText} baholash mumkin. ${tier === 'free' ? 'Premium obuna oling va 5 marta baholang.' : 'Siz allaqachon maksimal baholash soniga yetdingiz.'}`,
@@ -119,8 +123,27 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
+      <Card className={shouldBlur ? "relative" : ""}>
+        {shouldBlur && (
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 rounded-lg flex items-center justify-center">
+            <div className="text-center p-6 max-w-sm">
+              <div className="bg-accent/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Crown className="h-8 w-8 text-accent" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Premium xususiyat</h3>
+              <p className="text-muted-foreground text-sm mb-4">
+                Har bir protokolni ko'proq marta baholash va AI tahlil olish uchun Premium obuna oling
+              </p>
+              <Link href="/atmos-payment">
+                <Button className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                  <Crown className="h-4 w-4 mr-2" />
+                  Premium olish
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
+        <CardHeader className={shouldBlur ? "blur-sm" : ""}>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Lightbulb className="h-5 w-5 text-accent" />
@@ -141,7 +164,22 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
             Ushbu protokol asosida o'z promptingizni yozing va AI baholashini oling
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className={`space-y-4 ${shouldBlur ? "blur-sm" : ""}`}>
+          {tier === 'free' && evaluationCount === 0 && evaluationLimit === 1 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 dark:bg-amber-900/20 dark:border-amber-800">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 dark:text-amber-400" />
+                <div className="text-sm">
+                  <p className="font-medium text-amber-800 dark:text-amber-200 mb-1">
+                    Sizda 1 ta bepul baholash bor
+                  </p>
+                  <p className="text-amber-700 dark:text-amber-300">
+                    Ko'proq baholash uchun Premium obuna oling va har bir protokolni 5 marta baholang
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
           <div>
             <label htmlFor="user-prompt" className="text-sm font-medium mb-2 block">
               Sizning promptingiz:
