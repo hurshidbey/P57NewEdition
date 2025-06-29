@@ -428,10 +428,31 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         </Button>
       </motion.div>
 
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        className="bg-muted/50 rounded-lg p-4 border border-border"
+      >
+        <p className="text-xs text-muted-foreground text-center">
+          Ro'yxatdan o'tish orqali siz{" "}
+          <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
+            Ommaviy Oferta shartlari
+            <ExternalLink className="w-3 h-3" />
+          </Link>
+          {" "}va{" "}
+          <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
+            maxfiylik siyosati
+            <ExternalLink className="w-3 h-3" />
+          </Link>
+          ga rozilik bildirasiz.
+        </p>
+      </motion.div>
+
       <motion.p 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
+        transition={{ delay: 0.8 }}
         className="text-center text-sm text-muted-foreground"
       >
         Hisobingiz bormi?{" "}
