@@ -68,7 +68,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
 
   const handleSubmit = () => {
     if (!canEvaluate()) {
-      const limitText = tier === 'paid' ? '5 marta' : '1 marta';
+      const limitText = tier === 'paid' ? '5 marta' : '3 marta';
       toast({
         title: "Baholash limiti tugadi",
         description: `Har bir protokolni ${limitText} baholash mumkin. ${tier === 'free' ? 'Premium obuna oling va 5 marta baholang.' : 'Siz allaqachon maksimal baholash soniga yetdingiz.'}`,
