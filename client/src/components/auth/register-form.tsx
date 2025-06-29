@@ -169,7 +169,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           className="space-y-4 sm:space-y-5"
         >
           <GoogleOAuthButton>
-            Google bilan ro'yxatdan o'tish
+            Google bilan
           </GoogleOAuthButton>
           
           <div className="relative">
@@ -188,7 +188,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
             className="w-full h-12 sm:h-14 border-2 hover:bg-muted/50 transition-all duration-300 text-sm sm:text-base"
           >
             <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
-            Boshqa pochta bilan ro'yxatdan o'tish
+            Boshqa pochta bilan
           </Button>
         </motion.div>
 
@@ -421,7 +421,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2 sm:gap-3">
-              <span className="text-sm sm:text-base">Ro'yxatdan o'tish</span>
+              <span className="text-sm sm:text-base">Ro'yxatga olish</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
             </div>
           )}
