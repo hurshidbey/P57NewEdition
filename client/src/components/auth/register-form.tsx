@@ -2,12 +2,14 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { motion } from "framer-motion"
-import { User, Mail, Lock, CheckCircle, ArrowRight } from "lucide-react"
+import { User, Mail, Lock, CheckCircle, ArrowRight, ExternalLink } from "lucide-react"
 import { GoogleOAuthButton } from "./google-oauth-button"
 import { SimpleCaptcha } from "./simple-captcha"
+import { Link } from "wouter"
 
 interface RegisterFormProps {
   onToggleMode: () => void
@@ -22,6 +24,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
   const [loading, setLoading] = useState(false)
   const [lastSubmit, setLastSubmit] = useState<number>(0)
   const [captchaValid, setCaptchaValid] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const { signUp } = useAuth()
   const { toast } = useToast()
 
@@ -107,6 +110,16 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
       toast({
         title: "Xatolik",
         description: "Iltimos matematik masalani to'g'ri yeching",
+        variant: "destructive"
+      })
+      return
+    }
+
+    // Check terms acceptance
+    if (!termsAccepted) {
+      toast({
+        title: "Xatolik",
+        description: "Iltimos foydalanish shartlarini qabul qiling",
         variant: "destructive"
       })
       return
@@ -301,12 +314,34 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="bg-muted/50 rounded-lg p-4 border border-border"
+        className="space-y-4"
       >
-        <p className="text-xs text-muted-foreground">
-          Ro'yxatdan o'tish orqali siz bizning <a href="#" className="text-accent hover:underline">foydalanish shartlari</a> va{" "}
-          <a href="#" className="text-accent hover:underline">maxfiylik siyosati</a>ga rozilik bildirasiz.
-        </p>
+        <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg border border-border">
+          <Checkbox
+            id="terms"
+            checked={termsAccepted}
+            onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+            className="mt-0.5"
+          />
+          <div className="grid gap-1.5 leading-none">
+            <Label
+              htmlFor="terms"
+              className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
+            >
+              Men{" "}
+              <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
+                Ommaviy Oferta shartlari
+                <ExternalLink className="w-3 h-3" />
+              </Link>
+              {" "}va{" "}
+              <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
+                maxfiylik siyosati
+                <ExternalLink className="w-3 h-3" />
+              </Link>
+              {" "}ga to'liq rozilik bildiraman va barcha shartlarni qabul qilaman.
+            </Label>
+          </div>
+        </div>
       </motion.div>
       
       <motion.div
@@ -317,7 +352,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         <Button 
           type="submit" 
           className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-medium text-base transition-all duration-300 hover-lift group"
-          disabled={loading || !email || !password || !name || password !== confirmPassword || !captchaValid}
+          disabled={loading || !email || !password || !name || password !== confirmPassword || !captchaValid || !termsAccepted}
         >
           {loading ? (
             <div className="flex items-center gap-2">
