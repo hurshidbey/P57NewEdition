@@ -7,7 +7,7 @@ const STORAGE_KEY_PREFIX = 'protokol57_evaluations';
 
 // Tier-based per-protocol evaluation limits
 const getEvaluationLimit = (tier: UserTier): number => {
-  return tier === 'paid' ? 5 : 3; // Free users: 3 per protocol, Paid users: 5 per protocol
+  return tier === 'paid' ? 5 : 1; // Free users: 1 per protocol, Paid users: 5 per protocol
 };
 
 interface ProtocolEvaluations {
