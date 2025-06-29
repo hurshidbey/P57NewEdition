@@ -11,11 +11,11 @@ interface Protocol {
 export function useProtocolNavigation(currentProtocolId: number) {
   // Fetch all protocols for navigation
   const { data: allProtocols = [] } = useQuery<Protocol[]>({
-    queryKey: ['/api/protocols/all'],
+    queryKey: ['/api/protocols', 'navigation'],
     queryFn: async () => {
       const response = await apiRequest('GET', '/api/protocols?limit=100');
       const data = await response.json();
-      return data.protocols || [];
+      return data || [];
     },
   });
 
