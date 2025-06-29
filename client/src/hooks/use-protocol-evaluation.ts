@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useUserTier, type UserTier } from '@/hooks/use-user-tier';
 import { trackTierSystemEvent } from '@/utils/analytics';
+import { useAuth } from '@/contexts/auth-context';
 
-const STORAGE_KEY = 'protokol57_protocol_evaluations';
+const STORAGE_KEY_PREFIX = 'protokol57_evaluations';
 
 // Tier-based per-protocol evaluation limits
 const getEvaluationLimit = (tier: UserTier): number => {
-  return tier === 'paid' ? 5 : 1; // Free users: 1 per protocol, Paid users: 5 per protocol
+  return tier === 'paid' ? 5 : 3; // Free users: 3 per protocol, Paid users: 5 per protocol
 };
 
 interface ProtocolEvaluations {
@@ -18,23 +19,30 @@ interface ProtocolEvaluations {
 
 export function useProtocolEvaluation(protocolId: number) {
   const { tier } = useUserTier();
+  const { user } = useAuth();
   const [evaluations, setEvaluations] = useState<ProtocolEvaluations>({});
 
   const evaluationLimit = getEvaluationLimit(tier);
   const protocolKey = protocolId.toString();
+  
+  // Create user-specific storage key
+  const storageKey = user ? `${STORAGE_KEY_PREFIX}_${user.id}` : STORAGE_KEY_PREFIX;
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount or when user changes
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(storageKey);
       if (saved) {
         const data: ProtocolEvaluations = JSON.parse(saved);
         setEvaluations(data);
+      } else {
+        // Clear evaluations when no saved data (new user)
+        setEvaluations({});
       }
     } catch (error) {
 
     }
-  }, []);
+  }, [storageKey]);
 
   const incrementEvaluation = () => {
     const currentCount = evaluations[protocolKey]?.count || 0;
@@ -63,7 +71,7 @@ export function useProtocolEvaluation(protocolId: number) {
     }
     
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newEvaluations));
+      localStorage.setItem(storageKey, JSON.stringify(newEvaluations));
     } catch (error) {
 
     }
@@ -92,7 +100,7 @@ export function useProtocolEvaluation(protocolId: number) {
     const newEvaluations = { ...evaluations };
     delete newEvaluations[protocolKey];
     setEvaluations(newEvaluations);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newEvaluations));
+    localStorage.setItem(storageKey, JSON.stringify(newEvaluations));
   };
 
   return {
