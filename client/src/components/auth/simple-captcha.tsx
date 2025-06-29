@@ -25,16 +25,16 @@ export function SimpleCaptcha({ onValidationChange, className }: SimpleCaptchaPr
     
     switch (randomOperator) {
       case '+':
-        n1 = Math.floor(Math.random() * 20) + 1  // 1-20 (easier calculations)
-        n2 = Math.floor(Math.random() * 20) + 1  // 1-20 (easier calculations)
+        n1 = Math.floor(Math.random() * 15) + 1  // 1-15 (simple calculations)
+        n2 = Math.floor(Math.random() * 15) + 1  // 1-15 (simple calculations)
         break
       case '-':
-        n1 = Math.floor(Math.random() * 50) + 20  // 20-70
-        n2 = Math.floor(Math.random() * 19) + 1   // 1-19 (ensure positive result)
+        n1 = Math.floor(Math.random() * 15) + 10  // 10-25 (simple subtraction)
+        n2 = Math.floor(Math.random() * 9) + 1    // 1-9 (ensure positive result)
         break
       case '*':
-        n1 = Math.floor(Math.random() * 10) + 2   // 2-11
-        n2 = Math.floor(Math.random() * 10) + 2   // 2-11
+        n1 = Math.floor(Math.random() * 5) + 2    // 2-6 (very simple multiplication)
+        n2 = Math.floor(Math.random() * 5) + 2    // 2-6 (very simple multiplication)
         break
       default:
         n1 = 5
