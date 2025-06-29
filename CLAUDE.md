@@ -454,6 +454,20 @@ The application uses OpenAI's GPT-4 model for AI-powered prompt evaluation. Here
    curl https://p57.birfoiz.uz/api/test-openai
    ```
 
+### ⚠️ CRITICAL: Deployment Script (USE THIS!)
+
+**ALWAYS use the deployment script for production deployments:**
+```bash
+./deploy-production.sh
+```
+
+This script automatically:
+1. Updates OpenAI API key BEFORE building
+2. Clears ALL Docker caches to prevent stale builds
+3. Fixes Traefik routing issues
+4. Verifies all endpoints are working
+5. Checks that navigation components are in the bundle
+
 ### Troubleshooting OpenAI Integration
 
 #### ❌ "OpenAI connection failed"
