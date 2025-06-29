@@ -16,6 +16,7 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) {
+  const [showEmailForm, setShowEmailForm] = useState(false)
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -145,8 +146,112 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
     }
   }
 
+  // OAuth-first registration flow
+  if (!showEmailForm) {
+    return (
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-center space-y-4"
+        >
+          <h3 className="text-lg font-semibold text-foreground">Ro'yxatdan o'tish</h3>
+          <p className="text-muted-foreground text-sm">
+            Tezkor ro'yxatdan o'tish uchun Google hisobingizni ishlating
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-4"
+        >
+          <GoogleOAuthButton>
+            Google bilan ro'yxatdan o'tish
+          </GoogleOAuthButton>
+          
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border"></div>
+            </div>
+            <div className="relative flex justify-center text-caption">
+              <span className="bg-background px-4 text-muted-foreground">yoki</span>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowEmailForm(true)}
+            className="w-full h-12 border-2 hover:bg-muted/50 transition-all duration-300"
+          >
+            <Mail className="w-4 h-4 mr-2" />
+            Boshqa pochta bilan ro'yxatdan o'tish
+          </Button>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-muted/50 rounded-lg p-4 border border-border"
+        >
+          <p className="text-xs text-muted-foreground text-center">
+            Ro'yxatdan o'tish orqali siz{" "}
+            <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
+              Ommaviy Oferta shartlari
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+            {" "}va{" "}
+            <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
+              maxfiylik siyosati
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+            ga rozilik bildirasiz.
+          </p>
+        </motion.div>
+
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-center text-sm text-muted-foreground"
+        >
+          Hisobingiz bormi?{" "}
+          <button
+            type="button"
+            onClick={onToggleMode}
+            className="text-accent hover:text-accent/80 font-medium transition-colors duration-200 hover:underline underline-offset-4"
+          >
+            Kirish
+          </button>
+        </motion.p>
+      </div>
+    )
+  }
+
+  // Full email registration form (when user chooses email option)
   return (
     <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between mb-4"
+      >
+        <h3 className="text-lg font-semibold text-foreground">Email bilan ro'yxatdan o'tish</h3>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowEmailForm(false)}
+          className="text-muted-foreground hover:text-foreground"
+        >
+          ← Orqaga
+        </Button>
+      </motion.div>
+
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -298,32 +403,11 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           onValidationChange={setCaptchaValid}
         />
       </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="bg-muted/50 rounded-lg p-4 border border-border"
-      >
-        <p className="text-xs text-muted-foreground text-center">
-          "Ro'yxatdan o'tish" tugmasini bosish orqali siz{" "}
-          <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
-            Ommaviy Oferta shartlari
-            <ExternalLink className="w-3 h-3" />
-          </Link>
-          {" "}va{" "}
-          <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
-            maxfiylik siyosati
-            <ExternalLink className="w-3 h-3" />
-          </Link>
-          ga rozilik bildirasiz.
-        </p>
-      </motion.div>
       
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
+        transition={{ delay: 0.6 }}
       >
         <Button 
           type="submit" 
@@ -343,36 +427,11 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           )}
         </Button>
       </motion.div>
-      
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="relative"
-      >
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border"></div>
-        </div>
-        <div className="relative flex justify-center text-caption">
-          <span className="bg-background px-4 text-muted-foreground">yoki</span>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9 }}
-        className="space-y-4"
-      >
-        <GoogleOAuthButton>
-          Google bilan ro'yxatdan o'tish
-        </GoogleOAuthButton>
-      </motion.div>
 
       <motion.p 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.0 }}
+        transition={{ delay: 0.7 }}
         className="text-center text-sm text-muted-foreground"
       >
         Hisobingiz bormi?{" "}
