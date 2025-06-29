@@ -25,8 +25,8 @@ export function SimpleCaptcha({ onValidationChange, className }: SimpleCaptchaPr
     
     switch (randomOperator) {
       case '+':
-        n1 = Math.floor(Math.random() * 50) + 1  // 1-50
-        n2 = Math.floor(Math.random() * 50) + 1  // 1-50
+        n1 = Math.floor(Math.random() * 20) + 1  // 1-20 (easier calculations)
+        n2 = Math.floor(Math.random() * 20) + 1  // 1-20 (easier calculations)
         break
       case '-':
         n1 = Math.floor(Math.random() * 50) + 20  // 20-70

@@ -328,7 +328,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
               htmlFor="terms"
               className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
             >
-              Men{" "}
+              Ro'yxatdan o'tish orqali men{" "}
               <Link href="/oferta" target="_blank" className="text-accent hover:underline inline-flex items-center gap-1">
                 Ommaviy Oferta shartlari
                 <ExternalLink className="w-3 h-3" />
@@ -338,7 +338,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
                 maxfiylik siyosati
                 <ExternalLink className="w-3 h-3" />
               </Link>
-              {" "}ga to'liq rozilik bildiraman va barcha shartlarni qabul qilaman.
+              ga avtomatik ravishda rozilik bildiraman.
             </Label>
           </div>
         </div>
