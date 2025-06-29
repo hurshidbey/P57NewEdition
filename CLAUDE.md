@@ -123,6 +123,7 @@ ATMOS_CONSUMER_KEY=UhGzIAQ10FhOZiZ9KTHH_3NhTZ8a
 ATMOS_CONSUMER_SECRET=JCuvoGpaV6VHf3migqRy7r6qtiMa
 ATMOS_ENV=production
 SESSION_SECRET=protokol57-production-secret
+OPENAI_API_KEY=sk-proj-YOUR_ACTUAL_KEY_HERE  # CRITICAL: Must be set for AI evaluation to work
 ```
 
 ### Client-side (Build-time):
@@ -374,6 +375,66 @@ ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && docker
 - **Containerization**: Docker + docker-compose for all environments
 - **Build System**: Vite for frontend, esbuild for backend
 - **Process Management**: Docker containers (not PM2)
+
+## OpenAI Integration Setup
+
+The application uses OpenAI's GPT-4 model for AI-powered prompt evaluation. Here's how to set it up:
+
+### Getting Your OpenAI API Key
+
+1. Create an account at https://platform.openai.com/
+2. Go to https://platform.openai.com/api-keys
+3. Create a new API key
+4. Copy the key (starts with `sk-proj-`)
+
+### Setting Up the API Key
+
+**IMPORTANT**: Never commit your actual API key to Git!
+
+1. **For Local Development**:
+   ```bash
+   # Edit .env.production
+   OPENAI_API_KEY=sk-proj-YOUR_ACTUAL_KEY_HERE
+   ```
+
+2. **For Production Deployment**:
+   ```bash
+   # Copy .env.production to server
+   scp -i ~/.ssh/protokol57_ed25519 .env.production root@69.62.126.73:/opt/protokol57/.env.production
+   
+   # Rebuild and restart container
+   ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && docker compose down && docker compose build --no-cache && docker compose up -d"
+   ```
+
+3. **Verify It's Working**:
+   ```bash
+   # Test locally
+   curl http://localhost:5001/api/test-openai
+   
+   # Test production
+   curl https://p57.birfoiz.uz/api/test-openai
+   ```
+
+### Troubleshooting OpenAI Integration
+
+#### ❌ "OpenAI connection failed"
+**Root Cause**: Missing or invalid API key
+
+**Solution**:
+```bash
+# Check if key is set in container
+docker exec p57-protokol57-1 printenv | grep OPENAI
+
+# If missing or wrong, update .env.production and rebuild
+```
+
+#### ❌ "Evaluation not working"
+**Root Cause**: API key may have expired or hit rate limits
+
+**Solution**:
+1. Check API key status at https://platform.openai.com/usage
+2. Generate new key if needed
+3. Update .env.production and redeploy
 ```
 
 **Memories**:

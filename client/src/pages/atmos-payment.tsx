@@ -5,8 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CreditCard, Loader2, CheckCircle, XCircle, RefreshCw, Shield, Info, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { CreditCard, Loader2, CheckCircle, XCircle, RefreshCw, Shield, Info, AlertCircle, Crown, FileText, BookOpen, Brain, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import AppHeader from '@/components/app-header';
+import AppFooter from '@/components/app-footer';
 
 interface AtmosPaymentStep {
   step: 'card-details' | 'otp' | 'processing' | 'success' | 'error';
@@ -266,139 +269,73 @@ export default function AtmosPayment() {
   };
 
   const renderCardDetailsForm = () => (
-    <form onSubmit={handleCardSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="cardNumber">Karta raqami</Label>
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <Label htmlFor="cardNumber" className="text-lg font-black text-foreground">KARTA RAQAMI</Label>
         <Input
           id="cardNumber"
           placeholder="0000 0000 0000 0000"
           value={cardNumber}
           onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
           maxLength={19}
-          className="text-lg tracking-wider font-mono"
+          className="text-xl tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background"
           required
         />
-        <div className="text-xs text-muted-foreground mt-1">
+        <div className="text-sm font-bold text-muted-foreground">
           UzCard (8600...) yoki Humo (9860...) kartalari qabul qilinadi
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="expiry">Amal qilish muddati (MM/YY)</Label>
+      <div className="space-y-3">
+        <Label htmlFor="expiry" className="text-lg font-black text-foreground">AMAL QILISH MUDDATI</Label>
         <Input
           id="expiry"
           placeholder="MM/YY"
           value={expiry}
           onChange={(e) => setExpiry(formatExpiry(e.target.value))}
           maxLength={5}
-          className="text-lg"
+          className="text-xl font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background"
           required
         />
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
-        <div className="flex items-start gap-2">
-          <Info className="h-4 w-4 text-blue-600 mt-0.5" />
-          <div className="text-xs text-blue-700">
-            <p className="font-medium mb-1">Muhim ma'lumot:</p>
-            <ul className="space-y-1">
-              <li>• SMS xizmati yoqilgan bo'lishi kerak</li>
-              <li>• Kartada yetarli mablag' bo'lishi kerak</li>
-              <li>• Karta muddati tugamagan bo'lishi kerak</li>
-            </ul>
-          </div>
+      <div className="bg-muted/30 border-2 border-muted p-4 mt-6">
+        <div className="text-sm font-bold text-foreground">
+          <p className="font-black mb-2">MUHIM SHARTLAR:</p>
+          <ul className="space-y-1 font-bold">
+            <li>• SMS xizmati yoqilgan bo'lishi kerak</li>
+            <li>• Kartada yetarli mablag' bo'lishi kerak</li>
+            <li>• Karta muddati tugamagan bo'lishi kerak</li>
+          </ul>
         </div>
       </div>
-
-      <div className="pt-4">
-        <Button 
-          type="submit" 
-          disabled={loading}
-          className="w-full bg-[#FF4F30] hover:bg-[#E63E20] text-white"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Tekshirilmoqda...
-            </>
-          ) : (
-            <>
-              <CreditCard className="mr-2 h-4 w-4" />
-              To'lovni davom ettirish
-            </>
-          )}
-        </Button>
-      </div>
-    </form>
+    </div>
   );
 
   const renderOtpForm = () => (
-    <form onSubmit={handleOtpSubmit} className="space-y-4">
-      <div className="text-center mb-4">
-        <CheckCircle className="mx-auto h-12 w-12 text-green-500 mb-2" />
-        <p className="text-sm text-muted-foreground">{paymentState.message}</p>
+    <div className="space-y-6">
+      <div className="text-center mb-6">
+        <p className="text-lg font-black text-foreground mb-4">SMS KOD YUBORILDI</p>
+        <p className="font-bold text-muted-foreground">{paymentState.message}</p>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="otp">SMS kod</Label>
+      <div className="space-y-3">
+        <Label htmlFor="otp" className="text-lg font-black text-foreground">SMS KOD</Label>
         <Input
           id="otp"
           placeholder="000000"
           value={otpCode}
           onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
           maxLength={6}
-          className="text-2xl text-center tracking-wider font-mono"
+          className="text-3xl text-center tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background"
           required
           autoFocus
         />
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-sm font-bold text-muted-foreground text-center">
           6 raqamli kodni kiriting
         </p>
       </div>
-
-      <div className="pt-4 space-y-3">
-        <Button 
-          type="submit" 
-          disabled={loading}
-          className="w-full bg-[#FF4F30] hover:bg-[#E63E20] text-white"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Tasdiqlanmoqda...
-            </>
-          ) : (
-            <>
-              <CheckCircle className="mr-2 h-4 w-4" />
-              To'lovni tasdiqlash
-            </>
-          )}
-        </Button>
-        
-        <div className="flex gap-2">
-          <Button 
-            type="button" 
-            variant="outline"
-            onClick={() => setPaymentState({ step: 'card-details' })}
-            className="flex-1"
-            disabled={loading}
-          >
-            Orqaga qaytish
-          </Button>
-          
-          <Button 
-            type="button" 
-            variant="outline"
-            onClick={handleResendOtp}
-            className="flex-1"
-            disabled={loading}
-          >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Qayta yuborish
-          </Button>
-        </div>
-      </div>
-    </form>
+    </div>
   );
 
   const renderSuccess = () => (
@@ -462,59 +399,164 @@ export default function AtmosPayment() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Protokol 57</CardTitle>
-            <CardDescription>
-              AI Prompt Mastery Platform - To'lov
-            </CardDescription>
-            <div className="mt-2 p-3 bg-blue-50 rounded-lg">
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-sm font-medium text-blue-800">
-                  To'lov miqdori: 5,000 UZS
-                </p>
-                <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
-                  Test narxi
-                </span>
+    <div className="min-h-screen bg-background">
+      <AppHeader />
+      
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-black text-foreground mb-6">
+              PREMIUM TO'LOV
+            </h1>
+          </div>
+
+          <div className="grid lg:grid-cols-5 gap-8">
+            {/* Left Column - Payment Form */}
+            <div className="lg:col-span-2">
+              <div className="bg-card border-2 border-foreground shadow-lg">
+                {/* Payment Form */}
+                <div className="p-6 border-b-2 border-foreground">
+                  <h2 className="text-xl font-black text-foreground mb-6">TO'LOV MA'LUMOTLARI</h2>
+                  
+                  {error && (
+                    <div className="bg-destructive/10 border-2 border-destructive/20 p-4 mb-6">
+                      <p className="text-destructive font-bold">XATOLIK: {error}</p>
+                    </div>
+                  )}
+
+                  {paymentState.step === 'card-details' && renderCardDetailsForm()}
+                  {paymentState.step === 'otp' && renderOtpForm()}
+                  {paymentState.step === 'success' && (
+                    <div className="text-center">
+                      <h3 className="text-xl font-black text-foreground mb-4">TO'LOV MUVAFFAQIYATLI</h3>
+                      <p className="font-bold text-foreground">Rahmat! Premium dostup faollashtirildi.</p>
+                    </div>
+                  )}
+                  {paymentState.step === 'error' && (
+                    <div className="text-center">
+                      <h3 className="text-xl font-black text-foreground mb-4">TO'LOVDA XATOLIK</h3>
+                      <p className="mb-4 text-foreground">{paymentState.message}</p>
+                      <Button 
+                        onClick={() => setPaymentState({ step: 'card-details' })}
+                        className="bg-foreground text-background font-bold py-3 px-6 border-2 border-foreground hover:bg-foreground/90"
+                      >
+                        QAYTA URINISH
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer with Payment Button */}
+                <div className="p-6 text-center">
+                  {paymentState.step === 'card-details' && (
+                    <form onSubmit={handleCardSubmit}>
+                      <Button 
+                        type="submit" 
+                        disabled={loading}
+                        className="w-full bg-foreground text-background font-black text-lg py-4 border-2 border-foreground hover:bg-foreground/90 mb-6"
+                      >
+                        {loading ? (
+                          "TEKSHIRILMOQDA..."
+                        ) : (
+                          "TO'LOVNI DAVOM ETTIRISH"
+                        )}
+                      </Button>
+                    </form>
+                  )}
+                  
+                  {paymentState.step === 'otp' && (
+                    <form onSubmit={handleOtpSubmit} className="space-y-4 mb-6">
+                      <Button 
+                        type="submit" 
+                        disabled={loading}
+                        className="w-full bg-foreground text-background font-black text-lg py-4 border-2 border-foreground hover:bg-foreground/90"
+                      >
+                        {loading ? "TASDIQLANMOQDA..." : "TO'LOVNI TASDIQLASH"}
+                      </Button>
+                      
+                      <div className="flex gap-4">
+                        <Button 
+                          type="button" 
+                          variant="outline"
+                          onClick={() => setPaymentState({ step: 'card-details' })}
+                          className="flex-1 font-bold border-2 border-foreground text-foreground hover:bg-muted"
+                          disabled={loading}
+                        >
+                          ORQAGA
+                        </Button>
+                        
+                        <Button 
+                          type="button" 
+                          variant="outline"
+                          onClick={handleResendOtp}
+                          className="flex-1 font-bold border-2 border-foreground text-foreground hover:bg-muted"
+                          disabled={loading}
+                        >
+                          QAYTA YUBORISH
+                        </Button>
+                      </div>
+                    </form>
+                  )}
+                  
+                  <p className="text-sm font-bold text-muted-foreground">XAVFSIZ TO'LOV ATMOS ORQALI</p>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Test rejimi uchun arzon narx
-              </p>
-              <p className="text-xs text-blue-600 mt-1">
-                UzCard va Humo kartalari qabul qilinadi
-              </p>
-              {user && (
-                <p className="text-xs text-green-600 mt-1 font-medium">
-                  Foydalanuvchi: {user.email}
-                </p>
-              )}
             </div>
-          </CardHeader>
 
-          <CardContent>
-            {error && (
-              <Alert className="mb-4 border-red-200 bg-red-50">
-                <XCircle className="h-4 w-4 text-red-500" />
-                <AlertDescription className="text-red-700">
-                  {error}
-                </AlertDescription>
-              </Alert>
-            )}
+            {/* Right Column - Product Details */}
+            <div className="lg:col-span-3">
+              <div className="bg-card border-2 border-foreground shadow-lg">
+                {/* Features */}
+                <div className="border-b-2 border-foreground p-6">
+                  <h2 className="text-xl font-black text-foreground mb-4">MAHSULOT TAFSILOTLARI</h2>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="font-bold text-foreground">57 ta protokol</span>
+                      <span className="text-muted-foreground">KIRITILGAN</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-bold text-foreground">50+ Premium promptlar</span>
+                      <span className="text-muted-foreground">KIRITILGAN</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-bold text-foreground">Promptlash asoslari</span>
+                      <span className="text-muted-foreground">KIRITILGAN</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-bold text-foreground">Sun'iy-Intellekt asoslari</span>
+                      <span className="text-muted-foreground">KIRITILGAN</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-bold text-foreground">(BETA) S.I. bilan mashq</span>
+                      <span className="text-muted-foreground">KIRITILGAN</span>
+                    </div>
+                  </div>
+                </div>
 
-            {paymentState.step === 'card-details' && renderCardDetailsForm()}
-            {paymentState.step === 'otp' && renderOtpForm()}
-            {paymentState.step === 'success' && renderSuccess()}
-            {paymentState.step === 'error' && renderError()}
+                {/* Price */}
+                <div className="border-b-2 border-foreground p-6">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xl font-black text-foreground">JAMI SUMMA</span>
+                    <span className="text-2xl font-black text-foreground">5,000 UZS</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">Bir martalik to'lov</p>
+                </div>
 
-            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Shield className="h-3 w-3" />
-              <span>Xavfsiz to'lov ATMOS orqali</span>
+                {/* User Info */}
+                {user && (
+                  <div className="p-6 bg-muted/30">
+                    <h3 className="text-lg font-black text-foreground mb-2">MIJOZ MA'LUMOTLARI</h3>
+                    <p className="font-bold text-foreground">{user.email}</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
+
+      <AppFooter />
     </div>
   );
 }
