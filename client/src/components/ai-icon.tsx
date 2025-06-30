@@ -84,10 +84,28 @@ export function AiIcon({ name, className = "", size = 24, set = 'ai' }: AiIconPr
     <img 
       src={iconPath} 
       alt={name}
-      className={className}
+      className={`inline-block ${className}`}
       width={size}
       height={size}
-      style={{ filter: 'brightness(0) saturate(100%)' }} // Make icons black
+      style={{ 
+        filter: 'brightness(0) saturate(100%)', // Make icons black
+        minWidth: size,
+        minHeight: size
+      }}
+      loading="lazy"
+      onError={(e) => {
+        // Fallback to a simple SVG if icon fails to load
+        const target = e.target as HTMLImageElement;
+        target.style.display = 'none';
+        // Insert a placeholder div
+        const placeholder = document.createElement('div');
+        placeholder.style.width = `${size}px`;
+        placeholder.style.height = `${size}px`;
+        placeholder.style.backgroundColor = '#e5e5e5';
+        placeholder.style.borderRadius = '4px';
+        placeholder.style.display = 'inline-block';
+        target.parentNode?.insertBefore(placeholder, target.nextSibling);
+      }}
     />
   );
 }

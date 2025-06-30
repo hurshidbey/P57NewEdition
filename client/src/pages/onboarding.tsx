@@ -26,7 +26,7 @@ function FlipCard({ term, definition, icon, examples }: FlipCardProps) {
 
   return (
     <motion.div 
-      className="relative w-full min-h-[200px] sm:h-64 cursor-pointer perspective-1000 group touch-manipulation"
+      className="relative w-full min-h-[240px] sm:h-72 cursor-pointer perspective-1000 group touch-manipulation"
       onClick={() => setIsFlipped(!isFlipped)}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
@@ -37,25 +37,25 @@ function FlipCard({ term, definition, icon, examples }: FlipCardProps) {
       }`}>
         {/* Front */}
         <div className="absolute inset-0 w-full h-full backface-hidden">
-          <Card className="h-full border-2 border-border hover:border-accent transition-all shadow-medium hover:shadow-strong">
-            <CardContent className="h-full flex flex-col items-center justify-center text-center p-6">
-              {icon && <div className="mb-4 text-accent">{icon}</div>}
-              <h3 className="text-xl font-bold text-foreground mb-2">{term}</h3>
-              <p className="text-sm text-muted-foreground">Bosing ko'rish uchun</p>
+          <Card className="h-full border-2 border-black hover:border-black transition-all shadow-lg hover:shadow-xl">
+            <CardContent className="h-full flex flex-col items-center justify-center text-center p-6 sm:p-8">
+              {icon && <div className="mb-4 text-black">{icon}</div>}
+              <h3 className="text-xl sm:text-2xl font-bold text-black mb-3">{term}</h3>
+              <p className="text-sm text-gray-600">Bosing ko'rish uchun</p>
             </CardContent>
           </Card>
         </div>
         
         {/* Back */}
         <div className="absolute inset-0 w-full h-full rotate-y-180 backface-hidden">
-          <Card className="h-full bg-accent text-accent-foreground border-2 border-accent overflow-y-auto shadow-strong">
-            <CardContent className="h-full flex flex-col justify-center p-6">
-              <p className="text-base leading-relaxed mb-4">{definition}</p>
+          <Card className="h-full bg-black text-white border-2 border-black overflow-y-auto shadow-xl">
+            <CardContent className="h-full flex flex-col justify-center p-6 sm:p-8">
+              <p className="text-base sm:text-lg leading-relaxed mb-4">{definition}</p>
               {examples && examples.length > 0 && (
-                <div className="mt-auto pt-4 border-t border-accent-foreground/20">
-                  <p className="text-xs opacity-80 mb-2">Misollar:</p>
+                <div className="mt-auto pt-4 border-t border-white/20">
+                  <p className="text-xs sm:text-sm opacity-80 mb-2">Misollar:</p>
                   {examples.map((example, idx) => (
-                    <p key={idx} className="text-xs opacity-90">• {example}</p>
+                    <p key={idx} className="text-xs sm:text-sm opacity-90">• {example}</p>
                   ))}
                 </div>
               )}
@@ -86,8 +86,8 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
   };
 
   return (
-    <Card className="border-2 border-border shadow-soft hover:shadow-medium transition-all">
-      <CardContent className="p-4 sm:p-6">
+    <Card className="border-2 border-black shadow-lg hover:shadow-xl transition-all">
+      <CardContent className="p-6 sm:p-8">
         <h4 className="font-semibold text-lg mb-4">{question}</h4>
         <div className="space-y-3">
           {options.map((option, index) => (
@@ -99,14 +99,14 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
               whileTap={{ scale: showResult ? 1 : 0.99 }}
               className={`w-full text-left p-4 sm:p-5 rounded-xl border-2 transition-all min-h-[60px] ${
                 showResult && index === correctAnswer
-                  ? 'border-black bg-gray-50'
+                  ? 'border-green-600 bg-green-50'
                   : showResult && index === selected && index !== correctAnswer
-                  ? 'border-black bg-gray-100'
-                  : 'border-border hover:border-accent'
+                  ? 'border-red-600 bg-red-50'
+                  : 'border-gray-300 hover:border-black'
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="w-8 h-8 border-2 rounded-full flex items-center justify-center text-sm font-bold">
+                <span className="w-8 h-8 border-2 border-current rounded-full flex items-center justify-center text-sm font-bold">
                   {String.fromCharCode(65 + index)}
                 </span>
                 <span className="text-base">{option}</span>
@@ -120,9 +120,9 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <Alert className="mt-4 border-black bg-gray-50">
-              <AiIcon name="info" size={16} />
-              <AlertDescription>{explanation}</AlertDescription>
+            <Alert className="mt-4 border-2 border-black bg-gray-50">
+              <AiIcon name="info" size={20} />
+              <AlertDescription className="text-sm sm:text-base">{explanation}</AlertDescription>
             </Alert>
           </motion.div>
         )}
@@ -142,19 +142,19 @@ function InteractiveExample({ title, badPrompt, goodPrompt, explanation }: Inter
   const [showGood, setShowGood] = useState(false);
 
   return (
-    <Card className="border-2 border-border">
-      <CardContent className="p-4 sm:p-6">
+    <Card className="border-2 border-black shadow-lg">
+      <CardContent className="p-6 sm:p-8">
         <h4 className="font-semibold text-lg mb-4">{title}</h4>
         
         <div className="space-y-4">
           {/* Bad Example */}
           <div className={`transition-opacity ${showGood ? 'opacity-50' : ''}`}>
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center"><AiIcon name="close" size={16} /></div>
+              <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center"><AiIcon name="close" size={16} /></div>
               <span className="text-sm font-medium text-gray-900">Yomon misol</span>
             </div>
-            <div className="bg-gray-100 border border-gray-400 rounded-lg p-3 sm:p-4 overflow-x-auto">
-              <p className="text-xs sm:text-sm font-mono text-foreground break-words">{badPrompt}</p>
+            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 sm:p-5 overflow-x-auto">
+              <p className="text-sm sm:text-base font-mono text-gray-900 break-words">{badPrompt}</p>
             </div>
           </div>
 
@@ -164,7 +164,7 @@ function InteractiveExample({ title, badPrompt, goodPrompt, explanation }: Inter
               onClick={() => setShowGood(!showGood)}
               variant="outline"
               size="sm"
-              className="gap-2 h-10 px-4 touch-manipulation"
+              className="gap-2 h-10 px-6 touch-manipulation border-2 border-black hover:bg-gray-100"
             >
               {showGood ? <AiIcon name="pause" size={16} /> : <AiIcon name="play" size={16} />}
               {showGood ? "Yomon misolni ko'rish" : "Yaxshi misolni ko'rish"}
@@ -174,18 +174,18 @@ function InteractiveExample({ title, badPrompt, goodPrompt, explanation }: Inter
           {/* Good Example */}
           <div className={`transition-opacity ${!showGood ? 'opacity-50' : ''}`}>
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center"><AiIcon name="checked" size={16} /></div>
+              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center"><AiIcon name="checked" size={16} /></div>
               <span className="text-sm font-medium text-gray-900">Yaxshi misol</span>
             </div>
-            <div className="bg-gray-50 border border-gray-300 rounded-lg p-3 sm:p-4 overflow-x-auto">
-              <p className="text-xs sm:text-sm font-mono text-foreground break-words">{goodPrompt}</p>
+            <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 sm:p-5 overflow-x-auto">
+              <p className="text-sm sm:text-base font-mono text-gray-900 break-words">{goodPrompt}</p>
             </div>
           </div>
 
           {/* Explanation */}
-          <Alert className="border-black bg-gray-50">
-            <AiIcon name="lightbulb" size={16} />
-            <AlertDescription>{explanation}</AlertDescription>
+          <Alert className="border-2 border-black bg-gray-50">
+            <AiIcon name="lightbulb" size={20} />
+            <AlertDescription className="text-sm sm:text-base">{explanation}</AlertDescription>
           </Alert>
         </div>
       </CardContent>
@@ -205,11 +205,11 @@ function TryItYourself({ task, hints, sampleSolution }: TryItYourselfProps) {
   const [showSolution, setShowSolution] = useState(false);
 
   return (
-    <Card className="border-2 border-accent/20 bg-gradient-to-r from-accent/5 to-accent/10">
-      <CardContent className="p-4 sm:p-6">
+    <Card className="border-2 border-black bg-gradient-to-r from-gray-50 to-white shadow-lg">
+      <CardContent className="p-6 sm:p-8">
         <div className="flex items-center gap-2 mb-4">
-          <AiIcon name="code" size={20} />
-          <h4 className="font-semibold text-lg">O'zingiz sinab ko'ring!</h4>
+          <AiIcon name="code" size={24} />
+          <h4 className="font-bold text-xl">O'zingiz sinab ko'ring!</h4>
         </div>
         
         <p className="text-muted-foreground mb-4">{task}</p>
@@ -218,7 +218,7 @@ function TryItYourself({ task, hints, sampleSolution }: TryItYourselfProps) {
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
           placeholder="Promptingizni shu yerga yozing..."
-          className="mb-4 min-h-[120px]"
+          className="mb-4 min-h-[120px] border-2 border-gray-300 focus:border-black"
         />
 
         <div className="flex flex-col sm:flex-row gap-2 mb-4">
@@ -226,7 +226,7 @@ function TryItYourself({ task, hints, sampleSolution }: TryItYourselfProps) {
             variant="outline"
             size="sm"
             onClick={() => setShowHints(!showHints)}
-            className="w-full sm:w-auto h-10 touch-manipulation"
+            className="w-full sm:w-auto h-10 touch-manipulation border-2 border-black hover:bg-gray-100"
           >
             {showHints ? "Maslahatlarni yashirish" : "Maslahat olish"}
           </Button>
@@ -234,16 +234,16 @@ function TryItYourself({ task, hints, sampleSolution }: TryItYourselfProps) {
             variant="outline"
             size="sm"
             onClick={() => setShowSolution(!showSolution)}
-            className="w-full sm:w-auto h-10 touch-manipulation"
+            className="w-full sm:w-auto h-10 touch-manipulation border-2 border-black hover:bg-gray-100"
           >
             {showSolution ? "Yechimni yashirish" : "Yechimni ko'rish"}
           </Button>
         </div>
 
         {showHints && (
-          <Alert className="mb-4 border-black bg-gray-50">
-            <AiIcon name="lightbulb" size={16} />
-            <AlertDescription>
+          <Alert className="mb-4 border-2 border-black bg-gray-50">
+            <AiIcon name="lightbulb" size={20} />
+            <AlertDescription className="text-sm sm:text-base">
               <ul className="list-disc list-inside space-y-1">
                 {hints.map((hint, idx) => (
                   <li key={idx} className="text-sm">{hint}</li>
@@ -254,9 +254,9 @@ function TryItYourself({ task, hints, sampleSolution }: TryItYourselfProps) {
         )}
 
         {showSolution && (
-          <div className="bg-background border border-border rounded-lg p-4">
-            <p className="text-sm font-medium text-muted-foreground mb-2">Namuna yechim:</p>
-            <p className="text-sm font-mono text-foreground whitespace-pre-wrap">{sampleSolution}</p>
+          <div className="bg-gray-50 border-2 border-black rounded-lg p-5">
+            <p className="text-sm font-medium text-gray-600 mb-2">Namuna yechim:</p>
+            <p className="text-sm sm:text-base font-mono text-black whitespace-pre-wrap">{sampleSolution}</p>
           </div>
         )}
       </CardContent>
@@ -290,8 +290,8 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
       {/* Slider */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-muted-foreground">Qiymat:</span>
-          <span className="text-2xl font-bold text-accent">{value.toFixed(1)}</span>
+          <span className="text-sm font-medium text-gray-600">Qiymat:</span>
+          <span className="text-2xl font-bold text-black">{value.toFixed(1)}</span>
         </div>
         
         <Slider
@@ -310,9 +310,9 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
       </div>
 
       {/* Visual representation */}
-      <div className="relative h-24 bg-gradient-to-r from-blue-100 via-yellow-100 to-red-100 rounded-lg overflow-hidden">
+      <div className="relative h-24 bg-gradient-to-r from-blue-100 via-yellow-100 to-red-100 rounded-lg overflow-hidden border-2 border-black">
         <motion.div
-          className="absolute top-0 bottom-0 w-1 bg-black"
+          className="absolute top-0 bottom-0 w-2 bg-black"
           animate={{
             left: `${(value - min) / (max - min) * 100}%`
           }}
@@ -341,8 +341,8 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
             whileTap={{ scale: 0.98 }}
             className={`p-3 rounded-lg border-2 transition-all text-sm ${
               Math.abs(value - example.value) < 0.05
-                ? 'border-accent bg-accent/10'
-                : 'border-border hover:border-accent/50'
+                ? 'border-black bg-gray-100'
+                : 'border-gray-300 hover:border-black'
             }`}
           >
             <p className="font-semibold">{example.label}</p>
@@ -352,9 +352,9 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
       </div>
 
       {/* Live example */}
-      <Alert className="border-accent/20">
-        <AiIcon name="rocket" size={16} />
-        <AlertDescription>
+      <Alert className="border-2 border-black bg-gray-50">
+        <AiIcon name="rocket" size={20} />
+        <AlertDescription className="text-sm sm:text-base">
           <strong>Hozirgi sozlama:</strong> {setting}={value.toFixed(1)}
           <br />
           <span className="text-sm text-muted-foreground">
@@ -452,28 +452,28 @@ export default function Onboarding() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">
+            <Badge className="mb-4 bg-black text-white border-black px-4 py-2">
               Yangi boshlanish
             </Badge>
-            <h1 className="text-5xl font-black text-foreground mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl font-black text-black mb-6 leading-tight">
               ChatGPT bilan to'g'ri ishlashni o'rganing
             </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
               Bu qo'llanma ChatGPT bilan muloyim gaplashishni o'rgatmaydi. 
-              <span className="font-bold text-foreground"> Bu yerda faqat natija muhim.</span>
+              <span className="font-bold text-black"> Bu yerda faqat natija muhim.</span>
             </p>
           </motion.div>
           
           {/* Why This Matters - New Section */}
-          <Card className="border-2 border-border overflow-hidden">
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6">
-              <h3 className="text-xl font-bold text-foreground mb-4">Nima uchun bu muhim?</h3>
+          <Card className="border-2 border-black overflow-hidden shadow-lg">
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 sm:p-8 border-b-2 border-black">
+              <h3 className="text-xl sm:text-2xl font-bold text-black mb-4">Nima uchun bu muhim?</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <h4 className="font-semibold mb-2">Bugunga qadar:</h4>
-                  <ul className="space-y-2 text-muted-foreground">
+                  <ul className="space-y-2 text-gray-700">
                     <li className="flex items-start gap-2">
-                      <span className="text-gray-900 mt-1">▸</span>
+                      <span className="text-black mt-1">▸</span>
                       <span>AI'dan 10% foydalanish</span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -488,9 +488,9 @@ export default function Onboarding() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-2">O'rganganingizdan keyin:</h4>
-                  <ul className="space-y-2 text-muted-foreground">
+                  <ul className="space-y-2 text-gray-700">
                     <li className="flex items-start gap-2">
-                      <span className="text-gray-800 mt-1">▸</span>
+                      <span className="text-black mt-1">▸</span>
                       <span>AI imkoniyatlaridan 90% foydalanish</span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -1774,7 +1774,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
                   <h4 className="font-bold mb-4 uppercase text-sm tracking-wide">Oddiy ChatGPT:</h4>
-                  <div className="bg-gray-100 p-4 border border-gray-300">
+                  <div className="bg-gray-100 p-4 border-2 border-gray-300 rounded-lg">
                     <div className="flex items-center gap-3 mb-3">
                       <AiIcon name="brain" size={24} />
                       <span className="font-medium">Faqat o'z xotirasidan</span>
