@@ -9,4 +9,5 @@ echo "VITE_TELEGRAM_BOT_USERNAME: $VITE_TELEGRAM_BOT_USERNAME"
 
 # Application already built during Docker build
 echo "Starting application..."
-exec npm run start
+# Use the command passed to the container, or default to npm run start
+exec "$@"

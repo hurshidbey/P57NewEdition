@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  protokol57:
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
