@@ -563,13 +563,121 @@ export default function KnowledgeBase() {
 
   const searchResults = searchContent(searchQuery);
 
-  // Content Renderer (placeholder - will be filled with actual content)
+  // Content Renderer
   function renderCurrentContent() {
-    // This will be replaced with actual content from onboarding.tsx
+    const categoryId = activeCategory;
+    const sectionId = activeSection;
+    
+    // Sample content mapping - will be expanded with content from onboarding.tsx
+    if (categoryId === 'kirish' && sectionId === 'nima-uchun-muhim') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Hozirgi kunda sun'iy intellekt (AI) hayotimizning ajralmas qismiga aylanmoqda. 
+              ChatGPT, Claude, Gemini kabi AI assistentlar kundalik ishlarimizni yengillashtirmoqda.
+            </p>
+            <p className="text-lg leading-relaxed">
+              Lekin ko'pchilik foydalanuvchilar AI'ning to'liq potensialidan foydalana olmayapti. 
+              Sabab oddiy - ular AI bilan qanday muloqot qilishni bilishmaydi.
+            </p>
+          </div>
+          
+          <ExpandableCard
+            term="PROMPTING"
+            definition="AI bilan samarali muloqot qilish san'ati. To'g'ri savol berish orqali to'g'ri javob olish."
+            icon={<AiIcon name="brain" size={24} />}
+            examples={[
+              "Yomon: 'Menga maqola yoz'",
+              "Yaxshi: 'O'zbek tili tarixiga oid 500 so'zlik ilmiy maqola yoz. Uslub: akademik, auditoriya: universitet talabalari'"
+            ]}
+          />
+          
+          <Card className="border-2 border-black">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">NIMA UCHUN BU MUHIM?</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
+                  <span>Vaqtingizni tejaysiz - 10 soatlik ishni 1 soatda bajaring</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
+                  <span>Sifatni oshirasiz - Professional natijalar oling</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
+                  <span>Kreativlikni rivojlantirasiz - Yangi g'oyalar toping</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+          
+          <CodeExample
+            title="YAXSHI PROMPT MISOLI"
+            badExample="Menga biznes-plan yoz"
+            goodExample="Men yangi online ta'lim platformasi ochmoqchiman. 
+Target auditoriya: 18-25 yoshli talabalar
+Asosiy xizmat: Professional ko'nikmalar o'rgatish
+Biznes modeli: Oylik obuna
+Iltimos, quyidagi bo'limlarni o'z ichiga olgan biznes-plan tayyorla:
+1. Bozor tahlili
+2. Raqobatchilar tahlili
+3. Marketing strategiyasi
+4. Moliyaviy prognoz (1 yillik)
+5. Xatarlar va ularni kamaytirish yo'llari"
+            explanation="Yaxshi prompt aniq kontekst, maqsad va kutilgan natijani o'z ichiga oladi. Bu AI'ga sizning ehtiyojingizni to'liq tushunishga yordam beradi."
+          />
+        </div>
+      );
+    }
+    
+    if (categoryId === 'asoslar' && sectionId === 'ai-qanday-ishlaydi') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Sun'iy intellekt qanday ishlaydi? Bu savolga javob berish uchun avval 
+              AI'ning asosiy tushunchalarini tushunishimiz kerak.
+            </p>
+          </div>
+          
+          <ExpandableCard
+            term="NEYRON TARMOQLAR"
+            definition="Inson miyasining ishlash prinsipiga asoslangan kompyuter tizimlari. Millionlab 'neyron'lar ma'lumotni qayta ishlaydi."
+            icon={<AiIcon name="network" size={24} />}
+            examples={[
+              "Input (kirish) → Processing (qayta ishlash) → Output (natija)",
+              "Misol: Rasm → Neyron tarmoq → 'Bu mushuk rasmi'"
+            ]}
+          />
+          
+          <ExpandableCard
+            term="MACHINE LEARNING"
+            definition="Kompyuterlarning ma'lumotlardan o'rganish qobiliyati. Qancha ko'p ma'lumot, shuncha yaxshi natija."
+            icon={<AiIcon name="brain" size={24} />}
+            examples={[
+              "Supervised Learning - Nazorat ostida o'rganish",
+              "Unsupervised Learning - Mustaqil o'rganish",
+              "Reinforcement Learning - Mukofotlash orqali o'rganish"
+            ]}
+          />
+        </div>
+      );
+    }
+    
+    // Default content for sections not yet implemented
     return (
       <div className="prose prose-lg max-w-none">
-        <p className="text-lg">
-          Bu bo'lim tez orada to'ldiriladi. Hozircha siz boshqa bo'limlarga o'tishingiz mumkin.
+        <Alert className="border-2 border-black">
+          <AiIcon name="warning" size={20} />
+          <AlertDescription>
+            Bu bo'lim hozircha ishlab chiqilmoqda. Tez orada to'liq kontent qo'shiladi.
+          </AlertDescription>
+        </Alert>
+        <p className="text-lg mt-4">
+          Hozircha boshqa bo'limlarni ko'rib chiqishingiz mumkin. Har bir bo'lim AI va prompting 
+          bo'yicha foydali ma'lumotlar bilan to'ldiriladi.
         </p>
       </div>
     );
