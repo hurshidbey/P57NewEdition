@@ -274,11 +274,13 @@ export default function AtmosPayment() {
         <Label htmlFor="cardNumber" className="text-lg font-black text-foreground">KARTA RAQAMI</Label>
         <Input
           id="cardNumber"
+          type="tel"
+          inputMode="numeric"
           placeholder="0000 0000 0000 0000"
           value={cardNumber}
           onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
           maxLength={19}
-          className="text-xl tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background"
+          className="text-lg sm:text-xl tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background min-h-[56px]"
           required
         />
         <div className="text-sm font-bold text-muted-foreground">
@@ -290,11 +292,13 @@ export default function AtmosPayment() {
         <Label htmlFor="expiry" className="text-lg font-black text-foreground">AMAL QILISH MUDDATI</Label>
         <Input
           id="expiry"
+          type="tel"
+          inputMode="numeric"
           placeholder="MM/YY"
           value={expiry}
           onChange={(e) => setExpiry(formatExpiry(e.target.value))}
           maxLength={5}
-          className="text-xl font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background"
+          className="text-lg sm:text-xl font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background min-h-[56px]"
           required
         />
       </div>
@@ -323,11 +327,13 @@ export default function AtmosPayment() {
         <Label htmlFor="otp" className="text-lg font-black text-foreground">SMS KOD</Label>
         <Input
           id="otp"
+          type="tel"
+          inputMode="numeric"
           placeholder="000000"
           value={otpCode}
           onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
           maxLength={6}
-          className="text-3xl text-center tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background"
+          className="text-2xl sm:text-3xl text-center tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background min-h-[64px]"
           required
           autoFocus
         />
@@ -402,18 +408,18 @@ export default function AtmosPayment() {
     <div className="min-h-screen bg-background">
       <AppHeader />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-foreground mb-6">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-4 sm:mb-6">
               PREMIUM TO'LOV
             </h1>
           </div>
 
-          <div className="grid lg:grid-cols-5 gap-8">
-            {/* Left Column - Payment Form */}
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+            {/* Left Column - Payment Form - Full width on mobile */}
+            <div className="order-2 lg:order-1 lg:col-span-2">
               <div className="bg-card border-2 border-foreground shadow-lg">
                 {/* Payment Form */}
                 <div className="p-6 border-b-2 border-foreground">
@@ -504,8 +510,8 @@ export default function AtmosPayment() {
               </div>
             </div>
 
-            {/* Right Column - Product Details */}
-            <div className="lg:col-span-3">
+            {/* Right Column - Product Details - Shows first on mobile */}
+            <div className="order-1 lg:order-2 lg:col-span-3">
               <div className="bg-card border-2 border-foreground shadow-lg">
                 {/* Features */}
                 <div className="border-b-2 border-foreground p-6">
