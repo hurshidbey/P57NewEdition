@@ -1,12 +1,24 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LoginForm } from "@/components/auth/login-form"
 import { RegisterForm } from "@/components/auth/register-form"
 import { motion, AnimatePresence } from "framer-motion"
+import { useAuth } from "@/contexts/auth-context"
+import { useLocation } from "wouter"
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
   const [showEmailConfirm, setShowEmailConfirm] = useState(false)
+  const { isAuthenticated } = useAuth()
+  const [, setLocation] = useLocation()
+  
+  // If user is already authenticated, redirect to home
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('[AuthPage] User is authenticated, redirecting to home')
+      setLocation('/')
+    }
+  }, [isAuthenticated, setLocation])
 
   if (showEmailConfirm) {
     return (
