@@ -44,8 +44,9 @@ export default function PremiumPrompts() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const { tier } = useUserTier();
 
+  // Always fetch all prompts, we'll handle access control in the UI
   const { data: prompts = [], isLoading, error } = useQuery<Prompt[]>({
-    queryKey: [`/api/prompts`, { userTier: tier }],
+    queryKey: [`/api/prompts`, { userTier: 'paid' }], // Fetch all prompts
   });
 
   // Filter prompts based on search and category
@@ -62,9 +63,9 @@ export default function PremiumPrompts() {
   // Get unique categories
   const categories = ['all', ...Array.from(new Set(prompts.map(p => p.category)))];
   
-  // Separate free and premium prompts
-  const freePrompts = filteredPrompts.filter(p => !p.isPremium);
-  const premiumPrompts = filteredPrompts.filter(p => p.isPremium);
+  // Separate free and premium prompts based on specific IDs
+  const freePrompts = filteredPrompts.filter(p => p.id === 25 || p.id === 26 || p.id === 27);
+  const premiumPrompts = filteredPrompts.filter(p => p.id !== 25 && p.id !== 26 && p.id !== 27);
 
   if (isLoading) {
     return (
