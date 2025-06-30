@@ -27,7 +27,7 @@ export default function ProtocolNavigation({ currentProtocolId }: ProtocolNaviga
           <Link href={`/protocols/${previousProtocol.id}`}>
             <Button 
               variant="outline" 
-              className="w-full sm:w-auto justify-start gap-2 min-h-[44px] px-4 py-3 rounded-xl border-border/50 hover:border-accent hover:bg-accent/5 transition-all touch-manipulation group"
+              className="w-full sm:w-auto justify-start gap-2 min-h-[48px] px-4 py-3 rounded-xl border-border/50 hover:border-accent hover:bg-accent/5 transition-all touch-manipulation group"
             >
               <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
               <div className="text-left">
@@ -56,7 +56,7 @@ export default function ProtocolNavigation({ currentProtocolId }: ProtocolNaviga
           <Link href={`/protocols/${nextProtocol.id}`}>
             <Button 
               variant="outline" 
-              className="w-full sm:w-auto justify-end gap-2 min-h-[44px] px-4 py-3 rounded-xl border-border/50 hover:border-accent hover:bg-accent/5 transition-all touch-manipulation group sm:ml-auto"
+              className="w-full sm:w-auto justify-end gap-2 min-h-[48px] px-4 py-3 rounded-xl border-border/50 hover:border-accent hover:bg-accent/5 transition-all touch-manipulation group sm:ml-auto"
             >
               <div className="text-right">
                 <div className="text-xs text-muted-foreground">Keyingi</div>
