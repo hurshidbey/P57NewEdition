@@ -42,10 +42,20 @@ function AppContent() {
   const { isAuthenticated, loading, user } = useAuth();
 
   // Check if current user is admin
-  const isAdmin = user?.email === 'hurshidbey@gmail.com';
+  const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
   
-  // Show loading while checking auth
-  if (loading) {
+  // Debug logging
+  console.log('[AppContent] Auth state:', { 
+    isAuthenticated, 
+    loading, 
+    userEmail: user?.email,
+    isAdmin,
+    user
+  });
+  
+  // Show loading while checking auth OR if authenticated but user data not loaded yet
+  if (loading || (isAuthenticated && !user)) {
+    console.log('[AppContent] Waiting for user data to load...');
     return <PageLoader />;
   }
 
@@ -74,13 +84,26 @@ function AppContent() {
       </Route>
       
       <Route path="/admin">
-        {isAuthenticated && isAdmin ? (
-          <Suspense fallback={<PageLoader />}>
-            <Admin />
-          </Suspense>
-        ) : (
-          <AuthPage />
-        )}
+        {(() => {
+          console.log('[Admin Route Check]', {
+            path: '/admin',
+            isAuthenticated,
+            isAdmin,
+            userEmail: user?.email,
+            shouldShowAdmin: isAuthenticated && isAdmin
+          });
+          
+          if (isAuthenticated && isAdmin) {
+            return (
+              <Suspense fallback={<PageLoader />}>
+                <Admin />
+              </Suspense>
+            );
+          } else {
+            console.log('[Admin Route] Access denied, showing AuthPage');
+            return <AuthPage />;
+          }
+        })()}
       </Route>
       
       <Route path="/onboarding">

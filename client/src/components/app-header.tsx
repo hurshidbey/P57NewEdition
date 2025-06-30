@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,13 +8,21 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Crown, Star, FileText } from "lucide-react";
 
 export default function AppHeader() {
-  const { user, signOut, isAuthenticated } = useAuth();
+  const { user, signOut, isAuthenticated, refreshUser } = useAuth();
   const { tier, getTierStatus } = useUserTier();
   
   // Check if current user is admin
   const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
   
   const tierStatus = getTierStatus();
+
+  // If authenticated but no user data, try to refresh
+  useEffect(() => {
+    if (isAuthenticated && !user) {
+      console.log('[AppHeader] Authenticated but no user data, refreshing...');
+      refreshUser();
+    }
+  }, [isAuthenticated, user, refreshUser]);
 
   if (!isAuthenticated) {
     return null;

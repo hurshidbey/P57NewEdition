@@ -100,6 +100,13 @@ export default function Admin() {
   const isAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL || 
                   user?.email === 'hurshidbey@gmail.com' || 
                   user?.email === 'mustafaabdurahmonov7777@gmail.com';
+  
+  console.log('[Admin Page] Rendering', {
+    userEmail: user?.email,
+    isAuthenticated,
+    isAdmin,
+    VITE_ADMIN_EMAIL: import.meta.env.VITE_ADMIN_EMAIL
+  });
 
   useEffect(() => {
     if (isAuthenticated && isAdmin) {
@@ -211,7 +218,7 @@ export default function Admin() {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       
-      const res = await fetch(`/api/admin/protocols/${protocolId}/access`, {
+      const res = await fetch(`/api/admin/protocols/${protocolId}/toggle-free`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

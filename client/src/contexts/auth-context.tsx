@@ -31,12 +31,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check Supabase auth
     authService.getCurrentUser().then(user => {
+      console.log('[AuthContext] Initial user loaded:', user)
       setUser(user)
+      setLoading(false)
+    }).catch(error => {
+      console.error('[AuthContext] Error loading initial user:', error)
       setLoading(false)
     })
 
     // Listen for auth changes (Supabase only)
     const subscription = authService.onAuthStateChange((user) => {
+      console.log('[AuthContext] Auth state changed, new user:', user)
       setUser(user)
       setLoading(false)
     })
