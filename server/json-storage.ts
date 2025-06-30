@@ -45,11 +45,16 @@ export class JsonPromptsStorage {
       if (!prompt.isPublic) return false;
       
       if (userTier === 'free') {
-        return !prompt.isPremium; // Free users: only non-premium prompts
+        // Free users: only prompts with ID 1, 2, or 3
+        return prompt.id === 1 || prompt.id === 2 || prompt.id === 3;
       } else {
         return true; // Premium users: all public prompts
       }
-    }).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    }).sort((a, b) => {
+      const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+      const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+      return dateB - dateA;
+    });
   }
 
   async getPrompt(id: number): Promise<Prompt | undefined> {
@@ -60,7 +65,11 @@ export class JsonPromptsStorage {
   // Admin methods (require database sync)
   async getAllPrompts(): Promise<Prompt[]> {
     await this.initialize();
-    return [...this.prompts].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    return [...this.prompts].sort((a, b) => {
+      const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+      const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+      return dateB - dateA;
+    });
   }
 
   async addPrompt(prompt: Prompt): Promise<void> {
