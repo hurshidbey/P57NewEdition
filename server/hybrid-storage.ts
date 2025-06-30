@@ -22,8 +22,11 @@ export class HybridPromptsStorage {
     // Apply tier-based access control
     if (!prompt.isPublic) return undefined;
     
-    if (userTier === 'free' && prompt.isPremium) {
-      return undefined; // Free users can't access premium prompts
+    if (userTier === 'free') {
+      // Free users can only access prompts with ID 1, 2, or 3
+      if (prompt.id !== 1 && prompt.id !== 2 && prompt.id !== 3) {
+        return undefined;
+      }
     }
     
     return prompt;
