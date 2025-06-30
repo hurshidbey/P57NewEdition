@@ -45,8 +45,9 @@ export class JsonPromptsStorage {
       if (!prompt.isPublic) return false;
       
       if (userTier === 'free') {
-        // Free users: only non-premium prompts
-        return !prompt.isPremium;
+        // Free users: only prompts with ID 25, 26, 27
+        // These are: Business Performance Optimization, Target Auditoriya Tahlilchisi, Content Marketing Strategist
+        return prompt.id === 25 || prompt.id === 26 || prompt.id === 27;
       } else {
         return true; // Premium users: all public prompts
       }
