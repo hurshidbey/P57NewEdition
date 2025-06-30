@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
-import { motion, AnimatePresence } from "framer-motion";
+// Removed framer-motion for performance
 // All icons now use AiIcon component for consistency
 import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
@@ -25,12 +25,9 @@ function FlipCard({ term, definition, icon, examples }: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
-    <motion.div 
+    <div 
       className="relative w-full min-h-[240px] sm:h-72 cursor-pointer perspective-1000 group touch-manipulation"
       onClick={() => setIsFlipped(!isFlipped)}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 300 }}
     >
       <div className={`absolute inset-0 w-full h-full transition-transform duration-700 transform-style-preserve-3d ${
         isFlipped ? 'rotate-y-180' : ''
@@ -63,7 +60,7 @@ function FlipCard({ term, definition, icon, examples }: FlipCardProps) {
           </Card>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -91,7 +88,7 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
         <h4 className="font-semibold text-lg mb-4">{question}</h4>
         <div className="space-y-3">
           {options.map((option, index) => (
-            <motion.button
+            <button
               key={index}
               onClick={() => handleSelect(index)}
               disabled={showResult}
@@ -111,11 +108,11 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
                 </span>
                 <span className="text-base">{option}</span>
               </div>
-            </motion.button>
+            </button>
           ))}
         </div>
         {showResult && explanation && (
-          <motion.div
+          <div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -124,7 +121,7 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
               <AiIcon name="info" size={20} />
               <AlertDescription className="text-sm sm:text-base">{explanation}</AlertDescription>
             </Alert>
-          </motion.div>
+          </div>
         )}
       </CardContent>
     </Card>
@@ -311,7 +308,7 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
 
       {/* Visual representation */}
       <div className="relative h-24 bg-gradient-to-r from-blue-100 via-yellow-100 to-red-100 rounded-lg overflow-hidden border-2 border-black">
-        <motion.div
+        <div
           className="absolute top-0 bottom-0 w-2 bg-black"
           animate={{
             left: `${(value - min) / (max - min) * 100}%`
@@ -319,7 +316,7 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         />
         <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
+          <div
             key={currentExample.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -327,14 +324,14 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
           >
             <p className="font-bold text-lg">{currentExample.label}</p>
             <p className="text-sm text-muted-foreground">{currentExample.example}</p>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Examples grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {examples.map((example) => (
-          <motion.button
+          <button
             key={example.value}
             onClick={() => setValue(example.value)}
             whileHover={{ scale: 1.02 }}
@@ -347,7 +344,7 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
           >
             <p className="font-semibold">{example.label}</p>
             <p className="text-xs text-muted-foreground">({example.value})</p>
-          </motion.button>
+          </button>
         ))}
       </div>
 
@@ -446,7 +443,7 @@ export default function Onboarding() {
       content: (
         <div className="space-y-8">
           {/* Hero Section */}
-          <motion.div 
+          <div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -462,7 +459,7 @@ export default function Onboarding() {
               Bu qo'llanma ChatGPT bilan muloyim gaplashishni o'rgatmaydi. 
               <span className="font-bold text-black"> Bu yerda faqat natija muhim.</span>
             </p>
-          </motion.div>
+          </div>
           
           {/* Why This Matters - New Section */}
           <Card className="border-2 border-black overflow-hidden shadow-lg">
@@ -698,27 +695,27 @@ export default function Onboarding() {
                 rows={5}
               />
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <motion.div 
+                <div 
                   whileHover={{ scale: 1.02 }}
                   className="text-center p-4 bg-background rounded-xl border-2 border-border shadow-soft hover:shadow-medium transition-all"
                 >
                   <p className="text-sm text-muted-foreground mb-1">Belgilar</p>
                   <p className="text-2xl font-bold text-foreground">{tokenText.length}</p>
-                </motion.div>
-                <motion.div 
+                </div>
+                <div 
                   whileHover={{ scale: 1.02 }}
                   className="text-center p-4 bg-accent/10 rounded-xl border-2 border-accent/20 shadow-soft hover:shadow-medium transition-all"
                 >
                   <p className="text-sm text-muted-foreground mb-1">Taxminiy tokenlar</p>
                   <p className="text-3xl font-bold text-accent">{calculateTokens(tokenText)}</p>
-                </motion.div>
-                <motion.div 
+                </div>
+                <div 
                   whileHover={{ scale: 1.02 }}
                   className="text-center p-4 bg-background rounded-xl border-2 border-border shadow-soft hover:shadow-medium transition-all"
                 >
                   <p className="text-sm text-muted-foreground mb-1">Narxi (GPT-4)</p>
                   <p className="text-2xl font-bold text-foreground">${(calculateTokens(tokenText) * 0.00003).toFixed(4)}</p>
-                </motion.div>
+                </div>
               </div>
               
               {/* Token Tips */}
@@ -905,7 +902,7 @@ export default function Onboarding() {
                       solution: "'Aniq emas' javoblarini ham qabul qiling"
                     }
                   ].map((item, idx) => (
-                    <motion.div 
+                    <div 
                       key={idx}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -919,7 +916,7 @@ export default function Onboarding() {
                       <p className="text-sm text-black">
                         <strong>Yechim:</strong> {item.solution}
                       </p>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </CardContent>
@@ -3296,7 +3293,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
       {/* Save Indicator */}
       <AnimatePresence>
         {showSaveIndicator && (
-          <motion.div
+          <div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -3304,7 +3301,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
           >
             <AiIcon name="checked" size={16} className="invert" />
             <span className="text-sm">Progress saqlandi</span>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
       
@@ -3312,7 +3309,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
         {/* Welcome Back Message */}
         <AnimatePresence>
           {showWelcomeBack && (
-            <motion.div
+            <div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -3333,12 +3330,12 @@ O'z javobingizga asoslanib vazifani bajaring."`}
               >
                 <AiIcon name="close" size={16} className="invert" />
               </Button>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
         {/* Progress Header */}
-        <motion.div 
+        <div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 bg-muted rounded-2xl p-8 shadow-soft"
@@ -3367,17 +3364,17 @@ O'z javobingizga asoslanib vazifani bajaring."`}
             </div>
           </div>
           <Progress value={totalProgress} className="h-3 bg-muted" />
-        </motion.div>
+        </div>
 
         {/* Section Navigation Tabs */}
-        <motion.div 
+        <div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
           className="flex items-center justify-start sm:justify-center gap-1 mb-8 sm:mb-12 bg-muted rounded-2xl p-1 overflow-x-auto shadow-soft scrollbar-hide"
         >
           {sections.map((section, index) => (
-            <motion.button
+            <button
               key={section.id}
               onClick={() => setCurrentSection(index)}
               whileHover={{ scale: 1.02 }}
@@ -3395,13 +3392,13 @@ O'z javobingizga asoslanib vazifani bajaring."`}
               {completedSections.has(index) && index !== currentSection && (
                 <AiIcon name="checked" size={16} className="ml-auto" />
               )}
-            </motion.button>
+            </button>
           ))}
-        </motion.div>
+        </div>
 
         {/* Content Area with Animation */}
         <AnimatePresence mode="wait">
-          <motion.div 
+          <div 
             key={currentSection}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -3410,11 +3407,11 @@ O'z javobingizga asoslanib vazifani bajaring."`}
             className="min-h-[400px] sm:min-h-[600px]"
           >
             {sections[currentSection].content}
-          </motion.div>
+          </div>
         </AnimatePresence>
 
         {/* Navigation Footer */}
-        <motion.div 
+        <div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
@@ -3433,7 +3430,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
 
           <div className="flex items-center gap-2">
             {sections.map((_, index) => (
-              <motion.div
+              <div
                 key={index}
                 animate={{
                   width: index === currentSection ? 32 : 8,
@@ -3466,7 +3463,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
               <AiIcon name="arrow-right" size={16} className="transition-transform group-hover:translate-x-1" />
             </Button>
           )}
-        </motion.div>
+        </div>
       </main>
       <AppFooter />
     </div>

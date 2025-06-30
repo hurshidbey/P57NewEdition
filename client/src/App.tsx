@@ -23,6 +23,7 @@ const Home = lazy(() => import("@/pages/home"));
 const ProtocolDetail = lazy(() => import("@/pages/protocol-detail"));
 const Admin = lazy(() => import("@/pages/admin"));
 const Onboarding = lazy(() => import("@/pages/onboarding"));
+const KnowledgeBase = lazy(() => import("@/pages/knowledge-base"));
 const AtmosPayment = lazy(() => import("@/pages/atmos-payment"));
 const PremiumPrompts = lazy(() => import("@/pages/premium-prompts"));
 
@@ -110,6 +111,16 @@ function AppContent() {
         {isAuthenticated ? (
           <Suspense fallback={<PageLoader />}>
             <Onboarding />
+          </Suspense>
+        ) : (
+          <AuthPage />
+        )}
+      </Route>
+      
+      <Route path="/knowledge-base">
+        {isAuthenticated ? (
+          <Suspense fallback={<PageLoader />}>
+            <KnowledgeBase />
           </Suspense>
         ) : (
           <AuthPage />
