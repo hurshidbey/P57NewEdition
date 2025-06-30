@@ -62,10 +62,9 @@ export default function PremiumPrompts() {
   // Get unique categories
   const categories = ['all', ...Array.from(new Set(prompts.map(p => p.category)))];
   
-  // Separate free and premium prompts based on ID
-  // Free users can only see prompts with ID 1, 2, or 3
-  const freePrompts = filteredPrompts.filter(p => p.id === 1 || p.id === 2 || p.id === 3);
-  const premiumPrompts = filteredPrompts.filter(p => p.id !== 1 && p.id !== 2 && p.id !== 3);
+  // Separate free and premium prompts
+  const freePrompts = filteredPrompts.filter(p => !p.isPremium);
+  const premiumPrompts = filteredPrompts.filter(p => p.isPremium);
 
   if (isLoading) {
     return (

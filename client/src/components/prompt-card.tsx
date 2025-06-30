@@ -38,8 +38,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
     }
   };
 
-  // Free users can only access prompts with ID 1, 2, or 3
-  const canAccess = tier === 'paid' || (prompt.id === 1 || prompt.id === 2 || prompt.id === 3);
+  const canAccess = tier === 'paid' || !prompt.isPremium;
 
   if (variant === 'compact') {
     return (
@@ -53,7 +52,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
               <Badge variant="outline" className="text-xs">
                 {prompt.category}
               </Badge>
-              {(prompt.id !== 1 && prompt.id !== 2 && prompt.id !== 3) && (
+              {prompt.isPremium && (
                 <Badge className="bg-accent/20 text-accent hover:bg-accent/30 text-xs">
                   <Crown className="w-2 h-2 mr-1" />
                   Premium
@@ -198,7 +197,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
             <Badge variant="outline" className="text-xs">
               {prompt.category}
             </Badge>
-            {(prompt.id !== 1 && prompt.id !== 2 && prompt.id !== 3) && (
+            {prompt.isPremium && (
               <Badge className="bg-accent/20 text-accent hover:bg-accent/30">
                 <Crown className="w-3 h-3 mr-1" />
                 Premium
