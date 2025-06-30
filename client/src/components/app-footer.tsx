@@ -31,9 +31,9 @@ export default function AppFooter() {
             <h3 className="font-semibold text-foreground mb-4">O'rganish</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/onboarding">
+                <Link href="/knowledge-base">
                   <span className="text-muted-foreground hover:text-accent transition-colors cursor-pointer">
-                    Boshlang'ich qo'llanma
+                    Bilimlar Bazasi
                   </span>
                 </Link>
               </li>
