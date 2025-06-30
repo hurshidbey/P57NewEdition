@@ -10,9 +10,9 @@ services:
     ports:
       - "5001:5000"
     # Remove volume mounts in production to prevent overriding built assets
-    # volumes:
-    #   - .:/app
-    #   - /app/node_modules
+    volumes:
+      - .:/app
+      - /app/node_modules
     env_file:
       - .env.production
     environment:
