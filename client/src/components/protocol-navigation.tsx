@@ -19,9 +19,10 @@ export default function ProtocolNavigation({ currentProtocolId }: ProtocolNaviga
     <motion.section 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mb-8"
+      className="mt-16 mb-12"
     >
-      <div className="flex items-center justify-between gap-4">
+      {/* Desktop Layout */}
+      <div className="hidden sm:flex items-center justify-between gap-4">
         {/* Previous Protocol */}
         {previousProtocol ? (
           <Link href={`/protocols/${previousProtocol.id}`} className="flex-1 max-w-[280px]">
@@ -64,6 +65,49 @@ export default function ProtocolNavigation({ currentProtocolId }: ProtocolNaviga
         ) : (
           <div className="flex-1 max-w-[280px]" />
         )}
+      </div>
+
+      {/* Mobile Layout - Stacked */}
+      <div className="sm:hidden flex flex-col gap-3">
+        {/* Progress Indicator - Top */}
+        <div className="text-center mb-2">
+          <div className="inline-block px-6 py-3 bg-white border-2 border-black">
+            <span className="text-base font-bold text-black">{currentIndex} / {totalProtocols}</span>
+          </div>
+        </div>
+
+        {/* Navigation Buttons - Horizontal */}
+        <div className="flex gap-3">
+          {/* Previous Protocol */}
+          {previousProtocol ? (
+            <Link href={`/protocols/${previousProtocol.id}`} className="flex-1">
+              <Button 
+                variant="outline" 
+                className="w-full h-[48px] px-4 py-2 border-2 border-black bg-white hover:bg-gray-100 transition-all touch-manipulation flex items-center justify-center gap-2"
+              >
+                <ChevronLeft className="w-4 h-4 flex-shrink-0" />
+                <span className="text-xs font-bold uppercase">OLDINGI</span>
+              </Button>
+            </Link>
+          ) : (
+            <div className="flex-1" />
+          )}
+
+          {/* Next Protocol */}
+          {nextProtocol ? (
+            <Link href={`/protocols/${nextProtocol.id}`} className="flex-1">
+              <Button 
+                variant="outline" 
+                className="w-full h-[48px] px-4 py-2 border-2 border-black bg-white hover:bg-gray-100 transition-all touch-manipulation flex items-center justify-center gap-2"
+              >
+                <span className="text-xs font-bold uppercase">KEYINGI</span>
+                <ChevronRight className="w-4 h-4 flex-shrink-0" />
+              </Button>
+            </Link>
+          ) : (
+            <div className="flex-1" />
+          )}
+        </div>
       </div>
     </motion.section>
   );
