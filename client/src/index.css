@@ -447,3 +447,71 @@ img[alt*="icon"] {
     @apply px-0;
   }
 }
+
+/* Knowledge Base Prose Overrides */
+.kb-prose h1,
+.kb-prose h2,
+.kb-prose h3,
+.kb-prose h4,
+.kb-prose h5,
+.kb-prose h6 {
+  @apply font-black uppercase tracking-tight;
+}
+
+.kb-prose h1 {
+  @apply mt-0 mb-6 text-3xl lg:text-4xl;
+}
+
+.kb-prose h2 {
+  @apply mt-8 mb-4 text-2xl lg:text-3xl;
+}
+
+.kb-prose h3 {
+  @apply mt-6 mb-3 text-xl lg:text-2xl;
+}
+
+.kb-prose h4 {
+  @apply mt-4 mb-2 text-lg lg:text-xl;
+}
+
+.kb-prose p {
+  @apply my-4;
+}
+
+.kb-prose ul,
+.kb-prose ol {
+  @apply my-4 pl-6;
+}
+
+.kb-prose li {
+  @apply my-2;
+}
+
+.kb-prose pre {
+  @apply my-6;
+}
+
+.kb-prose blockquote {
+  @apply my-6;
+}
+
+/* Remove spacing for first/last children */
+.kb-prose > :first-child {
+  @apply mt-0;
+}
+
+.kb-prose > :last-child {
+  @apply mb-0;
+}
+
+/* Card and Example component spacing */
+.kb-card,
+.kb-example {
+  @apply mb-6;
+}
+
+/* Last card/example doesn't need bottom margin */
+.kb-prose > .kb-card:last-child,
+.kb-prose > .kb-example:last-child {
+  @apply mb-0;
+}

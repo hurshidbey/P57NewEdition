@@ -12,7 +12,7 @@ export function ExpandableCard({ term, definition, icon, examples }: ExpandableC
   const [isExpanded, setIsExpanded] = useState(false);
   
   return (
-    <div className="border-2 border-black mb-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+    <div className="border-2 border-black kb-card shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full p-6 flex items-center justify-between hover:bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
