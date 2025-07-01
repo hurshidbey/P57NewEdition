@@ -41,7 +41,7 @@ export function ExpandableCard({ term, definition, icon, examples }: ExpandableC
           <p className="text-base mb-4 text-black leading-relaxed">{definition}</p>
           {examples && examples.length > 0 && (
             <div className="mt-4 pt-4 border-t-2 border-black">
-              <p className="font-black mb-1 text-black uppercase">MISOLLAR:</p>
+              <p className="font-black mb-0 text-black uppercase">MISOLLAR:</p>
               {examples.map((example, idx) => (
                 <p key={idx} className="mb-2 text-black text-sm">• {example}</p>
               ))}
