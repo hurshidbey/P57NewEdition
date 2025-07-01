@@ -27,13 +27,13 @@ export const ragAsoslari: SectionContent = {
               </p>
             </div>
 
-            <Card className="border-2 border-black bg-gradient-to-r from-blue-50 to-purple-50">
+            <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-6 text-center">RAG ARXITEKTURASI</h3>
                 
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">1</div>
+                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">1</div>
                     <div className="flex-1">
                       <h4 className="font-bold">SAVOL</h4>
                       <p className="text-sm text-gray-700">Foydalanuvchi savolini qabul qilish</p>
@@ -41,7 +41,7 @@ export const ragAsoslari: SectionContent = {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">2</div>
+                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">2</div>
                     <div className="flex-1">
                       <h4 className="font-bold">QIDIRUV</h4>
                       <p className="text-sm text-gray-700">Ma'lumotlar bazasidan tegishli hujjatlarni topish</p>
@@ -49,7 +49,7 @@ export const ragAsoslari: SectionContent = {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">3</div>
+                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">3</div>
                     <div className="flex-1">
                       <h4 className="font-bold">BIRLASHMA</h4>
                       <p className="text-sm text-gray-700">Savol va topilgan ma'lumotlarni birlashtirish</p>
@@ -57,7 +57,7 @@ export const ragAsoslari: SectionContent = {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">4</div>
+                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">4</div>
                     <div className="flex-1">
                       <h4 className="font-bold">GENERATSIYA</h4>
                       <p className="text-sm text-gray-700">AI model orqali to'liq javob yaratish</p>
@@ -68,52 +68,52 @@ export const ragAsoslari: SectionContent = {
             </Card>
 
             <div className="grid gap-4 md:grid-cols-2">
-              <Card className="border-2 border-green-600">
-                <div className="bg-green-600 p-3">
+              <Card className="border-2 border-black">
+                <div className="bg-black p-3">
                   <h4 className="text-white font-bold">RAG AFZALLIKLARI</h4>
                 </div>
                 <CardContent className="p-4">
                   <ul className="text-sm space-y-2">
                     <li className="flex items-start gap-2">
-                      <AiIcon name="checked" size={16} className="mt-0.5 text-green-600" />
+                      <AiIcon name="checked" size={16} className="mt-0.5 text-black" />
                       <span>Doim yangi ma'lumotlar</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <AiIcon name="checked" size={16} className="mt-0.5 text-green-600" />
+                      <AiIcon name="checked" size={16} className="mt-0.5 text-black" />
                       <span>Manbaga asoslangan javoblar</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <AiIcon name="checked" size={16} className="mt-0.5 text-green-600" />
+                      <AiIcon name="checked" size={16} className="mt-0.5 text-black" />
                       <span>Kamroq gallyutsinatsiya</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <AiIcon name="checked" size={16} className="mt-0.5 text-green-600" />
+                      <AiIcon name="checked" size={16} className="mt-0.5 text-black" />
                       <span>Domain-specific bilimlar</span>
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-orange-600">
-                <div className="bg-orange-600 p-3">
+              <Card className="border-2 border-black">
+                <div className="bg-black p-3">
                   <h4 className="text-white font-bold">QACHON ISHLATISH?</h4>
                 </div>
                 <CardContent className="p-4">
                   <ul className="text-sm space-y-2">
                     <li className="flex items-start gap-2">
-                      <span className="text-orange-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Kompaniya ichki hujjatlari</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-orange-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Yangiliklar va real vaqt</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-orange-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Ilmiy tadqiqotlar</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-orange-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Qonunchilik bazasi</span>
                     </li>
                   </ul>
@@ -139,9 +139,9 @@ rag_ai:
               explanation="RAG tizimi real vaqtda yangi ma'lumotlarni topib, manbaga asoslangan aniq javob beradi."
             />
 
-            <Alert className="border-2 border-blue-500 bg-blue-50">
-              <AiIcon name="info" size={20} className="text-blue-600" />
-              <AlertDescription className="text-blue-800">
+            <Alert className="border-2 border-gray-600 bg-gray-50">
+              <AiIcon name="info" size={20} className="text-gray-700" />
+              <AlertDescription className="text-gray-800">
                 <strong>Muhim:</strong> RAG tizimi faqat ma'lumotlar bazasidagi sifatga bog'liq. 
                 Shuning uchun ma'lumotlarni doimiy yangilab turish zarur.
               </AlertDescription>
@@ -190,7 +190,7 @@ export const vektorQidiruv: SectionContent = {
               <CardContent className="p-6">
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">1</div>
+                    <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">1</div>
                     <div>
                       <h4 className="font-bold mb-1">EMBEDDING YARATISH</h4>
                       <p className="text-sm text-gray-700">Barcha hujjatlarni vektorlarga aylantirish</p>
@@ -201,7 +201,7 @@ export const vektorQidiruv: SectionContent = {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-purple-500 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">2</div>
+                    <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">2</div>
                     <div>
                       <h4 className="font-bold mb-1">VEKTOR BAZASIGA SAQLASH</h4>
                       <p className="text-sm text-gray-700">Vektorlarni maxsus bazaga yozish</p>
@@ -212,7 +212,7 @@ export const vektorQidiruv: SectionContent = {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-green-500 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">3</div>
+                    <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">3</div>
                     <div>
                       <h4 className="font-bold mb-1">QIDIRUV AMALGA OSHIRISH</h4>
                       <p className="text-sm text-gray-700">Savol vektorini yaratib, eng yaqinlarini topish</p>
@@ -229,7 +229,7 @@ export const vektorQidiruv: SectionContent = {
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
                   <h4 className="font-bold mb-2 text-center">COSINE SIMILARITY</h4>
-                  <div className="text-center text-3xl my-3">📐</div>
+                  <div className="text-center text-3xl my-3"></div>
                   <p className="text-sm text-center">Vektorlar orasidagi burchakni o'lchash</p>
                   <p className="text-xs text-center mt-2 text-gray-600">Eng mashhur usul</p>
                 </CardContent>
@@ -238,7 +238,7 @@ export const vektorQidiruv: SectionContent = {
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
                   <h4 className="font-bold mb-2 text-center">EUCLIDEAN DISTANCE</h4>
-                  <div className="text-center text-3xl my-3">📏</div>
+                  <div className="text-center text-3xl my-3"></div>
                   <p className="text-sm text-center">To'g'ri chiziq masofasi</p>
                   <p className="text-xs text-center mt-2 text-gray-600">Oddiy va tez</p>
                 </CardContent>
@@ -247,7 +247,7 @@ export const vektorQidiruv: SectionContent = {
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
                   <h4 className="font-bold mb-2 text-center">DOT PRODUCT</h4>
-                  <div className="text-center text-3xl my-3">⚡</div>
+                  <div className="text-center text-3xl my-3"></div>
                   <p className="text-sm text-center">Vektorlar ko'paytmasi</p>
                   <p className="text-xs text-center mt-2 text-gray-600">Eng tez usul</p>
                 </CardContent>
@@ -272,9 +272,9 @@ vector_search("mashina")
               explanation="Vektor qidiruv semantik o'xshashlikni tushunadi va sinonimlarni ham topadi."
             />
 
-            <Alert className="border-2 border-purple-500 bg-purple-50">
-              <AiIcon name="rocket" size={20} className="text-purple-600" />
-              <AlertDescription className="text-purple-800">
+            <Alert className="border-2 border-gray-600 bg-gray-50">
+              <AiIcon name="rocket" size={20} className="text-gray-700" />
+              <AlertDescription className="text-gray-800">
                 <strong>Maslahat:</strong> Embedding modeli tanlashda tilni hisobga oling. 
                 O'zbek tili uchun multilingual modellar yaxshi ishlaydi.
               </AlertDescription>
@@ -305,7 +305,7 @@ export const hybridSearch: SectionContent = {
               </p>
             </div>
 
-            <Card className="border-2 border-black bg-gradient-to-br from-orange-50 to-red-50">
+            <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-6 text-center">HYBRID SEARCH FORMULASI</h3>
                 
@@ -319,23 +319,23 @@ export const hybridSearch: SectionContent = {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4 mt-6">
-                  <div className="bg-blue-100 border-2 border-blue-600 p-4 rounded">
-                    <h4 className="font-bold text-blue-800 mb-2">BM25 (Keyword)</h4>
+                  <div className="bg-gray-100 border-2 border-gray-600 p-4 rounded">
+                    <h4 className="font-bold text-gray-800 mb-2">BM25 (Keyword)</h4>
                     <ul className="text-sm space-y-1">
-                      <li>✓ Aniq terminlar</li>
-                      <li>✓ Rare words</li>
-                      <li>✓ Tez ishlaydi</li>
-                      <li>✗ Semantikani tushunmaydi</li>
+                      <li>- Aniq terminlar</li>
+                      <li>- Rare words</li>
+                      <li>- Tez ishlaydi</li>
+                      <li>- Semantikani tushunmaydi</li>
                     </ul>
                   </div>
                   
-                  <div className="bg-purple-100 border-2 border-purple-600 p-4 rounded">
-                    <h4 className="font-bold text-purple-800 mb-2">Vector Search</h4>
+                  <div className="bg-gray-100 border-2 border-gray-600 p-4 rounded">
+                    <h4 className="font-bold text-gray-800 mb-2">Vector Search</h4>
                     <ul className="text-sm space-y-1">
-                      <li>✓ Semantik o'xshashlik</li>
-                      <li>✓ Sinonimlar</li>
-                      <li>✓ Kontekstni tushunadi</li>
-                      <li>✗ Sekinroq</li>
+                      <li>- Semantik o'xshashlik</li>
+                      <li>- Sinonimlar</li>
+                      <li>- Kontekstni tushunadi</li>
+                      <li>- Sekinroq</li>
                     </ul>
                   </div>
                 </div>
@@ -382,25 +382,25 @@ def hybrid_search(query, alpha=0.5):
 
             <div className="grid gap-4 md:grid-cols-2">
               <Card className="border-2 border-black">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3">
+                <div className="bg-black p-3">
                   <h4 className="text-white font-bold">QACHON HYBRID KERAK?</h4>
                 </div>
                 <CardContent className="p-4">
                   <ul className="text-sm space-y-2">
                     <li className="flex items-start gap-2">
-                      <AiIcon name="target" size={16} className="mt-0.5 text-blue-600" />
+                      <AiIcon name="target" size={16} className="mt-0.5 text-black" />
                       <span>Aralash kontentlar (kod + matn)</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <AiIcon name="target" size={16} className="mt-0.5 text-blue-600" />
+                      <AiIcon name="target" size={16} className="mt-0.5 text-black" />
                       <span>Texnik dokumentatsiya</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <AiIcon name="target" size={16} className="mt-0.5 text-blue-600" />
+                      <AiIcon name="target" size={16} className="mt-0.5 text-black" />
                       <span>Ko'p tilli kontentlar</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <AiIcon name="target" size={16} className="mt-0.5 text-blue-600" />
+                      <AiIcon name="target" size={16} className="mt-0.5 text-black" />
                       <span>E-commerce qidiruv</span>
                     </li>
                   </ul>
@@ -408,25 +408,25 @@ def hybrid_search(query, alpha=0.5):
               </Card>
 
               <Card className="border-2 border-black">
-                <div className="bg-gradient-to-r from-green-600 to-teal-600 p-3">
+                <div className="bg-black p-3">
                   <h4 className="text-white font-bold">OPTIMIZATSIYA</h4>
                 </div>
                 <CardContent className="p-4">
                   <ul className="text-sm space-y-2">
                     <li className="flex items-start gap-2">
-                      <AiIcon name="lightning" size={16} className="mt-0.5 text-green-600" />
+                      <AiIcon name="lightning" size={16} className="mt-0.5 text-black" />
                       <span>Alpha parametrini sozlash</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <AiIcon name="lightning" size={16} className="mt-0.5 text-green-600" />
+                      <AiIcon name="lightning" size={16} className="mt-0.5 text-black" />
                       <span>Index strategiyasi</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <AiIcon name="lightning" size={16} className="mt-0.5 text-green-600" />
+                      <AiIcon name="lightning" size={16} className="mt-0.5 text-black" />
                       <span>Caching natijalar</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <AiIcon name="lightning" size={16} className="mt-0.5 text-green-600" />
+                      <AiIcon name="lightning" size={16} className="mt-0.5 text-black" />
                       <span>Parallel qidiruv</span>
                     </li>
                   </ul>
@@ -434,9 +434,9 @@ def hybrid_search(query, alpha=0.5):
               </Card>
             </div>
 
-            <Alert className="border-2 border-orange-500 bg-orange-50">
-              <AiIcon name="warning" size={20} className="text-orange-600" />
-              <AlertDescription className="text-orange-800">
+            <Alert className="border-2 border-gray-600 bg-gray-50">
+              <AiIcon name="warning" size={20} className="text-gray-700" />
+              <AlertDescription className="text-gray-800">
                 <strong>Diqqat:</strong> Hybrid search konfiguratsiyasi use-case ga bog'liq. 
                 A/B testing orqali optimal parametrlarni toping.
               </AlertDescription>
@@ -449,19 +449,19 @@ def hybrid_search(query, alpha=0.5):
               <CardContent className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-bold mb-2">📚 Texnik Dokumentatsiya Qidiruvi</h4>
+                    <h4 className="font-bold mb-2">Texnik Dokumentatsiya Qidiruvi</h4>
                     <p className="text-sm text-gray-700 mb-3">
                       Savol: "Python'da async funksiya qanday ishlaydi?"
                     </p>
                     <div className="space-y-2">
-                      <div className="p-3 bg-blue-50 border border-blue-300 rounded">
-                        <span className="font-bold text-blue-700">BM25:</span> "async", "function", "Python" kalit so'zlari bo'yicha
+                      <div className="p-3 bg-gray-50 border border-gray-300 rounded">
+                        <span className="font-bold text-gray-700">BM25:</span> "async", "function", "Python" kalit so'zlari bo'yicha
                       </div>
-                      <div className="p-3 bg-purple-50 border border-purple-300 rounded">
-                        <span className="font-bold text-purple-700">Vector:</span> Asinxron dasturlash konseptlari bo'yicha
+                      <div className="p-3 bg-gray-50 border border-gray-300 rounded">
+                        <span className="font-bold text-gray-700">Vector:</span> Asinxron dasturlash konseptlari bo'yicha
                       </div>
-                      <div className="p-3 bg-green-50 border border-green-300 rounded">
-                        <span className="font-bold text-green-700">Hybrid:</span> Eng relevant va to'liq natijalar
+                      <div className="p-3 bg-gray-50 border border-gray-300 rounded">
+                        <span className="font-bold text-gray-700">Hybrid:</span> Eng relevant va to'liq natijalar
                       </div>
                     </div>
                   </div>

@@ -80,9 +80,9 @@ agent:
               ]}
             />
 
-            <Alert className="border-2 border-orange-500 bg-orange-50">
-              <AiIcon name="lightbulb" size={20} className="text-orange-600" />
-              <AlertDescription className="text-orange-800">
+            <Alert className="border-2 border-gray-600 bg-gray-50">
+              <AiIcon name="lightbulb" size={20} className="text-gray-700" />
+              <AlertDescription className="text-gray-800">
                 <strong>Maslahat:</strong> Agentlar eng yaxshi natija beradi qachonki ularga aniq maqsad, 
                 kerakli vositalar va etarli vaqt berilsa.
               </AlertDescription>
@@ -176,34 +176,34 @@ agent:
             />
 
             <div className="grid gap-4 md:grid-cols-2">
-              <Card className="border-2 border-green-600">
+              <Card className="border-2 border-black">
                 <CardContent className="p-4">
-                  <h4 className="font-bold text-green-800 mb-2">✓ AFZALLIKLAR</h4>
+                  <h4 className="font-bold text-black mb-2">AFZALLIKLAR</h4>
                   <ul className="text-sm space-y-1">
-                    <li>• Real vaqt ma'lumotlari</li>
-                    <li>• Aniq hisoblashlar</li>
-                    <li>• Keng imkoniyatlar</li>
-                    <li>• Avtomatlashtirish</li>
+                    <li>- Real vaqt ma'lumotlari</li>
+                    <li>- Aniq hisoblashlar</li>
+                    <li>- Keng imkoniyatlar</li>
+                    <li>- Avtomatlashtirish</li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-red-600">
+              <Card className="border-2 border-black">
                 <CardContent className="p-4">
-                  <h4 className="font-bold text-red-800 mb-2">✗ CHEKLOVLAR</h4>
+                  <h4 className="font-bold text-black mb-2">CHEKLOVLAR</h4>
                   <ul className="text-sm space-y-1">
-                    <li>• API limitlari</li>
-                    <li>• Xavfsizlik masalalari</li>
-                    <li>• Sekinroq javob</li>
-                    <li>• Xatolik ehtimoli</li>
+                    <li>- API limitlari</li>
+                    <li>- Xavfsizlik masalalari</li>
+                    <li>- Sekinroq javob</li>
+                    <li>- Xatolik ehtimoli</li>
                   </ul>
                 </CardContent>
               </Card>
             </div>
 
-            <Alert className="border-2 border-blue-500 bg-blue-50">
-              <AiIcon name="shield" size={20} className="text-blue-600" />
-              <AlertDescription className="text-blue-800">
+            <Alert className="border-2 border-gray-600 bg-gray-50">
+              <AiIcon name="shield" size={20} className="text-gray-700" />
+              <AlertDescription className="text-gray-800">
                 <strong>Xavfsizlik:</strong> Agentlarga faqat kerakli vositalarni bering. 
                 Har bir vosita uchun ruxsatlarni aniq belgilang.
               </AlertDescription>
@@ -234,39 +234,39 @@ export const orchestration: SectionContent = {
               </p>
             </div>
 
-            <Card className="border-2 border-black bg-gradient-to-br from-gray-50 to-gray-100">
+            <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-6 text-center">ORCHESTRATION ARXITEKTURASI</h3>
                 
                 <div className="space-y-6">
                   {/* Orchestrator */}
                   <div className="border-3 border-black bg-white p-4 shadow-lg">
-                    <h4 className="font-bold text-center mb-2">🎯 ORCHESTRATOR</h4>
+                    <h4 className="font-bold text-center mb-2">ORCHESTRATOR</h4>
                     <p className="text-sm text-center">Vazifalarni taqsimlash va natijalarni birlashtirish</p>
                   </div>
 
                   {/* Agents */}
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="border-2 border-blue-600 bg-blue-50 p-3">
-                      <h5 className="font-bold text-sm text-center mb-1">📊 Tahlil Agent</h5>
+                    <div className="border-2 border-gray-600 bg-gray-50 p-3">
+                      <h5 className="font-bold text-sm text-center mb-1">Tahlil Agent</h5>
                       <p className="text-xs text-center">Ma'lumotlarni tahlil qilish</p>
                     </div>
-                    <div className="border-2 border-green-600 bg-green-50 p-3">
-                      <h5 className="font-bold text-sm text-center mb-1">✍️ Yozuv Agent</h5>
+                    <div className="border-2 border-gray-600 bg-gray-50 p-3">
+                      <h5 className="font-bold text-sm text-center mb-1">Yozuv Agent</h5>
                       <p className="text-xs text-center">Kontent yaratish</p>
                     </div>
-                    <div className="border-2 border-purple-600 bg-purple-50 p-3">
-                      <h5 className="font-bold text-sm text-center mb-1">✓ Tekshiruv Agent</h5>
+                    <div className="border-2 border-gray-600 bg-gray-50 p-3">
+                      <h5 className="font-bold text-sm text-center mb-1">Tekshiruv Agent</h5>
                       <p className="text-xs text-center">Sifatni nazorat qilish</p>
                     </div>
                   </div>
 
                   {/* Arrows showing flow */}
-                  <div className="text-center text-2xl">↕️</div>
+                  <div className="text-center text-2xl">↕</div>
 
                   {/* Shared Resources */}
                   <div className="border-2 border-gray-600 bg-gray-100 p-4">
-                    <h4 className="font-bold text-center mb-2">💾 UMUMIY RESURSLAR</h4>
+                    <h4 className="font-bold text-center mb-2">UMUMIY RESURSLAR</h4>
                     <p className="text-sm text-center">Xotira, Vositalar, Ma'lumotlar bazasi</p>
                   </div>
                 </div>
@@ -316,19 +316,19 @@ orchestrator.assign_tasks({
                 <CardContent className="p-4">
                   <ul className="text-sm space-y-2">
                     <li className="flex items-start gap-2">
-                      <span className="text-green-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Murakkab, ko'p bosqichli vazifalar</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-green-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Turli ixtisoslar talab qilinsa</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-green-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Parallel ishlash imkoni bo'lsa</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-green-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Katta hajmdagi ishlar</span>
                     </li>
                   </ul>
@@ -342,19 +342,19 @@ orchestrator.assign_tasks({
                 <CardContent className="p-4">
                   <ul className="text-sm space-y-2">
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Aniq rol va mas'uliyatlar</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Samarali kommunikatsiya</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Xatoliklarni boshqarish</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-600">•</span>
+                      <span className="text-black">•</span>
                       <span>Monitoring va logging</span>
                     </li>
                   </ul>
@@ -362,9 +362,9 @@ orchestrator.assign_tasks({
               </Card>
             </div>
 
-            <Alert className="border-2 border-purple-500 bg-purple-50">
-              <AiIcon name="rocket" size={20} className="text-purple-600" />
-              <AlertDescription className="text-purple-800">
+            <Alert className="border-2 border-gray-600 bg-gray-50">
+              <AiIcon name="rocket" size={20} className="text-gray-700" />
+              <AlertDescription className="text-gray-800">
                 <strong>Pro tip:</strong> Orchestration-ni oddiy vazifadan boshlang. 
                 Murakkablikni asta-sekin oshiring va har bir agentni alohida test qiling.
               </AlertDescription>
