@@ -391,3 +391,59 @@ a:not(.no-hover-effect) {
 img[alt*="icon"] {
   object-fit: contain;
 }
+
+/* Responsive Content Fixes */
+/* Code blocks */
+.prose pre {
+  @apply overflow-x-auto;
+  max-width: 100%;
+}
+
+.prose code {
+  @apply break-words;
+}
+
+/* Tables */
+.prose table {
+  @apply block overflow-x-auto whitespace-nowrap;
+  max-width: 100%;
+}
+
+.prose td,
+.prose th {
+  @apply px-3 py-2;
+}
+
+/* Images */
+.prose img {
+  @apply max-w-full h-auto;
+}
+
+/* Responsive containers */
+.responsive-container {
+  @apply w-full overflow-x-auto;
+}
+
+.responsive-container > * {
+  @apply min-w-0;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  .prose {
+    @apply text-base;
+  }
+  
+  .prose pre {
+    @apply text-sm p-3;
+  }
+  
+  .prose table {
+    @apply text-sm;
+  }
+  
+  /* Reduce horizontal padding on mobile for better space usage */
+  .prose > * {
+    @apply px-0;
+  }
+}
