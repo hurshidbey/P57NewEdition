@@ -135,6 +135,60 @@
   [tabindex]:focus-visible {
     @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-background;
   }
+  
+  /* Ensure text is always visible in form inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  textarea {
+    @apply text-gray-900 !important;
+    color: #111827 !important;
+  }
+  
+  /* Force all pre tags to have visible text */
+  pre {
+    @apply text-gray-900 !important;
+    color: #111827 !important;
+  }
+  
+  /* Fix for inputs inside dark backgrounds */
+  .text-white input,
+  .text-white textarea,
+  .bg-black input,
+  .bg-black textarea,
+  .bg-gray-50 input,
+  .bg-gray-50 textarea {
+    @apply text-gray-900 bg-white !important;
+    color: #111827 !important;
+    background-color: white !important;
+  }
+  
+  /* Force visibility in any container that might have white text */
+  textarea,
+  input,
+  pre,
+  code {
+    color: #111827 !important;
+  }
+  
+  /* Specific fix for knowledge base code examples */
+  .prose pre,
+  .prose code,
+  .prose textarea {
+    color: #111827 !important;
+    background-color: #f9fafb !important;
+  }
+  
+  /* Fix for black header sections */
+  .bg-black h1,
+  .bg-black h2,
+  .bg-black h3,
+  .bg-black h4,
+  .bg-black h5,
+  .bg-black h6 {
+    color: white !important;
+  }
 }
 
 @layer utilities {
@@ -270,6 +324,49 @@
 /* Touch manipulation for better mobile experience */
 .touch-manipulation {
   touch-action: manipulation;
+}
+
+/* Consistent hover and active states */
+.hover-scale {
+  @apply transition-transform duration-150 ease-out;
+}
+
+.hover-scale:hover {
+  @apply scale-[1.02];
+}
+
+.hover-scale:active {
+  @apply scale-[0.98];
+}
+
+/* Button hover effects */
+button,
+.button-like {
+  @apply transition-all duration-150 ease-out;
+}
+
+button:not(:disabled):hover,
+.button-like:not(:disabled):hover {
+  @apply shadow-md;
+}
+
+button:not(:disabled):active,
+.button-like:not(:disabled):active {
+  @apply shadow-sm translate-y-[1px];
+}
+
+/* Link hover effects */
+a:not(.no-hover-effect) {
+  @apply transition-colors duration-150 ease-out;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-150 ease-out;
+}
+
+.card-hover:hover {
+  @apply shadow-lg -translate-y-[2px];
 }
 
 /* Shadow utilities for consistent depth */

@@ -8,6 +8,8 @@ import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import { AiIcon } from "@/components/ai-icon";
 import { getContent } from "@/content/knowledge-base";
+import { ContentSkeleton } from "@/components/knowledge-base/ContentSkeleton";
+import { NoResults } from "@/components/knowledge-base/NoResults";
 
 // Import the shared components
 import { ExpandableCard } from "@/content/knowledge-base/components/ExpandableCard";
@@ -301,7 +303,8 @@ export default function KnowledgeBase() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['kirish']));
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isContentLoading, setIsContentLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState('kirish');
   const [activeSection, setActiveSection] = useState('nima-uchun-muhim');
   const touchStartX = useRef<number | null>(null);
@@ -309,6 +312,7 @@ export default function KnowledgeBase() {
 
   // Navigation Functions
   function navigateToSection(categoryId: string, sectionId: string) {
+    setIsContentLoading(true);
     setActiveCategory(categoryId);
     setActiveSection(sectionId);
     setSidebarOpen(false);
@@ -316,6 +320,9 @@ export default function KnowledgeBase() {
     
     // Expand category if not expanded
     setExpandedCategories(prev => new Set([...prev, categoryId]));
+    
+    // Simulate content loading
+    setTimeout(() => setIsContentLoading(false), 300);
   }
 
   function navigateToNext() {
@@ -448,6 +455,8 @@ export default function KnowledgeBase() {
         setExpandedCategories(new Set([categoryId]));
       }
     }
+    // Initial load complete
+    setTimeout(() => setIsLoading(false), 500);
   }, []);
 
   useEffect(() => {
@@ -501,6 +510,28 @@ export default function KnowledgeBase() {
 
   // Content Renderer
   function renderCurrentContent() {
+    // If searching and no results
+    if (searchQuery && searchResults.length === 0) {
+      const suggestions = knowledgeBaseStructure
+        .flatMap(cat => cat.sections.map(sec => ({
+          categoryId: cat.id,
+          sectionId: sec.id,
+          title: sec.title
+        })))
+        .slice(0, 3); // Show first 3 sections as suggestions
+        
+      return (
+        <NoResults 
+          searchQuery={searchQuery}
+          suggestions={suggestions}
+          onSuggestionClick={(catId, secId) => {
+            setSearchQuery('');
+            navigateToSection(catId, secId);
+          }}
+        />
+      );
+    }
+    
     // Get content from the modular system
     const content = getContent(activeCategory, activeSection);
     
@@ -561,13 +592,30 @@ export default function KnowledgeBase() {
 
           {/* Search */}
           <div className="p-4 border-b-2 border-black">
-            <input
-              type="text"
-              placeholder="Qidirish..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 border-2 border-black text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Qidirish..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3 py-2 pr-10 border-2 border-black text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded"
+                  aria-label="Qidirishni tozalash"
+                >
+                  <AiIcon name="close" size={16} />
+                </button>
+              )}
+            </div>
+            {searchQuery && searchResults.length > 0 && (
+              <div className="mt-2 text-xs text-gray-600">
+                {searchResults.length} ta natija topildi
+              </div>
+            )}
           </div>
 
           {/* Navigation */}
@@ -654,7 +702,7 @@ export default function KnowledgeBase() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {renderCurrentContent()}
+              {isContentLoading ? <ContentSkeleton /> : renderCurrentContent()}
             </div>
 
             {/* Navigation Buttons */}

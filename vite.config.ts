@@ -27,6 +27,15 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        // Reduce chunk splitting to minimize HTTP requests
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom', 'wouter'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-label']
+        }
+      }
+    }
   },
   server: {
     fs: {
@@ -41,6 +50,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    force: process.env.NODE_ENV === "development",
+    force: false, // Don't force re-optimization
+    include: ['react', 'react-dom', 'react/jsx-runtime'], // Pre-bundle common deps
   },
 });
