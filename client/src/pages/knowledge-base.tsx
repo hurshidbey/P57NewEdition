@@ -191,7 +191,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="px-3 py-1 border-2 border-black bg-white font-mono text-xs hover:bg-gray-50"
+      className="px-3 py-1 border-2 border-border bg-background font-mono text-xs hover:bg-muted"
     >
       {copied ? 'COPIED!' : 'COPY'}
     </button>
@@ -217,7 +217,7 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
   };
 
   return (
-    <Card className="border-2 border-black">
+    <Card className="border-2 border-border">
       <CardContent className="p-6">
         <h4 className="font-semibold text-lg mb-4">{question}</h4>
         <div className="space-y-3">
@@ -228,10 +228,10 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
               disabled={showResult}
               className={`w-full text-left p-4 border-2 transition-none ${
                 showResult && index === correctAnswer
-                  ? 'border-green-600 bg-green-50'
+                  ? 'border-success bg-success/10'
                   : showResult && index === selected && index !== correctAnswer
-                  ? 'border-red-600 bg-red-50'
-                  : 'border-black hover:bg-gray-50'
+                  ? 'border-destructive bg-destructive/10'
+                  : 'border-border hover:bg-muted'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -244,7 +244,7 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
           ))}
         </div>
         {showResult && explanation && (
-          <Alert className="mt-4 border-2 border-black bg-gray-50">
+          <Alert className="mt-4 border-2 border-border bg-muted">
             <AiIcon name="info" size={20} />
             <AlertDescription>{explanation}</AlertDescription>
           </Alert>
@@ -277,16 +277,16 @@ class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryStat
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-white flex items-center justify-center p-8">
+        <div className="min-h-screen bg-background flex items-center justify-center p-8">
           <div className="text-center max-w-md">
             <AiIcon name="warning" size={48} className="mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">XATOLIK YUZ BERDI</h2>
-            <p className="text-gray-700 mb-6">
+            <p className="text-muted-foreground mb-6">
               Bilimlar bazasini yuklashda muammo yuz berdi. Sahifani qayta yuklang.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 border-2 border-black font-bold hover:bg-gray-50"
+              className="px-6 py-3 border-2 border-border font-bold hover:bg-muted"
             >
               QAYTA YUKLASH
             </button>
@@ -545,23 +545,23 @@ export default function KnowledgeBase() {
     // No content available - show placeholder
     return (
       <div className="text-center py-12">
-        <AiIcon name="construction" size={48} className="mx-auto mb-4 text-gray-500" />
-        <p className="text-lg text-gray-700">Bu bo'lim hozircha tayyorlanmoqda...</p>
+        <AiIcon name="construction" size={48} className="mx-auto mb-4 text-muted-foreground" />
+        <p className="text-lg text-muted-foreground">Bu bo'lim hozircha tayyorlanmoqda...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <AppHeader />
       
       {/* Mobile Header with Menu Button */}
-      <div className="lg:hidden sticky top-[64px] z-40 bg-white border-b-2 border-black">
+      <div className="lg:hidden sticky top-[64px] z-40 bg-background border-b-2 border-border">
         <div className="flex items-center justify-between p-4">
           <h1 className="text-[1.125rem] font-bold leading-[1.75rem]">BILIMLAR BAZASI</h1>
           <button
             onClick={() => setSidebarOpen(true)}
-            className="min-w-[48px] min-h-[48px] p-2 border-2 border-black hover:bg-gray-50 touch-manipulation flex items-center justify-center"
+            className="min-w-[48px] min-h-[48px] p-2 border-2 border-border hover:bg-muted touch-manipulation flex items-center justify-center"
             aria-label="Menyuni ochish"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -575,41 +575,41 @@ export default function KnowledgeBase() {
       
       <div className="flex h-[calc(100vh-128px)] lg:h-[calc(100vh-64px)]">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:block w-[300px] border-r-2 border-black bg-white overflow-y-auto">
+        <aside className="hidden lg:block w-[300px] border-r-2 border-border bg-background overflow-y-auto">
           {/* Progress Bar */}
-          <div className="p-4 border-b-2 border-black bg-gray-50">
+          <div className="p-4 border-b-2 border-border bg-muted">
             <div className="mb-3 flex justify-between items-baseline">
               <span className="text-[1rem] font-bold uppercase tracking-wide">Umumiy Progress</span>
               <span className="text-[1.25rem] font-black font-mono">{calculateOverallProgress()}%</span>
             </div>
-            <div className="h-3 bg-white border-2 border-black rounded-sm overflow-hidden">
+            <div className="h-3 bg-background border-2 border-border rounded-sm overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-accent to-orange-600 transition-all duration-500 ease-out relative overflow-hidden"
                 style={{ width: `${calculateOverallProgress()}%` }}
               >
-                <div className="absolute inset-0 bg-white opacity-20 animate-pulse" />
+                <div className="absolute inset-0 bg-background opacity-20 animate-pulse" />
               </div>
             </div>
-            <div className="mt-2 text-[0.75rem] text-gray-600">
+            <div className="mt-2 text-[0.75rem] text-muted-foreground">
               {loadProgress().completedSections.size} ta bo'limdan {knowledgeBaseStructure.reduce((sum, cat) => sum + cat.sections.length, 0)} tasi o'qildi
             </div>
           </div>
 
           {/* Search */}
-          <div className="p-4 border-b-2 border-black">
+          <div className="p-4 border-b-2 border-border">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Qidirish..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-3 py-2 pr-10 border-2 border-black text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                className="w-full px-3 py-2 pr-10 border-2 border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-muted rounded"
                   aria-label="Qidirishni tozalash"
                 >
                   <AiIcon name="close" size={16} />
@@ -617,7 +617,7 @@ export default function KnowledgeBase() {
               )}
             </div>
             {searchQuery && searchResults.length > 0 && (
-              <div className="mt-2 text-[0.75rem] leading-[1rem] text-gray-600">
+              <div className="mt-2 text-[0.75rem] leading-[1rem] text-muted-foreground">
                 {searchResults.length} ta natija topildi
               </div>
             )}
@@ -629,13 +629,13 @@ export default function KnowledgeBase() {
               <div key={category.id} className="mb-4 relative">
                 <button
                   onClick={() => toggleCategory(category.id)}
-                  className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                  className="w-full text-left p-3 border-2 border-border font-bold hover:bg-muted flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
                   type="button"
                 >
                   <div className="flex items-center gap-2">
                     <AiIcon name={category.icon as any} size={20} />
                     <span>{category.title}</span>
-                    <span className="ml-auto mr-8 text-[0.75rem] text-gray-500">
+                    <span className="ml-auto mr-8 text-[0.75rem] text-muted-foreground">
                       {category.sections.filter(s => isSectionCompleted(category.id, s.id)).length}/{category.sections.length}
                     </span>
                   </div>
@@ -651,9 +651,9 @@ export default function KnowledgeBase() {
                       <button
                         key={section.id}
                         onClick={() => navigateToSection(category.id, section.id)}
-                        className={`w-full text-left p-3 min-h-[44px] text-sm hover:bg-gray-100 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset ${
+                        className={`w-full text-left p-3 min-h-[44px] text-sm hover:bg-muted flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset ${
                           activeCategory === category.id && activeSection === section.id
-                            ? 'bg-black text-white font-bold'
+                            ? 'bg-foreground text-background font-bold'
                             : ''
                         }`}
                         aria-current={activeCategory === category.id && activeSection === section.id ? 'page' : undefined}
@@ -661,7 +661,7 @@ export default function KnowledgeBase() {
                         <span>{section.title}</span>
                         {isSectionCompleted(category.id, section.id) && (
                           <div className="flex items-center gap-1">
-                            <AiIcon name="checked" size={16} className="text-green-600" />
+                            <AiIcon name="checked" size={16} className="text-success" />
                           </div>
                         )}
                       </button>
@@ -677,9 +677,9 @@ export default function KnowledgeBase() {
         <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
           <div className="max-w-4xl mx-auto p-4 lg:p-8 pb-24 lg:pb-8">
             {/* Breadcrumb */}
-            <div className="mb-6 text-sm text-gray-700 flex items-center gap-2">
+            <div className="mb-6 text-sm text-muted-foreground flex items-center gap-2">
               <Link href="/">
-                <span className="hover:text-black cursor-pointer">Bosh sahifa</span>
+                <span className="hover:text-foreground cursor-pointer">Bosh sahifa</span>
               </Link>
               <span>/</span>
               <span className="font-medium">
@@ -692,7 +692,7 @@ export default function KnowledgeBase() {
               <h1 className="text-[1.953rem] lg:text-[2.441rem] font-black mb-4 leading-[2.5rem] lg:leading-[3rem]">
                 {getCurrentSection()?.title}
               </h1>
-              <div className="flex items-center gap-4 text-sm text-gray-700">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <Badge variant="outline" aria-label="Qiyinlik darajasi">
                   {getCurrentSection()?.difficulty === 'beginner' && 'Boshlang\'ich'}
                   {getCurrentSection()?.difficulty === 'intermediate' && 'O\'rta'}
@@ -743,10 +743,10 @@ export default function KnowledgeBase() {
       {/* Mobile Sidebar */}
       {sidebarOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setSidebarOpen(false)} />
-          <div className="relative w-[300px] bg-white h-full overflow-y-auto border-r-2 border-black">
+          <div className="fixed inset-0 bg-foreground bg-opacity-50" onClick={() => setSidebarOpen(false)} />
+          <div className="relative w-[300px] bg-background h-full overflow-y-auto border-r-2 border-border">
             {/* Mobile sidebar content - same as desktop */}
-            <div className="p-4 border-b-2 border-black flex justify-between items-center">
+            <div className="p-4 border-b-2 border-border flex justify-between items-center">
               <h2 className="font-bold text-[1.125rem] leading-[1.75rem]">MUNDARIJA</h2>
               <button onClick={() => setSidebarOpen(false)} aria-label="Menyuni yopish" type="button">
                 <AiIcon name="close" size={24} />
@@ -758,7 +758,7 @@ export default function KnowledgeBase() {
                 <div key={category.id} className="mb-4 relative">
                   <button
                     onClick={() => toggleCategory(category.id)}
-                    className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                    className="w-full text-left p-3 border-2 border-border font-bold hover:bg-muted flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
                     type="button"
                   >
                     <div className="flex items-center gap-2">
@@ -777,9 +777,9 @@ export default function KnowledgeBase() {
                         <button
                           key={section.id}
                           onClick={() => navigateToSection(category.id, section.id)}
-                          className={`w-full text-left p-3 min-h-[44px] text-sm hover:bg-gray-100 flex items-center justify-between ${
+                          className={`w-full text-left p-3 min-h-[44px] text-sm hover:bg-muted flex items-center justify-between ${
                             activeCategory === category.id && activeSection === section.id
-                              ? 'bg-black text-white font-bold'
+                              ? 'bg-foreground text-background font-bold'
                               : ''
                           }`}
                           type="button"
@@ -801,7 +801,7 @@ export default function KnowledgeBase() {
       )}
       
       {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black p-4">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t-2 border-border p-4">
         <div className="flex justify-between items-center">
           <button
             onClick={navigateToPrevious}
@@ -815,7 +815,7 @@ export default function KnowledgeBase() {
           
           <button
             onClick={() => setSidebarOpen(true)}
-            className="min-h-[48px] px-4 py-2 border-2 border-black font-bold touch-manipulation"
+            className="min-h-[48px] px-4 py-2 border-2 border-border font-bold touch-manipulation"
             type="button"
           >
             MUNDARIJA
