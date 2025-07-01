@@ -25,7 +25,7 @@ export const haroratParametri: SectionContent = {
 
           <Card className="border-2 border-black">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-2">TEMPERATURE SHKALASI</h3>
+              <h3 className="text-xl font-bold mb-0">TEMPERATURE SHKALASI</h3>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="w-24 text-center">
@@ -45,7 +45,7 @@ export const haroratParametri: SectionContent = {
           <div className="grid md:grid-cols-3 gap-4">
             <Card className="border-2 border-black">
               <CardContent className="p-4">
-                <h4 className="font-bold mb-2">PAST (0.0-0.5)</h4>
+                <h4 className="font-bold mb-0">PAST (0.0-0.5)</h4>
                 <p className="text-sm text-muted-foreground mb-3">Aniq, bashorat qilsa bo'ladigan</p>
                 <ul className="text-xs space-y-1">
                   <li>• Faktlar va ma'lumotlar</li>
@@ -57,7 +57,7 @@ export const haroratParametri: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-4">
-                <h4 className="font-bold mb-2">O'RTA (0.5-1.0)</h4>
+                <h4 className="font-bold mb-0">O'RTA (0.5-1.0)</h4>
                 <p className="text-sm text-muted-foreground mb-3">Muvozanatli javoblar</p>
                 <ul className="text-xs space-y-1">
                   <li>• Umumiy foydalanish</li>
@@ -69,7 +69,7 @@ export const haroratParametri: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-4">
-                <h4 className="font-bold mb-2">YUQORI (1.0-2.0)</h4>
+                <h4 className="font-bold mb-0">YUQORI (1.0-2.0)</h4>
                 <p className="text-sm text-muted-foreground mb-3">Ijodkor, kutilmagan</p>
                 <ul className="text-xs space-y-1">
                   <li>• Brainstorming</li>
@@ -117,7 +117,7 @@ export const topPVaTopK: SectionContent = {
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-2">TOP-P (Nucleus Sampling)</h3>
+                <h3 className="text-lg font-bold mb-0">TOP-P (Nucleus Sampling)</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Ehtimollik yig'indisi P ga teng bo'lgan so'zlarni tanlaydi
                 </p>
@@ -136,7 +136,7 @@ export const topPVaTopK: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-2">TOP-K</h3>
+                <h3 className="text-lg font-bold mb-0">TOP-K</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Faqat eng yuqori K ta so'zdan tanlaydi
                 </p>
@@ -187,7 +187,7 @@ export const maxTokens: SectionContent = {
 
           <Card className="border-2 border-black">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-2">TOKEN HISOBI</h3>
+              <h3 className="text-xl font-bold mb-0">TOKEN HISOBI</h3>
               <div className="grid md:grid-cols-3 gap-4 text-center">
                 <div>
                   <div className="text-3xl font-bold">1 token</div>
@@ -208,7 +208,7 @@ export const maxTokens: SectionContent = {
           <div className="grid gap-4">
             <Card className="border-2 border-black">
               <CardContent className="p-4">
-                <h4 className="font-bold mb-2">QISQA JAVOBLAR (50-150 token)</h4>
+                <h4 className="font-bold mb-0">QISQA JAVOBLAR (50-150 token)</h4>
                 <ul className="text-sm space-y-1">
                   <li>• Ha/yo'q savollari</li>
                   <li>• Qisqa ta'riflar</li>
@@ -219,7 +219,7 @@ export const maxTokens: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-4">
-                <h4 className="font-bold mb-2">O'RTA JAVOBLAR (500-1000 token)</h4>
+                <h4 className="font-bold mb-0">O'RTA JAVOBLAR (500-1000 token)</h4>
                 <ul className="text-sm space-y-1">
                   <li>• Email va xatlar</li>
                   <li>• Qisqa maqolalar</li>
@@ -230,7 +230,7 @@ export const maxTokens: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-4">
-                <h4 className="font-bold mb-2">UZUN JAVOBLAR (2000+ token)</h4>
+                <h4 className="font-bold mb-0">UZUN JAVOBLAR (2000+ token)</h4>
                 <ul className="text-sm space-y-1">
                   <li>• To'liq maqolalar</li>
                   <li>• Batafsil tahlillar</li>
@@ -283,7 +283,7 @@ export const stopSequences: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">QACHON ISHLATILADI:</h3>
+                <h3 className="text-xl font-bold mb-0">QACHON ISHLATILADI:</h3>
                 <div className="space-y-4">
                   <div className="border-l-4 border-black pl-4">
                     <h4 className="font-bold">1. Strukturalangan javoblar</h4>
@@ -334,7 +334,7 @@ stop_sequences = ["---"]
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-2">AMALIY MISOLLAR:</h3>
+                <h3 className="text-lg font-bold mb-0">AMALIY MISOLLAR:</h3>
                 <pre className="text-sm overflow-x-auto">
 {`# JSON uchun
 stop_sequences = ['}']
@@ -372,7 +372,7 @@ export const presenceFrequency: SectionContent = {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="border-2 border-black">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-bold mb-2">PRESENCE PENALTY</h3>
+                  <h3 className="text-lg font-bold mb-0">PRESENCE PENALTY</h3>
                   <p className="text-sm mb-3">Yangi mavzularni qo'shishga undaydi</p>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
@@ -393,7 +393,7 @@ export const presenceFrequency: SectionContent = {
 
               <Card className="border-2 border-black">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-bold mb-2">FREQUENCY PENALTY</h3>
+                  <h3 className="text-lg font-bold mb-0">FREQUENCY PENALTY</h3>
                   <p className="text-sm mb-3">Takrorlanishni kamaytiradi</p>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
@@ -459,7 +459,7 @@ kerak. Mijozlar ehtiyojini tahlil qilib..."  # Rang-barang!`}
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-2">QO'LLANISH SOHALARI:</h3>
+                <h3 className="text-lg font-bold mb-0">QO'LLANISH SOHALARI:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Badge className="mb-2">Ijodiy yozuv</Badge>

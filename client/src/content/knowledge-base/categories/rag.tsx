@@ -29,7 +29,7 @@ export const ragAsoslari: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-center">RAG ARXITEKTURASI</h3>
+                <h3 className="text-xl font-bold mb-0 text-center">RAG ARXITEKTURASI</h3>
                 
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
@@ -192,7 +192,7 @@ export const vektorQidiruv: SectionContent = {
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">1</div>
                     <div>
-                      <h4 className="font-bold mb-1">EMBEDDING YARATISH</h4>
+                      <h4 className="font-bold mb-0">EMBEDDING YARATISH</h4>
                       <p className="text-sm text-gray-700">Barcha hujjatlarni vektorlarga aylantirish</p>
                       <div className="mt-2 p-3 bg-gray-100 rounded border border-gray-300">
                         <code className="text-xs">embeddings = model.encode(documents)</code>
@@ -203,7 +203,7 @@ export const vektorQidiruv: SectionContent = {
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">2</div>
                     <div>
-                      <h4 className="font-bold mb-1">VEKTOR BAZASIGA SAQLASH</h4>
+                      <h4 className="font-bold mb-0">VEKTOR BAZASIGA SAQLASH</h4>
                       <p className="text-sm text-gray-700">Vektorlarni maxsus bazaga yozish</p>
                       <div className="mt-2 p-3 bg-gray-100 rounded border border-gray-300">
                         <code className="text-xs">vector_db.add(embeddings, metadata)</code>
@@ -214,7 +214,7 @@ export const vektorQidiruv: SectionContent = {
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">3</div>
                     <div>
-                      <h4 className="font-bold mb-1">QIDIRUV AMALGA OSHIRISH</h4>
+                      <h4 className="font-bold mb-0">QIDIRUV AMALGA OSHIRISH</h4>
                       <p className="text-sm text-gray-700">Savol vektorini yaratib, eng yaqinlarini topish</p>
                       <div className="mt-2 p-3 bg-gray-100 rounded border border-gray-300">
                         <code className="text-xs">results = vector_db.search(query_embedding, k=5)</code>
@@ -228,7 +228,7 @@ export const vektorQidiruv: SectionContent = {
             <div className="grid gap-4 md:grid-cols-3">
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2 text-center">COSINE SIMILARITY</h4>
+                  <h4 className="font-bold mb-0 text-center">COSINE SIMILARITY</h4>
                   <div className="text-center text-3xl my-3"></div>
                   <p className="text-sm text-center">Vektorlar orasidagi burchakni o'lchash</p>
                   <p className="text-xs text-center mt-2 text-gray-600">Eng mashhur usul</p>
@@ -237,7 +237,7 @@ export const vektorQidiruv: SectionContent = {
 
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2 text-center">EUCLIDEAN DISTANCE</h4>
+                  <h4 className="font-bold mb-0 text-center">EUCLIDEAN DISTANCE</h4>
                   <div className="text-center text-3xl my-3"></div>
                   <p className="text-sm text-center">To'g'ri chiziq masofasi</p>
                   <p className="text-xs text-center mt-2 text-gray-600">Oddiy va tez</p>
@@ -246,7 +246,7 @@ export const vektorQidiruv: SectionContent = {
 
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2 text-center">DOT PRODUCT</h4>
+                  <h4 className="font-bold mb-0 text-center">DOT PRODUCT</h4>
                   <div className="text-center text-3xl my-3"></div>
                   <p className="text-sm text-center">Vektorlar ko'paytmasi</p>
                   <p className="text-xs text-center mt-2 text-gray-600">Eng tez usul</p>
@@ -307,7 +307,7 @@ export const hybridSearch: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-center">HYBRID SEARCH FORMULASI</h3>
+                <h3 className="text-xl font-bold mb-0 text-center">HYBRID SEARCH FORMULASI</h3>
                 
                 <div className="bg-white border-2 border-black p-4 rounded-lg font-mono text-center">
                   <p className="text-lg">
@@ -320,7 +320,7 @@ export const hybridSearch: SectionContent = {
 
                 <div className="grid md:grid-cols-2 gap-4 mt-6">
                   <div className="bg-gray-100 border-2 border-gray-600 p-4 rounded">
-                    <h4 className="font-bold text-gray-800 mb-2">BM25 (Keyword)</h4>
+                    <h4 className="font-bold text-gray-800 mb-0">BM25 (Keyword)</h4>
                     <ul className="text-sm space-y-1">
                       <li>- Aniq terminlar</li>
                       <li>- Rare words</li>
@@ -330,7 +330,7 @@ export const hybridSearch: SectionContent = {
                   </div>
                   
                   <div className="bg-gray-100 border-2 border-gray-600 p-4 rounded">
-                    <h4 className="font-bold text-gray-800 mb-2">Vector Search</h4>
+                    <h4 className="font-bold text-gray-800 mb-0">Vector Search</h4>
                     <ul className="text-sm space-y-1">
                       <li>- Semantik o'xshashlik</li>
                       <li>- Sinonimlar</li>
@@ -449,7 +449,7 @@ def hybrid_search(query, alpha=0.5):
               <CardContent className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-bold mb-2">Texnik Dokumentatsiya Qidiruvi</h4>
+                    <h4 className="font-bold mb-0">Texnik Dokumentatsiya Qidiruvi</h4>
                     <p className="text-sm text-gray-700 mb-3">
                       Savol: "Python'da async funksiya qanday ishlaydi?"
                     </p>

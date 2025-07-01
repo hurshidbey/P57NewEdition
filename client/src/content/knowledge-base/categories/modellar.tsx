@@ -28,7 +28,7 @@ export const gptOilasi: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-4">
-                <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-lg font-bold mb-0 flex items-center gap-2">
                   <AiIcon name="openai" size={24} />
                   GPT MODELLAR EVOLYUTSIYASI
                 </h3>
@@ -194,7 +194,7 @@ export const claudeOilasi: SectionContent = {
                 <div className="grid md:grid-cols-3 divide-x-2 divide-black">
                   <div className="p-6 text-center">
                     <div className="text-4xl mb-3"></div>
-                    <h4 className="font-bold text-lg mb-2">CLAUDE 3 HAIKU</h4>
+                    <h4 className="font-bold text-lg mb-0">CLAUDE 3 HAIKU</h4>
                     <p className="text-sm text-gray-700 mb-3">Eng tez va arzon</p>
                     <div className="space-y-1 text-xs">
                       <p>0.25¢ / 1K token</p>
@@ -205,7 +205,7 @@ export const claudeOilasi: SectionContent = {
 
                   <div className="p-6 text-center bg-gray-50">
                     <div className="text-4xl mb-3"></div>
-                    <h4 className="font-bold text-lg mb-2">CLAUDE 3.5 SONNET</h4>
+                    <h4 className="font-bold text-lg mb-0">CLAUDE 3.5 SONNET</h4>
                     <p className="text-sm text-gray-700 mb-3">Eng muvozanatli</p>
                     <div className="space-y-1 text-xs">
                       <p>3¢ / 1K token</p>
@@ -216,7 +216,7 @@ export const claudeOilasi: SectionContent = {
 
                   <div className="p-6 text-center">
                     <div className="text-4xl mb-3"></div>
-                    <h4 className="font-bold text-lg mb-2">CLAUDE 3 OPUS</h4>
+                    <h4 className="font-bold text-lg mb-0">CLAUDE 3 OPUS</h4>
                     <p className="text-sm text-gray-700 mb-3">Eng kuchli</p>
                     <div className="space-y-1 text-xs">
                       <p>15¢ / 1K token</p>
@@ -275,12 +275,12 @@ Savol: Bu qism qanday bog'langan asosiy tezis bilan?
 
             <Card className="border-2 border-black bg-gray-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-4">
-                <h3 className="text-lg font-bold mb-2 text-black">
+                <h3 className="text-lg font-bold mb-0 text-black">
                   CLAUDE VS GPT: QACHON QAYSI?
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-bold text-gray-700 mb-2">Claude yaxshiroq:</h4>
+                    <h4 className="font-bold text-gray-700 mb-0">Claude yaxshiroq:</h4>
                     <ul className="text-sm space-y-1">
                       <li>- Uzun hujjatlar tahlili</li>
                       <li>- Kod yozish va debug</li>
@@ -289,7 +289,7 @@ Savol: Bu qism qanday bog'langan asosiy tezis bilan?
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-700 mb-2">GPT yaxshiroq:</h4>
+                    <h4 className="font-bold text-gray-700 mb-0">GPT yaxshiroq:</h4>
                     <ul className="text-sm space-y-1">
                       <li>- Ijodiy yozuv</li>
                       <li>- Ko'p tilli tarjima</li>
@@ -336,7 +336,7 @@ export const ochiqModellar: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-4">
-                <h3 className="text-lg font-bold mb-2 text-center">TOP OCHIQ MODELLAR 2024</h3>
+                <h3 className="text-lg font-bold mb-0 text-center">TOP OCHIQ MODELLAR 2024</h3>
                 
                 <div className="space-y-3">
                   <div className="border-2 border-gray-600 rounded-lg p-4 bg-white">

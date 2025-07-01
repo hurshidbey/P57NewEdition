@@ -605,7 +605,7 @@ export default function KnowledgeBase() {
             </div>
             <div className="h-6 bg-white border-2 border-black relative overflow-hidden">
               <div 
-                className="h-full bg-accent relative transition-all duration-500 ease-out"
+                className="h-full bg-[#ffeb3b] relative transition-all duration-500 ease-out"
                 style={{ width: `${calculateOverallProgress()}%` }}
               >
                 {/* Striped pattern for progress */}
@@ -690,7 +690,7 @@ export default function KnowledgeBase() {
                         <span>{section.title}</span>
                         {isSectionCompleted(category.id, section.id) && (
                           <div className="flex items-center gap-1">
-                            <AiIcon name="checked" size={16} className="text-accent" />
+                            <AiIcon name="checked" size={16} className="text-[#ffeb3b]" />
                           </div>
                         )}
                       </button>

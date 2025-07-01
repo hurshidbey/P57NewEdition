@@ -40,7 +40,7 @@ export function CodeExample({ title, badExample, goodExample, explanation }: Cod
         {/* Good Example */}
         <div className={!showGood ? 'opacity-50' : ''}>
           <div className="flex items-center gap-2 mb-2">
-            <AiIcon name="checked" size={16} className="text-accent" />
+            <AiIcon name="checked" size={16} className="text-[#ffeb3b]" />
             <span className="font-black uppercase">YAXSHI MISOL</span>
           </div>
           <pre className="bg-white border-2 border-black p-6 font-mono text-sm overflow-x-auto whitespace-pre-wrap text-black">

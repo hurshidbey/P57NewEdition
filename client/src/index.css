@@ -17,8 +17,8 @@
   --secondary-foreground: 0 0% 9%;
   --muted: 0 0% 96%;
   --muted-foreground: 0 0% 35%; /* Updated for WCAG AA compliance */
-  --accent: 12 100% 59%; /* Brand Orange #FF4F30 */
-  --accent-foreground: 0 0% 100%; /* White text for contrast */
+  --accent: 162 100% 55%; /* Brand Cyan #1bffbb */
+  --accent-foreground: 0 0% 0%; /* Black text for contrast */
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
   --border: 0 0% 89%;
@@ -94,8 +94,8 @@
   --secondary-foreground: 0 0% 98%;
   --muted: 0 0% 14.9%;
   --muted-foreground: 0 0% 63.9%;
-  --accent: 12 100% 59%; /* Brand Orange #FF4F30 - same in dark mode */
-  --accent-foreground: 0 0% 100%; /* White text for contrast in dark mode too */
+  --accent: 162 100% 55%; /* Brand Cyan #1bffbb - same in dark mode */
+  --accent-foreground: 0 0% 0%; /* Black text for contrast in dark mode too */
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
   --border: 0 0% 14.9%;

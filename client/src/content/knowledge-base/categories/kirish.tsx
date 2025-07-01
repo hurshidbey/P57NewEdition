@@ -39,7 +39,7 @@ export const nimaUchunMuhim: SectionContent = {
           
           <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="p-6">
-              <h3 className="text-xl font-black mb-2 uppercase">NIMA UCHUN BU MUHIM?</h3>
+              <h3 className="text-xl font-black mb-0 uppercase">NIMA UCHUN BU MUHIM?</h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
                   <AiIcon name="checked" size={24} className="flex-shrink-0" />
@@ -108,7 +108,7 @@ export const promptingNima: SectionContent = {
 
           <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="p-6">
-              <h3 className="text-xl font-black mb-2 uppercase">YAXSHI PROMPT ELEMENTLARI:</h3>
+              <h3 className="text-xl font-black mb-0 uppercase">YAXSHI PROMPT ELEMENTLARI:</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <AiIcon name="target" size={24} className="flex-shrink-0" />
@@ -249,7 +249,7 @@ export const promptElementlari: SectionContent = {
 
           <Card className="border-2 border-black bg-gray-50">
             <CardContent className="p-6">
-              <h3 className="text-xl font-black mb-2 uppercase">TO'LIQ PROMPT NAMUNASI:</h3>
+              <h3 className="text-xl font-black mb-0 uppercase">TO'LIQ PROMPT NAMUNASI:</h3>
               <pre className="bg-white border-2 border-black p-4 overflow-x-auto text-sm">
 {`ROL: Sen tajribali content marketing mutaxassisisan.
 
@@ -292,7 +292,7 @@ export const aiInqilobi: SectionContent = {
 
           <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="p-6">
-              <h3 className="text-xl font-black mb-2 uppercase">AI INQILOBINING 3 TO'LQINI:</h3>
+              <h3 className="text-xl font-black mb-0 uppercase">AI INQILOBINING 3 TO'LQINI:</h3>
               <div className="space-y-4">
                 <div className="border-l-2 border-black pl-4">
                   <h4 className="font-black uppercase">1-TO'LQIN: TOR AI (2010-2020)</h4>
@@ -313,7 +313,7 @@ export const aiInqilobi: SectionContent = {
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
-                <h4 className="font-black mb-2 flex items-center gap-2 uppercase">
+                <h4 className="font-black mb-0 flex items-center gap-2 uppercase">
                   <AiIcon name="world" size={24} />
                   GLOBAL IMKONIYATLAR
                 </h4>
@@ -328,7 +328,7 @@ export const aiInqilobi: SectionContent = {
 
             <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
-                <h4 className="font-black mb-2 flex items-center gap-2 uppercase">
+                <h4 className="font-black mb-0 flex items-center gap-2 uppercase">
                   <AiIcon name="flag" size={24} />
                   O'ZBEKISTON UCHUN
                 </h4>
@@ -376,7 +376,7 @@ export const umumiyMaslahatlar: SectionContent = {
 
           <Card className="border-2 border-black bg-black text-white">
             <CardContent className="p-6">
-              <h3 className="text-xl font-black mb-2 uppercase">7 OLTIN QOIDA</h3>
+              <h3 className="text-xl font-black mb-0 uppercase">7 OLTIN QOIDA</h3>
               <div className="space-y-3">
                 {[
                   "Aniq va konkret bo'ling",
@@ -399,7 +399,7 @@ export const umumiyMaslahatlar: SectionContent = {
           <div className="grid gap-4">
             <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
-                <h4 className="font-black mb-2 uppercase">❌ QILMANG:</h4>
+                <h4 className="font-black mb-0 uppercase">❌ QILMANG:</h4>
                 <ul className="space-y-2 text-sm">
                   <li>• Noaniq so'rovlar bermang</li>
                   <li>• AI'ga ko'r-ko'rona ishonmang</li>
@@ -411,7 +411,7 @@ export const umumiyMaslahatlar: SectionContent = {
 
             <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
-                <h4 className="font-black mb-2 uppercase">✅ QILING:</h4>
+                <h4 className="font-black mb-0 uppercase">✅ QILING:</h4>
                 <ul className="space-y-2 text-sm">
                   <li>• Aniq maqsad belgilang</li>
                   <li>• Natijalarni tekshiring</li>
