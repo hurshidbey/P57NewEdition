@@ -29,7 +29,7 @@ export default function HeroSection() {
                             <Button
                                 asChild
                                 size="lg"
-                                className="bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold px-12 py-6 text-xl rounded-xl">
+                                className="bg-accent hover:bg-accent/90 text-black font-bold px-12 py-6 text-xl rounded-xl">
                                 <Link href="/auth">
                                     HOZIROQ BOSHLASH
                                 </Link>

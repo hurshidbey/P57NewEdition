@@ -1,0 +1,753 @@
+import React, { useState, useEffect, useRef, Component, ReactNode } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "wouter";
+import AppHeader from "@/components/app-header";
+import AppFooter from "@/components/app-footer";
+import { AiIcon } from "@/components/ai-icon";
+import { getContent } from "@/content/knowledge-base";
+
+// Import the shared components
+import { ExpandableCard } from "@/content/knowledge-base/components/ExpandableCard";
+import { CodeExample } from "@/content/knowledge-base/components/CodeExample";
+
+// Knowledge Base Structure
+interface KBSection {
+  id: string;
+  title: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  readTime: number;
+}
+
+interface KBCategory {
+  id: string;
+  title: string;
+  icon: string;
+  sections: KBSection[];
+}
+
+const knowledgeBaseStructure: KBCategory[] = [
+  {
+    id: 'kirish',
+    title: 'KIRISH',
+    icon: 'book',
+    sections: [
+      { id: 'nima-uchun-muhim', title: 'PROMPTING NIMA UCHUN MUHIM?', difficulty: 'beginner', readTime: 5 },
+      { id: 'prompting-nima', title: 'PROMPTING NIMA?', difficulty: 'beginner', readTime: 3 },
+      { id: 'prompt-elementlari', title: 'PROMPT ELEMENTLARI', difficulty: 'beginner', readTime: 7 },
+      { id: 'ai-inqilobi', title: 'AI INQILOBI', difficulty: 'beginner', readTime: 5 },
+      { id: 'umumiy-maslahatlar', title: 'UMUMIY MASLAHATLAR', difficulty: 'beginner', readTime: 6 }
+    ]
+  },
+  {
+    id: 'asoslar',
+    title: 'AI ASOSLARI',
+    icon: 'cpu',
+    sections: [
+      { id: 'ai-qanday-ishlaydi', title: 'AI QANDAY ISHLAYDI?', difficulty: 'beginner', readTime: 8 },
+      { id: 'neyron-tarmoqlar', title: 'NEYRON TARMOQLAR', difficulty: 'intermediate', readTime: 10 },
+      { id: 'llm-arxitekturasi', title: 'LLM ARXITEKTURASI', difficulty: 'advanced', readTime: 15 },
+      { id: 'transformer-modellari', title: 'TRANSFORMER MODELLARI', difficulty: 'advanced', readTime: 12 },
+      { id: 'tokenizatsiya', title: 'TOKENIZATSIYA', difficulty: 'intermediate', readTime: 8 }
+    ]
+  },
+  {
+    id: 'sozlamalar',
+    title: 'MODEL SOZLAMALARI',
+    icon: 'settings',
+    sections: [
+      { id: 'harorat-parametri', title: 'HARORAT (TEMPERATURE)', difficulty: 'beginner', readTime: 6 },
+      { id: 'top-p-va-top-k', title: 'TOP-P VA TOP-K', difficulty: 'intermediate', readTime: 8 },
+      { id: 'max-tokens', title: 'MAX TOKENS', difficulty: 'beginner', readTime: 5 },
+      { id: 'stop-sequences', title: 'STOP SEQUENCES', difficulty: 'intermediate', readTime: 6 },
+      { id: 'presence-frequency', title: 'PRESENCE & FREQUENCY PENALTY', difficulty: 'intermediate', readTime: 7 }
+    ]
+  },
+  {
+    id: 'texnikalar',
+    title: 'PROMPTING TEXNIKALARI',
+    icon: 'lightbulb',
+    sections: [
+      { id: 'zero-shot', title: 'ZERO-SHOT PROMPTING', difficulty: 'beginner', readTime: 5 },
+      { id: 'few-shot', title: 'FEW-SHOT PROMPTING', difficulty: 'intermediate', readTime: 7 },
+      { id: 'chain-of-thought', title: 'CHAIN-OF-THOUGHT', difficulty: 'intermediate', readTime: 8 },
+      { id: 'role-playing', title: 'ROLE-PLAYING', difficulty: 'beginner', readTime: 6 },
+      { id: 'structured-output', title: 'STRUCTURED OUTPUT', difficulty: 'advanced', readTime: 10 }
+    ]
+  },
+  {
+    id: 'agents',
+    title: 'AGENT TIZIMLAR',
+    icon: 'robot',
+    sections: [
+      { id: 'agent-tizimlar', title: 'AGENT NIMA?', difficulty: 'advanced', readTime: 10 },
+      { id: 'tool-use', title: 'TOOL USE', difficulty: 'advanced', readTime: 12 },
+      { id: 'orchestration', title: 'ORCHESTRATION', difficulty: 'advanced', readTime: 15 }
+    ]
+  },
+  {
+    id: 'rag',
+    title: 'RAG TEXNOLOGIYASI',
+    icon: 'database',
+    sections: [
+      { id: 'rag-asoslari', title: 'RAG NIMA?', difficulty: 'intermediate', readTime: 10 },
+      { id: 'vektor-qidiruv', title: 'VEKTOR QIDIRUV', difficulty: 'advanced', readTime: 12 },
+      { id: 'hybrid-search', title: 'HYBRID SEARCH', difficulty: 'advanced', readTime: 10 }
+    ]
+  },
+  {
+    id: 'tanqidiy',
+    title: 'TANQIDIY FIKRLASH',
+    icon: 'brain',
+    sections: [
+      { id: 'baholash', title: 'NATIJALARNI BAHOLASH', difficulty: 'intermediate', readTime: 8 },
+      { id: 'taqqoslash', title: 'MODELLARNI TAQQOSLASH', difficulty: 'intermediate', readTime: 10 },
+      { id: 'xato-analiz', title: 'XATOLARNI TAHLIL QILISH', difficulty: 'intermediate', readTime: 9 }
+    ]
+  },
+  {
+    id: 'modellar',
+    title: 'AI MODELLAR',
+    icon: 'network',
+    sections: [
+      { id: 'gpt-oilasi', title: 'GPT OILASI', difficulty: 'beginner', readTime: 8 },
+      { id: 'claude-oilasi', title: 'CLAUDE OILASI', difficulty: 'beginner', readTime: 8 },
+      { id: 'ochiq-modellar', title: 'OCHIQ MODELLAR', difficulty: 'intermediate', readTime: 10 }
+    ]
+  },
+  {
+    id: 'xavfsizlik',
+    title: 'XAVFSIZLIK',
+    icon: 'shield',
+    sections: [
+      { id: 'xavfsizlik-tamoyillari', title: 'XAVFSIZLIK TAMOYILLARI', difficulty: 'beginner', readTime: 7 },
+      { id: 'jailbreaking', title: 'JAILBREAKING HAQIDA', difficulty: 'advanced', readTime: 10 },
+      { id: 'responsible-ai', title: 'MAS\'ULIYATLI AI', difficulty: 'intermediate', readTime: 8 }
+    ]
+  },
+  {
+    id: 'optimizatsiya',
+    title: 'OPTIMIZATSIYA',
+    icon: 'rocket',
+    sections: [
+      { id: 'narx-optimallashtirish', title: 'NARXNI KAMAYTIRISH', difficulty: 'intermediate', readTime: 8 },
+      { id: 'tezlik-oshirish', title: 'TEZLIKNI OSHIRISH', difficulty: 'intermediate', readTime: 9 },
+      { id: 'xotira-boshqaruv', title: 'XOTIRA BOSHQARUVI', difficulty: 'advanced', readTime: 10 }
+    ]
+  },
+  {
+    id: 'amaliyot',
+    title: 'AMALIYOT',
+    icon: 'code',
+    sections: [
+      { id: 'chatbot-yaratish', title: 'CHATBOT YARATISH', difficulty: 'intermediate', readTime: 15 },
+      { id: 'kontent-generatsiya', title: 'KONTENT GENERATSIYA', difficulty: 'beginner', readTime: 10 },
+      { id: 'kod-assistenti', title: 'KOD ASSISTENTI', difficulty: 'advanced', readTime: 12 }
+    ]
+  },
+  {
+    id: 'resurslar',
+    title: 'QO\'SHIMCHA RESURSLAR',
+    icon: 'folder',
+    sections: [
+      { id: 'foydali-havolalar', title: 'FOYDALI HAVOLALAR', difficulty: 'beginner', readTime: 3 },
+      { id: 'kitoblar', title: 'TAVSIYA ETILADIGAN KITOBLAR', difficulty: 'beginner', readTime: 4 },
+      { id: 'kurslar', title: 'ONLINE KURSLAR', difficulty: 'beginner', readTime: 4 },
+      { id: 'hamjamiyat', title: 'HAMJAMIYAT', difficulty: 'beginner', readTime: 3 },
+      { id: 'glossariy', title: 'GLOSSARIY', difficulty: 'beginner', readTime: 10 }
+    ]
+  }
+];
+
+// User Progress Interface
+interface UserProgress {
+  completedSections: Set<string>;
+  sectionScores: Record<string, number>;
+  timeSpent: Record<string, number>;
+  lastVisited: string;
+  bookmarks: string[];
+}
+
+// Storage Keys
+const STORAGE_KEY = {
+  PROGRESS: 'kb_progress',
+  LAST_VISITED: 'kb_last_visited',
+  BOOKMARKS: 'kb_bookmarks'
+};
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  
+  return (
+    <button
+      onClick={handleCopy}
+      className="px-3 py-1 border-2 border-black bg-white font-mono text-xs hover:bg-gray-50"
+    >
+      {copied ? 'COPIED!' : 'COPY'}
+    </button>
+  );
+}
+
+interface KnowledgeCheckProps {
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+  onAnswer: (isCorrect: boolean) => void;
+}
+
+function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswer }: KnowledgeCheckProps) {
+  const [selected, setSelected] = useState<number | null>(null);
+  const [showResult, setShowResult] = useState(false);
+
+  const handleSelect = (index: number) => {
+    setSelected(index);
+    setShowResult(true);
+    onAnswer(index === correctAnswer);
+  };
+
+  return (
+    <Card className="border-2 border-black">
+      <CardContent className="p-6">
+        <h4 className="font-semibold text-lg mb-4">{question}</h4>
+        <div className="space-y-3">
+          {options.map((option, index) => (
+            <button
+              key={index}
+              onClick={() => handleSelect(index)}
+              disabled={showResult}
+              className={`w-full text-left p-4 border-2 transition-none ${
+                showResult && index === correctAnswer
+                  ? 'border-green-600 bg-green-50'
+                  : showResult && index === selected && index !== correctAnswer
+                  ? 'border-red-600 bg-red-50'
+                  : 'border-black hover:bg-gray-50'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="w-8 h-8 border-2 border-current flex items-center justify-center text-sm font-bold">
+                  {String.fromCharCode(65 + index)}
+                </span>
+                <span className="text-base">{option}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+        {showResult && explanation && (
+          <Alert className="mt-4 border-2 border-black bg-gray-50">
+            <AiIcon name="info" size={20} />
+            <AlertDescription>{explanation}</AlertDescription>
+          </Alert>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// Error Boundary Component
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryState> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Knowledge Base Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-white flex items-center justify-center p-8">
+          <div className="text-center max-w-md">
+            <AiIcon name="warning" size={48} className="mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">XATOLIK YUZ BERDI</h2>
+            <p className="text-gray-600 mb-6">
+              Bilimlar bazasini yuklashda muammo yuz berdi. Sahifani qayta yuklang.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 border-2 border-black font-bold hover:bg-gray-50"
+            >
+              QAYTA YUKLASH
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+export default function KnowledgeBase() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['kirish']));
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('kirish');
+  const [activeSection, setActiveSection] = useState('nima-uchun-muhim');
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
+  // Navigation Functions
+  function navigateToSection(categoryId: string, sectionId: string) {
+    setActiveCategory(categoryId);
+    setActiveSection(sectionId);
+    setSidebarOpen(false);
+    saveLastVisited(categoryId, sectionId);
+    
+    // Expand category if not expanded
+    setExpandedCategories(prev => new Set([...prev, categoryId]));
+  }
+
+  function navigateToNext() {
+    const currentCategoryIndex = knowledgeBaseStructure.findIndex(c => c.id === activeCategory);
+    const currentCategory = knowledgeBaseStructure[currentCategoryIndex];
+    const currentSectionIndex = currentCategory.sections.findIndex(s => s.id === activeSection);
+    
+    if (currentSectionIndex < currentCategory.sections.length - 1) {
+      const nextSection = currentCategory.sections[currentSectionIndex + 1];
+      navigateToSection(activeCategory, nextSection.id);
+    } else if (currentCategoryIndex < knowledgeBaseStructure.length - 1) {
+      const nextCategory = knowledgeBaseStructure[currentCategoryIndex + 1];
+      navigateToSection(nextCategory.id, nextCategory.sections[0].id);
+    }
+  }
+
+  function navigateToPrevious() {
+    const currentCategoryIndex = knowledgeBaseStructure.findIndex(c => c.id === activeCategory);
+    const currentCategory = knowledgeBaseStructure[currentCategoryIndex];
+    const currentSectionIndex = currentCategory.sections.findIndex(s => s.id === activeSection);
+    
+    if (currentSectionIndex > 0) {
+      const prevSection = currentCategory.sections[currentSectionIndex - 1];
+      navigateToSection(activeCategory, prevSection.id);
+    } else if (currentCategoryIndex > 0) {
+      const prevCategory = knowledgeBaseStructure[currentCategoryIndex - 1];
+      const lastSection = prevCategory.sections[prevCategory.sections.length - 1];
+      navigateToSection(prevCategory.id, lastSection.id);
+    }
+  }
+
+  function hasNext() {
+    const currentCategoryIndex = knowledgeBaseStructure.findIndex(c => c.id === activeCategory);
+    const currentCategory = knowledgeBaseStructure[currentCategoryIndex];
+    const currentSectionIndex = currentCategory.sections.findIndex(s => s.id === activeSection);
+    
+    return currentSectionIndex < currentCategory.sections.length - 1 || 
+           currentCategoryIndex < knowledgeBaseStructure.length - 1;
+  }
+
+  function hasPrevious() {
+    const currentCategoryIndex = knowledgeBaseStructure.findIndex(c => c.id === activeCategory);
+    const currentCategory = knowledgeBaseStructure[currentCategoryIndex];
+    const currentSectionIndex = currentCategory.sections.findIndex(s => s.id === activeSection);
+    
+    return currentSectionIndex > 0 || currentCategoryIndex > 0;
+  }
+
+  // Touch handlers for swipe navigation
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    
+    const diffX = touchStartX.current - touchEndX.current;
+    const threshold = 50;
+
+    if (Math.abs(diffX) > threshold) {
+      if (diffX > 0 && hasNext()) {
+        navigateToNext();
+      } else if (diffX < 0 && hasPrevious()) {
+        navigateToPrevious();
+      }
+    }
+  };
+
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
+      return newSet;
+    });
+  };
+
+  // Progress Management
+  function saveProgress(sectionKey: string) {
+    const progress = loadProgress();
+    progress.completedSections.add(sectionKey);
+    progress.lastVisited = sectionKey;
+    localStorage.setItem(STORAGE_KEY.PROGRESS, JSON.stringify({
+      ...progress,
+      completedSections: Array.from(progress.completedSections)
+    }));
+  }
+
+  function loadProgress(): UserProgress {
+    const saved = localStorage.getItem(STORAGE_KEY.PROGRESS);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        ...parsed,
+        completedSections: new Set(parsed.completedSections || [])
+      };
+    }
+    return {
+      completedSections: new Set(),
+      sectionScores: {},
+      timeSpent: {},
+      lastVisited: '',
+      bookmarks: []
+    };
+  }
+
+  function saveLastVisited(categoryId: string, sectionId: string) {
+    localStorage.setItem(STORAGE_KEY.LAST_VISITED, `${categoryId}:${sectionId}`);
+  }
+
+  function getCurrentSection() {
+    const category = knowledgeBaseStructure.find(c => c.id === activeCategory);
+    return category?.sections.find(s => s.id === activeSection);
+  }
+
+  useEffect(() => {
+    const lastVisited = localStorage.getItem(STORAGE_KEY.LAST_VISITED);
+    if (lastVisited) {
+      const [categoryId, sectionId] = lastVisited.split(':');
+      if (categoryId && sectionId) {
+        setActiveCategory(categoryId);
+        setActiveSection(sectionId);
+        setExpandedCategories(new Set([categoryId]));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const sectionKey = `${activeCategory}:${activeSection}`;
+    const timer = setTimeout(() => {
+      saveProgress(sectionKey);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, [activeCategory, activeSection]);
+
+  // Progress Calculation
+  function isSectionCompleted(categoryId: string, sectionId: string) {
+    const progress = loadProgress();
+    return progress.completedSections.has(`${categoryId}:${sectionId}`);
+  }
+
+  function calculateOverallProgress() {
+    const totalSections = knowledgeBaseStructure.reduce(
+      (sum, cat) => sum + cat.sections.length, 0
+    );
+    const completedCount = loadProgress().completedSections.size;
+    return Math.round((completedCount / totalSections) * 100);
+  }
+
+  // Search Functions
+  function searchContent(query: string) {
+    if (!query.trim()) return [];
+    
+    const results: any[] = [];
+    const lowerQuery = query.toLowerCase();
+    
+    knowledgeBaseStructure.forEach(category => {
+      category.sections.forEach(section => {
+        if (section.title.toLowerCase().includes(lowerQuery)) {
+          results.push({
+            categoryId: category.id,
+            sectionId: section.id,
+            categoryTitle: category.title,
+            sectionTitle: section.title,
+            matchType: 'title'
+          });
+        }
+      });
+    });
+    
+    return results;
+  }
+
+  const searchResults = searchContent(searchQuery);
+
+  // Content Renderer
+  function renderCurrentContent() {
+    // Get content from the modular system
+    const content = getContent(activeCategory, activeSection);
+    
+    if (content && content.sections && content.sections.length > 0) {
+      const section = content.sections[0];
+      if (section.type === 'custom' && section.content.render) {
+        return section.content.render();
+      }
+    }
+    
+    // No content available - show placeholder
+    return (
+      <div className="text-center py-12">
+        <AiIcon name="construction" size={48} className="mx-auto mb-4 text-gray-400" />
+        <p className="text-lg text-gray-600">Bu bo'lim hozircha tayyorlanmoqda...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white">
+      <AppHeader />
+      
+      <div className="flex h-[calc(100vh-64px)]">
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:block w-[300px] border-r-2 border-black bg-white overflow-y-auto">
+          {/* Progress Bar */}
+          <div className="p-4 border-b-2 border-black">
+            <div className="mb-2 flex justify-between text-sm">
+              <span className="font-bold">UMUMIY PROGRESS</span>
+              <span className="font-mono">{calculateOverallProgress()}%</span>
+            </div>
+            <div className="h-2 bg-gray-200 border border-black">
+              <div 
+                className="h-full bg-black transition-all duration-300"
+                style={{ width: `${calculateOverallProgress()}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Search */}
+          <div className="p-4 border-b-2 border-black">
+            <input
+              type="text"
+              placeholder="Qidirish..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-3 py-2 border-2 border-black text-sm focus:outline-none"
+            />
+          </div>
+
+          {/* Navigation */}
+          <nav className="p-4">
+            {knowledgeBaseStructure.map((category) => (
+              <div key={category.id} className="mb-4">
+                <button
+                  onClick={() => toggleCategory(category.id)}
+                  className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-2">
+                    <AiIcon name={category.icon as any} size={20} />
+                    <span>{category.title}</span>
+                  </div>
+                  <AiIcon 
+                    name={expandedCategories.has(category.id) ? 'chevron-down' : 'chevron-right'} 
+                    size={16} 
+                  />
+                </button>
+                
+                {expandedCategories.has(category.id) && (
+                  <div className="ml-6 mt-2">
+                    {category.sections.map((section) => (
+                      <button
+                        key={section.id}
+                        onClick={() => navigateToSection(category.id, section.id)}
+                        className={`w-full text-left p-2 text-sm hover:bg-gray-100 flex items-center justify-between ${
+                          activeCategory === category.id && activeSection === section.id
+                            ? 'bg-black text-white font-bold'
+                            : ''
+                        }`}
+                      >
+                        <span>{section.title}</span>
+                        {isSectionCompleted(category.id, section.id) && (
+                          <AiIcon name="checked" size={16} />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-4xl mx-auto p-4 lg:p-8 pb-24 lg:pb-8">
+            {/* Breadcrumb */}
+            <div className="mb-6 text-sm text-gray-600 flex items-center gap-2">
+              <Link href="/">
+                <span className="hover:text-black cursor-pointer">Bosh sahifa</span>
+              </Link>
+              <span>/</span>
+              <span className="font-medium">
+                {knowledgeBaseStructure.find(c => c.id === activeCategory)?.title}
+              </span>
+            </div>
+
+            {/* Section Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl lg:text-4xl font-black mb-4">
+                {getCurrentSection()?.title}
+              </h1>
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                <Badge variant="outline">
+                  {getCurrentSection()?.difficulty === 'beginner' && 'Boshlang\'ich'}
+                  {getCurrentSection()?.difficulty === 'intermediate' && 'O\'rta'}
+                  {getCurrentSection()?.difficulty === 'advanced' && 'Murakkab'}
+                </Badge>
+                <span className="flex items-center gap-1">
+                  <AiIcon name="clock" size={16} />
+                  {getCurrentSection()?.readTime} daqiqa
+                </span>
+              </div>
+            </div>
+
+            {/* Dynamic Content */}
+            <div 
+              className="prose prose-lg max-w-none"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              {renderCurrentContent()}
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="mt-12 flex justify-between items-center">
+              <Button
+                onClick={navigateToPrevious}
+                disabled={!hasPrevious()}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <AiIcon name="arrow-left" size={20} />
+                Oldingi
+              </Button>
+              
+              <Button
+                onClick={navigateToNext}
+                disabled={!hasNext()}
+                className="flex items-center gap-2"
+              >
+                Keyingi
+                <AiIcon name="arrow-right" size={20} />
+              </Button>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      {/* Mobile Sidebar */}
+      {sidebarOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setSidebarOpen(false)} />
+          <div className="relative w-[300px] bg-white h-full overflow-y-auto border-r-2 border-black">
+            {/* Mobile sidebar content - same as desktop */}
+            <div className="p-4 border-b-2 border-black flex justify-between items-center">
+              <h2 className="font-bold text-lg">MUNDARIJA</h2>
+              <button onClick={() => setSidebarOpen(false)}>
+                <AiIcon name="close" size={24} />
+              </button>
+            </div>
+            
+            <nav className="p-4">
+              {knowledgeBaseStructure.map((category) => (
+                <div key={category.id} className="mb-4">
+                  <button
+                    onClick={() => toggleCategory(category.id)}
+                    className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <AiIcon name={category.icon as any} size={20} />
+                      <span>{category.title}</span>
+                    </div>
+                    <AiIcon 
+                      name={expandedCategories.has(category.id) ? 'chevron-down' : 'chevron-right'} 
+                      size={16} 
+                    />
+                  </button>
+                  
+                  {expandedCategories.has(category.id) && (
+                    <div className="ml-6 mt-2">
+                      {category.sections.map((section) => (
+                        <button
+                          key={section.id}
+                          onClick={() => navigateToSection(category.id, section.id)}
+                          className={`w-full text-left p-2 text-sm hover:bg-gray-100 flex items-center justify-between ${
+                            activeCategory === category.id && activeSection === section.id
+                              ? 'bg-black text-white font-bold'
+                              : ''
+                          }`}
+                        >
+                          <span>{section.title}</span>
+                          {isSectionCompleted(category.id, section.id) && (
+                            <AiIcon name="checked" size={16} />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
+      
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black p-4">
+        <div className="flex justify-between items-center">
+          <button
+            onClick={navigateToPrevious}
+            disabled={!hasPrevious()}
+            className="p-2"
+          >
+            <AiIcon name="arrow-left" size={24} />
+          </button>
+          
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="px-4 py-2 border-2 border-black font-bold"
+          >
+            MUNDARIJA
+          </button>
+          
+          <button
+            onClick={navigateToNext}
+            disabled={!hasNext()}
+            className="p-2"
+          >
+            <AiIcon name="arrow-right" size={24} />
+          </button>
+        </div>
+      </div>
+      
+      <AppFooter />
+    </div>
+  );
+}

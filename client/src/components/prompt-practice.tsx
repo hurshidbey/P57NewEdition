@@ -113,7 +113,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-[#1bffbb]";
+    if (score >= 80) return "text-accent";
     if (score >= 60) return "text-yellow-600";
     return "text-red-600";
   };
@@ -151,12 +151,12 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
         <CardHeader className={shouldBlur ? "blur-sm" : ""}>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Lightbulb className="h-5 w-5 text-[#1bffbb]" />
+              <Lightbulb className="h-5 w-5 text-accent" />
               Protokolni mashq qiling
             </div>
             <div className="flex items-center gap-2">
               {protocolProgress && (
-                <Badge variant="secondary" className="font-bold uppercase bg-[#1bffbb] text-black border-2 border-black">
+                <Badge variant="secondary" className="font-bold uppercase bg-accent text-black border-2 border-black">
                   O'rganilgan
                 </Badge>
               )}
@@ -211,7 +211,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
             <Button
               onClick={handleSubmit}
               disabled={!userPrompt.trim() || evaluationMutation.isPending || userPrompt.length > 300}
-              className="flex-1 bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold uppercase border-2 border-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              className="flex-1 bg-accent hover:bg-accent/90 text-black font-bold uppercase border-2 border-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             >
               {evaluationMutation.isPending ? (
                 <>

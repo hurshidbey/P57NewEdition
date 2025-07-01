@@ -158,14 +158,14 @@ export default function ProtocolDetail() {
         <main className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8">
           <section className="pt-16 pb-16">
             <div className="text-center max-w-md mx-auto">
-              <h2 className="text-2xl font-black text-black uppercase mb-4 leading-tight">
+              <h2 className="text-2xl font-black text-foreground uppercase mb-4 leading-tight">
                 Protokol topilmadi
               </h2>
-              <p className="text-base text-black mb-8 leading-relaxed">
+              <p className="text-base text-foreground mb-8 leading-relaxed">
                 Siz qidirayotgan protokol mavjud emas yoki o'chirilgan bo'lishi mumkin.
               </p>
               <Link href="/">
-                <Button className="bg-black hover:bg-gray-900 text-white font-bold uppercase px-6 py-2 h-[44px] border-2 border-black transition-all hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase px-6 py-2 h-[44px] border-2 border-border transition-all hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Protokollarga qaytish
                 </Button>
@@ -191,10 +191,10 @@ export default function ProtocolDetail() {
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8">
               <div className="flex items-start gap-6">
-                <div className={`w-24 h-24 flex items-center justify-center font-black text-3xl border-2 border-black ${
+                <div className={`w-24 h-24 flex items-center justify-center font-black text-3xl border-2 border-border ${
                   isProtocolCompleted(protocol.id) 
-                    ? 'bg-[#1bffbb] text-black' 
-                    : 'bg-white text-black'
+                    ? 'bg-accent text-foreground' 
+                    : 'bg-card text-foreground'
                 }`}>
                   {protocol.number.toString().padStart(2, "0")}
                 </div>
@@ -204,30 +204,30 @@ export default function ProtocolDetail() {
                     <div className="mb-3">
                       <span className={`inline-block px-3 py-1 text-xs font-bold uppercase border-2 ${
                         protocol.difficultyLevel === 'BEGINNER' 
-                          ? 'bg-[#1bffbb] text-black border-black'
+                          ? 'bg-accent text-foreground border-border'
                           : protocol.difficultyLevel === 'O\'RTA DARAJA'
-                          ? 'bg-white text-black border-black'
-                          : 'bg-black text-white border-black'
+                          ? 'bg-card text-foreground border-border'
+                          : 'bg-primary text-primary-foreground border-border'
                       }`}>
                         {protocol.difficultyLevel === 'BEGINNER' ? 'Boshlang\'ich' : 
                          protocol.difficultyLevel === 'O\'RTA DARAJA' ? 'O\'rta daraja' : 'Yuqori daraja'}
                       </span>
                     </div>
                   )}
-                  <h1 className="text-3xl font-black text-black uppercase leading-tight mb-3">
+                  <h1 className="text-3xl font-black text-foreground uppercase leading-tight mb-3">
                     {protocol.title}
                   </h1>
                   <div className="flex items-center gap-4">
-                    <span className="text-base text-black font-bold uppercase">
+                    <span className="text-base text-foreground font-bold uppercase">
                       Protokol №{protocol.number}
                     </span>
                     {tier === 'free' && (
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold uppercase bg-gray-100 text-black px-2 py-1 border border-black">
+                        <span className="text-xs font-bold uppercase bg-secondary text-foreground px-2 py-1 border border-border">
                           {accessedCount}/3 protokol ishlatilgan
                         </span>
                         {!protocol.isFreeAccess && (
-                          <span className="text-xs font-bold uppercase bg-black text-white px-2 py-1 border border-black flex items-center gap-1">
+                          <span className="text-xs font-bold uppercase bg-primary text-primary-foreground px-2 py-1 border border-border flex items-center gap-1">
                             <Crown className="w-3 h-3" />
                             Premium
                           </span>
@@ -245,7 +245,7 @@ export default function ProtocolDetail() {
                       markProtocolCompleted(protocol.id, 70);
                       triggerConfetti();
                     }}
-                    className="bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold uppercase px-6 py-2 h-[44px] border-2 border-black transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    className="bg-accent hover:bg-accent/90 text-foreground font-bold uppercase px-6 py-2 h-[44px] border-2 border-border transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   >
                     O'rgandim
                   </Button>
@@ -253,7 +253,7 @@ export default function ProtocolDetail() {
                   <Button 
                     disabled
                     variant="outline"
-                    className="border-2 border-black text-black bg-gray-100 font-bold uppercase px-6 py-2 h-[44px] cursor-default"
+                    className="border-2 border-border text-foreground bg-secondary font-bold uppercase px-6 py-2 h-[44px] cursor-default"
                   >
                     O'rganilgan
                   </Button>
@@ -280,10 +280,10 @@ export default function ProtocolDetail() {
               
               return (
                 <>
-                  <div className={`bg-white border-2 border-black p-8 space-y-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${shouldShowUpgrade ? 'filter blur-sm' : ''}`}>
+                  <div className={`bg-card border-2 border-border p-8 space-y-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${shouldShowUpgrade ? 'filter blur-sm' : ''}`}>
                     {parsedContent.problemStatement && (
                       <div>
-                        <h2 className="text-xl font-black text-black uppercase mb-4">
+                        <h2 className="text-xl font-black text-foreground uppercase mb-4">
                           {parsedContent.problemStatement}
                         </h2>
                       </div>
@@ -291,10 +291,10 @@ export default function ProtocolDetail() {
 
                     {parsedContent.whyExplanation && (
                       <div>
-                        <h3 className="text-lg font-black text-black uppercase mb-3">
+                        <h3 className="text-lg font-black text-foreground uppercase mb-3">
                           Nega bunday bo'ladi?
                         </h3>
-                        <p className="text-base text-black leading-relaxed">
+                        <p className="text-base text-foreground leading-relaxed">
                           {parsedContent.whyExplanation}
                         </p>
                       </div>
@@ -302,10 +302,10 @@ export default function ProtocolDetail() {
 
                     {parsedContent.solutionApproach && (
                       <div>
-                        <h3 className="text-lg font-black text-black uppercase mb-3">
+                        <h3 className="text-lg font-black text-foreground uppercase mb-3">
                           Yechim.
                         </h3>
-                        <p className="text-base text-black leading-relaxed">
+                        <p className="text-base text-foreground leading-relaxed">
                           {parsedContent.solutionApproach}
                         </p>
                       </div>
@@ -314,7 +314,7 @@ export default function ProtocolDetail() {
                   
                   {/* Enhanced Premium Overlay for Locked Content */}
                   {shouldShowUpgrade && (
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
                       <UpgradeCTA
                         variant="modal"
                         title={accessedCount >= 3 ? 'Limit tugadi' : 'Premium protokol'}
@@ -334,13 +334,13 @@ export default function ProtocolDetail() {
             
             {/* Bad Example */}
             {protocol.badExample && (
-              <div className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <h3 className="text-sm font-black uppercase text-black mb-4 flex items-center gap-2">
+              <div className="bg-card border-2 border-border p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <h3 className="text-sm font-black uppercase text-foreground mb-4 flex items-center gap-2">
                   <XCircle className="w-5 h-5 text-red-600" />
                   Yomon misol
                 </h3>
-                <div className="bg-gray-100 border border-black p-4">
-                  <p className="text-black text-base leading-relaxed font-mono">
+                <div className="bg-secondary border border-border p-4">
+                  <p className="text-foreground text-base leading-relaxed font-mono">
                     "{protocol.badExample}"
                   </p>
                 </div>
@@ -349,13 +349,13 @@ export default function ProtocolDetail() {
 
             {/* Good Example */}
             {protocol.goodExample && (
-              <div className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <h3 className="text-sm font-black uppercase text-black mb-4 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-[#1bffbb]" />
+              <div className="bg-card border-2 border-border p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <h3 className="text-sm font-black uppercase text-foreground mb-4 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-accent" />
                   Yaxshi misol
                 </h3>
-                <div className="bg-gray-100 border border-black p-4">
-                  <p className="text-black text-base leading-relaxed font-mono">
+                <div className="bg-secondary border border-border p-4">
+                  <p className="text-foreground text-base leading-relaxed font-mono">
                     "{protocol.goodExample}"
                   </p>
                 </div>
@@ -370,9 +370,9 @@ export default function ProtocolDetail() {
 
           {/* Notes Section */}
           {protocol.notes && (
-            <section className="bg-white border-2 border-black p-8 mb-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <h3 className="text-lg font-black text-black uppercase mb-4">Eslatmalar</h3>
-              <p className="text-black leading-relaxed">{protocol.notes}</p>
+            <section className="bg-card border-2 border-border p-8 mb-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <h3 className="text-lg font-black text-foreground uppercase mb-4">Eslatmalar</h3>
+              <p className="text-foreground leading-relaxed">{protocol.notes}</p>
             </section>
           )}
 
@@ -382,7 +382,7 @@ export default function ProtocolDetail() {
           {/* Back Button */}
           <section className="text-center mt-8 mb-8 px-4">
             <Link href="/">
-              <Button className="bg-black hover:bg-gray-900 text-white font-bold uppercase px-6 py-2 h-[44px] border-2 border-black transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase px-6 py-2 h-[44px] border-2 border-border transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <ArrowLeft className="w-4 h-4 mr-2 flex-shrink-0" />
                 Protokollarga qaytish
               </Button>

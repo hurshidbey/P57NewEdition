@@ -136,58 +136,55 @@
     @apply outline-none ring-2 ring-black ring-offset-2 ring-offset-background;
   }
   
-  /* Ensure text is always visible in form inputs */
+  /* Theme-aware form inputs */
   input[type="text"],
   input[type="email"],
   input[type="password"],
   input[type="search"],
   textarea {
-    @apply text-gray-900 !important;
-    color: #111827 !important;
+    @apply bg-background text-foreground border-border;
   }
   
-  /* Force all pre tags to have visible text */
+  /* Theme-aware code blocks */
   pre {
-    @apply text-gray-900 !important;
-    color: #111827 !important;
+    @apply bg-muted text-foreground;
   }
   
-  /* Fix for inputs inside dark backgrounds */
-  .text-white input,
-  .text-white textarea,
-  .bg-black input,
-  .bg-black textarea,
-  .bg-gray-50 input,
-  .bg-gray-50 textarea {
-    @apply text-gray-900 bg-white !important;
-    color: #111827 !important;
-    background-color: white !important;
+  /* Proper dark mode support for inputs */
+  .dark input[type="text"],
+  .dark input[type="email"],
+  .dark input[type="password"],
+  .dark input[type="search"],
+  .dark textarea {
+    @apply bg-secondary text-foreground;
   }
   
-  /* Force visibility in any container that might have white text */
+  /* Theme-aware code and pre elements */
   textarea,
   input,
   pre,
   code {
-    color: #111827 !important;
+    @apply text-foreground;
   }
   
-  /* Specific fix for knowledge base code examples */
+  /* Knowledge base code examples with proper theming */
   .prose pre,
-  .prose code,
-  .prose textarea {
-    color: #111827 !important;
-    background-color: #f9fafb !important;
+  .prose code {
+    @apply bg-muted text-foreground;
   }
   
-  /* Fix for black header sections */
-  .bg-black h1,
-  .bg-black h2,
-  .bg-black h3,
-  .bg-black h4,
-  .bg-black h5,
-  .bg-black h6 {
-    color: white !important;
+  .prose textarea {
+    @apply bg-background text-foreground border-border;
+  }
+  
+  /* Theme-aware header sections */
+  .bg-primary h1,
+  .bg-primary h2,
+  .bg-primary h3,
+  .bg-primary h4,
+  .bg-primary h5,
+  .bg-primary h6 {
+    @apply text-primary-foreground;
   }
 }
 

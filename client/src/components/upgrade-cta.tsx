@@ -45,11 +45,11 @@ export function UpgradeCTA({
   const getIcon = () => {
     switch (variant) {
       case 'modal':
-        return <Lock className="w-16 h-16 text-black mx-auto mb-4" />;
+        return <Lock className="w-16 h-16 text-foreground mx-auto mb-4" />;
       case 'banner':
-        return <Crown className="w-6 h-6 text-[#1bffbb]" />;
+        return <Crown className="w-6 h-6 text-accent" />;
       default:
-        return <Crown className="w-8 h-8 text-[#1bffbb] mx-auto mb-3" />;
+        return <Crown className="w-8 h-8 text-accent mx-auto mb-3" />;
     }
   };
 
@@ -77,11 +77,11 @@ export function UpgradeCTA({
 
   if (variant === 'banner') {
     return (
-      <Card className={`bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none ${className}`}>
+      <Card className={`bg-card border-2 border-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none ${className}`}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-black">
+              <div className="p-3 bg-primary">
                 {getIcon()}
               </div>
               <div>
@@ -90,13 +90,13 @@ export function UpgradeCTA({
                   {description || getDefaultDescription()}
                 </CardDescription>
                 {reason && (
-                  <p className="text-sm text-black mt-1 font-bold">{reason}</p>
+                  <p className="text-sm text-foreground mt-1 font-bold">{reason}</p>
                 )}
               </div>
             </div>
             <Link href="/atmos-payment">
               <Button 
-                className="bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold uppercase border-2 border-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                className="bg-accent hover:bg-accent/90 text-foreground font-bold uppercase border-2 border-border h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                 onClick={handleUpgradeClick}
               >
                 Premium olish
@@ -111,17 +111,17 @@ export function UpgradeCTA({
 
   if (variant === 'modal') {
     return (
-      <div className={`bg-white border-2 border-black p-8 max-w-md text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${className}`}>
+      <div className={`bg-card border-2 border-border p-8 max-w-md text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${className}`}>
         {getIcon()}
-        <h3 className="text-xl font-black uppercase text-black mb-2">
+        <h3 className="text-xl font-black uppercase text-foreground mb-2">
           {title || getDefaultTitle()}
         </h3>
-        <p className="text-black mb-4">
+        <p className="text-foreground mb-4">
           {description || getDefaultDescription()}
         </p>
         {reason && (
-          <div className="bg-gray-100 border-2 border-black p-3 mb-6">
-            <p className="text-sm text-black font-bold">
+          <div className="bg-secondary border-2 border-border p-3 mb-6">
+            <p className="text-sm text-foreground font-bold">
               {reason}
             </p>
           </div>
@@ -129,8 +129,8 @@ export function UpgradeCTA({
 
         {showFeatures && (
           <div className="space-y-3 mb-6">
-            <p className="text-sm font-bold uppercase text-black">Premium rejada:</p>
-            <ul className="text-sm text-black space-y-1">
+            <p className="text-sm font-bold uppercase text-foreground">Premium rejada:</p>
+            <ul className="text-sm text-foreground space-y-1">
               {features.map((feature, index) => (
                 <li key={index}>• {feature}</li>
               ))}
@@ -142,7 +142,7 @@ export function UpgradeCTA({
           <Link href="/atmos-payment" className="flex-1">
             <Button 
               size="lg"
-              className="bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold uppercase px-6 py-3 text-sm w-full border-2 border-black h-[52px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              className="bg-accent hover:bg-accent/90 text-foreground font-bold uppercase px-6 py-3 text-sm w-full border-2 border-border h-[52px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               onClick={handleUpgradeClick}
             >
               <Crown className="w-4 h-4 mr-2" />
@@ -150,7 +150,7 @@ export function UpgradeCTA({
             </Button>
           </Link>
         </div>
-        <p className="text-xs text-black font-bold mt-3">
+        <p className="text-xs text-foreground font-bold mt-3">
           5,000 UZS/oy - Har qanday vaqt bekor qilishingiz mumkin
         </p>
       </div>
@@ -159,14 +159,14 @@ export function UpgradeCTA({
 
   if (variant === 'inline') {
     return (
-      <div className={`flex items-center gap-3 p-4 bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${className}`}>
-        <Crown className="w-5 h-5 text-[#1bffbb] flex-shrink-0" />
+      <div className={`flex items-center gap-3 p-4 bg-card border-2 border-border shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${className}`}>
+        <Crown className="w-5 h-5 text-accent flex-shrink-0" />
         <div className="flex-1">
-          <p className="text-sm font-bold uppercase text-black">
+          <p className="text-sm font-bold uppercase text-foreground">
             {title || 'Premium funksiya'}
           </p>
           {(description || reason) && (
-            <p className="text-xs text-black">
+            <p className="text-xs text-foreground">
               {description || reason}
             </p>
           )}
@@ -174,7 +174,7 @@ export function UpgradeCTA({
         <Link href="/atmos-payment">
           <Button 
             size="sm" 
-            className="bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold uppercase border-2 border-black h-[40px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            className="bg-accent hover:bg-accent/90 text-foreground font-bold uppercase border-2 border-border h-[40px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             onClick={handleUpgradeClick}
           >
             Upgrade
@@ -186,18 +186,18 @@ export function UpgradeCTA({
 
   // Default card variant
   return (
-    <Card className={`text-center bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none ${className}`}>
+    <Card className={`text-center bg-card border-2 border-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none ${className}`}>
       <CardContent className="pt-6">
         {getIcon()}
-        <h3 className="text-lg font-black uppercase text-black mb-2">
+        <h3 className="text-lg font-black uppercase text-foreground mb-2">
           {title || getDefaultTitle()}
         </h3>
-        <p className="text-black mb-4">
+        <p className="text-foreground mb-4">
           {description || getDefaultDescription()}
         </p>
         {reason && (
-          <div className="bg-gray-100 border-2 border-black p-3 mb-4">
-            <p className="text-sm text-black font-bold">
+          <div className="bg-secondary border-2 border-border p-3 mb-4">
+            <p className="text-sm text-foreground font-bold">
               {reason}
             </p>
           </div>
@@ -205,8 +205,8 @@ export function UpgradeCTA({
 
         {showFeatures && (
           <div className="space-y-2 mb-4">
-            <p className="text-sm font-bold uppercase text-black">Premium rejada:</p>
-            <ul className="text-sm text-black space-y-1">
+            <p className="text-sm font-bold uppercase text-foreground">Premium rejada:</p>
+            <ul className="text-sm text-foreground space-y-1">
               {features.map((feature, index) => (
                 <li key={index}>• {feature}</li>
               ))}
@@ -216,14 +216,14 @@ export function UpgradeCTA({
 
         <Link href="/atmos-payment">
           <Button 
-            className="bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold uppercase w-full border-2 border-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            className="bg-accent hover:bg-accent/90 text-foreground font-bold uppercase w-full border-2 border-border h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             onClick={handleUpgradeClick}
           >
             <Crown className="w-4 h-4 mr-2" />
             Premium olish
           </Button>
         </Link>
-        <p className="text-xs text-black font-bold mt-2">
+        <p className="text-xs text-foreground font-bold mt-2">
           5,000 UZS/oy
         </p>
       </CardContent>
