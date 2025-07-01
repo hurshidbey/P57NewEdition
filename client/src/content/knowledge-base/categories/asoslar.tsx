@@ -1,32 +1,32 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { AiIcon } from "@/components/ai-icon";
-import { ExpandableCard } from "../components/ExpandableCard";
-import { CodeExample } from "../components/CodeExample";
-import type { SectionContent } from "../components/types";
+import React from"react";
+import { Card, CardContent } from"@/components/ui/card";
+import { Alert, AlertDescription } from"@/components/ui/alert";
+import { Badge } from"@/components/ui/badge";
+import { AiIcon } from"@/components/ai-icon";
+import { ExpandableCard } from"../components/ExpandableCard";
+import { CodeExample } from"../components/CodeExample";
+import type { SectionContent } from"../components/types";
 
 export const aiQandayIshlaydi: SectionContent = {
- title: "AI QANDAY ISHLAYDI",
+ title:"AI QANDAY ISHLAYDI",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-6">
+<div>
      <div>
-      <p className="text-lg leading-relaxed">
-       Sun'iy intellekt — bu kompyuterlarni inson kabi "o'ylash"ga o'rgatish san'ati. 
-       Lekin bu "o'ylash" aslida nima?
+      <p className="text-lg ">
+       Sun'iy intellekt — bu kompyuterlarni inson kabi"o'ylash"ga o'rgatish san'ati. 
+       Lekin bu"o'ylash" aslida nima?
       </p>
      </div>
 
      <Card className="border-2 border-black">
       <CardContent className="p-6">
-       <h3 className="text-xl font-bold">AI QANDAY "O'YLAYDI":</h3>
-       <ol className="space-y-3">
+       <h3 className="text-xl font-bold ">AI QANDAY"O'YLAYDI":</h3>
+       <ol>
         <li className="flex gap-3">
          <span className="font-bold">1.</span>
          <div>
@@ -53,9 +53,7 @@ export const aiQandayIshlaydi: SectionContent = {
       term="NEYRON TARMOQLAR"
       definition="Inson miyasining ishlash prinsipiga asoslangan kompyuter tizimlari. Millionlab 'neyron'lar ma'lumotni qayta ishlaydi."
       icon={<AiIcon name="network" size={24} />}
-      examples={[
-       "Input (kirish) → Processing (qayta ishlash) → Output (natija)",
-       "Misol: Rasm → Neyron tarmoq → 'Bu mushuk rasmi'"
+      examples={["Input (kirish) → Processing (qayta ishlash) → Output (natija)","Misol: Rasm → Neyron tarmoq → 'Bu mushuk rasmi'"
       ]}
      />
      
@@ -63,17 +61,14 @@ export const aiQandayIshlaydi: SectionContent = {
       term="MACHINE LEARNING"
       definition="Kompyuterlarning ma'lumotlardan o'rganish qobiliyati. Qancha ko'p ma'lumot, shuncha yaxshi natija."
       icon={<AiIcon name="brain" size={24} />}
-      examples={[
-       "Supervised Learning - Nazorat ostida o'rganish",
-       "Unsupervised Learning - Mustaqil o'rganish",
-       "Reinforcement Learning - Mukofotlash orqali o'rganish"
+      examples={["Supervised Learning - Nazorat ostida o'rganish","Unsupervised Learning - Mustaqil o'rganish","Reinforcement Learning - Mukofotlash orqali o'rganish"
       ]}
      />
 
      <Alert className="border-2 border-black">
       <AiIcon name="info" size={20} />
       <AlertDescription>
-       <strong>Muhim:</strong> AI aslida "tushunmaydi" — u statistik model. 
+       <strong>Muhim:</strong> AI aslida"tushunmaydi" — u statistik model. 
        Lekin bu model shunchalik murakkabki, u go'yo tushungandek natija beradi.
       </AlertDescription>
      </Alert>
@@ -85,15 +80,15 @@ export const aiQandayIshlaydi: SectionContent = {
  ]
 };
 export const neyronTarmoqlar: SectionContent = {
- title: "NEYRON TARMOQLAR",
+ title:"NEYRON TARMOQLAR",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Neyron tarmoqlar - sun'iy intellektning asosi. Inson miyasining ishlash 
         prinsiplariga asoslangan matematik modellar.
        </p>
@@ -103,28 +98,25 @@ export const neyronTarmoqlar: SectionContent = {
        term="NEYRON NIMA?"
        definition="Matematik funksiya bo'lib, kirish signallarini qabul qilib, ularni qayta ishlab, chiqish signalini beradi."
        icon={<AiIcon name="brain" size={24} />}
-       examples={[
-        "Kirish: [0.5, 0.3, 0.8] → Neyron → Chiqish: 0.7",
-        "Har bir neyron o'z vazn (weight) va bias qiymatlariga ega",
-        "Aktivatsiya funksiyasi orqali chiziqli bo'lmagan transformatsiya"
+       examples={["Kirish: [0.5, 0.3, 0.8] → Neyron → Chiqish: 0.7","Har bir neyron o'z vazn (weight) va bias qiymatlariga ega","Aktivatsiya funksiyasi orqali chiziqli bo'lmagan transformatsiya"
        ]}
       />
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold">NEYRON TARMOQ QATLAMLARI:</h3>
-        <div className="space-y-4">
+        <h3 className="text-xl font-bold ">NEYRON TARMOQ QATLAMLARI:</h3>
+        <div>
          <div className="border-2 border-black p-4">
-          <h4 className="font-bold">1. Kirish Qatlami (Input Layer)</h4>
-          <p>Ma'lumotlarni qabul qiladi (matn, rasm, ovoz)</p>
+          <h4 className="font-bold ">1. Kirish Qatlami (Input Layer)</h4>
+          <p className="">Ma'lumotlarni qabul qiladi (matn, rasm, ovoz)</p>
          </div>
          <div className="border-2 border-black p-4">
-          <h4 className="font-bold">2. Yashirin Qatlamlar (Hidden Layers)</h4>
-          <p>Ma'lumotlarni qayta ishlaydi va pattern'larni o'rganadi</p>
+          <h4 className="font-bold ">2. Yashirin Qatlamlar (Hidden Layers)</h4>
+          <p className="">Ma'lumotlarni qayta ishlaydi va pattern'larni o'rganadi</p>
          </div>
          <div className="border-2 border-black p-4">
-          <h4 className="font-bold">3. Chiqish Qatlami (Output Layer)</h4>
-          <p>Natijani beradi (javob, klassifikatsiya, bashorat)</p>
+          <h4 className="font-bold ">3. Chiqish Qatlami (Output Layer)</h4>
+          <p className="">Natijani beradi (javob, klassifikatsiya, bashorat)</p>
          </div>
         </div>
        </CardContent>
@@ -132,12 +124,10 @@ export const neyronTarmoqlar: SectionContent = {
 
       <CodeExample
        title="ODDIY NEYRON MISOLI"
-       badExample={`# Murakkab tushuntirish
-"Neyron tarmoq - bu ko'p o'lchovli fazoda gradient descent 
+       badExample={`# Murakkab tushuntirish"Neyron tarmoq - bu ko'p o'lchovli fazoda gradient descent 
 algoritmidan foydalanib loss funksiyani minimallashtiradigan 
 parametrik model..."`}
-       goodExample={`# Sodda tushuntirish
-"Neyron tarmoq - xuddi miya kabi ishlaydi:
+       goodExample={`# Sodda tushuntirish"Neyron tarmoq - xuddi miya kabi ishlaydi:
 1. Ko'z (input) → rasmni ko'radi
 2. Miya (hidden layers) → rasmni tahlil qiladi 
 3. Xulosa (output) → 'Bu mushuk' deb aytadi
@@ -161,15 +151,15 @@ Har safar xato qilganda, o'rganib boradi!"`}
 };
 
 export const llmArxitekturasi: SectionContent = {
- title: "LLM ARXITEKTURASI",
+ title:"LLM ARXITEKTURASI",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Large Language Model (LLM) - katta til modellari qanday tuzilgan va 
         ular qanday ishlaydi?
        </p>
@@ -177,34 +167,34 @@ export const llmArxitekturasi: SectionContent = {
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold">LLM KOMPONENTLARI:</h3>
-        <div className="space-y-3">
+        <h3 className="text-xl font-bold ">LLM KOMPONENTLARI:</h3>
+        <div>
          <div className="flex items-start gap-3">
           <Badge className="mt-1">1</Badge>
           <div>
            <strong>Tokenizer:</strong> Matnni raqamlarga aylantiradi
-           <p className="text-sm text-gray-600">Misol: "Salom" → [1234, 5678]</p>
+           <p className="text-sm text-gray-600 ">Misol:"Salom" → [1234, 5678]</p>
           </div>
          </div>
          <div className="flex items-start gap-3">
           <Badge className="mt-1">2</Badge>
           <div>
            <strong>Embedding Layer:</strong> Tokenlarni vektor fazoga joylashtiradi
-           <p className="text-sm text-gray-600">Har bir token 768-4096 o'lchamli vektor bo'ladi</p>
+           <p className="text-sm text-gray-600 ">Har bir token 768-4096 o'lchamli vektor bo'ladi</p>
           </div>
          </div>
          <div className="flex items-start gap-3">
           <Badge className="mt-1">3</Badge>
           <div>
            <strong>Transformer Blocks:</strong> Asosiy hisoblash bloklari
-           <p className="text-sm text-gray-600">Attention va Feed-Forward tarmoqlar</p>
+           <p className="text-sm text-gray-600 ">Attention va Feed-Forward tarmoqlar</p>
           </div>
          </div>
          <div className="flex items-start gap-3">
           <Badge className="mt-1">4</Badge>
           <div>
            <strong>Output Layer:</strong> Keyingi so'zni bashorat qiladi
-           <p className="text-sm text-gray-600">Barcha mumkin bo'lgan tokenlar ehtimoli</p>
+           <p className="text-sm text-gray-600 ">Barcha mumkin bo'lgan tokenlar ehtimoli</p>
           </div>
          </div>
         </div>
@@ -215,26 +205,23 @@ export const llmArxitekturasi: SectionContent = {
        term="ATTENTION MEXANIZMI"
        definition="Modelga matnning qaysi qismlariga e'tibor berish kerakligini o'rgatadigan texnologiya"
        icon={<AiIcon name="focus" size={24} />}
-       examples={[
-        "'U mushukni ko'rdi' - 'U' so'zi 'mushuk'ka emas, balki biror shaxsga ishora qiladi",
-        "Model har bir so'zning boshqa so'zlar bilan bog'lanishini o'rganadi",
-        "Self-attention: matn o'z-o'ziga e'tibor beradi"
+       examples={["'U mushukni ko'rdi' - 'U' so'zi 'mushuk'ka emas, balki biror shaxsga ishora qiladi","Model har bir so'zning boshqa so'zlar bilan bog'lanishini o'rganadi","Self-attention: matn o'z-o'ziga e'tibor beradi"
        ]}
       />
 
       <CodeExample
        title="LLM ISHLASH JARAYONI"
-       badExample={`User: "Uzbekiston poytaxti qayer?"
-AI: "Men bu haqda ma'lumotga ega emasman"`}
-       goodExample={`User: "Uzbekiston poytaxti qayer?"
+       badExample={`User:"Uzbekiston poytaxti qayer?"
+AI:"Men bu haqda ma'lumotga ega emasman"`}
+       goodExample={`User:"Uzbekiston poytaxti qayer?"
 
 AI jarayoni:
-1. Tokenizatsiya: ["Uzbek", "iston", " poyt", "axti", " qay", "er", "?"]
+1. Tokenizatsiya: ["Uzbek","iston"," poyt","axti"," qay","er","?"]
 2. Kontekstni tushunish: Geografik savol, davlat haqida
 3. Bilimlardan qidirish: Uzbekiston → Markaziy Osiyo → Poytaxt
-4. Javob generatsiya: "Uzbekiston poytaxti - Toshkent"
+4. Javob generatsiya:"Uzbekiston poytaxti - Toshkent"
 
-AI: "Uzbekiston poytaxti Toshkent shahridir."`}
+AI:"Uzbekiston poytaxti Toshkent shahridir."`}
        explanation="LLM har bir so'zni kontekstda tushunib, mantiqiy javob yaratadi."
       />
      </div>
@@ -245,15 +232,15 @@ AI: "Uzbekiston poytaxti Toshkent shahridir."`}
 };
 
 export const transformerModellari: SectionContent = {
- title: "TRANSFORMER MODELLARI",
+ title:"TRANSFORMER MODELLARI",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Transformer - 2017-yilda Google tomonidan yaratilgan inqilobiy arxitektura. 
         Bugungi barcha zamonaviy LLMlarning asosi.
        </p>
@@ -261,9 +248,9 @@ export const transformerModellari: SectionContent = {
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold">"ATTENTION IS ALL YOU NEED"</h3>
-        <p className="mb-0">Transformerning asosiy g'oyasi:</p>
-        <ul className="space-y-2">
+        <h3 className="text-xl font-bold ">"ATTENTION IS ALL YOU NEED"</h3>
+        <p className="mb-0 ">Transformerning asosiy g'oyasi:</p>
+        <ul>
          <li className="flex items-start gap-2">
           <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
           <span>Parallel hisoblash - tezkor ishlash</span>
@@ -283,9 +270,9 @@ export const transformerModellari: SectionContent = {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
        <Card className="border-2 border-black">
         <CardContent className="p-4">
-         <h4 className="font-bold">ENCODER MODELLARI</h4>
-         <p className="text-sm">Matnni tushunish uchun</p>
-         <ul className="text-sm space-y-1">
+         <h4 className="font-bold ">ENCODER MODELLARI</h4>
+         <p className="text-sm ">Matnni tushunish uchun</p>
+         <ul className="text-sm">
           <li>• BERT (Google)</li>
           <li>• RoBERTa (Facebook)</li>
           <li>• ELECTRA</li>
@@ -295,9 +282,9 @@ export const transformerModellari: SectionContent = {
        
        <Card className="border-2 border-black">
         <CardContent className="p-4">
-         <h4 className="font-bold">DECODER MODELLARI</h4>
-         <p className="text-sm">Matn generatsiya uchun</p>
-         <ul className="text-sm space-y-1">
+         <h4 className="font-bold ">DECODER MODELLARI</h4>
+         <p className="text-sm ">Matn generatsiya uchun</p>
+         <ul className="text-sm">
           <li>• GPT seriyasi</li>
           <li>• Claude</li>
           <li>• LLaMA</li>
@@ -310,11 +297,7 @@ export const transformerModellari: SectionContent = {
        term="MULTI-HEAD ATTENTION"
        definition="Bir vaqtda bir necha jihatdan matnni tahlil qilish qobiliyati"
        icon={<AiIcon name="multi-select" size={24} />}
-       examples={[
-        "1-head: Grammatika strukturasiga e'tibor",
-        "2-head: Semantic ma'noga e'tibor", 
-        "3-head: Kontekstual bog'lanishlarga e'tibor",
-        "...va hokazo (odatda 12-32 head)"
+       examples={["1-head: Grammatika strukturasiga e'tibor","2-head: Semantic ma'noga e'tibor","3-head: Kontekstual bog'lanishlarga e'tibor","...va hokazo (odatda 12-32 head)"
        ]}
       />
 
@@ -334,15 +317,15 @@ export const transformerModellari: SectionContent = {
 };
 
 export const tokenizatsiya: SectionContent = {
- title: "TOKENIZATSIYA",
+ title:"TOKENIZATSIYA",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Tokenizatsiya - matnni AI tushunadigan raqamlarga aylantirish jarayoni. 
         Bu AI'ning birinchi va eng muhim qadami.
        </p>
@@ -352,36 +335,30 @@ export const tokenizatsiya: SectionContent = {
        term="TOKEN NIMA?"
        definition="Matnning eng kichik ma'noli bo'lagi. Bu to'liq so'z, so'z qismi yoki hatto bitta belgi bo'lishi mumkin."
        icon={<AiIcon name="text" size={24} />}
-       examples={[
-        "Salom → ['Salom'] (1 token)",
-        "Assalomu alaykum → ['Ass', 'alomu', ' alay', 'kum'] (4 token)",
-        "👋 → ['👋'] (1 token - emoji ham token!)"
+       examples={["Salom → ['Salom'] (1 token)","Assalomu alaykum → ['Ass', 'alomu', ' alay', 'kum'] (4 token)","👋 → ['👋'] (1 token - emoji ham token!)"
        ]}
       />
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold">TOKENIZATSIYA TURLARI:</h3>
-        <div className="space-y-4">
+        <h3 className="text-xl font-bold ">TOKENIZATSIYA TURLARI:</h3>
+        <div>
          <div>
-          <h4 className="font-bold">1. Word-level Tokenization</h4>
-          <p className="text-sm">Har bir so'z = 1 token</p>
-          <code className="block mt-1 p-2 bg-gray-100 text-sm">
-           "Men dasturlashni yaxshi ko'raman" → ["Men", "dasturlashni", "yaxshi", "ko'raman"]
+          <h4 className="font-bold ">1. Word-level Tokenization</h4>
+          <p className="text-sm ">Har bir so'z = 1 token</p>
+          <code className="block mt-1 p-2 bg-gray-100 text-sm">"Men dasturlashni yaxshi ko'raman" → ["Men","dasturlashni","yaxshi","ko'raman"]
           </code>
          </div>
          <div>
-          <h4 className="font-bold">2. Subword Tokenization (BPE)</h4>
-          <p className="text-sm">So'zlarni qismlarga bo'lish</p>
-          <code className="block mt-1 p-2 bg-gray-100 text-sm">
-           "dasturlash" → ["dastur", "lash"]
+          <h4 className="font-bold ">2. Subword Tokenization (BPE)</h4>
+          <p className="text-sm ">So'zlarni qismlarga bo'lish</p>
+          <code className="block mt-1 p-2 bg-gray-100 text-sm">"dasturlash" → ["dastur","lash"]
           </code>
          </div>
          <div>
-          <h4 className="font-bold">3. Character-level</h4>
-          <p className="text-sm">Har bir harf = 1 token</p>
-          <code className="block mt-1 p-2 bg-gray-100 text-sm">
-           "AI" → ["A", "I"]
+          <h4 className="font-bold ">3. Character-level</h4>
+          <p className="text-sm ">Har bir harf = 1 token</p>
+          <code className="block mt-1 p-2 bg-gray-100 text-sm">"AI" → ["A","I"]
           </code>
          </div>
         </div>
@@ -391,19 +368,17 @@ export const tokenizatsiya: SectionContent = {
       <CodeExample
        title="TOKENIZATSIYA AMALIYOTI"
        badExample={`# Token limitni hisobga olmaslik
-prompt = """
+prompt ="""
 Menga 10000 so'zlik esse yoz, batafsil ma'lumot ber,
 hamma narsani tushuntir, ko'p misollar keltir...
-[juda uzun prompt davom etadi...]
-"""
+[juda uzun prompt davom etadi...]"""
 # ❌ Token limiti oshib ketishi mumkin!`}
        goodExample={`# Token samaradorligi
-prompt = """
+prompt ="""
 Qisqa esse yoz (500 so'z):
 - Mavzu: Sun'iy intellekt
 - Uslub: Akademik
-- Struktura: Kirish, asosiy qism, xulosa
-"""
+- Struktura: Kirish, asosiy qism, xulosa"""
 # ✓ Aniq va ixcham - kamroq token, yaxshi natija`}
        explanation="Har bir model token limiti bor. GPT-4: 128k, Claude: 100k. Samarali tokenizatsiya pulni tejaydi!"
       />
@@ -419,12 +394,12 @@ Qisqa esse yoz (500 so'z):
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-lg font-bold">TOKEN KALKULYATOR:</h3>
-        <div className="space-y-2">
-         <p><strong>100 token ≈</strong> 75 so'z (inglizcha)</p>
-         <p><strong>100 token ≈</strong> 35-50 so'z (o'zbekcha)</p>
-         <p><strong>1 sahifa matn ≈</strong> 500-700 token</p>
-         <p><strong>Narxi:</strong> GPT-4 uchun 1000 token ≈ $0.03</p>
+        <h3 className="text-lg font-bold ">TOKEN KALKULYATOR:</h3>
+        <div>
+         <p className=""><strong>100 token ≈</strong> 75 so'z (inglizcha)</p>
+         <p className=""><strong>100 token ≈</strong> 35-50 so'z (o'zbekcha)</p>
+         <p className=""><strong>1 sahifa matn ≈</strong> 500-700 token</p>
+         <p className=""><strong>Narxi:</strong> GPT-4 uchun 1000 token ≈ $0.03</p>
         </div>
        </CardContent>
       </Card>

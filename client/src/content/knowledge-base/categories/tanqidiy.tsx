@@ -1,43 +1,43 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { AiIcon } from "@/components/ai-icon";
-import { ExpandableCard } from "../components/ExpandableCard";
-import { CodeExample } from "../components/CodeExample";
-import type { SectionContent } from "../components/types";
+import React from"react";
+import { Card, CardContent } from"@/components/ui/card";
+import { Alert, AlertDescription } from"@/components/ui/alert";
+import { Badge } from"@/components/ui/badge";
+import { AiIcon } from"@/components/ai-icon";
+import { ExpandableCard } from"../components/ExpandableCard";
+import { CodeExample } from"../components/CodeExample";
+import type { SectionContent } from"../components/types";
 
 export const baholash: SectionContent = {
- title: "NATIJALARNI BAHOLASH",
+ title:"NATIJALARNI BAHOLASH",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         AI natijalarini baholash - bu model javoblarining sifati, aniqligi va foydaliligini 
         o'lchash jarayoni. To'g'ri baholash orqali siz AI'dan maksimal foyda olishingiz mumkin.
        </p>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Har bir AI javobi kritik fikrlash bilan tahlil qilinishi kerak. Chunki AI ba'zan 
-        noto'g'ri ma'lumot berishi yoki "gallyutsinatsiya" qilishi mumkin.
+        noto'g'ri ma'lumot berishi yoki"gallyutsinatsiya" qilishi mumkin.
        </p>
       </div>
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold flex items-center gap-2">
+        <h3 className="text-xl font-bold flex items-center gap-2 ">
          <AiIcon name="checklist" size={24} />
          BAHOLASH MEZONLARI
         </h3>
         
         <div className="grid gap-4 md:grid-cols-2">
-         <div className="space-y-3">
+         <div>
           <div className="border-2 border-gray-600 bg-white p-4 rounded">
-           <h4 className="font-bold text-gray-800">1. TO'G'RILIK</h4>
-           <p className="text-sm">Faktlar va ma'lumotlarning aniqligi</p>
+           <h4 className="font-bold text-gray-800 ">1. TO'G'RILIK</h4>
+           <p className="text-sm ">Faktlar va ma'lumotlarning aniqligi</p>
            <div className="mt-2 flex gap-2">
             <Badge variant="secondary">Faktlarni tekshirish</Badge>
             <Badge variant="secondary">Manbalar</Badge>
@@ -45,8 +45,8 @@ export const baholash: SectionContent = {
           </div>
 
           <div className="border-2 border-gray-600 bg-white p-4 rounded">
-           <h4 className="font-bold text-gray-800">2. TO'LIQLIK</h4>
-           <p className="text-sm">Savol to'liq javoblanganligi</p>
+           <h4 className="font-bold text-gray-800 ">2. TO'LIQLIK</h4>
+           <p className="text-sm ">Savol to'liq javoblanganligi</p>
            <div className="mt-2 flex gap-2">
             <Badge variant="secondary">Qamrov</Badge>
             <Badge variant="secondary">Chuqurlik</Badge>
@@ -54,10 +54,10 @@ export const baholash: SectionContent = {
           </div>
          </div>
 
-         <div className="space-y-3">
+         <div>
           <div className="border-2 border-gray-600 bg-white p-4 rounded">
-           <h4 className="font-bold text-gray-800">3. RELEVANTLIK</h4>
-           <p className="text-sm">Javobning savolga mosligi</p>
+           <h4 className="font-bold text-gray-800 ">3. RELEVANTLIK</h4>
+           <p className="text-sm ">Javobning savolga mosligi</p>
            <div className="mt-2 flex gap-2">
             <Badge variant="secondary">Kontekst</Badge>
             <Badge variant="secondary">Fokus</Badge>
@@ -65,8 +65,8 @@ export const baholash: SectionContent = {
           </div>
 
           <div className="border-2 border-gray-600 bg-white p-4 rounded">
-           <h4 className="font-bold text-gray-800">4. FOYDALILIK</h4>
-           <p className="text-sm">Amaliy qiymat va qo'llanilishi</p>
+           <h4 className="font-bold text-gray-800 ">4. FOYDALILIK</h4>
+           <p className="text-sm ">Amaliy qiymat va qo'llanilishi</p>
            <div className="mt-2 flex gap-2">
             <Badge variant="secondary">Amaliyot</Badge>
             <Badge variant="secondary">Natija</Badge>
@@ -81,25 +81,21 @@ export const baholash: SectionContent = {
        term="GALLYUTSINATSIYA"
        definition="AI tomonidan yaratilgan noto'g'ri yoki mavjud bo'lmagan ma'lumotlar"
        icon={<AiIcon name="warning" size={24} />}
-       examples={[
-        "Mavjud bo'lmagan manbalarni ko'rsatish",
-        "Noto'g'ri statistik ma'lumotlar",
-        "O'ylab topilgan voqealar yoki shaxslar",
-        "Xato kod yoki formulalar"
+       examples={["Mavjud bo'lmagan manbalarni ko'rsatish","Noto'g'ri statistik ma'lumotlar","O'ylab topilgan voqealar yoki shaxslar","Xato kod yoki formulalar"
        ]}
       />
 
       <CodeExample
        title="BAHOLASH JARAYONI"
        badExample={`# Tanqidiy baholashsiz qabul qilish
-user: "Toshkentda nechta metro stantsiyasi bor?"
-ai: "Toshkentda 43 ta metro stantsiyasi mavjud"
-user: "Rahmat!" [Tekshirmaydi]`}
+user:"Toshkentda nechta metro stantsiyasi bor?"
+ai:"Toshkentda 43 ta metro stantsiyasi mavjud"
+user:"Rahmat!" [Tekshirmaydi]`}
        goodExample={`# Tanqidiy baholash bilan
-user: "Toshkentda nechta metro stantsiyasi bor?"
-ai: "Toshkentda 43 ta metro stantsiyasi mavjud"
-user: "Bu ma'lumot qaysi yilga tegishli? Manba bera olasizmi?"
-ai: "Kechirasiz, aniq manba keltira olmayman. 
+user:"Toshkentda nechta metro stantsiyasi bor?"
+ai:"Toshkentda 43 ta metro stantsiyasi mavjud"
+user:"Bu ma'lumot qaysi yilga tegishli? Manba bera olasizmi?"
+ai:"Kechirasiz, aniq manba keltira olmayman. 
    2024-yil holatiga ko'ra rasmiy ma'lumotlarni
    Toshkent metropoliteni saytidan tekshiring."`}
        explanation="Har doim ma'lumotlarni tekshiring va manbalarni so'rang."
@@ -108,10 +104,10 @@ ai: "Kechirasiz, aniq manba keltira olmayman.
       <div className="grid gap-4 md:grid-cols-3">
        <Card className="border-2 border-black">
         <div className="bg-black p-3">
-         <h4 className="text-white font-bold text-center">XAVFLI</h4>
+         <h4 className="text-white font-bold text-center ">XAVFLI</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="text-sm space-y-2">
+         <ul className="text-sm">
           <li>- Ko'r-ko'rona ishonish</li>
           <li>- Manbalarni tekshirmaslik</li>
           <li>- Bir AI'ga tayanish</li>
@@ -122,10 +118,10 @@ ai: "Kechirasiz, aniq manba keltira olmayman.
 
        <Card className="border-2 border-gray-700">
         <div className="bg-gray-700 p-3">
-         <h4 className="text-white font-bold text-center">EHTIYOT</h4>
+         <h4 className="text-white font-bold text-center ">EHTIYOT</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="text-sm space-y-2">
+         <ul className="text-sm">
           <li>- Yangi ma'lumotlar</li>
           <li>- Murakkab hisoblashlar</li>
           <li>- Huquqiy maslahatlar</li>
@@ -136,10 +132,10 @@ ai: "Kechirasiz, aniq manba keltira olmayman.
 
        <Card className="border-2 border-gray-600">
         <div className="bg-gray-600 p-3">
-         <h4 className="text-white font-bold text-center">XAVFSIZ</h4>
+         <h4 className="text-white font-bold text-center ">XAVFSIZ</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="text-sm space-y-2">
+         <ul className="text-sm">
           <li>- Umumiy ma'lumotlar</li>
           <li>- Ijodiy g'oyalar</li>
           <li>- Kod namunalari</li>
@@ -164,19 +160,19 @@ ai: "Kechirasiz, aniq manba keltira olmayman.
 };
 
 export const taqqoslash: SectionContent = {
- title: "MODELLARNI TAQQOSLASH",
+ title:"MODELLARNI TAQQOSLASH",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Turli AI modellarini taqqoslash - to'g'ri vositani tanlash uchun muhim ko'nikma. 
         Har bir model o'z kuchli va zaif tomonlariga ega.
        </p>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Modellarni baholashda nafaqat texnik ko'rsatkichlar, balki amaliy foydalanish 
         senariylari ham hisobga olinishi kerak.
        </p>
@@ -184,7 +180,7 @@ export const taqqoslash: SectionContent = {
 
       <Card className="border-2 border-black overflow-hidden">
        <div className="bg-black p-4">
-        <h3 className="text-white font-bold uppercase">ASOSIY MODELLAR TAQQOSLASH JADVALI</h3>
+        <h3 className="text-white font-bold uppercase ">ASOSIY MODELLAR TAQQOSLASH JADVALI</h3>
        </div>
        <div className="overflow-x-auto">
         <table className="w-full">
@@ -236,11 +232,7 @@ export const taqqoslash: SectionContent = {
         term="BENCHMARK"
         definition="Modellarni standart testlar orqali baholash"
         icon={<AiIcon name="chart" size={24} />}
-        examples={[
-         "MMLU - Ko'p sohali bilimlar testi",
-         "HumanEval - Kod yozish qobiliyati",
-         "HellaSwag - Mantiqiy fikrlash",
-         "TruthfulQA - Haqiqatga sodiqlik"
+        examples={["MMLU - Ko'p sohali bilimlar testi","HumanEval - Kod yozish qobiliyati","HellaSwag - Mantiqiy fikrlash","TruthfulQA - Haqiqatga sodiqlik"
         ]}
        />
 
@@ -248,11 +240,7 @@ export const taqqoslash: SectionContent = {
         term="USE CASE"
         definition="Har bir model uchun optimal foydalanish holatlari"
         icon={<AiIcon name="target" size={24} />}
-        examples={[
-         "GPT-4: Murakkab tahlil va ijod",
-         "Claude: Uzun hujjatlar bilan ishlash",
-         "Gemini: Ko'p modallik (rasm+matn)",
-         "Llama: Mahalliy deployment"
+        examples={["GPT-4: Murakkab tahlil va ijod","Claude: Uzun hujjatlar bilan ishlash","Gemini: Ko'p modallik (rasm+matn)","Llama: Mahalliy deployment"
         ]}
        />
       </div>
@@ -260,35 +248,35 @@ export const taqqoslash: SectionContent = {
       <CodeExample
        title="MODEL TANLASH STRATEGIYASI"
        badExample={`# Har doim eng qimmat modelni tanlash
-task = "Oddiy savol-javob"
-model = "gpt-4-turbo" # $20/1M token
+task ="Oddiy savol-javob"
+model ="gpt-4-turbo" # $20/1M token
 # Ortiqcha xarajat!`}
        goodExample={`# Vazifaga mos model tanlash
 def select_model(task_complexity, budget, speed_required):
-  if task_complexity == "low" and speed_required:
-    return "gpt-3.5-turbo" # Tez va arzon
-  elif task_complexity == "high" and budget == "high":
-    return "gpt-4o" # Eng yaxshi sifat
+  if task_complexity =="low" and speed_required:
+    return"gpt-3.5-turbo" # Tez va arzon
+  elif task_complexity =="high" and budget =="high":
+    return"gpt-4o" # Eng yaxshi sifat
   elif need_long_context:
-    return "claude-3-sonnet" # 200K kontekst
+    return"claude-3-sonnet" # 200K kontekst
   else:
-    return "gemini-pro" # Balansli variant`}
+    return"gemini-pro" # Balansli variant`}
        explanation="Har bir vazifa uchun optimal model tanlanishi kerak - har doim eng kuchli model kerak emas."
       />
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold text-black">
+        <h3 className="text-xl font-bold text-black ">
          MODEL TANLASH CHECKLIST
         </h3>
-        <div className="space-y-3">
+        <div>
          {[
-          { icon: "target", text: "Vazifa murakkabligi qanday?" },
-          { icon: "dollar", text: "Byudjet cheklovi bormi?" },
-          { icon: "clock", text: "Javob tezligi muhimmi?" },
-          { icon: "shield", text: "Ma'lumot maxfiyligi kerakmi?" },
-          { icon: "code", text: "Qanday formatda javob kerak?" },
-          { icon: "language", text: "Qaysi tillar qo'llab-quvvatlanadi?" }
+          { icon:"target", text:"Vazifa murakkabligi qanday?" },
+          { icon:"dollar", text:"Byudjet cheklovi bormi?" },
+          { icon:"clock", text:"Javob tezligi muhimmi?" },
+          { icon:"shield", text:"Ma'lumot maxfiyligi kerakmi?" },
+          { icon:"code", text:"Qanday formatda javob kerak?" },
+          { icon:"language", text:"Qaysi tillar qo'llab-quvvatlanadi?" }
          ].map((item, idx) => (
           <div key={idx} className="flex items-center gap-3 p-3 bg-white border border-gray-300 rounded">
            <AiIcon name={item.icon as any} size={20} className="text-gray-700" />
@@ -314,19 +302,19 @@ def select_model(task_complexity, budget, speed_required):
 };
 
 export const xatoAnaliz: SectionContent = {
- title: "XATOLARNI TAHLIL QILISH",
+ title:"XATOLARNI TAHLIL QILISH",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         AI xatolarini tahlil qilish - modellardan samarali foydalanish va natijalarni 
         yaxshilashning asosiy yo'li. Xatolarni tushunish orqali promptlarni optimallashtirishingiz mumkin.
        </p>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Har bir xato - o'rganish imkoniyati. To'g'ri tahlil orqali siz AI bilan 
         ishlash ko'nikmangizni sezilarli darajada oshirishingiz mumkin.
        </p>
@@ -334,15 +322,15 @@ export const xatoAnaliz: SectionContent = {
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold text-center">XATO TURLARI VA SABABLARI</h3>
+        <h3 className="text-xl font-bold text-center ">XATO TURLARI VA SABABLARI</h3>
         
-        <div className="space-y-4">
+        <div>
          <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
           <div className="flex items-start gap-3">
            <div className="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center font-bold">1</div>
            <div className="flex-1">
-            <h4 className="font-bold text-gray-800">KONTEKST XATOLARI</h4>
-            <p className="text-sm text-gray-700 mt-1">Noto'g'ri yoki yetarli bo'lmagan kontekst</p>
+            <h4 className="font-bold text-gray-800 ">KONTEKST XATOLARI</h4>
+            <p className="text-sm text-gray-700 mt-1 ">Noto'g'ri yoki yetarli bo'lmagan kontekst</p>
             <div className="mt-2 flex flex-wrap gap-2">
              <Badge variant="outline">Aniq bo'lmagan savol</Badge>
              <Badge variant="outline">Kontekst yo'qligi</Badge>
@@ -355,8 +343,8 @@ export const xatoAnaliz: SectionContent = {
           <div className="flex items-start gap-3">
            <div className="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center font-bold">2</div>
            <div className="flex-1">
-            <h4 className="font-bold text-gray-800">MANTIQIY XATOLAR</h4>
-            <p className="text-sm text-gray-700 mt-1">Noto'g'ri xulosalar va qarama-qarshiliklar</p>
+            <h4 className="font-bold text-gray-800 ">MANTIQIY XATOLAR</h4>
+            <p className="text-sm text-gray-700 mt-1 ">Noto'g'ri xulosalar va qarama-qarshiliklar</p>
             <div className="mt-2 flex flex-wrap gap-2">
              <Badge variant="outline">Ziddiyatli javoblar</Badge>
              <Badge variant="outline">Noto'g'ri hisoblash</Badge>
@@ -369,8 +357,8 @@ export const xatoAnaliz: SectionContent = {
           <div className="flex items-start gap-3">
            <div className="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center font-bold">3</div>
            <div className="flex-1">
-            <h4 className="font-bold text-gray-800">FORMAT XATOLARI</h4>
-            <p className="text-sm text-gray-700 mt-1">Kutilgan formatga mos kelmaydigan javoblar</p>
+            <h4 className="font-bold text-gray-800 ">FORMAT XATOLARI</h4>
+            <p className="text-sm text-gray-700 mt-1 ">Kutilgan formatga mos kelmaydigan javoblar</p>
             <div className="mt-2 flex flex-wrap gap-2">
              <Badge variant="outline">Struktura buzilishi</Badge>
              <Badge variant="outline">Til xatolari</Badge>
@@ -383,8 +371,8 @@ export const xatoAnaliz: SectionContent = {
           <div className="flex items-start gap-3">
            <div className="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center font-bold">4</div>
            <div className="flex-1">
-            <h4 className="font-bold text-gray-800">GALLYUTSINATSIYA</h4>
-            <p className="text-sm text-gray-700 mt-1">To'liq o'ylab topilgan ma'lumotlar</p>
+            <h4 className="font-bold text-gray-800 ">GALLYUTSINATSIYA</h4>
+            <p className="text-sm text-gray-700 mt-1 ">To'liq o'ylab topilgan ma'lumotlar</p>
             <div className="mt-2 flex flex-wrap gap-2">
              <Badge variant="outline">Mavjud bo'lmagan faktlar</Badge>
              <Badge variant="outline">Noto'g'ri manbalar</Badge>
@@ -399,14 +387,14 @@ export const xatoAnaliz: SectionContent = {
       <CodeExample
        title="XATONI TAHLIL QILISH"
        badExample={`# Xatoni e'tiborsiz qoldirish
-user: "Python'da fayl o'qish"
-ai: "file = open('data.txt', 'w')" # Xato: 'w' emas, 'r' bo'lishi kerak
+user:"Python'da fayl o'qish"
+ai:"file = open('data.txt', 'w')" # Xato: 'w' emas, 'r' bo'lishi kerak
 user: [Xatoni sezmaydi va davom etadi]`}
        goodExample={`# Xatoni tahlil qilish
-user: "Python'da fayl o'qish"
-ai: "file = open('data.txt', 'w')"
-user: "Bu xato. 'w' yozish uchun, men o'qish kerak"
-ai: "To'g'ri, kechirasiz. O'qish uchun:
+user:"Python'da fayl o'qish"
+ai:"file = open('data.txt', 'w')"
+user:"Bu xato. 'w' yozish uchun, men o'qish kerak"
+ai:"To'g'ri, kechirasiz. O'qish uchun:
    file = open('data.txt', 'r')
    # yoki kontekst manager bilan:
    with open('data.txt', 'r') as file:
@@ -417,10 +405,10 @@ ai: "To'g'ri, kechirasiz. O'qish uchun:
       <div className="grid gap-4 md:grid-cols-2">
        <Card className="border-2 border-black">
         <div className="bg-black p-3">
-         <h4 className="text-white font-bold">XATOLARNI OLDINI OLISH</h4>
+         <h4 className="text-white font-bold ">XATOLARNI OLDINI OLISH</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="space-y-3 text-sm">
+         <ul className="text-sm">
           <li className="flex items-start gap-2">
            <AiIcon name="checked" size={16} className="mt-0.5 text-black" />
            <span>Aniq va to'liq prompt yozish</span>
@@ -443,10 +431,10 @@ ai: "To'g'ri, kechirasiz. O'qish uchun:
 
        <Card className="border-2 border-black">
         <div className="bg-black p-3">
-         <h4 className="text-white font-bold">XATOLARDAN O'RGANISH</h4>
+         <h4 className="text-white font-bold ">XATOLARDAN O'RGANISH</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="space-y-3 text-sm">
+         <ul className="text-sm">
           <li className="flex items-start gap-2">
            <AiIcon name="brain" size={16} className="mt-0.5 text-black" />
            <span>Xato sababini aniqlash</span>
@@ -479,36 +467,36 @@ ai: "To'g'ri, kechirasiz. O'qish uchun:
 
       <Card className="border-2 border-black">
        <div className="bg-black p-4">
-        <h3 className="text-white font-bold uppercase">XATO TAHLIL FRAMEWORK</h3>
+        <h3 className="text-white font-bold uppercase ">XATO TAHLIL FRAMEWORK</h3>
        </div>
        <CardContent className="p-6">
-        <div className="space-y-4">
+        <div>
          <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold">1</div>
           <div>
-           <h4 className="font-bold">ANIQLASH</h4>
-           <p className="text-sm text-gray-600">Xato qayerda va qanday yuz berdi?</p>
+           <h4 className="font-bold ">ANIQLASH</h4>
+           <p className="text-sm text-gray-600 ">Xato qayerda va qanday yuz berdi?</p>
           </div>
          </div>
          <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold">2</div>
           <div>
-           <h4 className="font-bold">TASNIFLASH</h4>
-           <p className="text-sm text-gray-600">Bu qaysi turdagi xato?</p>
+           <h4 className="font-bold ">TASNIFLASH</h4>
+           <p className="text-sm text-gray-600 ">Bu qaysi turdagi xato?</p>
           </div>
          </div>
          <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold">3</div>
           <div>
-           <h4 className="font-bold">TAHLIL QILISH</h4>
-           <p className="text-sm text-gray-600">Nima sabab bo'ldi?</p>
+           <h4 className="font-bold ">TAHLIL QILISH</h4>
+           <p className="text-sm text-gray-600 ">Nima sabab bo'ldi?</p>
           </div>
          </div>
          <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold">4</div>
           <div>
-           <h4 className="font-bold">TO'G'RILASH</h4>
-           <p className="text-sm text-gray-600">Qanday hal qilish mumkin?</p>
+           <h4 className="font-bold ">TO'G'RILASH</h4>
+           <p className="text-sm text-gray-600 ">Qanday hal qilish mumkin?</p>
           </div>
          </div>
         </div>
