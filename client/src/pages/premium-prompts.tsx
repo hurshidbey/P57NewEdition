@@ -13,22 +13,22 @@ import { Link } from 'wouter';
 
 function UpgradeBanner() {
   return (
-    <Card className="bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200">
+    <Card className="bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-none">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-orange-100 rounded-full">
-              <Crown className="w-6 h-6 text-orange-600" />
+            <div className="p-3 bg-black">
+              <Crown className="w-6 h-6 text-white" />
             </div>
             <div>
-              <CardTitle className="text-lg">Premium Promptlarga kirish</CardTitle>
+              <CardTitle className="text-lg font-black uppercase">Premium Promptlarga kirish</CardTitle>
               <CardDescription>
                 Maxsus tayyorlangan premium promptlar bilan ishlash samaradorligingizni oshiring
               </CardDescription>
             </div>
           </div>
           <Link href="/atmos-payment">
-            <Button className="bg-orange-600 hover:bg-orange-700 text-white">
+            <Button className="bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold uppercase border-2 border-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               Premium olish
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -74,10 +74,10 @@ export default function PremiumPrompts() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <section className="pt-8 pb-12">
             <div className="animate-pulse space-y-8">
-              <div className="h-8 bg-muted rounded w-64"></div>
+              <div className="h-8 bg-black w-64"></div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-64 bg-muted rounded-xl"></div>
+                  <div key={i} className="h-64 bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></div>
                 ))}
               </div>
             </div>
@@ -94,13 +94,13 @@ export default function PremiumPrompts() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <section className="pt-16 pb-16">
             <div className="text-center max-w-md mx-auto">
-              <h2 className="text-2xl font-bold text-red-600 mb-4">
+              <h2 className="text-2xl font-black text-black uppercase mb-4">
                 Xatolik yuz berdi
               </h2>
-              <p className="text-muted-foreground mb-8">
+              <p className="text-black mb-8">
                 Promptlarni yuklashda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.
               </p>
-              <Button onClick={() => window.location.reload()}>
+              <Button onClick={() => window.location.reload()} className="bg-black hover:bg-gray-900 text-white font-bold uppercase border-2 border-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 Qayta yuklash
               </Button>
             </div>
@@ -118,10 +118,10 @@ export default function PremiumPrompts() {
         {/* Header Section */}
         <section className="pt-8 pb-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="font-inter text-4xl font-black text-foreground leading-tight mb-4">
+            <h1 className="text-4xl font-black text-black uppercase leading-tight mb-4">
               Premium Promptlar
             </h1>
-            <p className="font-inter text-lg text-muted-foreground leading-relaxed mb-8">
+            <p className="text-lg text-black leading-relaxed mb-8">
               AI bilan ishlash uchun maxsus tayyorlangan professional promptlar to'plami
             </p>
 
@@ -145,13 +145,13 @@ export default function PremiumPrompts() {
                 placeholder="Promptlar bo'yicha qidirish..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 border-2 border-black font-bold uppercase placeholder:font-normal placeholder:normal-case focus:ring-2 focus:ring-black rounded-none h-[44px]"
               />
             </div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="px-4 py-2 border-2 border-black bg-white text-black font-bold uppercase focus:outline-none focus:ring-2 focus:ring-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               {categories.map(category => (
                 <option key={category} value={category}>
@@ -166,10 +166,10 @@ export default function PremiumPrompts() {
         {freePrompts.length > 0 && (
           <section className="pb-16">
             <div className="mb-6">
-              <h2 className="font-inter text-2xl font-bold text-foreground mb-2">
+              <h2 className="text-2xl font-black text-black uppercase mb-2">
                 Bepul Promptlar
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-black">
                 Barcha foydalanuvchilar uchun ochiq promptlar
               </p>
             </div>
@@ -186,12 +186,12 @@ export default function PremiumPrompts() {
           <section className="pb-16">
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
-                <Crown className="w-6 h-6 text-orange-600" />
-                <h2 className="font-inter text-2xl font-bold text-foreground">
+                <Crown className="w-6 h-6 text-[#1bffbb]" />
+                <h2 className="text-2xl font-black text-black uppercase">
                   Premium Promptlar
                 </h2>
               </div>
-              <p className="text-muted-foreground">
+              <p className="text-black">
                 Premium obuna egalariga maxsus promptlar
               </p>
             </div>
@@ -206,12 +206,12 @@ export default function PremiumPrompts() {
         {/* Empty State */}
         {filteredPrompts.length === 0 && (
           <section className="pb-16">
-            <div className="text-center max-w-md mx-auto">
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-muted-foreground" />
+            <div className="text-center max-w-md mx-auto bg-white border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="w-16 h-16 bg-black flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-white" />
               </div>
-              <h3 className="font-bold text-lg mb-2">Hech narsa topilmadi</h3>
-              <p className="text-muted-foreground">
+              <h3 className="font-black text-lg uppercase mb-2">Hech narsa topilmadi</h3>
+              <p className="text-black">
                 Qidiruv so'rov yoki kategoriya bo'yicha promptlar topilmadi.
               </p>
             </div>

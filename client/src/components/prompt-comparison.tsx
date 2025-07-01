@@ -38,7 +38,7 @@ export default function PromptComparison() {
         <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
           Har bir protokol yaxshi va yomon misollar bilan.
         </h2>
-        <div className="w-24 h-1 bg-[#FF4F30] mx-auto"></div>
+        <div className="w-24 h-1 bg-[#1bffbb] mx-auto"></div>
       </div>
       
       <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-800">
@@ -99,7 +99,7 @@ export default function PromptComparison() {
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index === currentIndex ? 'bg-[#FF4F30] w-8' : 'bg-gray-600'
+                index === currentIndex ? 'bg-[#1bffbb] w-8' : 'bg-gray-600'
               }`}
             />
           ))}

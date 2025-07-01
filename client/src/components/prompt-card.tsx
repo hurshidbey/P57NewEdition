@@ -43,18 +43,18 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
 
   if (variant === 'compact') {
     return (
-      <Card className="relative">
+      <Card className="relative bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all rounded-none">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-3">
             <CardTitle className="text-base font-semibold line-clamp-1">
               {prompt.title}
             </CardTitle>
             <div className="flex gap-1">
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs font-bold uppercase border border-black bg-white hover:bg-gray-100">
                 {prompt.category}
               </Badge>
               {(prompt.id !== 25 && prompt.id !== 26 && prompt.id !== 27) && (
-                <Badge className="bg-accent/20 text-accent hover:bg-accent/30 text-xs">
+                <Badge className="bg-black text-white hover:bg-gray-900 text-xs font-bold uppercase">
                   <Crown className="w-2 h-2 mr-1" />
                   Premium
                 </Badge>
@@ -72,7 +72,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                 variant="outline"
                 size="sm"
                 onClick={copyToClipboard}
-                className="gap-1 text-xs h-7"
+                className="gap-1 text-xs h-[32px] font-bold uppercase border border-black hover:bg-black hover:text-white transition-all rounded-none"
               >
                 {copied ? (
                   <>
@@ -100,13 +100,13 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
 
   if (variant === 'featured') {
     return (
-      <Card className="relative bg-accent/5 border-accent/20">
+      <Card className="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all rounded-none">
         <CardHeader>
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <Crown className="w-5 h-5 text-accent" />
-                <Badge className="bg-accent/20 text-accent hover:bg-accent/30">
+                <Crown className="w-5 h-5 text-[#1bffbb]" />
+                <Badge className="bg-[#1bffbb] text-black hover:bg-[#00e6a0] font-bold uppercase">
                   Tavsiya etiladi
                 </Badge>
               </div>
@@ -119,7 +119,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                 </CardDescription>
               )}
             </div>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs font-bold uppercase border-2 border-black bg-white hover:bg-gray-100">
               {prompt.category}
             </Badge>
           </div>
@@ -127,19 +127,19 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
 
         <CardContent>
           <div className="relative">
-            <div className={`bg-background/80 rounded-lg p-4 ${!canAccess ? 'filter blur-sm' : ''}`}>
-              <pre className="text-sm text-foreground whitespace-pre-wrap font-mono line-clamp-3">
+            <div className={`bg-gray-50 p-4 ${!canAccess ? 'filter blur-sm' : ''}`}>
+              <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono line-clamp-3">
                 {prompt.content}
               </pre>
             </div>
 
             {!canAccess && (
-              <div className="absolute inset-0 bg-black/10 rounded-lg flex items-center justify-center">
-                <div className="bg-background rounded-lg p-4 text-center shadow-lg">
-                  <Lock className="w-8 h-8 text-accent mx-auto mb-2" />
-                  <p className="text-sm font-medium text-foreground mb-2">Premium prompt</p>
+              <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
+                <div className="bg-white border-2 border-black p-4 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <Lock className="w-8 h-8 text-black mx-auto mb-2" />
+                  <p className="text-sm font-bold uppercase text-black mb-2">Premium prompt</p>
                   <Link href="/atmos-payment">
-                    <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                    <Button size="sm" className="bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold uppercase border-2 border-black h-[36px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                       <Crown className="w-3 h-3 mr-1" />
                       Premium olish
                     </Button>
@@ -157,7 +157,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                   variant="outline"
                   size="sm"
                   onClick={copyToClipboard}
-                  className="gap-2 bg-background/80"
+                  className="gap-2 bg-white font-bold uppercase border border-black h-[36px] hover:bg-black hover:text-white transition-all rounded-none"
                 >
                   {copied ? (
                     <>
@@ -181,7 +181,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
 
   // Default variant
   return (
-    <Card className="relative h-full group">
+    <Card className="relative h-full group bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all rounded-none">
       <CardHeader>
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
@@ -195,11 +195,11 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs font-bold uppercase border-2 border-black bg-white hover:bg-gray-100">
               {prompt.category}
             </Badge>
             {(prompt.id !== 25 && prompt.id !== 26 && prompt.id !== 27) && (
-              <Badge className="bg-accent/20 text-accent hover:bg-accent/30">
+              <Badge className="bg-black text-white hover:bg-gray-900 font-bold uppercase border-2 border-black">
                 <Crown className="w-3 h-3 mr-1" />
                 Premium
               </Badge>
@@ -211,16 +211,16 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
       <CardContent>
         <div className="relative">
           {showContent ? (
-            <div className={`bg-muted/50 rounded-lg p-4 ${!canAccess ? 'filter blur-sm' : ''}`}>
-              <pre className="text-sm text-foreground whitespace-pre-wrap font-mono max-h-64 overflow-y-auto">
+            <div className={`bg-gray-50 p-4 ${!canAccess ? 'filter blur-sm' : ''}`}>
+              <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono max-h-64 overflow-y-auto">
                 {prompt.content}
               </pre>
             </div>
           ) : (
-            <div className="bg-muted/30 rounded-lg p-4 border-2 border-dashed border-muted-foreground/20">
-              <div className="text-center py-4">
-                <Eye className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground mb-3">
+            <div className="bg-gray-50 p-8">
+              <div className="text-center">
+                <Eye className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 font-medium mb-3">
                   Prompt matnini ko'rish uchun bosing
                 </p>
                 <Button
@@ -228,6 +228,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                   size="sm"
                   onClick={() => setShowContent(true)}
                   disabled={!canAccess}
+                  className="font-bold uppercase border border-black h-[36px] hover:bg-black hover:text-white transition-all"
                 >
                   {canAccess ? 'Promptni ko\'rish' : 'Premium kerak'}
                 </Button>
@@ -236,15 +237,15 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
           )}
 
           {!canAccess && showContent && (
-            <div className="absolute inset-0 bg-black/10 rounded-lg flex items-center justify-center">
-              <div className="bg-background dark:bg-gray-900 rounded-lg p-4 text-center shadow-lg">
-                <Lock className="w-8 h-8 text-accent mx-auto mb-2" />
-                <p className="text-sm font-medium text-foreground mb-2">Premium prompt</p>
-                <p className="text-xs text-muted-foreground mb-3">
+            <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
+              <div className="bg-white border-2 border-black p-4 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <Lock className="w-8 h-8 text-black mx-auto mb-2" />
+                <p className="text-sm font-bold uppercase text-black mb-2">Premium prompt</p>
+                <p className="text-xs text-black mb-3">
                   Bu promptni ko'rish uchun Premium obuna kerak
                 </p>
                 <Link href="/atmos-payment">
-                  <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                  <Button size="sm" className="bg-[#1bffbb] hover:bg-[#00e6a0] text-black font-bold uppercase border-2 border-black h-[36px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                     <Crown className="w-3 h-3 mr-1" />
                     Premium olish
                   </Button>
@@ -263,6 +264,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                   variant="outline"
                   size="sm"
                   onClick={() => setShowContent(false)}
+                  className="font-bold uppercase border border-black h-[36px] hover:bg-black hover:text-white transition-all rounded-none"
                 >
                   Yashirish
                 </Button>
@@ -270,7 +272,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                   variant="outline"
                   size="sm"
                   onClick={copyToClipboard}
-                  className="gap-2"
+                  className="gap-2 font-bold uppercase border border-black h-[36px] hover:bg-black hover:text-white transition-all rounded-none"
                 >
                   {copied ? (
                     <>

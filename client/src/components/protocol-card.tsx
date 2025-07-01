@@ -48,100 +48,102 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
   
   const getCardStyles = () => {
     if (isLocked) {
-      return 'border-muted bg-muted/50 hover:border-muted-foreground hover:shadow-md';
+      return 'opacity-50';
     }
-    if (isCompleted) {
-      return 'border-success hover:border-success shadow-sm';
-    }
-    return 'border-border hover:border-accent hover:shadow-lg';
+    return '';
   };
 
   return (
-    <Card className={`bg-card border-2 transition-all duration-200 group h-full ${getCardStyles()}`}>
-      <CardContent className="p-6 relative">
-        {/* Lock or Progress indicator */}
-        <div className="absolute top-4 right-4">
+    <Card className={`bg-white border-2 border-black transition-all duration-200 group h-full min-h-[320px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none flex flex-col ${getCardStyles()}`}>
+      <CardContent className="!p-5 flex flex-col h-full">
+        {/* Content wrapper with flex-grow to push buttons down */}
+        <div className="flex-grow flex flex-col">
+          {/* Lock or Progress indicator */}
+          <div className="absolute top-5 right-5">
           {isLocked ? (
             <div className="flex items-center gap-1">
               <Lock className="w-5 h-5 text-muted-foreground" />
             </div>
           ) : isCompleted ? (
-            <CheckCircle className="w-5 h-5 text-success" />
+            <CheckCircle className="w-5 h-5 text-black" />
           ) : null}
-        </div>
-        
-        <Link href={isLocked ? '#' : `/protocols/${protocol.id}`} className={`block ${isLocked ? 'pointer-events-none' : ''}`}>
-          {/* Protocol Number */}
-          <div className="mb-4">
-            <div className={`w-14 h-14 rounded-xl flex items-center justify-center font-black text-lg shadow-sm ${
+          </div>
+          
+          <Link href={isLocked ? '#' : `/protocols/${protocol.id}`} className={`block h-full flex flex-col ${isLocked ? 'pointer-events-none' : ''}`}>
+            {/* Protocol Number */}
+            <div className="mb-3">
+            <div className={`w-14 h-14 flex items-center justify-center font-black text-xl border-2 ${
               isLocked
-                ? 'bg-muted text-muted-foreground'
+                ? 'bg-gray-100 text-gray-400 border-gray-400'
                 : isCompleted 
-                ? 'bg-success/20 text-success' 
-                : 'bg-accent text-accent-foreground'
+                ? 'bg-[#1bffbb] text-black border-black' 
+                : 'bg-white text-black border-black'
             }`}>
               {protocol.number.toString().padStart(2, '0')}
             </div>
-          </div>
-          
-          {/* Difficulty Level Badge */}
-          {protocol.difficultyLevel && (
-            <div className="mb-2">
-              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                protocol.difficultyLevel === 'BEGINNER' 
-                  ? 'bg-success/20 text-success'
-                  : protocol.difficultyLevel === 'O\'RTA DARAJA'
-                  ? 'bg-warning/20 text-warning'
-                  : 'bg-destructive/20 text-destructive'
-              }`}>
-                {protocol.difficultyLevel === 'BEGINNER' ? 'Boshlang\'ich' : 
-                 protocol.difficultyLevel === 'O\'RTA DARAJA' ? 'O\'rta daraja' : 'Yuqori daraja'}
-              </span>
             </div>
-          )}
+            
+            {/* Difficulty Level Badge */}
+            <div className="mb-3 h-7">
+              {protocol.difficultyLevel && (
+                <span className={`inline-block px-3 py-1 text-xs font-bold uppercase border-2 ${
+                  protocol.difficultyLevel === 'BEGINNER' 
+                    ? 'bg-[#1bffbb] text-black border-black'
+                    : protocol.difficultyLevel === 'O\'RTA DARAJA'
+                    ? 'bg-white text-black border-black'
+                    : 'bg-black text-white border-black'
+                }`}>
+                  {protocol.difficultyLevel === 'BEGINNER' ? 'Boshlang\'ich' : 
+                   protocol.difficultyLevel === 'O\'RTA DARAJA' ? 'O\'rta daraja' : 'Yuqori daraja'}
+                </span>
+              )}
+            </div>
           
-          {/* Title - Hide for free users to prevent revealing protocol content */}
-          <h3 className={`text-lg font-bold mb-3 leading-tight pr-6 line-height-[1.4] ${
-            isLocked ? 'text-muted-foreground' : 'text-foreground'
-          }`}>
-            {isLocked ? 'Premium Protokol' : protocol.title}
-          </h3>
-          
-          {/* Problem Statement - Hide content for free users */}
-          <p className={`leading-relaxed line-clamp-3 mb-4 text-sm line-height-[1.5] ${
-            isLocked ? 'text-muted-foreground/60' : 'text-muted-foreground'
-          }`}>
-            {isLocked ? 'Bu protokol Premium foydalanuvchilar uchun mo\'ljallangan. Barcha 57 protokolga kirish uchun Premium obuna oling.' : (protocol.problemStatement || protocol.description)}
-          </p>
-        </Link>
+            {/* Content area with consistent height */}
+            <div className="flex-grow">
+              {/* Title - Hide for free users to prevent revealing protocol content */}
+              <h3 className={`text-lg font-bold mb-2 leading-tight pr-8 ${
+                isLocked ? 'text-muted-foreground' : 'text-foreground'
+              }`}>
+                {isLocked ? 'Premium Protokol' : protocol.title}
+              </h3>
+              
+              {/* Problem Statement - Hide content for free users */}
+              <p className={`leading-relaxed line-clamp-3 text-sm ${
+                isLocked ? 'text-muted-foreground/60' : 'text-muted-foreground'
+              }`}>
+                {isLocked ? 'Bu protokol Premium foydalanuvchilar uchun mo\'ljallangan. Barcha 57 protokolga kirish uchun Premium obuna oling.' : (protocol.problemStatement || protocol.description)}
+              </p>
+            </div>
+          </Link>
+        </div>
         
-        {/* Action buttons - Fixed layout and spacing */}
-        <div className="flex flex-col gap-2 pt-2">
+        {/* Action buttons - Always at bottom with consistent spacing */}
+        <div className="flex flex-col gap-2 mt-4">
           {isLocked ? (
-            <>
+            <div className="grid grid-cols-1 gap-2">
               <Link href="/atmos-payment" className="w-full">
                 <Button 
                   size="sm"
-                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-3 min-h-[44px] text-sm font-medium touch-manipulation"
+                  className="w-full bg-black hover:bg-gray-900 text-white border-2 border-black px-4 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                   onClick={handleUpgradeClick}
                 >
                   <Crown className="w-3 h-3 mr-1" />
                   Premium olish
                 </Button>
               </Link>
-              <div className="flex items-center justify-center gap-1 py-1 text-xs text-muted-foreground">
+              <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
                 <Lock className="w-3 h-3" />
                 <span>Premium protokol</span>
               </div>
-            </>
+            </div>
           ) : (
-            <>
-              <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-2">
                 {!isCompleted ? (
                   <Button 
                     onClick={handleMarkCompleted}
                     size="sm"
-                    className="flex-1 bg-success hover:bg-success/90 text-success-foreground px-3 py-3 min-h-[44px] text-sm font-medium touch-manipulation"
+                    className="w-full bg-[#1bffbb] hover:bg-[#00e6a0] text-black border-2 border-black px-3 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                   >
                     O'rgandim
                   </Button>
@@ -150,19 +152,18 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
                     onClick={handleMarkCompleted}
                     size="sm"
                     variant="outline"
-                    className="flex-1 border-success text-success hover:bg-success/20 px-3 py-3 min-h-[44px] text-sm font-medium touch-manipulation"
+                    className="w-full border-2 border-black text-black hover:bg-gray-100 px-3 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                   >
                     Qayta mashq
                   </Button>
                 )}
                 
-                <Link href={`/protocols/${protocol.id}`} className="flex-1">
-                  <Button size="sm" variant="outline" className="w-full px-3 py-3 min-h-[44px] text-sm font-medium touch-manipulation">
+                <Link href={`/protocols/${protocol.id}`}>
+                  <Button size="sm" variant="outline" className="w-full px-3 py-2 h-[44px] text-sm font-bold uppercase border-2 border-black hover:bg-black hover:text-white touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                     Ko'rish
                   </Button>
                 </Link>
-              </div>
-            </>
+            </div>
           )}
         </div>
         
