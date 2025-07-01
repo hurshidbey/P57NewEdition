@@ -68,7 +68,7 @@ function parseProtocolDescription(description: string) {
 
 export default function ProtocolDetail() {
   const { id } = useParams<{ id: string }>();
-  const { isProtocolCompleted, markProtocolCompleted } = useProgress();
+  const { isProtocolCompleted, markProtocolCompleted, toggleProtocolCompleted } = useProgress();
   const { tier, getAccessedProtocolsCount, canAccessNewProtocol } = useUserTier();
   const { trigger: triggerConfetti, ConfettiRenderer } = useConfetti();
 
@@ -239,25 +239,21 @@ export default function ProtocolDetail() {
               </div>
               
               <div className="flex-shrink-0">
-                {!isProtocolCompleted(protocol.id) ? (
-                  <Button 
-                    onClick={() => {
-                      markProtocolCompleted(protocol.id, 70);
+                <Button 
+                  onClick={() => {
+                    if (!isProtocolCompleted(protocol.id)) {
                       triggerConfetti();
-                    }}
-                    className="bg-accent hover:bg-accent/90 text-foreground font-bold uppercase px-6 py-2 h-[44px] border-2 border-black transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                  >
-                    O'rgandim
-                  </Button>
-                ) : (
-                  <Button 
-                    disabled
-                    variant="outline"
-                    className="border-2 border-black text-foreground bg-secondary font-bold uppercase px-6 py-2 h-[44px] cursor-default">
-                  >
-                    O'rganilgan
-                  </Button>
-                )}
+                    }
+                    toggleProtocolCompleted(protocol.id, 70);
+                  }}
+                  className={`font-bold uppercase px-6 py-2 h-[44px] border-2 border-black transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+                    isProtocolCompleted(protocol.id)
+                      ? 'bg-secondary hover:bg-secondary/90 text-foreground'
+                      : 'bg-accent hover:bg-accent/90 text-black'
+                  }`}
+                >
+                  {isProtocolCompleted(protocol.id) ? 'Takrorlash' : "O'rgandim"}
+                </Button>
               </div>
             </div>
           </div>

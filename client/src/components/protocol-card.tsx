@@ -13,7 +13,7 @@ interface ProtocolCardProps {
 }
 
 export default function ProtocolCard({ protocol }: ProtocolCardProps) {
-  const { isProtocolCompleted, getProtocolProgress, markProtocolCompleted } = useProgress();
+  const { isProtocolCompleted, getProtocolProgress, markProtocolCompleted, toggleProtocolCompleted } = useProgress();
   const { canAccess, isLocked, requiresUpgrade } = useProtocolAccess(protocol.id, protocol.isFreeAccess);
   const { tier } = useUserTier();
   const isCompleted = isProtocolCompleted(protocol.id);
@@ -29,10 +29,10 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
     }
   }, [protocol.id, isLocked, protocol.isFreeAccess, tier]);
 
-  const handleMarkCompleted = (e: React.MouseEvent) => {
+  const handleToggleCompleted = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    markProtocolCompleted(protocol.id, 70);
+    toggleProtocolCompleted(protocol.id, 70);
   };
 
   const handleUpgradeClick = () => {
@@ -54,19 +54,33 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
   };
 
   return (
-    <Card className={`bg-card border-2 border-border transition-all duration-200 group h-full min-h-[320px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none flex flex-col ${getCardStyles()}`}>
-      <CardContent className="!p-5 flex flex-col h-full">
+    <Card className={`relative bg-card border-2 border-black transition-all duration-200 group h-full min-h-[320px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none flex flex-col ${getCardStyles()}`}>
+      <CardContent className="!p-5 flex flex-col h-full relative">
         {/* Content wrapper with flex-grow to push buttons down */}
         <div className="flex-grow flex flex-col">
-          {/* Lock or Progress indicator */}
-          <div className="absolute top-5 right-5">
+          {/* Lock or Checkmark Toggle */}
+          <div className="absolute top-5 right-5 z-10">
           {isLocked ? (
             <div className="flex items-center gap-1">
               <Lock className="w-5 h-5 text-muted-foreground" />
             </div>
-          ) : isCompleted ? (
-            <CheckCircle className="w-5 h-5 text-foreground" />
-          ) : null}
+          ) : (
+            <button
+              onClick={handleToggleCompleted}
+              className={`w-12 h-12 border-2 border-black transition-all hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center ${
+                isCompleted 
+                  ? 'bg-accent text-black' 
+                  : 'bg-white text-black hover:bg-gray-100'
+              }`}
+              style={{ backgroundColor: isCompleted ? '#1bffbb' : '#ffffff' }}
+            >
+              {isCompleted ? (
+                <CheckCircle className="w-8 h-8 text-black" />
+              ) : (
+                <div className="w-6 h-6 border-2 border-black bg-white"></div>
+              )}
+            </button>
+          )}
           </div>
           
           <Link href={isLocked ? '#' : `/protocols/${protocol.id}`} className={`block h-full flex flex-col ${isLocked ? 'pointer-events-none' : ''}`}>
@@ -74,10 +88,10 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
             <div className="mb-3">
             <div className={`w-14 h-14 flex items-center justify-center font-black text-xl border-2 ${
               isLocked
-                ? 'bg-muted text-muted-foreground border-muted-foreground'
+                ? 'bg-muted text-muted-foreground border-black'
                 : isCompleted 
-                ? 'bg-accent text-accent-foreground border-accent' 
-                : 'bg-background text-foreground border-border'
+                ? 'bg-accent text-black border-black' 
+                : 'bg-background text-foreground border-black'
             }`}>
               {protocol.number.toString().padStart(2, '0')}
             </div>
@@ -88,10 +102,10 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               {protocol.difficultyLevel && (
                 <span className={`inline-block px-3 py-1 text-xs font-bold uppercase border-2 ${
                   protocol.difficultyLevel === 'BEGINNER' 
-                    ? 'bg-accent text-accent-foreground border-accent'
+                    ? 'bg-accent text-black border-black'
                     : protocol.difficultyLevel === 'O\'RTA DARAJA'
-                    ? 'bg-background text-foreground border-border'
-                    : 'bg-primary text-primary-foreground border-primary'
+                    ? 'bg-background text-foreground border-black'
+                    : 'bg-primary text-primary-foreground border-black'
                 }`}>
                   {protocol.difficultyLevel === 'BEGINNER' ? 'Boshlang\'ich' : 
                    protocol.difficultyLevel === 'O\'RTA DARAJA' ? 'O\'rta daraja' : 'Yuqori daraja'}
@@ -125,7 +139,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               <Link href="/atmos-payment" className="w-full">
                 <Button 
                   size="sm"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-primary px-4 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-black px-4 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                   onClick={handleUpgradeClick}
                 >
                   <Crown className="w-3 h-3 mr-1" />
@@ -138,32 +152,11 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
-                {!isCompleted ? (
-                  <Button 
-                    onClick={handleMarkCompleted}
-                    size="sm"
-                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground border-2 border-accent px-3 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                  >
-                    O'rgandim
-                  </Button>
-                ) : (
-                  <Button 
-                    disabled
-                    size="sm"
-                    variant="outline"
-                    className="w-full border-2 border-border text-muted-foreground bg-muted px-3 py-2 h-[44px] text-sm font-bold uppercase cursor-default"
-                  >
-                    O'rganilgan
-                  </Button>
-                )}
-                
-                <Link href={`/protocols/${protocol.id}`}>
-                  <Button size="sm" variant="outline" className="w-full px-3 py-2 h-[44px] text-sm font-bold uppercase border-2 border-border hover:bg-primary hover:text-primary-foreground touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                    Ko'rish
-                  </Button>
-                </Link>
-            </div>
+            <Link href={`/protocols/${protocol.id}`}>
+              <Button size="sm" variant="outline" className="w-full px-3 py-2 h-[44px] text-sm font-bold uppercase border-2 border-black hover:bg-primary hover:text-primary-foreground touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                Ko'rish
+              </Button>
+            </Link>
           )}
         </div>
         

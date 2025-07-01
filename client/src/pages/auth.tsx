@@ -29,7 +29,7 @@ export default function AuthPage() {
           transition={{ duration: 0.3 }}
           className="w-full max-w-container-narrow"
         >
-          <Card className="border-2 border-border shadow-glow overflow-hidden">
+          <Card className="border-2 border-black shadow-glow overflow-hidden">
             <div className="h-2 bg-gradient-to-r from-accent via-accent/50 to-accent" />
             <CardHeader className="text-center p-12 pb-8">
               <motion.div
@@ -49,7 +49,7 @@ export default function AuthPage() {
             </CardHeader>
             <CardContent className="p-12 pt-0">
               <div className="text-center space-y-6">
-                <div className="bg-muted rounded-xl p-6 border border-border">
+                <div className="bg-muted rounded-xl p-6 border border-black">
                   <p className="text-sm text-muted-foreground">
                     Agar email kelmagan bo'lsa, spam papkasini tekshiring.
                   </p>
@@ -100,10 +100,10 @@ export default function AuthPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <Card className="border-2 border-border shadow-glow hover-lift overflow-hidden">
+          <Card className="border-2 border-black shadow-glow hover-lift overflow-hidden">
             
             {/* Tab Navigation */}
-            <div className="flex border-b border-border">
+            <div className="flex border-b border-black">
               <button
                 onClick={() => setIsLogin(true)}
                 className={`flex-1 py-4 px-6 text-base font-medium transition-all duration-300 relative ${

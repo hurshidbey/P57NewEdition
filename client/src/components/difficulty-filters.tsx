@@ -29,8 +29,8 @@ export default function DifficultyFilters({
             onClick={() => onDifficultyChange(null)}
             className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] touch-manipulation ${
               selectedDifficulty === null
-                ? "bg-accent text-foreground border-border hover:bg-accent/90"
-                : "bg-card text-foreground border-border hover:bg-secondary"
+                ? "bg-accent text-black border-black hover:bg-accent/90"
+                : "bg-card text-foreground border-black hover:bg-secondary"
             }`}
           >
             Barcha darajalar
@@ -39,8 +39,8 @@ export default function DifficultyFilters({
             onClick={() => onDifficultyChange("BEGINNER")}
             className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] touch-manipulation ${
               selectedDifficulty === "BEGINNER"
-                ? "bg-accent text-foreground border-border hover:bg-accent/90"
-                : "bg-card text-foreground border-border hover:bg-secondary"
+                ? "bg-accent text-black border-black hover:bg-accent/90"
+                : "bg-card text-foreground border-black hover:bg-secondary"
             }`}
           >
             Boshlang'ich (1-20)
@@ -49,8 +49,8 @@ export default function DifficultyFilters({
             onClick={() => onDifficultyChange("ORTA DARAJA")}
             className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] touch-manipulation ${
               selectedDifficulty === "ORTA DARAJA"
-                ? "bg-accent text-foreground border-border hover:bg-accent/90"
-                : "bg-card text-foreground border-border hover:bg-secondary"
+                ? "bg-accent text-black border-black hover:bg-accent/90"
+                : "bg-card text-foreground border-black hover:bg-secondary"
             }`}
           >
             O'rta daraja (21-40)
@@ -59,8 +59,8 @@ export default function DifficultyFilters({
             onClick={() => onDifficultyChange("YUQORI DARAJA")}
             className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] touch-manipulation ${
               selectedDifficulty === "YUQORI DARAJA"
-                ? "bg-accent text-foreground border-border hover:bg-accent/90"
-                : "bg-card text-foreground border-border hover:bg-secondary"
+                ? "bg-accent text-black border-black hover:bg-accent/90"
+                : "bg-card text-foreground border-black hover:bg-secondary"
             }`}
           >
             Yuqori daraja (41-57)
