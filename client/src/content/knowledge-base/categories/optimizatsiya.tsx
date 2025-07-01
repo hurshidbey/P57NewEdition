@@ -28,7 +28,7 @@ export const narxOptimallashtirish: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
                   <AiIcon name="dollar" size={24} />
                   NARX OPTIMALLASHTIRISH STRATEGIYALARI
                 </h3>
@@ -182,7 +182,7 @@ def process_optimized(items):
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4 text-black">
+                <h3 className="text-xl font-bold mb-2 text-black">
                   REAL DUNYO MISOLI: 90% TEJASH
                 </h3>
                 <div className="space-y-3">
@@ -246,7 +246,7 @@ export const tezlikOshirish: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 text-center">TEZLIK OPTIMIZATSIYA PIRAMIDASI</h3>
+                <h3 className="text-xl font-bold mb-2 text-center">TEZLIK OPTIMIZATSIYA PIRAMIDASI</h3>
                 
                 <div className="space-y-4">
                   <div className="bg-gray-800 text-white p-4 rounded-lg">
@@ -463,7 +463,7 @@ export const xotiraBoshqaruv: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
                   <AiIcon name="memory" size={24} />
                   KONTEKST OYNASI CHEGARALARI
                 </h3>
@@ -618,7 +618,7 @@ class MemoryManager:
 
             <Card className="border-2 border-gray-600 bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4 text-gray-800">
+                <h3 className="text-xl font-bold mb-2 text-gray-800">
                   AMALIY MISOL: CUSTOMER SUPPORT BOT
                 </h3>
                 <div className="space-y-4">

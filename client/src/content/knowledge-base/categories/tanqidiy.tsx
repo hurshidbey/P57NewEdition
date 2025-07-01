@@ -28,7 +28,7 @@ export const baholash: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
                   <AiIcon name="checklist" size={24} />
                   BAHOLASH MEZONLARI
                 </h3>
@@ -278,7 +278,7 @@ def select_model(task_complexity, budget, speed_required):
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4 text-black">
+                <h3 className="text-xl font-bold mb-2 text-black">
                   MODEL TANLASH CHECKLIST
                 </h3>
                 <div className="space-y-3">
@@ -334,7 +334,7 @@ export const xatoAnaliz: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 text-center">XATO TURLARI VA SABABLARI</h3>
+                <h3 className="text-xl font-bold mb-2 text-center">XATO TURLARI VA SABABLARI</h3>
                 
                 <div className="space-y-4">
                   <div className="border-2 border-gray-600 bg-white rounded-lg p-4">

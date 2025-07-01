@@ -25,7 +25,7 @@ export const zeroShot: SectionContent = {
 
           <Card className="border-2 border-black">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">ZERO-SHOT QACHON ISHLAYDI?</h3>
+              <h3 className="text-xl font-bold mb-2">ZERO-SHOT QACHON ISHLAYDI?</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
@@ -105,7 +105,7 @@ export const fewShot: SectionContent = {
 
           <Card className="border-2 border-black">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">NECHTA MISOL KERAK?</h3>
+              <h3 className="text-xl font-bold mb-2">NECHTA MISOL KERAK?</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="text-center">
                   <div className="text-3xl font-bold">1-2</div>
@@ -177,7 +177,7 @@ export const chainOfThought: SectionContent = {
 
           <Card className="border-2 border-black bg-black text-white">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">SEHRLI IBORA:</h3>
+              <h3 className="text-xl font-bold mb-2">SEHRLI IBORA:</h3>
               <p className="text-2xl font-mono">"Keling, qadam-ba-qadam fikrlaymiz"</p>
               <p className="text-sm mt-2">Let's think step by step</p>
             </CardContent>
@@ -203,7 +203,7 @@ Javob: 51 yosh"
           <div className="grid gap-4">
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h4 className="font-bold mb-3">COT QACHON FOYDALANISH:</h4>
+                <h4 className="font-bold mb-2">COT QACHON FOYDALANISH:</h4>
                 <ul className="space-y-2 text-sm">
                   <li>• Matematik masalalar</li>
                   <li>• Mantiqiy topshiriqlar</li>
@@ -215,7 +215,7 @@ Javob: 51 yosh"
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h4 className="font-bold mb-3">COT VARIANTLARI:</h4>
+                <h4 className="font-bold mb-2">COT VARIANTLARI:</h4>
                 <ul className="space-y-2 text-sm">
                   <li>• <strong>Zero-shot CoT:</strong> "Qadam-ba-qadam tushuntir"</li>
                   <li>• <strong>Few-shot CoT:</strong> Misollar bilan</li>
@@ -251,7 +251,7 @@ export const rolePlaying: SectionContent = {
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-4">PROFESSIONAL ROLLAR</h3>
+                <h3 className="text-lg font-bold mb-2">PROFESSIONAL ROLLAR</h3>
                 <ul className="space-y-2 text-sm">
                   <li>• Tajribali dasturchi</li>
                   <li>• Marketing mutaxassisi</li>
@@ -264,7 +264,7 @@ export const rolePlaying: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-4">KREATIV ROLLAR</h3>
+                <h3 className="text-lg font-bold mb-2">KREATIV ROLLAR</h3>
                 <ul className="space-y-2 text-sm">
                   <li>• Stend-up komediyachi</li>
                   <li>• Motivatsion spiker</li>
@@ -344,7 +344,7 @@ export const structuredOutput: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4">ASOSIY USULLAR:</h3>
+                <h3 className="text-xl font-bold mb-2">ASOSIY USULLAR:</h3>
                 <div className="space-y-4">
                   <div className="border-2 border-black p-4">
                     <h4 className="font-bold mb-2">1. Format Ko'rsatish</h4>
@@ -437,7 +437,7 @@ Kitob haqida ma'lumot ber. Javobni quyidagi JSON formatida:
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-4">MURAKKAB MISOL:</h3>
+                <h3 className="text-lg font-bold mb-2">MURAKKAB MISOL:</h3>
                 <pre className="text-xs overflow-x-auto">
 {`prompt = """
 Quyidagi SQL so'rovni tahlil qil va JSON formatda javob ber:

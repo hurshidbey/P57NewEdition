@@ -54,7 +54,7 @@ export const jailbreaking: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4">UMUMIY JAILBREAK USULLARI:</h3>
+                <h3 className="text-xl font-bold mb-2">UMUMIY JAILBREAK USULLARI:</h3>
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-bold mb-2">1. Rol O'ynash (Role-Playing)</h4>
@@ -131,7 +131,7 @@ export const responsibleAi: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4">ASOSIY QOIDALAR:</h3>
+                <h3 className="text-xl font-bold mb-2">ASOSIY QOIDALAR:</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />

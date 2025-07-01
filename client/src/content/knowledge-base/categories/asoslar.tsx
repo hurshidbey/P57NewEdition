@@ -25,7 +25,7 @@ export const aiQandayIshlaydi: SectionContent = {
 
           <Card className="border-2 border-black">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">AI QANDAY "O'YLAYDI":</h3>
+              <h3 className="text-xl font-bold mb-2">AI QANDAY "O'YLAYDI":</h3>
               <ol className="space-y-3">
                 <li className="flex gap-3">
                   <span className="font-bold">1.</span>
@@ -112,7 +112,7 @@ export const neyronTarmoqlar: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4">NEYRON TARMOQ QATLAMLARI:</h3>
+                <h3 className="text-xl font-bold mb-2">NEYRON TARMOQ QATLAMLARI:</h3>
                 <div className="space-y-4">
                   <div className="border-2 border-black p-4">
                     <h4 className="font-bold mb-2">1. Kirish Qatlami (Input Layer)</h4>
@@ -177,7 +177,7 @@ export const llmArxitekturasi: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4">LLM KOMPONENTLARI:</h3>
+                <h3 className="text-xl font-bold mb-2">LLM KOMPONENTLARI:</h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Badge className="mt-1">1</Badge>
@@ -261,7 +261,7 @@ export const transformerModellari: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4">"ATTENTION IS ALL YOU NEED"</h3>
+                <h3 className="text-xl font-bold mb-2">"ATTENTION IS ALL YOU NEED"</h3>
                 <p className="mb-4">Transformerning asosiy g'oyasi:</p>
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
@@ -361,7 +361,7 @@ export const tokenizatsiya: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4">TOKENIZATSIYA TURLARI:</h3>
+                <h3 className="text-xl font-bold mb-2">TOKENIZATSIYA TURLARI:</h3>
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-bold">1. Word-level Tokenization</h4>
@@ -419,7 +419,7 @@ Qisqa esse yoz (500 so'z):
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-4">TOKEN KALKULYATOR:</h3>
+                <h3 className="text-lg font-bold mb-2">TOKEN KALKULYATOR:</h3>
                 <div className="space-y-2">
                   <p><strong>100 token ≈</strong> 75 so'z (inglizcha)</p>
                   <p><strong>100 token ≈</strong> 35-50 so'z (o'zbekcha)</p>

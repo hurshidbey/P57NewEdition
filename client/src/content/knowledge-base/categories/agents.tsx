@@ -28,7 +28,7 @@ export const agentTizimlar: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
                   <AiIcon name="robot" size={24} />
                   AGENT KOMPONENTLARI
                 </h3>
@@ -236,7 +236,7 @@ export const orchestration: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 text-center">ORCHESTRATION ARXITEKTURASI</h3>
+                <h3 className="text-xl font-bold mb-2 text-center">ORCHESTRATION ARXITEKTURASI</h3>
                 
                 <div className="space-y-6">
                   {/* Orchestrator */}
