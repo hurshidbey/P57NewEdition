@@ -8,6 +8,103 @@ import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import { AiIcon } from "@/components/ai-icon";
 
+// Component definitions
+interface ExpandableCardProps {
+  term: string;
+  definition: string;
+  icon?: React.ReactNode;
+  examples?: string[];
+}
+
+function ExpandableCard({ term, definition, icon, examples }: ExpandableCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  return (
+    <div className="border-2 border-black mb-4">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full p-6 flex items-center justify-between hover:bg-gray-50"
+      >
+        <div className="flex items-center gap-4">
+          {icon && <div>{icon}</div>}
+          <h3 className="text-xl font-bold uppercase">{term}</h3>
+        </div>
+        <AiIcon name={isExpanded ? 'chevron-up' : 'chevron-down'} size={20} />
+      </button>
+      
+      {isExpanded && (
+        <div className="p-6 pt-0">
+          <p className="text-lg mb-4">{definition}</p>
+          {examples && examples.length > 0 && (
+            <div className="mt-4 pt-4 border-t-2 border-gray-200">
+              <p className="font-bold mb-2">MISOLLAR:</p>
+              {examples.map((example, idx) => (
+                <p key={idx} className="mb-2">• {example}</p>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface CodeExampleProps {
+  title: string;
+  badExample: string;
+  goodExample: string;
+  explanation: string;
+}
+
+function CodeExample({ title, badExample, goodExample, explanation }: CodeExampleProps) {
+  const [showGood, setShowGood] = useState(false);
+  
+  return (
+    <div className="border-2 border-black mb-6">
+      <div className="bg-black text-white p-4">
+        <h4 className="font-bold uppercase">{title}</h4>
+      </div>
+      
+      <div className="p-6">
+        {/* Bad Example */}
+        <div className={showGood ? 'opacity-50' : ''}>
+          <div className="flex items-center gap-2 mb-2">
+            <AiIcon name="close" size={16} />
+            <span className="font-bold">YOMON MISOL</span>
+          </div>
+          <pre className="bg-gray-50 border-2 border-black p-4 font-mono text-sm overflow-x-auto whitespace-pre-wrap">
+            {badExample}
+          </pre>
+        </div>
+        
+        {/* Toggle Button */}
+        <button
+          onClick={() => setShowGood(!showGood)}
+          className="my-4 px-4 py-2 border-2 border-black font-bold hover:bg-gray-50"
+        >
+          {showGood ? 'YOMON MISOLNI KO\'RISH' : 'YAXSHI MISOLNI KO\'RISH'}
+        </button>
+        
+        {/* Good Example */}
+        <div className={!showGood ? 'opacity-50' : ''}>
+          <div className="flex items-center gap-2 mb-2">
+            <AiIcon name="checked" size={16} />
+            <span className="font-bold">YAXSHI MISOL</span>
+          </div>
+          <pre className="bg-gray-50 border-2 border-black p-4 font-mono text-sm overflow-x-auto whitespace-pre-wrap">
+            {goodExample}
+          </pre>
+        </div>
+        
+        {/* Explanation */}
+        <div className="mt-6 p-4 bg-gray-50 border-2 border-black">
+          <p>{explanation}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Knowledge Base Structure
 interface KBSection {
   id: string;
@@ -637,10 +734,36 @@ Iltimos, quyidagi bo'limlarni o'z ichiga olgan biznes-plan tayyorla:
         <div className="space-y-6">
           <div className="prose prose-lg max-w-none">
             <p className="text-lg leading-relaxed">
-              Sun'iy intellekt qanday ishlaydi? Bu savolga javob berish uchun avval 
-              AI'ning asosiy tushunchalarini tushunishimiz kerak.
+              Sun'iy intellekt — bu kompyuterlarni inson kabi "o'ylash"ga o'rgatish san'ati. 
+              Lekin bu "o'ylash" aslida nima?
             </p>
           </div>
+
+          <Card className="border-2 border-black">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">AI QANDAY "O'YLAYDI":</h3>
+              <ol className="space-y-3">
+                <li className="flex gap-3">
+                  <span className="font-bold">1.</span>
+                  <div>
+                    <strong>Pattern tanish:</strong> Millionlab misollardan qonuniyatlarni topadi
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold">2.</span>
+                  <div>
+                    <strong>Bashorat qilish:</strong> O'rgangan pattern'lar asosida keyingi so'zni taxmin qiladi
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold">3.</span>
+                  <div>
+                    <strong>Kontekstni tushunish:</strong> Sizning savolingiz qaysi mavzuga tegishli ekanini aniqlaydi
+                  </div>
+                </li>
+              </ol>
+            </CardContent>
+          </Card>
           
           <ExpandableCard
             term="NEYRON TARMOQLAR"
@@ -662,10 +785,813 @@ Iltimos, quyidagi bo'limlarni o'z ichiga olgan biznes-plan tayyorla:
               "Reinforcement Learning - Mukofotlash orqali o'rganish"
             ]}
           />
+
+          <Alert className="border-2 border-black">
+            <AiIcon name="info" size={20} />
+            <AlertDescription>
+              <strong>Muhim:</strong> AI aslida "tushunmaydi" — u statistik model. 
+              Lekin bu model shunchalik murakkabki, u go'yo tushungandek natija beradi.
+            </AlertDescription>
+          </Alert>
         </div>
       );
     }
     
+    if (categoryId === 'kirish' && sectionId === 'prompting-nima') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Prompting — bu AI bilan samarali muloqot qilish san'ati. To'g'ri prompt yozish orqali 
+              siz AI'dan maksimal foyda olishingiz mumkin.
+            </p>
+          </div>
+
+          <ExpandableCard
+            term="PROMPT"
+            definition="AI'ga beriladigan ko'rsatma yoki savol. Qanchalik aniq va to'liq bo'lsa, shunchalik yaxshi natija olasiz."
+            icon={<AiIcon name="target" size={24} />}
+            examples={[
+              "Oddiy prompt: 'Menga Python haqida aytib ber'",
+              "Yaxshi prompt: 'Python dasturlash tilining 5 ta asosiy afzalligini sanab ber. Har biri uchun qisqa misol keltir.'"
+            ]}
+          />
+
+          <Card className="border-2 border-black">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">YAXSHI PROMPT ELEMENTLARI:</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <AiIcon name="target" size={20} className="mt-1 flex-shrink-0" />
+                  <div>
+                    <strong>Aniq maqsad:</strong> Nimani xohlayotganingizni aniq ayting
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <AiIcon name="context" size={20} className="mt-1 flex-shrink-0" />
+                  <div>
+                    <strong>Kontekst:</strong> Vaziyat haqida ma'lumot bering
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <AiIcon name="format" size={20} className="mt-1 flex-shrink-0" />
+                  <div>
+                    <strong>Format:</strong> Qanday ko'rinishda javob kutayotganingizni ayting
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <AiIcon name="layers" size={20} className="mt-1 flex-shrink-0" />
+                  <div>
+                    <strong>Misollar:</strong> Agar kerak bo'lsa, namuna ko'rsating
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <CodeExample
+            title="PROMPT TAQQOSLASH"
+            badExample="Menga marketing haqida yoz"
+            goodExample="Men yangi mobil ilova uchun marketing strategiya tuzmoqchiman.
+
+Ilova haqida:
+- Nom: FitTracker
+- Maqsad: Sog'lom turmush tarzi uchun kunlik rejalar
+- Target auditoriya: 25-40 yoshli professional ayollar
+- Narx: Oyiga $9.99
+
+Iltimos, quyidagi marketing strategiya tayyorla:
+1. 3 ta asosiy marketing kanal
+2. Har bir kanal uchun konkret taktikalar
+3. Birinchi oy uchun content kalendar
+4. Taxminiy byudjet taqsimoti
+
+Format: Bullet point ro'yxat shaklida"
+            explanation="Yaxshi promptda barcha kerakli ma'lumotlar, aniq ko'rsatmalar va kutilgan format ko'rsatilgan."
+          />
+
+          <Alert className="border-2 border-black">
+            <AiIcon name="lightbulb" size={20} />
+            <AlertDescription>
+              <strong>Maslahat:</strong> Prompt yozishda o'zingizni AI o'rniga qo'ying. 
+              Sizga shunday topshiriq berilsa, nimalar kerak bo'lardi?
+            </AlertDescription>
+          </Alert>
+        </div>
+      );
+    }
+
+    if (categoryId === 'kirish' && sectionId === 'prompt-elementlari') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Professional prompt 5 ta asosiy elementdan tashkil topadi. Har bir element 
+              o'z vazifasiga ega va natija sifatiga ta'sir qiladi.
+            </p>
+          </div>
+
+          <div className="grid gap-4">
+            <ExpandableCard
+              term="1. ROL (ROLE)"
+              definition="AI'ga qanday mutaxassis sifatida javob berishini ko'rsating."
+              icon={<AiIcon name="brain" size={24} />}
+              examples={[
+                "Sen tajribali marketing mutaxassisisan...",
+                "Professional dasturchi sifatida...",
+                "10 yillik tajribaga ega moliya maslahatchisi rolida..."
+              ]}
+            />
+
+            <ExpandableCard
+              term="2. KONTEKST (CONTEXT)"
+              definition="Vaziyat haqida to'liq ma'lumot bering."
+              icon={<AiIcon name="context" size={24} />}
+              examples={[
+                "Bizning kompaniya B2B SaaS mahsulot ishlab chiqaradi...",
+                "Men universitetda o'qiyman va diplom ishi yozishim kerak...",
+                "Kichik biznes egasiman, 5 ta xodim bor..."
+              ]}
+            />
+
+            <ExpandableCard
+              term="3. VAZIFA (TASK)"
+              definition="Aniq nima qilish kerakligini ayting."
+              icon={<AiIcon name="target" size={24} />}
+              examples={[
+                "3 oylik marketing kampaniya rejasini tuzing",
+                "Ushbu kodni optimize qiling va kommentlar qo'shing",
+                "SWOT tahlil o'tkazing va tavsiyalar bering"
+              ]}
+            />
+
+            <ExpandableCard
+              term="4. FORMAT"
+              definition="Javob qanday ko'rinishda bo'lishini belgilang."
+              icon={<AiIcon name="format" size={24} />}
+              examples={[
+                "Markdown table shaklida",
+                "5 ta bullet point",
+                "Step-by-step qo'llanma"
+              ]}
+            />
+
+            <ExpandableCard
+              term="5. TON (TONE)"
+              definition="Qanday uslubda yozilishini ko'rsating."
+              icon={<AiIcon name="message" size={24} />}
+              examples={[
+                "Professional va rasmiy",
+                "Do'stona va tushunarli",
+                "Qisqa va lo'nda"
+              ]}
+            />
+          </div>
+
+          <Card className="border-2 border-black bg-gray-50">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">TO'LIQ PROMPT NAMUNASI:</h3>
+              <pre className="bg-white border-2 border-black p-4 overflow-x-auto text-sm">
+{`ROL: Sen tajribali content marketing mutaxassisisan.
+
+KONTEKST: Men yangi fitness blog ochyapman. Target auditoriya - 
+25-40 yoshli ayollar. Asosiy mavzu - uyda mashq qilish.
+
+VAZIFA: Birinchi oy uchun content plan tuzing.
+
+FORMAT: 
+- 4 haftalik jadval
+- Har hafta uchun 3 ta post mavzusi
+- Har bir post uchun asosiy kalit so'zlar
+
+TON: Professional lekin do'stona`}</pre>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    if (categoryId === 'kirish' && sectionId === 'ai-inqilobi') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              AI inqilobi global miqyosda sodir bo'lmoqda. O'zbekiston ham bu jarayondan 
+              chetda qolmasligi, balki faol ishtirok etishi muhim.
+            </p>
+          </div>
+
+          <Card className="border-2 border-black">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">AI INQILOBINING 3 TO'LQINI:</h3>
+              <div className="space-y-4">
+                <div className="border-l-4 border-black pl-4">
+                  <h4 className="font-bold">1-to'lqin: Tor AI (2010-2020)</h4>
+                  <p className="text-muted-foreground">Bitta vazifaga ixtisoslashgan AI: rasm tanish, tarjima, tavsiyalar</p>
+                </div>
+                <div className="border-l-4 border-black pl-4">
+                  <h4 className="font-bold">2-to'lqin: Generativ AI (2020-2025)</h4>
+                  <p className="text-muted-foreground">Yangi kontent yaratadigan AI: ChatGPT, DALL-E, Midjourney</p>
+                </div>
+                <div className="border-l-4 border-gray-400 pl-4">
+                  <h4 className="font-bold text-gray-600">3-to'lqin: AGI (2025+)</h4>
+                  <p className="text-muted-foreground">Inson darajasidagi umumiy sun'iy intellekt</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h4 className="font-bold mb-4 flex items-center gap-2">
+                  <AiIcon name="world" size={20} />
+                  GLOBAL IMKONIYATLAR
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• Remote ish imkoniyatlari</li>
+                  <li>• Global bozorga chiqish</li>
+                  <li>• Xalqaro hamkorlik</li>
+                  <li>• Bilim almashish</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h4 className="font-bold mb-4 flex items-center gap-2">
+                  <AiIcon name="flag" size={20} />
+                  O'ZBEKISTON UCHUN
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• IT eksporti o'sishi</li>
+                  <li>• Ta'lim tizimi yangilanishi</li>
+                  <li>• Startap ekotizimi</li>
+                  <li>• Raqamli transformatsiya</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Alert className="border-2 border-black">
+            <AiIcon name="lightbulb" size={20} />
+            <AlertDescription>
+              <strong>Muhim:</strong> AI inqilobida g'olib bo'lish uchun texnologiyani 
+              tushunish yetarli emas — uni to'g'ri qo'llashni bilish kerak. Aynan shuning 
+              uchun prompting ko'nikmalari muhim.
+            </AlertDescription>
+          </Alert>
+        </div>
+      );
+    }
+
+    if (categoryId === 'kirish' && sectionId === 'umumiy-maslahatlar') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              AI bilan ishlashda muvaffaqiyatli bo'lish uchun ushbu asosiy tamoyillarga 
+              amal qiling.
+            </p>
+          </div>
+
+          <Card className="border-2 border-black bg-black text-white">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">7 OLTIN QOIDA</h3>
+              <div className="space-y-3">
+                {[
+                  "Aniq va konkret bo'ling",
+                  "Kontekst bering",
+                  "Misollar keltiring",
+                  "Iterativ yondashing",
+                  "Faktlarni tekshiring",
+                  "Etik chegaralarni saqlang",
+                  "Doimiy o'rganing"
+                ].map((rule, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <span className="font-bold text-2xl">{idx + 1}</span>
+                    <span>{rule}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid gap-4">
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h4 className="font-bold mb-3">❌ QILMANG:</h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• Noaniq so'rovlar bermang</li>
+                  <li>• AI'ga ko'r-ko'rona ishonmang</li>
+                  <li>• Shaxsiy ma'lumotlarni bermang</li>
+                  <li>• Noqonuniy maqsadlarda foydalanmang</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h4 className="font-bold mb-3">✅ QILING:</h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• Aniq maqsad belgilang</li>
+                  <li>• Natijalarni tekshiring</li>
+                  <li>• Takrorlash orqali yaxshilang</li>
+                  <li>• Yangi texnikalarni sinang</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <CodeExample
+            title="ITERATIV YONDASHUV MISOLI"
+            badExample="Menga maqola yoz"
+            goodExample="1-urinish: Menga texnologiya haqida maqola yoz
+2-urinish: Sun'iy intellekt haqida 500 so'zlik maqola yoz
+3-urinish: ChatGPT'ning ta'limdagi roli haqida 500 so'zlik maqola yoz. Auditoriya: o'qituvchilar
+4-urinish: [Oldingi natijaga asoslanib] Iltimos, ko'proq amaliy misollar qo'sh"
+            explanation="Har bir iteratsiyada promptingizni aniqlashtirib boring. Bu sizga kerakli natijaga tezroq erishishga yordam beradi."
+          />
+        </div>
+      );
+    }
+    
+    // SOZLAMALAR category content
+    if (categoryId === 'sozlamalar' && sectionId === 'harorat-parametri') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Temperature (harorat) — AI javoblarining kreativlik darajasini boshqaruvchi 
+              eng muhim parametr. 0 dan 2 gacha qiymat oladi.
+            </p>
+          </div>
+
+          <Card className="border-2 border-black">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">TEMPERATURE SHKALASI</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-24 text-center">
+                    <div className="text-2xl font-bold">0.0</div>
+                    <div className="text-xs text-muted-foreground">Deterministik</div>
+                  </div>
+                  <div className="flex-1 bg-gradient-to-r from-blue-100 via-yellow-100 to-red-100 h-8 border-2 border-black"></div>
+                  <div className="w-24 text-center">
+                    <div className="text-2xl font-bold">2.0</div>
+                    <div className="text-xs text-muted-foreground">Xaotik</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            <Card className="border-2 border-black">
+              <CardContent className="p-4">
+                <h4 className="font-bold mb-2">PAST (0.0-0.5)</h4>
+                <p className="text-sm text-muted-foreground mb-3">Aniq, bashorat qilsa bo'ladigan</p>
+                <ul className="text-xs space-y-1">
+                  <li>• Faktlar va ma'lumotlar</li>
+                  <li>• Kod yozish</li>
+                  <li>• Hisob-kitoblar</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black">
+              <CardContent className="p-4">
+                <h4 className="font-bold mb-2">O'RTA (0.5-1.0)</h4>
+                <p className="text-sm text-muted-foreground mb-3">Muvozanatli javoblar</p>
+                <ul className="text-xs space-y-1">
+                  <li>• Umumiy foydalanish</li>
+                  <li>• Maqola yozish</li>
+                  <li>• Suhbat</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black">
+              <CardContent className="p-4">
+                <h4 className="font-bold mb-2">YUQORI (1.0-2.0)</h4>
+                <p className="text-sm text-muted-foreground mb-3">Ijodkor, kutilmagan</p>
+                <ul className="text-xs space-y-1">
+                  <li>• Brainstorming</li>
+                  <li>• She'riyat</li>
+                  <li>• Kreativ yozish</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <CodeExample
+            title="TEMPERATURE MISOLLARI"
+            badExample="Temperature = 2.0
+Prompt: O'zbekiston poytaxti qaysi?
+Javob: O'zbekiston poytaxti... balki Samarqand? Yoki Buxoro? Qadimda turli shaharlar..."
+            goodExample="Temperature = 0.2
+Prompt: O'zbekiston poytaxti qaysi?
+Javob: O'zbekiston poytaxti - Toshkent shahri."
+            explanation="Faktik ma'lumotlar uchun past temperature, ijodiy vazifalar uchun yuqori temperature ishlating."
+          />
+        </div>
+      );
+    }
+
+    if (categoryId === 'sozlamalar' && sectionId === 'top-p-va-top-k') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Top-P va Top-K parametrlari AI'ning so'z tanlash jarayonini boshqaradi. 
+              Ular temperature bilan birgalikda ishlab, javob sifatini nazorat qiladi.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold mb-4">TOP-P (Nucleus Sampling)</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Ehtimollik yig'indisi P ga teng bo'lgan so'zlarni tanlaydi
+                </p>
+                <div className="space-y-3">
+                  <div className="bg-gray-100 p-3 border border-gray-300">
+                    <div className="font-mono text-sm">top_p = 0.1</div>
+                    <div className="text-xs">Faqat eng ehtimollik yuqori so'zlar</div>
+                  </div>
+                  <div className="bg-gray-100 p-3 border border-gray-300">
+                    <div className="font-mono text-sm">top_p = 0.9</div>
+                    <div className="text-xs">Ko'proq so'z variantlari</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold mb-4">TOP-K</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Faqat eng yuqori K ta so'zdan tanlaydi
+                </p>
+                <div className="space-y-3">
+                  <div className="bg-gray-100 p-3 border border-gray-300">
+                    <div className="font-mono text-sm">top_k = 5</div>
+                    <div className="text-xs">Faqat 5 ta eng ehtimol so'z</div>
+                  </div>
+                  <div className="bg-gray-100 p-3 border border-gray-300">
+                    <div className="font-mono text-sm">top_k = 50</div>
+                    <div className="text-xs">50 ta so'z variantidan tanlash</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Alert className="border-2 border-black">
+            <AiIcon name="info" size={20} />
+            <AlertDescription>
+              <strong>Qachon ishlatish:</strong> Ko'pchilik holatlarda default qiymatlar 
+              yetarli. Faqat maxsus ehtiyoj bo'lganda o'zgartiring.
+            </AlertDescription>
+          </Alert>
+        </div>
+      );
+    }
+
+    if (categoryId === 'sozlamalar' && sectionId === 'max-tokens') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Max tokens parametri AI javobining maksimal uzunligini belgilaydi. 
+              Bu nafaqat narxni, balki javob to'liqligini ham nazorat qiladi.
+            </p>
+          </div>
+
+          <Card className="border-2 border-black">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">TOKEN HISOBI</h3>
+              <div className="grid md:grid-cols-3 gap-4 text-center">
+                <div>
+                  <div className="text-3xl font-bold">1 token</div>
+                  <div className="text-sm text-muted-foreground">≈ 0.75 so'z (inglizcha)</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold">1 token</div>
+                  <div className="text-sm text-muted-foreground">≈ 0.5 so'z (o'zbekcha)</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold">1000 token</div>
+                  <div className="text-sm text-muted-foreground">≈ 2 sahifa matn</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid gap-4">
+            <Card className="border-2 border-black">
+              <CardContent className="p-4">
+                <h4 className="font-bold mb-2">QISQA JAVOBLAR (50-150 token)</h4>
+                <ul className="text-sm space-y-1">
+                  <li>• Ha/yo'q savollari</li>
+                  <li>• Qisqa ta'riflar</li>
+                  <li>• Tezkor javoblar</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black">
+              <CardContent className="p-4">
+                <h4 className="font-bold mb-2">O'RTA JAVOBLAR (500-1000 token)</h4>
+                <ul className="text-sm space-y-1">
+                  <li>• Email va xatlar</li>
+                  <li>• Qisqa maqolalar</li>
+                  <li>• Kod parchalari</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black">
+              <CardContent className="p-4">
+                <h4 className="font-bold mb-2">UZUN JAVOBLAR (2000+ token)</h4>
+                <ul className="text-sm space-y-1">
+                  <li>• To'liq maqolalar</li>
+                  <li>• Batafsil tahlillar</li>
+                  <li>• Katta kod fayllari</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Alert className="border-2 border-black bg-gray-50">
+            <AiIcon name="dollar" size={20} />
+            <AlertDescription>
+              <strong>Narx optimallashtirish:</strong> Keragidan ortiq token sarflamang. 
+              Agar 500 token yetarli bo'lsa, max_tokens=2000 qo'ymang.
+            </AlertDescription>
+          </Alert>
+        </div>
+      );
+    }
+
+    // TEXNIKALAR category content
+    if (categoryId === 'texnikalar' && sectionId === 'zero-shot') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Zero-shot prompting — AI'ga hech qanday misol bermasdan to'g'ridan-to'g'ri 
+              vazifani bajarish ko'rsatmasi. Eng oddiy, lekin kuchli texnika.
+            </p>
+          </div>
+
+          <Card className="border-2 border-black">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">ZERO-SHOT QACHON ISHLAYDI?</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
+                  <span>Oddiy va aniq vazifalar uchun</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
+                  <span>AI allaqachon bilishi mumkin bo'lgan ma'lumotlar</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
+                  <span>Umumiy til vazifalar (tarjima, tushuntirish)</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <CodeExample
+            title="ZERO-SHOT MISOLLARI"
+            badExample="Quyidagi gapni tahlil qil: 'Bugun havo yaxshi'"
+            goodExample="Quyidagi gapni grammatik jihatdan tahlil qiling: 'Bugun havo yaxshi'
+
+Gap tarkibi:
+- Gap turi (darak/so'roq/undov)
+- Ega va kesim
+- Ikkinchi darajali bo'laklar
+- So'z turkumlari"
+            explanation="Aniq ko'rsatmalar berish zero-shot texnikani samaraliroq qiladi."
+          />
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <Card className="border-2 border-green-600">
+              <CardContent className="p-4">
+                <h4 className="font-bold mb-2 text-green-700">✅ AFZALLIKLARI</h4>
+                <ul className="text-sm space-y-1">
+                  <li>• Tez va oson</li>
+                  <li>• Misollar tayyorlash shart emas</li>
+                  <li>• Kam token sarflaydi</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-red-600">
+              <CardContent className="p-4">
+                <h4 className="font-bold mb-2 text-red-700">❌ KAMCHILIKLARI</h4>
+                <ul className="text-sm space-y-1">
+                  <li>• Murakkab vazifalar uchun yaramaydi</li>
+                  <li>• Format nazorati qiyin</li>
+                  <li>• Natija sifati o'zgaruvchan</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      );
+    }
+
+    if (categoryId === 'texnikalar' && sectionId === 'few-shot') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Few-shot prompting — AI'ga bir nechta misol ko'rsatib, keyin vazifani 
+              bajarishni so'rash. Bu AI'ga formatni va kutilgan natijani tushunishga yordam beradi.
+            </p>
+          </div>
+
+          <Card className="border-2 border-black">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">NECHTA MISOL KERAK?</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold">1-2</div>
+                  <div className="text-sm text-muted-foreground">Oddiy formatlar</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold">3-5</div>
+                  <div className="text-sm text-muted-foreground">O'rtacha murakkablik</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold">5-10</div>
+                  <div className="text-sm text-muted-foreground">Murakkab pattern'lar</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <CodeExample
+            title="FEW-SHOT PROMPTING NAMUNASI"
+            badExample="Bu gaplarni ijobiy yoki salbiy deb tasniflang:
+'Mahsulot zo'r!'
+'Xizmat yomon'"
+            goodExample="Gaplarni his-tuyg'u bo'yicha tasniflang:
+
+Gap: Bu kitob juda qiziqarli!
+Tasnif: IJOBIY
+
+Gap: Xizmat ko'rsatish darajasi past
+Tasnif: SALBIY
+
+Gap: Oddiy mahsulot, na yaxshi na yomon
+Tasnif: NEYTRAL
+
+Gap: Bugungi uchrashuvdan xursandman
+Tasnif:"
+            explanation="Misollar orqali AI format va tasnif mezonlarini aniq tushunadi."
+          />
+
+          <Alert className="border-2 border-black">
+            <AiIcon name="lightbulb" size={20} />
+            <AlertDescription>
+              <strong>Pro maslahat:</strong> Misollaringiz turli xil va vakillik qiluvchi 
+              bo'lsin. Faqat bir xil turdagi misollar bermang.
+            </AlertDescription>
+          </Alert>
+        </div>
+      );
+    }
+
+    if (categoryId === 'texnikalar' && sectionId === 'chain-of-thought') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Chain-of-Thought (CoT) — AI'ni qadam-ba-qadam fikrlashga undash texnikasi. 
+              Murakkab masalalar va mantiqiy xulosalar uchun juda samarali.
+            </p>
+          </div>
+
+          <Card className="border-2 border-black bg-black text-white">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold mb-4">SEHRLI IBORA:</h3>
+              <p className="text-2xl font-mono">"Keling, qadam-ba-qadam fikrlaymiz"</p>
+              <p className="text-sm mt-2">Let's think step by step</p>
+            </CardContent>
+          </Card>
+
+          <CodeExample
+            title="COT TAQQOSLASH"
+            badExample="Agar Aziz 23 yoshda va u akasidan 5 yosh kichik bo'lsa, ularning yoshlari yig'indisi nechchi?
+
+Javob: 51"
+            goodExample="Agar Aziz 23 yoshda va u akasidan 5 yosh kichik bo'lsa, ularning yoshlari yig'indisi nechchi?
+
+Keling, qadam-ba-qadam fikrlaymiz:
+1. Aziz 23 yoshda
+2. U akasidan 5 yosh kichik
+3. Demak, akasi: 23 + 5 = 28 yoshda
+4. Yoshlari yig'indisi: 23 + 28 = 51
+
+Javob: 51 yosh"
+            explanation="CoT texnikasi AI'ni o'z fikrlash jarayonini ko'rsatishga majbur qiladi, bu xatolar ehtimolini kamaytiradi."
+          />
+
+          <div className="grid gap-4">
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h4 className="font-bold mb-3">COT QACHON FOYDALANISH:</h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• Matematik masalalar</li>
+                  <li>• Mantiqiy topshiriqlar</li>
+                  <li>• Ko'p bosqichli vazifalar</li>
+                  <li>• Murakkab tahlillar</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h4 className="font-bold mb-3">COT VARIANTLARI:</h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• <strong>Zero-shot CoT:</strong> "Qadam-ba-qadam tushuntir"</li>
+                  <li>• <strong>Few-shot CoT:</strong> Misollar bilan</li>
+                  <li>• <strong>Self-consistency:</strong> Bir necha yechim, eng ko'p takrorlangan javob</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      );
+    }
+
+    if (categoryId === 'texnikalar' && sectionId === 'role-playing') {
+      return (
+        <div className="space-y-6">
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed">
+              Role-playing — AI'ga ma'lum bir mutaxassis yoki shaxs rolini berish. 
+              Bu javob sifati va uslubini sezilarli yaxshilaydi.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold mb-4">PROFESSIONAL ROLLAR</h3>
+                <ul className="space-y-2 text-sm">
+                  <li>• Tajribali dasturchi</li>
+                  <li>• Marketing mutaxassisi</li>
+                  <li>• Moliya maslahatchisi</li>
+                  <li>• Tibbiyot mutaxassisi</li>
+                  <li>• Huquqshunos</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold mb-4">KREATIV ROLLAR</h3>
+                <ul className="space-y-2 text-sm">
+                  <li>• Stend-up komediyachi</li>
+                  <li>• Motivatsion spiker</li>
+                  <li>• Tarixchi</li>
+                  <li>• Bolalar yozuvchisi</li>
+                  <li>• Ilmiy fantast muallifi</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <CodeExample
+            title="ROLE-PLAYING MISOLI"
+            badExample="Menga JavaScript'da array methods haqida tushuntir"
+            goodExample="Sen 10 yillik tajribaga ega Senior JavaScript dasturchisan. Junior dasturchilarga murakkab tushunchalarni sodda tilda tushuntirish bo'yicha maxsus tajribaga egasan.
+
+Menga JavaScript'dagi array methodlari haqida tushuntir. Har bir method uchun:
+1. Nima ish qilishini
+2. Qachon ishlatilishini
+3. Real proyektdan misol keltirishingni xohlayman."
+            explanation="Aniq rol va kontekst berish AI'ni mutaxassis kabi javob berishga undaydi."
+          />
+
+          <Alert className="border-2 border-black">
+            <AiIcon name="info" size={20} />
+            <AlertDescription>
+              <strong>Maslahat:</strong> Rolni batafsil tavsiflang - tajriba, mutaxassislik 
+              sohasi, uslub. Qanchalik aniq bo'lsa, shunchalik yaxshi natija.
+            </AlertDescription>
+          </Alert>
+        </div>
+      );
+    }
+
     // Default content for sections not yet implemented
     return (
       <div className="prose prose-lg max-w-none">
