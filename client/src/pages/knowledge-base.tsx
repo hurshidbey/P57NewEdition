@@ -717,8 +717,8 @@ export default function KnowledgeBase() {
             </div>
 
             {/* Section Header */}
-            <div className="mb-8">
-              <h1 className="text-4xl lg:text-5xl font-black mb-6 leading-none uppercase tracking-tight">
+            <div className="mb-6">
+              <h1 className="text-4xl lg:text-5xl font-black mb-3 leading-none uppercase tracking-tight">
                 {getCurrentSection()?.title}
               </h1>
               <div className="flex items-center gap-6 text-sm text-black">

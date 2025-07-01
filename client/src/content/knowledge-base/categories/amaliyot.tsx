@@ -28,7 +28,7 @@ export const loyihalar: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
                   <AiIcon name="sparkles" size={24} />
                   TOP AI LOYIHALAR 2024
                 </h3>
@@ -267,7 +267,7 @@ export const debugging: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
                   <AiIcon name="bug" size={24} />
                   AI DEBUGGING TOOLKIT
                 </h3>
@@ -468,7 +468,7 @@ class AIDebugger:
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4 text-black">
+                <h3 className="text-xl font-bold mb-2 text-black">
                   REAL-TIME DEBUGGING DASHBOARD
                 </h3>
                 <div className="bg-white border-2 border-gray-300 rounded-lg p-4 font-mono text-sm">
@@ -529,7 +529,7 @@ export const sohalarAmaliyot: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 text-center">AI SOHALARDA TATBIQI</h3>
+                <h3 className="text-xl font-bold mb-2 text-center">AI SOHALARDA TATBIQI</h3>
                 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="border-2 border-gray-600 bg-white rounded-lg p-4">

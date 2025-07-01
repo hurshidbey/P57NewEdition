@@ -29,7 +29,7 @@ export const ragAsoslari: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 text-center">RAG ARXITEKTURASI</h3>
+                <h3 className="text-xl font-bold mb-2 text-center">RAG ARXITEKTURASI</h3>
                 
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
@@ -307,7 +307,7 @@ export const hybridSearch: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 text-center">HYBRID SEARCH FORMULASI</h3>
+                <h3 className="text-xl font-bold mb-2 text-center">HYBRID SEARCH FORMULASI</h3>
                 
                 <div className="bg-white border-2 border-black p-4 rounded-lg font-mono text-center">
                   <p className="text-lg">

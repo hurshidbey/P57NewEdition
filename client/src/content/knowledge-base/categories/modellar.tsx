@@ -28,7 +28,7 @@ export const gptOilasi: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-4">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
                   <AiIcon name="openai" size={24} />
                   GPT MODELLAR EVOLYUTSIYASI
                 </h3>
@@ -275,7 +275,7 @@ Savol: Bu qism qanday bog'langan asosiy tezis bilan?
 
             <Card className="border-2 border-black bg-gray-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-4">
-                <h3 className="text-lg font-bold mb-3 text-black">
+                <h3 className="text-lg font-bold mb-2 text-black">
                   CLAUDE VS GPT: QACHON QAYSI?
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -336,7 +336,7 @@ export const ochiqModellar: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-4">
-                <h3 className="text-lg font-bold mb-4 text-center">TOP OCHIQ MODELLAR 2024</h3>
+                <h3 className="text-lg font-bold mb-2 text-center">TOP OCHIQ MODELLAR 2024</h3>
                 
                 <div className="space-y-3">
                   <div className="border-2 border-gray-600 rounded-lg p-4 bg-white">
