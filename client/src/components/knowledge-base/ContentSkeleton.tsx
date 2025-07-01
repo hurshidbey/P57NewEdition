@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function ContentSkeleton() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Title skeleton */}
       <Skeleton className="h-10 w-3/4" />
       
