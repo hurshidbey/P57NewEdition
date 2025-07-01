@@ -251,11 +251,11 @@ export default function ProtocolDetail() {
                   </Button>
                 ) : (
                   <Button 
-                    onClick={() => markProtocolCompleted(protocol.id, 70)}
+                    disabled
                     variant="outline"
-                    className="border-2 border-black text-black hover:bg-gray-100 font-bold uppercase px-6 py-2 h-[44px] transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    className="border-2 border-black text-black bg-gray-100 font-bold uppercase px-6 py-2 h-[44px] cursor-default"
                   >
-                    Qayta mashq qilish
+                    O'rganilgan
                   </Button>
                 )}
               </div>

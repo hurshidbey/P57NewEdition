@@ -149,12 +149,12 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
                   </Button>
                 ) : (
                   <Button 
-                    onClick={handleMarkCompleted}
+                    disabled
                     size="sm"
                     variant="outline"
-                    className="w-full border-2 border-black text-black hover:bg-gray-100 px-3 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    className="w-full border-2 border-black text-black bg-gray-100 px-3 py-2 h-[44px] text-sm font-bold uppercase cursor-default"
                   >
-                    Qayta mashq
+                    O'rganilgan
                   </Button>
                 )}
                 
