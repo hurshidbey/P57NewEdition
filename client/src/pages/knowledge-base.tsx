@@ -144,9 +144,9 @@ const knowledgeBaseStructure: KBCategory[] = [
     title: 'AMALIYOT',
     icon: 'code',
     sections: [
-      { id: 'chatbot-yaratish', title: 'CHATBOT YARATISH', difficulty: 'intermediate', readTime: 15 },
-      { id: 'kontent-generatsiya', title: 'KONTENT GENERATSIYA', difficulty: 'beginner', readTime: 10 },
-      { id: 'kod-assistenti', title: 'KOD ASSISTENTI', difficulty: 'advanced', readTime: 12 }
+      { id: 'loyihalar', title: 'REAL LOYIHALAR', difficulty: 'intermediate', readTime: 15 },
+      { id: 'debugging', title: 'DEBUGGING VA TESTING', difficulty: 'intermediate', readTime: 10 },
+      { id: 'sohalar-amaliyot', title: 'TURLI SOHALARDA AMALIYOT', difficulty: 'advanced', readTime: 12 }
     ]
   },
   {
@@ -154,11 +154,11 @@ const knowledgeBaseStructure: KBCategory[] = [
     title: 'QO\'SHIMCHA RESURSLAR',
     icon: 'folder',
     sections: [
-      { id: 'foydali-havolalar', title: 'FOYDALI HAVOLALAR', difficulty: 'beginner', readTime: 3 },
-      { id: 'kitoblar', title: 'TAVSIYA ETILADIGAN KITOBLAR', difficulty: 'beginner', readTime: 4 },
-      { id: 'kurslar', title: 'ONLINE KURSLAR', difficulty: 'beginner', readTime: 4 },
-      { id: 'hamjamiyat', title: 'HAMJAMIYAT', difficulty: 'beginner', readTime: 3 },
-      { id: 'glossariy', title: 'GLOSSARIY', difficulty: 'beginner', readTime: 10 }
+      { id: 'foydali-kutubxonalar', title: 'FOYDALI KUTUBXONALAR', difficulty: 'beginner', readTime: 8 },
+      { id: 'dokumentatsiya', title: 'DOKUMENTATSIYA', difficulty: 'beginner', readTime: 6 },
+      { id: 'hamjamiyat', title: 'HAMJAMIYAT', difficulty: 'beginner', readTime: 5 },
+      { id: 'vositalar-api', title: 'VOSITALAR VA API', difficulty: 'intermediate', readTime: 7 },
+      { id: 'ozbekiston-ai', title: 'O\'ZBEKISTONDA AI', difficulty: 'beginner', readTime: 5 }
     ]
   }
 ];
