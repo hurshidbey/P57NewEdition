@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Component, ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -458,6 +458,51 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
   );
 }
 
+// Error Boundary Component
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryState> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Knowledge Base Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-white flex items-center justify-center p-8">
+          <div className="text-center max-w-md">
+            <AiIcon name="warning" size={48} className="mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">XATOLIK YUZ BERDI</h2>
+            <p className="text-gray-600 mb-6">
+              Bilimlar bazasini yuklashda muammo yuz berdi. Sahifani qayta yuklang.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 border-2 border-black font-bold hover:bg-gray-50"
+            >
+              QAYTA YUKLASH
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 export default function KnowledgeBase() {
   // Navigation State
   const [activeCategory, setActiveCategory] = useState<string>('kirish');
@@ -469,6 +514,10 @@ export default function KnowledgeBase() {
   
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null);
+  
+  // Touch handling state
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   // Load saved progress on mount
   useEffect(() => {
@@ -501,6 +550,29 @@ export default function KnowledgeBase() {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [activeCategory, activeSection]);
+
+  // Touch handling functions
+  function handleTouchStart(e: React.TouchEvent) {
+    setTouchStart(e.targetTouches[0].clientX);
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    setTouchEnd(e.targetTouches[0].clientX);
+  }
+
+  function handleTouchEnd() {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    
+    if (isLeftSwipe && hasNext()) {
+      navigateToNext();
+    } else if (isRightSwipe && hasPrevious()) {
+      navigateToPrevious();
+    }
+  }
 
   // Navigation Functions
   function toggleCategory(categoryId: string) {
@@ -1723,7 +1795,12 @@ Menga JavaScript'dagi array methodlari haqida tushuntir. Har bir method uchun:
         </button>
         
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto">
+        <main 
+          className="flex-1 overflow-y-auto"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="max-w-4xl mx-auto p-6">
             {/* Breadcrumb */}
             <div className="mb-6 text-sm font-mono">
@@ -1756,7 +1833,9 @@ Menga JavaScript'dagi array methodlari haqida tushuntir. Har bir method uchun:
                   </div>
                 </div>
               ) : (
-                renderCurrentContent()
+                <ErrorBoundary>
+                  {renderCurrentContent()}
+                </ErrorBoundary>
               )}
             </article>
             
