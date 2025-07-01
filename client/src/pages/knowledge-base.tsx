@@ -10,6 +10,7 @@ import { AiIcon } from "@/components/ai-icon";
 import { getContent } from "@/content/knowledge-base";
 import { ContentSkeleton } from "@/components/knowledge-base/ContentSkeleton";
 import { NoResults } from "@/components/knowledge-base/NoResults";
+import "@/styles/knowledge-base-spacing.css";
 
 // Import the shared components
 import { ExpandableCard } from "@/content/knowledge-base/components/ExpandableCard";
@@ -217,10 +218,10 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
   };
 
   return (
-    <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-      <CardContent className="p-6">
-        <h4 className="font-semibold text-lg mb-4">{question}</h4>
-        <div className="space-y-3">
+    <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] kb-card">
+      <CardContent className="p-4">
+        <h4 className="font-semibold text-lg mb-3">{question}</h4>
+        <div className="space-y-2">
           {options.map((option, index) => (
             <button
               key={index}
@@ -334,7 +335,7 @@ export default function KnowledgeBase() {
     saveLastVisited(categoryId, sectionId);
     
     // Expand category if not expanded
-    setExpandedCategories(prev => new Set([...prev, categoryId]));
+    setExpandedCategories(prev => new Set(Array.from(prev).concat(categoryId)));
     
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -570,12 +571,12 @@ export default function KnowledgeBase() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white kb-container">
       <AppHeaderNoTheme />
       
       {/* Mobile Header with Menu Button */}
       <div className="lg:hidden sticky top-[64px] z-40 bg-black text-white border-b-2 border-black">
-        <div className="flex items-center justify-between p-4 h-16">
+        <div className="flex items-center justify-between p-3 h-14">
           <h1 className="text-xl font-black uppercase tracking-tight">BILIMLAR BAZASI</h1>
           <button
             onClick={() => setSidebarOpen(true)}
@@ -596,14 +597,14 @@ export default function KnowledgeBase() {
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-[300px] border-r-2 border-black bg-white overflow-y-auto">
           {/* Progress Bar */}
-          <div className="p-6 border-b-2 border-black bg-black text-white">
-            <div className="mb-4 flex justify-between items-center">
-              <span className="text-lg font-black uppercase tracking-tight">PROGRESS</span>
-              <div className="flex items-center gap-3">
-                <span className="text-3xl font-black font-mono tabular-nums">{calculateOverallProgress()}%</span>
+          <div className="kb-sidebar-section-header border-b-2 border-black bg-black text-white">
+            <div className="mb-2 flex justify-between items-center">
+              <span className="text-base font-black uppercase tracking-tight">PROGRESS</span>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-black font-mono tabular-nums">{calculateOverallProgress()}%</span>
               </div>
             </div>
-            <div className="h-6 bg-white border-2 border-black relative overflow-hidden">
+            <div className="h-5 bg-white border-2 border-black relative overflow-hidden">
               <div 
                 className="h-full bg-[#ffeb3b] relative transition-all duration-500 ease-out"
                 style={{ width: `${calculateOverallProgress()}%` }}
@@ -618,20 +619,20 @@ export default function KnowledgeBase() {
                 <div className="w-1/4 border-r-2 border-black"></div>
               </div>
             </div>
-            <div className="mt-3 text-sm font-bold">
+            <div className="mt-2 text-xs font-bold">
               {loadProgress().completedSections.size} / {knowledgeBaseStructure.reduce((sum, cat) => sum + cat.sections.length, 0)} BO'LIM O'QILDI
             </div>
           </div>
 
           {/* Search */}
-          <div className="p-6 border-b-2 border-black">
+          <div className="kb-sidebar-section border-b-2 border-black">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Qidirish..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 px-4 pr-12 border-2 border-black bg-white text-base font-bold text-black placeholder:text-black/50 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                className="w-full h-10 px-3 pr-10 border-2 border-black bg-white text-sm font-bold text-black placeholder:text-black/50 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
               />
               {searchQuery && (
                 <button
@@ -652,12 +653,12 @@ export default function KnowledgeBase() {
           </div>
 
           {/* Navigation */}
-          <nav className="p-6">
+          <nav className="kb-sidebar-section">
             {knowledgeBaseStructure.map((category) => (
-              <div key={category.id} className="mb-4 relative">
+              <div key={category.id} className="mb-3 relative">
                 <button
                   onClick={() => toggleCategory(category.id)}
-                  className="w-full text-left p-4 border-2 border-black font-bold uppercase hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                  className="w-full text-left p-3 border-2 border-black font-bold uppercase hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                   type="button"
                 >
                   <div className="flex items-center gap-2">
@@ -674,12 +675,12 @@ export default function KnowledgeBase() {
                 </button>
                 
                 {expandedCategories.has(category.id) && (
-                  <div className="ml-6 mt-2">
+                  <div className="ml-4 mt-1">
                     {category.sections.map((section) => (
                       <button
                         key={section.id}
                         onClick={() => navigateToSection(category.id, section.id)}
-                        className={`w-full text-left p-3 min-h-[48px] text-sm hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset transition-shadow ${
+                        className={`w-full text-left p-2 min-h-[40px] text-sm hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset transition-shadow ${
                           activeCategory === category.id && activeSection === section.id
                             ? 'bg-black text-white font-bold'
                             : 'bg-white'
@@ -704,9 +705,9 @@ export default function KnowledgeBase() {
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
-          <div className="max-w-4xl mx-auto p-6 lg:p-12 pb-32 lg:pb-12">
+          <div className="max-w-4xl mx-auto p-4 lg:p-8 pb-32 lg:pb-8">
             {/* Breadcrumb */}
-            <div className="mb-8 text-sm text-black flex items-center gap-2 font-bold uppercase">
+            <div className="mb-4 text-sm text-black flex items-center gap-2 font-bold uppercase">
               <Link href="/">
                 <span className="hover:text-black cursor-pointer font-bold">Bosh sahifa</span>
               </Link>
@@ -717,12 +718,12 @@ export default function KnowledgeBase() {
             </div>
 
             {/* Section Header */}
-            <div className="mb-6">
-              <h1 className="text-4xl lg:text-5xl font-black mb-0 leading-none uppercase tracking-tight">
+            <div className="mb-4">
+              <h1 className="text-3xl lg:text-4xl font-black mb-2 leading-none uppercase tracking-tight">
                 {getCurrentSection()?.title}
               </h1>
-              <div className="flex items-center gap-6 text-sm text-black">
-                <span className="px-3 py-2 border-2 border-black bg-white font-black uppercase text-xs" aria-label="Qiyinlik darajasi">
+              <div className="flex items-center gap-4 text-sm text-black">
+                <span className="px-2 py-1 border-2 border-black bg-white font-black uppercase text-xs" aria-label="Qiyinlik darajasi">
                   {getCurrentSection()?.difficulty === 'beginner' && 'Boshlang\'ich'}
                   {getCurrentSection()?.difficulty === 'intermediate' && 'O\'rta'}
                   {getCurrentSection()?.difficulty === 'advanced' && 'Murakkab'}
@@ -736,7 +737,7 @@ export default function KnowledgeBase() {
 
             {/* Dynamic Content */}
             <div 
-              className="prose prose-lg lg:prose-xl max-w-none"
+              className="prose prose-lg max-w-none kb-prose kb-content-spacing"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
@@ -745,12 +746,12 @@ export default function KnowledgeBase() {
             </div>
 
             {/* Navigation Buttons */}
-            <div className="mt-8 flex justify-between items-center">
+            <div className="mt-6 flex justify-between items-center">
               <button
                 onClick={navigateToPrevious}
                 disabled={!hasPrevious()}
                 type="button"
-                className="h-12 px-6 border-2 border-black bg-white font-black uppercase flex items-center gap-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-10 px-4 border-2 border-black bg-white font-black uppercase flex items-center gap-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <AiIcon name="arrow-left" size={24} />
                 OLDINGI
@@ -760,7 +761,7 @@ export default function KnowledgeBase() {
                 onClick={navigateToNext}
                 disabled={!hasNext()}
                 type="button"
-                className="h-12 px-6 border-2 border-black bg-black text-white font-black uppercase flex items-center gap-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-10 px-4 border-2 border-black bg-black text-white font-black uppercase flex items-center gap-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 KEYINGI
                 <AiIcon name="arrow-right" size={24} />
@@ -776,16 +777,16 @@ export default function KnowledgeBase() {
           <div className="fixed inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
           <div className="relative w-[300px] bg-white h-full overflow-y-auto border-r-2 border-black">
             {/* Mobile sidebar content - same as desktop */}
-            <div className="p-6 border-b-2 border-black flex justify-between items-center">
+            <div className="p-4 border-b-2 border-black flex justify-between items-center">
               <h2 className="text-xl font-black uppercase tracking-tight">MUNDARIJA</h2>
               <button onClick={() => setSidebarOpen(false)} aria-label="Menyuni yopish" type="button">
                 <AiIcon name="close" size={24} />
               </button>
             </div>
             
-            <nav className="p-6">
+            <nav className="p-4">
               {knowledgeBaseStructure.map((category) => (
-                <div key={category.id} className="mb-4 relative">
+                <div key={category.id} className="mb-3 relative">
                   <button
                     onClick={() => toggleCategory(category.id)}
                     className="w-full text-left p-3 border-2 border-black font-bold uppercase hover:bg-gray-100 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffeb3b] focus-visible:ring-offset-2"
@@ -831,7 +832,7 @@ export default function KnowledgeBase() {
       )}
       
       {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black p-6">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black p-4">
         <div className="flex justify-between items-center">
           <button
             onClick={navigateToPrevious}

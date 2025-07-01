@@ -1,27 +1,27 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { AiIcon } from "@/components/ai-icon";
-import { ExpandableCard } from "../components/ExpandableCard";
-import { CodeExample } from "../components/CodeExample";
-import type { SectionContent } from "../components/types";
+import React from"react";
+import { Card, CardContent } from"@/components/ui/card";
+import { Alert, AlertDescription } from"@/components/ui/alert";
+import { Badge } from"@/components/ui/badge";
+import { AiIcon } from"@/components/ai-icon";
+import { ExpandableCard } from"../components/ExpandableCard";
+import { CodeExample } from"../components/CodeExample";
+import type { SectionContent } from"../components/types";
 
 export const nimaUchunMuhim: SectionContent = {
- title: "NIMA UCHUN MUHIM",
+ title:"NIMA UCHUN MUHIM",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-8">
+<div>
      <div>
-      <p className="text-base leading-relaxed">
+      <p className="text-base ">
        Hozirgi kunda sun'iy intellekt (AI) hayotimizning ajralmas qismiga aylanmoqda. 
        ChatGPT, Claude, Gemini kabi AI assistentlar kundalik ishlarimizni yengillashtirmoqda.
       </p>
-      <p className="text-base leading-relaxed">
+      <p className="text-base ">
        Lekin ko'pchilik foydalanuvchilar AI'ning to'liq potensialidan foydalana olmayapti. 
        Sabab oddiy - ular AI bilan qanday muloqot qilishni bilishmaydi.
       </p>
@@ -31,16 +31,14 @@ export const nimaUchunMuhim: SectionContent = {
       term="PROMPTING"
       definition="AI bilan samarali muloqot qilish san'ati. To'g'ri savol berish orqali to'g'ri javob olish."
       icon={<AiIcon name="brain" size={24} />}
-      examples={[
-       "Yomon: 'Menga maqola yoz'",
-       "Yaxshi: 'O'zbek tili tarixiga oid 500 so'zlik ilmiy maqola yoz. Uslub: akademik, auditoriya: universitet talabalari'"
+      examples={["Yomon: 'Menga maqola yoz'","Yaxshi: 'O'zbek tili tarixiga oid 500 so'zlik ilmiy maqola yoz. Uslub: akademik, auditoriya: universitet talabalari'"
       ]}
      />
      
      <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <CardContent className="p-6">
-       <h3 className="text-xl font-black uppercase">NIMA UCHUN BU MUHIM?</h3>
-       <ul className="space-y-3">
+       <h3 className="text-xl font-black uppercase ">NIMA UCHUN BU MUHIM?</h3>
+       <ul>
         <li className="flex items-start gap-2">
          <AiIcon name="checked" size={24} className="flex-shrink-0" />
          <span>Vaqtingizni tejaysiz - 10 soatlik ishni 1 soatda bajaring</span>
@@ -81,16 +79,16 @@ Iltimos, quyidagi bo'limlarni o'z ichiga olgan biznes-plan tayyorla:
 };
 
 export const promptingNima: SectionContent = {
- title: "PROMPTING NIMA",
+ title:"PROMPTING NIMA",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-8">
+<div>
      <div>
-      <p className="text-base leading-relaxed">
+      <p className="text-base ">
        Prompting — bu AI bilan samarali muloqot qilish san'ati. To'g'ri prompt yozish orqali 
        siz AI'dan maksimal foyda olishingiz mumkin.
       </p>
@@ -100,16 +98,14 @@ export const promptingNima: SectionContent = {
       term="PROMPT"
       definition="AI'ga beriladigan ko'rsatma yoki savol. Qanchalik aniq va to'liq bo'lsa, shunchalik yaxshi natija olasiz."
       icon={<AiIcon name="target" size={24} />}
-      examples={[
-       "Oddiy prompt: 'Menga Python haqida aytib ber'",
-       "Yaxshi prompt: 'Python dasturlash tilining 5 ta asosiy afzalligini sanab ber. Har biri uchun qisqa misol keltir.'"
+      examples={["Oddiy prompt: 'Menga Python haqida aytib ber'","Yaxshi prompt: 'Python dasturlash tilining 5 ta asosiy afzalligini sanab ber. Har biri uchun qisqa misol keltir.'"
       ]}
      />
 
      <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <CardContent className="p-6">
-       <h3 className="text-xl font-black uppercase">YAXSHI PROMPT ELEMENTLARI:</h3>
-       <div className="space-y-4">
+       <h3 className="text-xl font-black uppercase ">YAXSHI PROMPT ELEMENTLARI:</h3>
+       <div>
         <div className="flex items-start gap-3">
          <AiIcon name="target" size={24} className="flex-shrink-0" />
          <div>
@@ -175,16 +171,16 @@ Format: Bullet point ro'yxat shaklida"
 };
 
 export const promptElementlari: SectionContent = {
- title: "PROMPT ELEMENTLARI",
+ title:"PROMPT ELEMENTLARI",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-8">
+<div>
      <div>
-      <p className="text-base leading-relaxed">
+      <p className="text-base ">
        Professional prompt 5 ta asosiy elementdan tashkil topadi. Har bir element 
        o'z vazifasiga ega va natija sifatiga ta'sir qiladi.
       </p>
@@ -195,10 +191,7 @@ export const promptElementlari: SectionContent = {
        term="1. ROL (ROLE)"
        definition="AI'ga qanday mutaxassis sifatida javob berishini ko'rsating."
        icon={<AiIcon name="brain" size={24} />}
-       examples={[
-        "Sen tajribali marketing mutaxassisisan...",
-        "Professional dasturchi sifatida...",
-        "10 yillik tajribaga ega moliya maslahatchisi rolida..."
+       examples={["Sen tajribali marketing mutaxassisisan...","Professional dasturchi sifatida...","10 yillik tajribaga ega moliya maslahatchisi rolida..."
        ]}
       />
 
@@ -206,10 +199,7 @@ export const promptElementlari: SectionContent = {
        term="2. KONTEKST (CONTEXT)"
        definition="Vaziyat haqida to'liq ma'lumot bering."
        icon={<AiIcon name="context" size={24} />}
-       examples={[
-        "Bizning kompaniya B2B SaaS mahsulot ishlab chiqaradi...",
-        "Men universitetda o'qiyman va diplom ishi yozishim kerak...",
-        "Kichik biznes egasiman, 5 ta xodim bor..."
+       examples={["Bizning kompaniya B2B SaaS mahsulot ishlab chiqaradi...","Men universitetda o'qiyman va diplom ishi yozishim kerak...","Kichik biznes egasiman, 5 ta xodim bor..."
        ]}
       />
 
@@ -217,10 +207,7 @@ export const promptElementlari: SectionContent = {
        term="3. VAZIFA (TASK)"
        definition="Aniq nima qilish kerakligini ayting."
        icon={<AiIcon name="target" size={24} />}
-       examples={[
-        "3 oylik marketing kampaniya rejasini tuzing",
-        "Ushbu kodni optimize qiling va kommentlar qo'shing",
-        "SWOT tahlil o'tkazing va tavsiyalar bering"
+       examples={["3 oylik marketing kampaniya rejasini tuzing","Ushbu kodni optimize qiling va kommentlar qo'shing","SWOT tahlil o'tkazing va tavsiyalar bering"
        ]}
       />
 
@@ -228,10 +215,7 @@ export const promptElementlari: SectionContent = {
        term="4. FORMAT"
        definition="Javob qanday ko'rinishda bo'lishini belgilang."
        icon={<AiIcon name="format" size={24} />}
-       examples={[
-        "Markdown table shaklida",
-        "5 ta bullet point",
-        "Step-by-step qo'llanma"
+       examples={["Markdown table shaklida","5 ta bullet point","Step-by-step qo'llanma"
        ]}
       />
 
@@ -239,17 +223,14 @@ export const promptElementlari: SectionContent = {
        term="5. TON (TONE)"
        definition="Qanday uslubda yozilishini ko'rsating."
        icon={<AiIcon name="message" size={24} />}
-       examples={[
-        "Professional va rasmiy",
-        "Do'stona va tushunarli",
-        "Qisqa va lo'nda"
+       examples={["Professional va rasmiy","Do'stona va tushunarli","Qisqa va lo'nda"
        ]}
       />
      </div>
 
      <Card className="border-2 border-black bg-gray-50">
       <CardContent className="p-6">
-       <h3 className="text-xl font-black uppercase">TO'LIQ PROMPT NAMUNASI:</h3>
+       <h3 className="text-xl font-black uppercase ">TO'LIQ PROMPT NAMUNASI:</h3>
        <pre className="bg-white border-2 border-black p-4 overflow-x-auto text-sm">
 {`ROL: Sen tajribali content marketing mutaxassisisan.
 
@@ -275,16 +256,16 @@ TON: Professional lekin do'stona`}</pre>
 };
 
 export const aiInqilobi: SectionContent = {
- title: "AI INQILOBI",
+ title:"AI INQILOBI",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-8">
+<div>
      <div>
-      <p className="text-base leading-relaxed">
+      <p className="text-base ">
        AI inqilobi global miqyosda sodir bo'lmoqda. O'zbekiston ham bu jarayondan 
        chetda qolmasligi, balki faol ishtirok etishi muhim.
       </p>
@@ -292,19 +273,19 @@ export const aiInqilobi: SectionContent = {
 
      <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <CardContent className="p-6">
-       <h3 className="text-xl font-black uppercase">AI INQILOBINING 3 TO'LQINI:</h3>
-       <div className="space-y-4">
+       <h3 className="text-xl font-black uppercase ">AI INQILOBINING 3 TO'LQINI:</h3>
+       <div>
         <div className="border-l-2 border-black pl-4">
-         <h4 className="font-black uppercase">1-TO'LQIN: TOR AI (2010-2020)</h4>
-         <p className="text-black/70">Bitta vazifaga ixtisoslashgan AI: rasm tanish, tarjima, tavsiyalar</p>
+         <h4 className="font-black uppercase ">1-TO'LQIN: TOR AI (2010-2020)</h4>
+         <p className="text-black/70 ">Bitta vazifaga ixtisoslashgan AI: rasm tanish, tarjima, tavsiyalar</p>
         </div>
         <div className="border-l-2 border-black pl-4">
-         <h4 className="font-black uppercase">2-TO'LQIN: GENERATIV AI (2020-2025)</h4>
-         <p className="text-black/70">Yangi kontent yaratadigan AI: ChatGPT, DALL-E, Midjourney</p>
+         <h4 className="font-black uppercase ">2-TO'LQIN: GENERATIV AI (2020-2025)</h4>
+         <p className="text-black/70 ">Yangi kontent yaratadigan AI: ChatGPT, DALL-E, Midjourney</p>
         </div>
         <div className="border-l-2 border-black/30 pl-4">
-         <h4 className="font-black text-black/50 uppercase">3-TO'LQIN: AGI (2025+)</h4>
-         <p className="text-black/70">Inson darajasidagi umumiy sun'iy intellekt</p>
+         <h4 className="font-black text-black/50 uppercase ">3-TO'LQIN: AGI (2025+)</h4>
+         <p className="text-black/70 ">Inson darajasidagi umumiy sun'iy intellekt</p>
         </div>
        </div>
       </CardContent>
@@ -313,11 +294,11 @@ export const aiInqilobi: SectionContent = {
      <div className="grid md:grid-cols-2 gap-6">
       <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
        <CardContent className="p-6">
-        <h4 className="font-black flex items-center gap-2 uppercase">
+        <h4 className="font-black flex items-center gap-2 uppercase ">
          <AiIcon name="world" size={24} />
          GLOBAL IMKONIYATLAR
         </h4>
-        <ul className="space-y-2 text-sm">
+        <ul className="text-sm">
          <li>• Remote ish imkoniyatlari</li>
          <li>• Global bozorga chiqish</li>
          <li>• Xalqaro hamkorlik</li>
@@ -328,11 +309,11 @@ export const aiInqilobi: SectionContent = {
 
       <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
        <CardContent className="p-6">
-        <h4 className="font-black flex items-center gap-2 uppercase">
+        <h4 className="font-black flex items-center gap-2 uppercase ">
          <AiIcon name="flag" size={24} />
          O'ZBEKISTON UCHUN
         </h4>
-        <ul className="space-y-2 text-sm">
+        <ul className="text-sm">
          <li>• IT eksporti o'sishi</li>
          <li>• Ta'lim tizimi yangilanishi</li>
          <li>• Startap ekotizimi</li>
@@ -359,16 +340,16 @@ export const aiInqilobi: SectionContent = {
 };
 
 export const umumiyMaslahatlar: SectionContent = {
- title: "UMUMIY MASLAHATLAR",
+ title:"UMUMIY MASLAHATLAR",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-8">
+<div>
      <div>
-      <p className="text-base leading-relaxed">
+      <p className="text-base ">
        AI bilan ishlashda muvaffaqiyatli bo'lish uchun ushbu asosiy tamoyillarga 
        amal qiling.
       </p>
@@ -376,16 +357,9 @@ export const umumiyMaslahatlar: SectionContent = {
 
      <Card className="border-2 border-black bg-black text-white">
       <CardContent className="p-6">
-       <h3 className="text-xl font-black uppercase">7 OLTIN QOIDA</h3>
-       <div className="space-y-3">
-        {[
-         "Aniq va konkret bo'ling",
-         "Kontekst bering",
-         "Misollar keltiring",
-         "Iterativ yondashing",
-         "Faktlarni tekshiring",
-         "Etik chegaralarni saqlang",
-         "Doimiy o'rganing"
+       <h3 className="text-xl font-black uppercase ">7 OLTIN QOIDA</h3>
+       <div>
+        {["Aniq va konkret bo'ling","Kontekst bering","Misollar keltiring","Iterativ yondashing","Faktlarni tekshiring","Etik chegaralarni saqlang","Doimiy o'rganing"
         ].map((rule, idx) => (
          <div key={idx} className="flex items-center gap-3">
           <span className="font-bold text-2xl">{idx + 1}</span>
@@ -399,8 +373,8 @@ export const umumiyMaslahatlar: SectionContent = {
      <div className="grid gap-4">
       <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
        <CardContent className="p-6">
-        <h4 className="font-black uppercase">❌ QILMANG:</h4>
-        <ul className="space-y-2 text-sm">
+        <h4 className="font-black uppercase ">❌ QILMANG:</h4>
+        <ul className="text-sm">
          <li>• Noaniq so'rovlar bermang</li>
          <li>• AI'ga ko'r-ko'rona ishonmang</li>
          <li>• Shaxsiy ma'lumotlarni bermang</li>
@@ -411,8 +385,8 @@ export const umumiyMaslahatlar: SectionContent = {
 
       <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
        <CardContent className="p-6">
-        <h4 className="font-black uppercase">✅ QILING:</h4>
-        <ul className="space-y-2 text-sm">
+        <h4 className="font-black uppercase ">✅ QILING:</h4>
+        <ul className="text-sm">
          <li>• Aniq maqsad belgilang</li>
          <li>• Natijalarni tekshiring</li>
          <li>• Takrorlash orqali yaxshilang</li>

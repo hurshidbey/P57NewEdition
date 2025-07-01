@@ -1,23 +1,23 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { AiIcon } from "@/components/ai-icon";
-import { ExpandableCard } from "../components/ExpandableCard";
-import { CodeExample } from "../components/CodeExample";
-import type { SectionContent } from "../components/types";
+import React from"react";
+import { Card, CardContent } from"@/components/ui/card";
+import { Alert, AlertDescription } from"@/components/ui/alert";
+import { Badge } from"@/components/ui/badge";
+import { AiIcon } from"@/components/ai-icon";
+import { ExpandableCard } from"../components/ExpandableCard";
+import { CodeExample } from"../components/CodeExample";
+import type { SectionContent } from"../components/types";
 
 export const haroratParametri: SectionContent = {
- title: "HARORAT PARAMETRI",
+ title:"HARORAT PARAMETRI",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-6">
+<div>
      <div>
-      <p className="text-lg leading-relaxed">
+      <p className="text-lg ">
        Temperature (harorat) — AI javoblarining kreativlik darajasini boshqaruvchi 
        eng muhim parametr. 0 dan 2 gacha qiymat oladi.
       </p>
@@ -25,8 +25,8 @@ export const haroratParametri: SectionContent = {
 
      <Card className="border-2 border-black">
       <CardContent className="p-6">
-       <h3 className="text-xl font-bold">TEMPERATURE SHKALASI</h3>
-       <div className="space-y-4">
+       <h3 className="text-xl font-bold ">TEMPERATURE SHKALASI</h3>
+       <div>
         <div className="flex items-center gap-4">
          <div className="w-24 text-center">
           <div className="text-2xl font-bold">0.0</div>
@@ -45,9 +45,9 @@ export const haroratParametri: SectionContent = {
      <div className="grid md:grid-cols-3 gap-4">
       <Card className="border-2 border-black">
        <CardContent className="p-4">
-        <h4 className="font-bold">PAST (0.0-0.5)</h4>
-        <p className="text-sm text-muted-foreground">Aniq, bashorat qilsa bo'ladigan</p>
-        <ul className="text-xs space-y-1">
+        <h4 className="font-bold ">PAST (0.0-0.5)</h4>
+        <p className="text-sm text-muted-foreground ">Aniq, bashorat qilsa bo'ladigan</p>
+        <ul className="text-xs">
          <li>• Faktlar va ma'lumotlar</li>
          <li>• Kod yozish</li>
          <li>• Hisob-kitoblar</li>
@@ -57,9 +57,9 @@ export const haroratParametri: SectionContent = {
 
       <Card className="border-2 border-black">
        <CardContent className="p-4">
-        <h4 className="font-bold">O'RTA (0.5-1.0)</h4>
-        <p className="text-sm text-muted-foreground">Muvozanatli javoblar</p>
-        <ul className="text-xs space-y-1">
+        <h4 className="font-bold ">O'RTA (0.5-1.0)</h4>
+        <p className="text-sm text-muted-foreground ">Muvozanatli javoblar</p>
+        <ul className="text-xs">
          <li>• Umumiy foydalanish</li>
          <li>• Maqola yozish</li>
          <li>• Suhbat</li>
@@ -69,9 +69,9 @@ export const haroratParametri: SectionContent = {
 
       <Card className="border-2 border-black">
        <CardContent className="p-4">
-        <h4 className="font-bold">YUQORI (1.0-2.0)</h4>
-        <p className="text-sm text-muted-foreground">Ijodkor, kutilmagan</p>
-        <ul className="text-xs space-y-1">
+        <h4 className="font-bold ">YUQORI (1.0-2.0)</h4>
+        <p className="text-sm text-muted-foreground ">Ijodkor, kutilmagan</p>
+        <ul className="text-xs">
          <li>• Brainstorming</li>
          <li>• She'riyat</li>
          <li>• Kreativ yozish</li>
@@ -99,16 +99,16 @@ Javob: O'zbekiston poytaxti - Toshkent shahri."
 };
 
 export const topPVaTopK: SectionContent = {
- title: "TOP P VA TOP K",
+ title:"TOP P VA TOP K",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-6">
+<div>
      <div>
-      <p className="text-lg leading-relaxed">
+      <p className="text-lg ">
        Top-P va Top-K parametrlari AI'ning so'z tanlash jarayonini boshqaradi. 
        Ular temperature bilan birgalikda ishlab, javob sifatini nazorat qiladi.
       </p>
@@ -117,11 +117,11 @@ export const topPVaTopK: SectionContent = {
      <div className="grid md:grid-cols-2 gap-6">
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-lg font-bold">TOP-P (Nucleus Sampling)</h3>
-        <p className="text-sm text-muted-foreground">
+        <h3 className="text-lg font-bold ">TOP-P (Nucleus Sampling)</h3>
+        <p className="text-sm text-muted-foreground ">
          Ehtimollik yig'indisi P ga teng bo'lgan so'zlarni tanlaydi
         </p>
-        <div className="space-y-3">
+        <div>
          <div className="bg-gray-100 p-3 border border-gray-300">
           <div className="font-mono text-sm">top_p = 0.1</div>
           <div className="text-xs">Faqat eng ehtimollik yuqori so'zlar</div>
@@ -136,11 +136,11 @@ export const topPVaTopK: SectionContent = {
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-lg font-bold">TOP-K</h3>
-        <p className="text-sm text-muted-foreground">
+        <h3 className="text-lg font-bold ">TOP-K</h3>
+        <p className="text-sm text-muted-foreground ">
          Faqat eng yuqori K ta so'zdan tanlaydi
         </p>
-        <div className="space-y-3">
+        <div>
          <div className="bg-gray-100 p-3 border border-gray-300">
           <div className="font-mono text-sm">top_k = 5</div>
           <div className="text-xs">Faqat 5 ta eng ehtimol so'z</div>
@@ -170,16 +170,16 @@ export const topPVaTopK: SectionContent = {
 };
 
 export const maxTokens: SectionContent = {
- title: "MAX TOKENS",
+ title:"MAX TOKENS",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-6">
+<div>
      <div>
-      <p className="text-lg leading-relaxed">
+      <p className="text-lg ">
        Max tokens parametri AI javobining maksimal uzunligini belgilaydi. 
        Bu nafaqat narxni, balki javob to'liqligini ham nazorat qiladi.
       </p>
@@ -187,7 +187,7 @@ export const maxTokens: SectionContent = {
 
      <Card className="border-2 border-black">
       <CardContent className="p-6">
-       <h3 className="text-xl font-bold">TOKEN HISOBI</h3>
+       <h3 className="text-xl font-bold ">TOKEN HISOBI</h3>
        <div className="grid md:grid-cols-3 gap-4 text-center">
         <div>
          <div className="text-3xl font-bold">1 token</div>
@@ -208,8 +208,8 @@ export const maxTokens: SectionContent = {
      <div className="grid gap-4">
       <Card className="border-2 border-black">
        <CardContent className="p-4">
-        <h4 className="font-bold">QISQA JAVOBLAR (50-150 token)</h4>
-        <ul className="text-sm space-y-1">
+        <h4 className="font-bold ">QISQA JAVOBLAR (50-150 token)</h4>
+        <ul className="text-sm">
          <li>• Ha/yo'q savollari</li>
          <li>• Qisqa ta'riflar</li>
          <li>• Tezkor javoblar</li>
@@ -219,8 +219,8 @@ export const maxTokens: SectionContent = {
 
       <Card className="border-2 border-black">
        <CardContent className="p-4">
-        <h4 className="font-bold">O'RTA JAVOBLAR (500-1000 token)</h4>
-        <ul className="text-sm space-y-1">
+        <h4 className="font-bold ">O'RTA JAVOBLAR (500-1000 token)</h4>
+        <ul className="text-sm">
          <li>• Email va xatlar</li>
          <li>• Qisqa maqolalar</li>
          <li>• Kod parchalari</li>
@@ -230,8 +230,8 @@ export const maxTokens: SectionContent = {
 
       <Card className="border-2 border-black">
        <CardContent className="p-4">
-        <h4 className="font-bold">UZUN JAVOBLAR (2000+ token)</h4>
-        <ul className="text-sm space-y-1">
+        <h4 className="font-bold ">UZUN JAVOBLAR (2000+ token)</h4>
+        <ul className="text-sm">
          <li>• To'liq maqolalar</li>
          <li>• Batafsil tahlillar</li>
          <li>• Katta kod fayllari</li>
@@ -256,15 +256,15 @@ export const maxTokens: SectionContent = {
 };
 
 export const stopSequences: SectionContent = {
- title: "STOP SEQUENCES",
+ title:"STOP SEQUENCES",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Stop sequences - AI javobini to'xtatish uchun maxsus belgilar yoki so'zlar. 
         Bu AI'ni nazorat qilishning kuchli usuli.
        </p>
@@ -274,28 +274,25 @@ export const stopSequences: SectionContent = {
        term="STOP SEQUENCE NIMA?"
        definition="AI matn generatsiyasini to'xtatadigan belgi yoki so'z. AI bu ketma-ketlikni ko'rganda javobni tugatadi."
        icon={<AiIcon name="stop" size={24} />}
-       examples={[
-        "Stop: '\\n\\n' - Ikki marta enter",
-        "Stop: 'END' - So'z oxiri belgisi",
-        "Stop: '</output>' - XML tegi"
+       examples={["Stop: '\\n\\n' - Ikki marta enter","Stop: 'END' - So'z oxiri belgisi","Stop: '</output>' - XML tegi"
        ]}
       />
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold">QACHON ISHLATILADI:</h3>
-        <div className="space-y-4">
+        <h3 className="text-xl font-bold ">QACHON ISHLATILADI:</h3>
+        <div>
          <div className="border-l-4 border-black pl-4">
-          <h4 className="font-bold">1. Strukturalangan javoblar</h4>
-          <p className="text-sm text-gray-700">JSON, XML yoki boshqa formatlar uchun</p>
+          <h4 className="font-bold ">1. Strukturalangan javoblar</h4>
+          <p className="text-sm text-gray-700 ">JSON, XML yoki boshqa formatlar uchun</p>
          </div>
          <div className="border-l-4 border-black pl-4">
-          <h4 className="font-bold">2. Dialog tizimlar</h4>
-          <p className="text-sm text-gray-700">Foydalanuvchi va AI o'rtasidagi chegaralar</p>
+          <h4 className="font-bold ">2. Dialog tizimlar</h4>
+          <p className="text-sm text-gray-700 ">Foydalanuvchi va AI o'rtasidagi chegaralar</p>
          </div>
          <div className="border-l-4 border-black pl-4">
-          <h4 className="font-bold">3. Ko'p qismli javoblar</h4>
-          <p className="text-sm text-gray-700">Har bir qismni alohida generatsiya qilish</p>
+          <h4 className="font-bold ">3. Ko'p qismli javoblar</h4>
+          <p className="text-sm text-gray-700 ">Har bir qismni alohida generatsiya qilish</p>
          </div>
         </div>
        </CardContent>
@@ -304,21 +301,18 @@ export const stopSequences: SectionContent = {
       <CodeExample
        title="STOP SEQUENCE MISOLI"
        badExample={`# Stop sequence ishlatmaslik
-prompt = "3 ta marketing g'oya yoz"
+prompt ="3 ta marketing g'oya yoz"
 
-# AI javob beradi va to'xtamasdan davom etadi:
-"1. Social media kampaniya
+# AI javob beradi va to'xtamasdan davom etadi:"1. Social media kampaniya
 2. Email marketing
 3. Influencer hamkorlik
 Bundan tashqari, siz quyidagilarni ham... [davom etaveradi]"`}
        goodExample={`# Stop sequence bilan
-prompt = """
-3 ta marketing g'oya yoz. Har bir g'oyadan keyin '---' belgisini qo'y.
-"""
+prompt ="""
+3 ta marketing g'oya yoz. Har bir g'oyadan keyin '---' belgisini qo'y."""
 stop_sequences = ["---"]
 
-# AI javob:
-"1. Social media kampaniya: Instagram reels orqali mahsulot namoyishi
+# AI javob:"1. Social media kampaniya: Instagram reels orqali mahsulot namoyishi
 ---"
 # To'xtaydi!`}
        explanation="Stop sequences yordamida aniq va qisqa javoblar olish mumkin."
@@ -334,7 +328,7 @@ stop_sequences = ["---"]
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-lg font-bold">AMALIY MISOLLAR:</h3>
+        <h3 className="text-lg font-bold ">AMALIY MISOLLAR:</h3>
         <pre className="text-sm overflow-x-auto">
 {`# JSON uchun
 stop_sequences = ['}']
@@ -355,15 +349,15 @@ stop_sequences = ['\\n\\n', 'Tugadi']`}
 };
 
 export const presenceFrequency: SectionContent = {
- title: "PRESENCE FREQUENCY",
+ title:"PRESENCE FREQUENCY",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Presence va Frequency penalty - AI javoblarida takrorlanishni kamaytirish 
         va rang-baranglikni oshirish uchun parametrlar.
        </p>
@@ -372,9 +366,9 @@ export const presenceFrequency: SectionContent = {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
        <Card className="border-2 border-black">
         <CardContent className="p-6">
-         <h3 className="text-lg font-bold">PRESENCE PENALTY</h3>
-         <p className="text-sm">Yangi mavzularni qo'shishga undaydi</p>
-         <div className="space-y-2">
+         <h3 className="text-lg font-bold ">PRESENCE PENALTY</h3>
+         <p className="text-sm ">Yangi mavzularni qo'shishga undaydi</p>
+         <div>
           <div className="flex justify-between text-sm">
            <span>0.0</span>
            <span className="text-gray-600">Standart</span>
@@ -393,9 +387,9 @@ export const presenceFrequency: SectionContent = {
 
        <Card className="border-2 border-black">
         <CardContent className="p-6">
-         <h3 className="text-lg font-bold">FREQUENCY PENALTY</h3>
-         <p className="text-sm">Takrorlanishni kamaytiradi</p>
-         <div className="space-y-2">
+         <h3 className="text-lg font-bold ">FREQUENCY PENALTY</h3>
+         <p className="text-sm ">Takrorlanishni kamaytiradi</p>
+         <div>
           <div className="flex justify-between text-sm">
            <span>0.0</span>
            <span className="text-gray-600">Takrorga ruxsat</span>
@@ -417,10 +411,7 @@ export const presenceFrequency: SectionContent = {
        term="QANDAY ISHLAYDI?"
        definition="Bu parametrlar allaqachon ishlatilgan so'zlarga 'jarima' beradi, natijada AI yangi so'zlarni tanlashga majbur bo'ladi."
        icon={<AiIcon name="penalty" size={24} />}
-       examples={[
-        "Presence: Bir marta ishlatilgan so'zga jarima",
-        "Frequency: Qancha ko'p ishlatilsa, shuncha ko'p jarima",
-        "Ikkalasini birgalikda ishlatish eng yaxshi natija beradi"
+       examples={["Presence: Bir marta ishlatilgan so'zga jarima","Frequency: Qancha ko'p ishlatilsa, shuncha ko'p jarima","Ikkalasini birgalikda ishlatish eng yaxshi natija beradi"
        ]}
       />
 
@@ -432,8 +423,7 @@ response = ai.complete(
   temperature=0.7
 )
 
-# Natija:
-"Marketing strategiya muhim. Marketing strategiya yaratishda 
+# Natija:"Marketing strategiya muhim. Marketing strategiya yaratishda 
 marketing strategiyani..." # Takror ko'p!`}
        goodExample={`# Penalty bilan
 response = ai.complete(
@@ -443,8 +433,7 @@ response = ai.complete(
   frequency_penalty=0.6
 )
 
-# Natija:
-"Zamonaviy bozorda muvaffaqiyat uchun innovatsion yondashuv 
+# Natija:"Zamonaviy bozorda muvaffaqiyat uchun innovatsion yondashuv 
 kerak. Mijozlar ehtiyojini tahlil qilib..." # Rang-barang!`}
        explanation="Penalty parametrlari AI javoblarini tabiiy va qiziqarli qiladi."
       />
@@ -459,23 +448,23 @@ kerak. Mijozlar ehtiyojini tahlil qilib..." # Rang-barang!`}
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-lg font-bold">QO'LLANISH SOHALARI:</h3>
+        <h3 className="text-lg font-bold ">QO'LLANISH SOHALARI:</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
          <div>
           <Badge className="mb-0">Ijodiy yozuv</Badge>
-          <p className="text-sm">Presence: 0.6-1.0<br/>Frequency: 0.6-1.0</p>
+          <p className="text-sm ">Presence: 0.6-1.0<br/>Frequency: 0.6-1.0</p>
          </div>
          <div>
           <Badge className="mb-0">Texnik hujjatlar</Badge>
-          <p className="text-sm">Presence: 0.0-0.3<br/>Frequency: 0.3-0.5</p>
+          <p className="text-sm ">Presence: 0.0-0.3<br/>Frequency: 0.3-0.5</p>
          </div>
          <div>
           <Badge className="mb-0">Dialog tizimlar</Badge>
-          <p className="text-sm">Presence: 0.4-0.8<br/>Frequency: 0.4-0.8</p>
+          <p className="text-sm ">Presence: 0.4-0.8<br/>Frequency: 0.4-0.8</p>
          </div>
          <div>
           <Badge className="mb-0">Kod generatsiya</Badge>
-          <p className="text-sm">Presence: 0.0<br/>Frequency: 0.0-0.2</p>
+          <p className="text-sm ">Presence: 0.0<br/>Frequency: 0.0-0.2</p>
          </div>
         </div>
        </CardContent>

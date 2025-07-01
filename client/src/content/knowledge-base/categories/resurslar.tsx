@@ -1,26 +1,26 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { AiIcon } from "@/components/ai-icon";
-import { ExpandableCard } from "../components/ExpandableCard";
-import { CodeExample } from "../components/CodeExample";
-import type { SectionContent } from "../components/types";
+import React from"react";
+import { Card, CardContent } from"@/components/ui/card";
+import { Alert, AlertDescription } from"@/components/ui/alert";
+import { Badge } from"@/components/ui/badge";
+import { AiIcon } from"@/components/ai-icon";
+import { ExpandableCard } from"../components/ExpandableCard";
+import { CodeExample } from"../components/CodeExample";
+import type { SectionContent } from"../components/types";
 
 export const foydaliFoydaliKutubxonalar: SectionContent = {
- title: "FOYDALI KUTUBXONALAR",
+ title:"FOYDALI KUTUBXONALAR",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         AI loyihalaringizni tezlashtirish uchun tayyor kutubxonalar va frameworklar. 
         Bu yerda eng mashhur va foydali AI/ML kutubxonalari, ularning qo'llanilishi va integration usullari keltirilgan.
        </p>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         To'g'ri kutubxonani tanlash - muvaffaqiyatli loyihaning yarmi. Har bir kutubxonaning 
         o'z kuchli tomonlari va use-case'lari mavjud.
        </p>
@@ -28,18 +28,18 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold flex items-center gap-2">
+        <h3 className="text-xl font-bold flex items-center gap-2 ">
          <AiIcon name="package" size={24} />
          TOP AI/ML KUTUBXONALAR
         </h3>
         
-        <div className="space-y-4">
+        <div>
          <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
           <div className="flex items-start justify-between">
-           <h4 className="font-bold text-gray-800">LANGCHAIN</h4>
+           <h4 className="font-bold text-gray-800 ">LANGCHAIN</h4>
            <Badge className="bg-gray-100 text-gray-800">LLM Framework</Badge>
           </div>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 ">
            LLM ilovalar yaratish uchun eng mashhur framework
           </p>
           <div className="bg-gray-100 p-3 rounded font-mono text-xs">
@@ -55,10 +55,10 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
 
          <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
           <div className="flex items-start justify-between">
-           <h4 className="font-bold text-gray-800">LLAMAINDEX</h4>
+           <h4 className="font-bold text-gray-800 ">LLAMAINDEX</h4>
            <Badge className="bg-gray-100 text-gray-800">Data Framework</Badge>
           </div>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 ">
            RAG va data-intensive AI ilovalar uchun
           </p>
           <div className="bg-gray-100 p-3 rounded font-mono text-xs">
@@ -73,10 +73,10 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
 
          <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
           <div className="flex items-start justify-between">
-           <h4 className="font-bold text-gray-800">TRANSFORMERS</h4>
+           <h4 className="font-bold text-gray-800 ">TRANSFORMERS</h4>
            <Badge className="bg-gray-100 text-gray-800">Model Hub</Badge>
           </div>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 ">
            Hugging Face'ning 100,000+ pre-trained modellari
           </p>
           <div className="bg-gray-100 p-3 rounded font-mono text-xs">
@@ -92,10 +92,10 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
 
          <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
           <div className="flex items-start justify-between">
-           <h4 className="font-bold text-gray-800">PANDAS AI</h4>
+           <h4 className="font-bold text-gray-800 ">PANDAS AI</h4>
            <Badge className="bg-gray-100 text-gray-800">Data Analysis</Badge>
           </div>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 ">
            Natural tilda data analysis va visualization
           </p>
           <div className="bg-gray-100 p-3 rounded font-mono text-xs">
@@ -114,8 +114,8 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
       <div className="grid gap-4 md:grid-cols-3">
        <Card className="border-2 border-black hover:shadow-lg transition-shadow">
         <CardContent className="p-4">
-         <h4 className="font-bold">VECTOR DATABASES</h4>
-         <div className="space-y-2 text-sm">
+         <h4 className="font-bold ">VECTOR DATABASES</h4>
+         <div className="text-sm">
           <div className="flex items-center gap-2">
            <span className="text-black">•</span>
            <span><strong>Pinecone:</strong> Managed</span>
@@ -138,8 +138,8 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
 
        <Card className="border-2 border-black hover:shadow-lg transition-shadow">
         <CardContent className="p-4">
-         <h4 className="font-bold">DEPLOYMENT TOOLS</h4>
-         <div className="space-y-2 text-sm">
+         <h4 className="font-bold ">DEPLOYMENT TOOLS</h4>
+         <div className="text-sm">
           <div className="flex items-center gap-2">
            <span className="text-black">•</span>
            <span><strong>Streamlit:</strong> Quick demos</span>
@@ -162,8 +162,8 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
 
        <Card className="border-2 border-black hover:shadow-lg transition-shadow">
         <CardContent className="p-4">
-         <h4 className="font-bold">MONITORING</h4>
-         <div className="space-y-2 text-sm">
+         <h4 className="font-bold ">MONITORING</h4>
+         <div className="text-sm">
           <div className="flex items-center gap-2">
            <span className="text-black">•</span>
            <span><strong>Weights & Biases:</strong> ML tracking</span>
@@ -221,7 +221,7 @@ answer = qa_chain.run("Your question here")`}
        <AiIcon name="lightbulb" size={20} className="text-black" />
        <AlertDescription className="text-gray-800">
         <strong>Maslahat:</strong> Avval oddiy kutubxonalardan boshlang. Murakkab frameworklarga 
-        o'tishdan oldin asosiy konseptlarni o'rganing. "Start simple, iterate fast!"
+        o'tishdan oldin asosiy konseptlarni o'rganing."Start simple, iterate fast!"
        </AlertDescription>
       </Alert>
      </div>
@@ -232,19 +232,19 @@ answer = qa_chain.run("Your question here")`}
 };
 
 export const dokumentatsiya: SectionContent = {
- title: "DOKUMENTATSIYA VA O'QUISH",
+ title:"DOKUMENTATSIYA VA O'QUISH",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         AI sohasida yangiliklar tez o'zgaradi. Shuning uchun doimiy o'rganish va 
         eng so'nggi dokumentatsiyalarni kuzatib borish muhim.
        </p>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Bu bo'limda eng yaxshi o'quv resurslari, dokumentatsiyalar va o'rganish 
         yo'llari keltirilgan.
        </p>
@@ -252,59 +252,59 @@ export const dokumentatsiya: SectionContent = {
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold text-center">ASOSIY DOKUMENTATSIYALAR</h3>
+        <h3 className="text-xl font-bold text-center ">ASOSIY DOKUMENTATSIYALAR</h3>
         
         <div className="grid md:grid-cols-2 gap-4">
-         <div className="space-y-3">
-          <h4 className="font-bold text-gray-800">RASMIY DOCS</h4>
-          <div className="space-y-2">
+         <div>
+          <h4 className="font-bold text-gray-800 ">RASMIY DOCS</h4>
+          <div>
            <a href="#" className="block p-3 bg-white border border-gray-300 rounded hover:border-gray-500 transition-colors">
             <div className="flex items-center justify-between">
              <span className="font-semibold text-sm">OpenAI Docs</span>
              <AiIcon name="external" size={16} />
             </div>
-            <p className="text-xs text-gray-600 mt-1">API reference, guides, best practices</p>
+            <p className="text-xs text-gray-600 mt-1 ">API reference, guides, best practices</p>
            </a>
            <a href="#" className="block p-3 bg-white border border-gray-300 rounded hover:border-gray-500 transition-colors">
             <div className="flex items-center justify-between">
              <span className="font-semibold text-sm">Anthropic Docs</span>
              <AiIcon name="external" size={16} />
             </div>
-            <p className="text-xs text-gray-600 mt-1">Claude API, constitutional AI</p>
+            <p className="text-xs text-gray-600 mt-1 ">Claude API, constitutional AI</p>
            </a>
            <a href="#" className="block p-3 bg-white border border-gray-300 rounded hover:border-gray-500 transition-colors">
             <div className="flex items-center justify-between">
              <span className="font-semibold text-sm">Google AI Docs</span>
              <AiIcon name="external" size={16} />
             </div>
-            <p className="text-xs text-gray-600 mt-1">Gemini, PaLM, Vertex AI</p>
+            <p className="text-xs text-gray-600 mt-1 ">Gemini, PaLM, Vertex AI</p>
            </a>
           </div>
          </div>
 
-         <div className="space-y-3">
-          <h4 className="font-bold text-gray-800">O'QUV PLATFORMALAR</h4>
-          <div className="space-y-2">
+         <div>
+          <h4 className="font-bold text-gray-800 ">O'QUV PLATFORMALAR</h4>
+          <div>
            <a href="#" className="block p-3 bg-white border border-gray-300 rounded hover:border-gray-500 transition-colors">
             <div className="flex items-center justify-between">
              <span className="font-semibold text-sm">Fast.ai</span>
              <AiIcon name="external" size={16} />
             </div>
-            <p className="text-xs text-gray-600 mt-1">Practical deep learning courses</p>
+            <p className="text-xs text-gray-600 mt-1 ">Practical deep learning courses</p>
            </a>
            <a href="#" className="block p-3 bg-white border border-gray-300 rounded hover:border-gray-500 transition-colors">
             <div className="flex items-center justify-between">
              <span className="font-semibold text-sm">DeepLearning.AI</span>
              <AiIcon name="external" size={16} />
             </div>
-            <p className="text-xs text-gray-600 mt-1">Andrew Ng's courses</p>
+            <p className="text-xs text-gray-600 mt-1 ">Andrew Ng's courses</p>
            </a>
            <a href="#" className="block p-3 bg-white border border-gray-300 rounded hover:border-gray-500 transition-colors">
             <div className="flex items-center justify-between">
              <span className="font-semibold text-sm">Hugging Face Course</span>
              <AiIcon name="external" size={16} />
             </div>
-            <p className="text-xs text-gray-600 mt-1">NLP va transformers</p>
+            <p className="text-xs text-gray-600 mt-1 ">NLP va transformers</p>
            </a>
           </div>
          </div>
@@ -316,37 +316,32 @@ export const dokumentatsiya: SectionContent = {
        term="LEARNING PATH"
        definition="AI/ML ni o'rganish uchun tavsiya etilgan yo'l"
        icon={<AiIcon name="road" size={24} />}
-       examples={[
-        "1. Python asoslari (2-4 hafta)",
-        "2. ML fundamentals (1-2 oy)",
-        "3. Deep Learning basics (1-2 oy)",
-        "4. LLMs va Prompting (2-4 hafta)",
-        "5. Production deployment (ongoing)"
+       examples={["1. Python asoslari (2-4 hafta)","2. ML fundamentals (1-2 oy)","3. Deep Learning basics (1-2 oy)","4. LLMs va Prompting (2-4 hafta)","5. Production deployment (ongoing)"
        ]}
       />
 
       <div className="grid gap-4 md:grid-cols-2">
        <Card className="border-2 border-black">
         <div className="bg-gray-700 p-3">
-         <h4 className="text-white font-bold">KITOBLAR</h4>
+         <h4 className="text-white font-bold ">KITOBLAR</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="space-y-3 text-sm">
+         <ul className="text-sm">
           <li>
            <strong>Pattern Recognition and ML</strong>
-           <p className="text-xs text-gray-600">Christopher Bishop</p>
+           <p className="text-xs text-gray-600 ">Christopher Bishop</p>
           </li>
           <li>
            <strong>Deep Learning</strong>
-           <p className="text-xs text-gray-600">Ian Goodfellow</p>
+           <p className="text-xs text-gray-600 ">Ian Goodfellow</p>
           </li>
           <li>
            <strong>The Alignment Problem</strong>
-           <p className="text-xs text-gray-600">Brian Christian</p>
+           <p className="text-xs text-gray-600 ">Brian Christian</p>
           </li>
           <li>
            <strong>Designing ML Systems</strong>
-           <p className="text-xs text-gray-600">Chip Huyen</p>
+           <p className="text-xs text-gray-600 ">Chip Huyen</p>
           </li>
          </ul>
         </CardContent>
@@ -354,25 +349,25 @@ export const dokumentatsiya: SectionContent = {
 
        <Card className="border-2 border-black">
         <div className="bg-gray-700 p-3">
-         <h4 className="text-white font-bold">YOUTUBE KANALLAR</h4>
+         <h4 className="text-white font-bold ">YOUTUBE KANALLAR</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="space-y-3 text-sm">
+         <ul className="text-sm">
           <li>
            <strong>Two Minute Papers</strong>
-           <p className="text-xs text-gray-600">Eng so'nggi tadqiqotlar</p>
+           <p className="text-xs text-gray-600 ">Eng so'nggi tadqiqotlar</p>
           </li>
           <li>
            <strong>Yannic Kilcher</strong>
-           <p className="text-xs text-gray-600">Paper reviews</p>
+           <p className="text-xs text-gray-600 ">Paper reviews</p>
           </li>
           <li>
            <strong>3Blue1Brown</strong>
-           <p className="text-xs text-gray-600">Math visualizations</p>
+           <p className="text-xs text-gray-600 ">Math visualizations</p>
           </li>
           <li>
            <strong>Andrej Karpathy</strong>
-           <p className="text-xs text-gray-600">Neural networks from scratch</p>
+           <p className="text-xs text-gray-600 ">Neural networks from scratch</p>
           </li>
          </ul>
         </CardContent>
@@ -382,8 +377,7 @@ export const dokumentatsiya: SectionContent = {
       <Alert className="border-2 border-gray-600 bg-gray-50">
        <AiIcon name="rocket" size={20} className="text-black" />
        <AlertDescription className="text-gray-800">
-        <strong>Pro tip:</strong> Dokumentatsiyani o'qish o'rniga amaliy loyihalar qiling. 
-        "Learning by doing" eng samarali usul. Har kuni 30 daqiqa amaliyot ko'proq samara beradi 3 soat nazariyadan!
+        <strong>Pro tip:</strong> Dokumentatsiyani o'qish o'rniga amaliy loyihalar qiling."Learning by doing" eng samarali usul. Har kuni 30 daqiqa amaliyot ko'proq samara beradi 3 soat nazariyadan!
        </AlertDescription>
       </Alert>
      </div>
@@ -394,19 +388,19 @@ export const dokumentatsiya: SectionContent = {
 };
 
 export const hamjamiyat: SectionContent = {
- title: "HAMJAMIYAT VA TARMOQLAR",
+ title:"HAMJAMIYAT VA TARMOQLAR",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         AI hamjamiyati - bu o'zaro yordam, bilim almashish va hamkorlik markazi. 
         To'g'ri hamjamiyatda bo'lish sizning o'sishingizni tezlashtiradi.
        </p>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Bu yerda eng faol va foydali AI hamjamiyatlari, ularning xususiyatlari va 
         qo'shilish usullari haqida ma'lumot berilgan.
        </p>
@@ -414,18 +408,18 @@ export const hamjamiyat: SectionContent = {
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold flex items-center gap-2">
+        <h3 className="text-xl font-bold flex items-center gap-2 ">
          <AiIcon name="community" size={24} />
          AI HAMJAMIYATLAR
         </h3>
         
-        <div className="space-y-4">
+        <div>
          <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
           <div className="flex items-center gap-3">
            <div className="text-2xl"></div>
            <div>
-            <h4 className="font-bold text-gray-800">DISCORD SERVERS</h4>
-            <p className="text-sm text-gray-600">Real-time suhbat va yordam</p>
+            <h4 className="font-bold text-gray-800 ">DISCORD SERVERS</h4>
+            <p className="text-sm text-gray-600 ">Real-time suhbat va yordam</p>
            </div>
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
@@ -440,8 +434,8 @@ export const hamjamiyat: SectionContent = {
           <div className="flex items-center gap-3">
            <div className="text-2xl"></div>
            <div>
-            <h4 className="font-bold text-gray-800">TELEGRAM GROUPS</h4>
-            <p className="text-sm text-gray-600">O'zbek tilida AI muhokamalar</p>
+            <h4 className="font-bold text-gray-800 ">TELEGRAM GROUPS</h4>
+            <p className="text-sm text-gray-600 ">O'zbek tilida AI muhokamalar</p>
            </div>
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
@@ -456,8 +450,8 @@ export const hamjamiyat: SectionContent = {
           <div className="flex items-center gap-3">
            <div className="text-2xl"></div>
            <div>
-            <h4 className="font-bold text-gray-800">X (TWITTER)</h4>
-            <p className="text-sm text-gray-600">Eng so'nggi yangiliklar va trendlar</p>
+            <h4 className="font-bold text-gray-800 ">X (TWITTER)</h4>
+            <p className="text-sm text-gray-600 ">Eng so'nggi yangiliklar va trendlar</p>
            </div>
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
@@ -476,11 +470,7 @@ export const hamjamiyat: SectionContent = {
         term="NETWORKING TIPS"
         definition="Hamjamiyatda faol bo'lish va tarmoq yaratish"
         icon={<AiIcon name="network" size={24} />}
-        examples={[
-         "Savol berishdan qo'rkmang",
-         "O'z tajribangizni ulashing",
-         "Open source loyihalarga hissa qo'shing",
-         "Hackathon va meetup'larda qatnashing"
+        examples={["Savol berishdan qo'rkmang","O'z tajribangizni ulashing","Open source loyihalarga hissa qo'shing","Hackathon va meetup'larda qatnashing"
         ]}
        />
 
@@ -488,25 +478,21 @@ export const hamjamiyat: SectionContent = {
         term="CONTRIBUTION"
         definition="Hamjamiyatga qanday hissa qo'shish mumkin"
         icon={<AiIcon name="contribute" size={24} />}
-        examples={[
-         "Blog yozish va tajriba ulashish",
-         "Open source kutubxonalar yaratish",
-         "Boshqalarga yordam berish",
-         "Dokumentatsiya yaxshilash"
+        examples={["Blog yozish va tajriba ulashish","Open source kutubxonalar yaratish","Boshqalarga yordam berish","Dokumentatsiya yaxshilash"
         ]}
        />
       </div>
 
       <Card className="border-2 border-black">
        <div className="bg-black p-4">
-        <h3 className="text-white font-bold uppercase">KONFERENSIYALAR VA MEETUP'LAR</h3>
+        <h3 className="text-white font-bold uppercase ">KONFERENSIYALAR VA MEETUP'LAR</h3>
        </div>
        <CardContent className="p-6">
         <div className="grid md:grid-cols-3 gap-4">
          <div className="text-center">
           <div className="text-3xl"></div>
-          <h4 className="font-bold">GLOBAL</h4>
-          <ul className="text-sm space-y-1">
+          <h4 className="font-bold ">GLOBAL</h4>
+          <ul className="text-sm">
            <li>• NeurIPS</li>
            <li>• ICML</li>
            <li>• CVPR</li>
@@ -515,8 +501,8 @@ export const hamjamiyat: SectionContent = {
          </div>
          <div className="text-center">
           <div className="text-3xl"></div>
-          <h4 className="font-bold">INDUSTRY</h4>
-          <ul className="text-sm space-y-1">
+          <h4 className="font-bold ">INDUSTRY</h4>
+          <ul className="text-sm">
            <li>• Google I/O</li>
            <li>• OpenAI DevDay</li>
            <li>• AWS re:Invent</li>
@@ -525,8 +511,8 @@ export const hamjamiyat: SectionContent = {
          </div>
          <div className="text-center">
           <div className="text-3xl"></div>
-          <h4 className="font-bold">LOCAL</h4>
-          <ul className="text-sm space-y-1">
+          <h4 className="font-bold ">LOCAL</h4>
+          <ul className="text-sm">
            <li>• IT Park Events</li>
            <li>• GDG Tashkent</li>
            <li>• AI Meetup UZ</li>
@@ -552,19 +538,19 @@ export const hamjamiyat: SectionContent = {
 };
 
 export const vositalarAPI: SectionContent = {
- title: "VOSITALAR VA API'LAR",
+ title:"VOSITALAR VA API'LAR",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         AI loyihalarni yaratish uchun turli vositalar va API'lar mavjud. To'g'ri vositani 
         tanlash loyihangiz muvaffaqiyatiga katta ta'sir ko'rsatadi.
        </p>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Bu bo'limda eng yaxshi AI vositalar, API'lar, ularning narxlari va 
         qo'llanish sohalari haqida ma'lumot berilgan.
        </p>
@@ -572,18 +558,18 @@ export const vositalarAPI: SectionContent = {
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold text-center">AI DEVELOPMENT TOOLS</h3>
+        <h3 className="text-xl font-bold text-center ">AI DEVELOPMENT TOOLS</h3>
         
         <div className="grid md:grid-cols-2 gap-4">
-         <div className="space-y-3">
-          <h4 className="font-bold text-gray-800">CODE ASSISTANTS</h4>
-          <div className="space-y-2">
+         <div>
+          <h4 className="font-bold text-gray-800 ">CODE ASSISTANTS</h4>
+          <div>
            <div className="p-3 bg-white border border-gray-300 rounded">
             <div className="flex items-center justify-between">
              <h5 className="font-semibold text-sm">GitHub Copilot</h5>
              <Badge className="text-xs">$10/mo</Badge>
             </div>
-            <p className="text-xs text-gray-600">AI pair programming</p>
+            <p className="text-xs text-gray-600 ">AI pair programming</p>
             <div className="mt-2 flex gap-1">
              <div className="w-full h-1 bg-gray-600 rounded"></div>
              <div className="w-full h-1 bg-gray-600 rounded"></div>
@@ -598,7 +584,7 @@ export const vositalarAPI: SectionContent = {
              <h5 className="font-semibold text-sm">Cursor</h5>
              <Badge className="text-xs">$20/mo</Badge>
             </div>
-            <p className="text-xs text-gray-600">AI-first code editor</p>
+            <p className="text-xs text-gray-600 ">AI-first code editor</p>
             <div className="mt-2 flex gap-1">
              <div className="w-full h-1 bg-gray-600 rounded"></div>
              <div className="w-full h-1 bg-gray-600 rounded"></div>
@@ -610,15 +596,15 @@ export const vositalarAPI: SectionContent = {
           </div>
          </div>
 
-         <div className="space-y-3">
-          <h4 className="font-bold text-gray-800">API PROVIDERS</h4>
-          <div className="space-y-2">
+         <div>
+          <h4 className="font-bold text-gray-800 ">API PROVIDERS</h4>
+          <div>
            <div className="p-3 bg-white border border-gray-300 rounded">
             <div className="flex items-center justify-between">
              <h5 className="font-semibold text-sm">OpenAI API</h5>
              <Badge className="text-xs">Pay-as-you-go</Badge>
             </div>
-            <p className="text-xs text-gray-600">GPT-4, DALL-E, Whisper</p>
+            <p className="text-xs text-gray-600 ">GPT-4, DALL-E, Whisper</p>
             <div className="mt-2 text-xs">
              <span className="text-gray-500">Starting:</span> $0.0005/1K tokens
             </div>
@@ -629,7 +615,7 @@ export const vositalarAPI: SectionContent = {
              <h5 className="font-semibold text-sm">Anthropic API</h5>
              <Badge className="text-xs">Pay-as-you-go</Badge>
             </div>
-            <p className="text-xs text-gray-600">Claude 3 family</p>
+            <p className="text-xs text-gray-600 ">Claude 3 family</p>
             <div className="mt-2 text-xs">
              <span className="text-gray-500">Starting:</span> $0.0025/1K tokens
             </div>
@@ -646,7 +632,7 @@ export const vositalarAPI: SectionContent = {
 import openai
 
 # XAVFLI! Hech qachon bunday qilmang
-openai.api_key = "sk-proj-abc123def456..."`}
+openai.api_key ="sk-proj-abc123def456..."`}
        goodExample={`# Environment variables ishlatish
 import os
 from dotenv import load_dotenv
@@ -674,10 +660,10 @@ config = Config()`}
       <div className="grid gap-4 md:grid-cols-3">
        <Card className="border-2 border-black">
         <div className="bg-gray-700 p-3">
-         <h4 className="text-white font-bold text-sm text-center">PROTOTYPING</h4>
+         <h4 className="text-white font-bold text-sm text-center ">PROTOTYPING</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="text-sm space-y-2">
+         <ul className="text-sm">
           <li className="flex items-start gap-2">
            <AiIcon name="tool" size={14} className="mt-0.5" />
            <span><strong>Colab:</strong> Free GPU</span>
@@ -696,10 +682,10 @@ config = Config()`}
 
        <Card className="border-2 border-black">
         <div className="bg-gray-700 p-3">
-         <h4 className="text-white font-bold text-sm text-center">TESTING</h4>
+         <h4 className="text-white font-bold text-sm text-center ">TESTING</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="text-sm space-y-2">
+         <ul className="text-sm">
           <li className="flex items-start gap-2">
            <AiIcon name="test" size={14} className="mt-0.5" />
            <span><strong>Postman:</strong> API testing</span>
@@ -718,10 +704,10 @@ config = Config()`}
 
        <Card className="border-2 border-black">
         <div className="bg-gray-700 p-3">
-         <h4 className="text-white font-bold text-sm text-center">PRODUCTION</h4>
+         <h4 className="text-white font-bold text-sm text-center ">PRODUCTION</h4>
         </div>
         <CardContent className="p-4">
-         <ul className="text-sm space-y-2">
+         <ul className="text-sm">
           <li className="flex items-start gap-2">
            <AiIcon name="cloud" size={14} className="mt-0.5" />
            <span><strong>Railway:</strong> Easy deploy</span>
@@ -754,20 +740,20 @@ config = Config()`}
 };
 
 export const ozbekistonAI: SectionContent = {
- title: "O'ZBEKISTONDA AI",
+ title:"O'ZBEKISTONDA AI",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         O'zbekistonda AI sohasida qiziqarli o'zgarishlar yuz bermoqda. Davlat dasturlari, 
         xususiy sektor tashabbusalari va ta'lim muassasalarining sa'y-harakatlari bu sohani 
         jadal rivojlantirmoqda.
        </p>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Bu bo'limda O'zbekistondagi AI ekosistemasi, imkoniyatlar va kelajak 
         istiqbollari haqida ma'lumot berilgan.
        </p>
@@ -775,37 +761,37 @@ export const ozbekistonAI: SectionContent = {
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold flex items-center gap-2">
+        <h3 className="text-xl font-bold flex items-center gap-2 ">
          <span className="text-2xl"></span>
          O'ZBEKISTON AI EKOSISTEMASI
         </h3>
         
-        <div className="space-y-4">
+        <div>
          <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
-          <h4 className="font-bold text-gray-800">DAVLAT TASHABBUSLARI</h4>
+          <h4 className="font-bold text-gray-800 ">DAVLAT TASHABBUSLARI</h4>
           <div className="grid md:grid-cols-2 gap-3">
            <div className="p-3 bg-gray-50 rounded">
             <h5 className="font-semibold text-sm">IT Park</h5>
-            <p className="text-xs">Rezidentlar uchun soliq imtiyozlari</p>
+            <p className="text-xs ">Rezidentlar uchun soliq imtiyozlari</p>
            </div>
            <div className="p-3 bg-gray-50 rounded">
             <h5 className="font-semibold text-sm">Digital Uzbekistan 2030</h5>
-            <p className="text-xs">Raqamlashtirish strategiyasi</p>
+            <p className="text-xs ">Raqamlashtirish strategiyasi</p>
            </div>
            <div className="p-3 bg-gray-50 rounded">
             <h5 className="font-semibold text-sm">AI Research Centers</h5>
-            <p className="text-xs">Universitetlarda tadqiqot markazlari</p>
+            <p className="text-xs ">Universitetlarda tadqiqot markazlari</p>
            </div>
            <div className="p-3 bg-gray-50 rounded">
             <h5 className="font-semibold text-sm">Startup Grants</h5>
-            <p className="text-xs">500 mln so'mgacha grantlar</p>
+            <p className="text-xs ">500 mln so'mgacha grantlar</p>
            </div>
           </div>
          </div>
 
          <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
-          <h4 className="font-bold text-gray-800">KOMPANIYALAR VA STARTUPLAR</h4>
-          <div className="space-y-2">
+          <h4 className="font-bold text-gray-800 ">KOMPANIYALAR VA STARTUPLAR</h4>
+          <div>
            <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
             <span className="font-semibold text-sm">UZINFOCOM</span>
             <Badge className="text-xs">Gov Tech</Badge>
@@ -826,27 +812,27 @@ export const ozbekistonAI: SectionContent = {
          </div>
 
          <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
-          <h4 className="font-bold text-gray-800">TA'LIM VA KADRLAR</h4>
+          <h4 className="font-bold text-gray-800 ">TA'LIM VA KADRLAR</h4>
           <div className="grid grid-cols-2 gap-3">
            <div className="p-3 bg-gray-50 rounded text-center">
             <div className="text-2xl"></div>
             <h5 className="font-semibold text-sm">TATU</h5>
-            <p className="text-xs">AI fakulteti</p>
+            <p className="text-xs ">AI fakulteti</p>
            </div>
            <div className="p-3 bg-gray-50 rounded text-center">
             <div className="text-2xl"></div>
             <h5 className="font-semibold text-sm">INHA</h5>
-            <p className="text-xs">ML kurslari</p>
+            <p className="text-xs ">ML kurslari</p>
            </div>
            <div className="p-3 bg-gray-50 rounded text-center">
             <div className="text-2xl"></div>
             <h5 className="font-semibold text-sm">IT Academy</h5>
-            <p className="text-xs">AI bootcamps</p>
+            <p className="text-xs ">AI bootcamps</p>
            </div>
            <div className="p-3 bg-gray-50 rounded text-center">
             <div className="text-2xl"></div>
             <h5 className="font-semibold text-sm">Online</h5>
-            <p className="text-xs">MOOC platformalar</p>
+            <p className="text-xs ">MOOC platformalar</p>
            </div>
           </div>
          </div>
@@ -859,11 +845,7 @@ export const ozbekistonAI: SectionContent = {
         term="IMKONIYATLAR"
         definition="O'zbekistonda AI sohasidagi imkoniyatlar"
         icon={<AiIcon name="opportunity" size={24} />}
-        examples={[
-         "Arzon IT xizmatlar eksporti",
-         "Katta ichki bozor (35+ mln)",
-         "Yosh aholi (60% < 30 yosh)",
-         "Davlat qo'llab-quvvatlashi"
+        examples={["Arzon IT xizmatlar eksporti","Katta ichki bozor (35+ mln)","Yosh aholi (60% < 30 yosh)","Davlat qo'llab-quvvatlashi"
         ]}
        />
 
@@ -871,36 +853,32 @@ export const ozbekistonAI: SectionContent = {
         term="MUAMMOLAR"
         definition="Hal qilinishi kerak bo'lgan masalalar"
         icon={<AiIcon name="challenge" size={24} />}
-        examples={[
-         "Malakali kadrlar yetishmasligi",
-         "Infrastructure cheklovlari",
-         "Venture capital kamligi",
-         "Til resurslari yetishmasligi"
+        examples={["Malakali kadrlar yetishmasligi","Infrastructure cheklovlari","Venture capital kamligi","Til resurslari yetishmasligi"
         ]}
        />
       </div>
 
       <Card className="border-2 border-gray-600 bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold text-gray-800">
+        <h3 className="text-xl font-bold text-gray-800 ">
          O'ZBEK TILI UCHUN AI RESURSLAR
         </h3>
-        <div className="space-y-3">
+        <div>
          <div className="p-3 bg-white border border-gray-300 rounded">
           <h5 className="font-semibold">Speech Recognition</h5>
-          <p className="text-sm">Google Speech-to-Text o'zbek tilini qo'llab-quvvatlaydi</p>
+          <p className="text-sm ">Google Speech-to-Text o'zbek tilini qo'llab-quvvatlaydi</p>
          </div>
          <div className="p-3 bg-white border border-gray-300 rounded">
           <h5 className="font-semibold">NLP Models</h5>
-          <p className="text-sm">UzBERT, multilingual models (mBERT, XLM-R)</p>
+          <p className="text-sm ">UzBERT, multilingual models (mBERT, XLM-R)</p>
          </div>
          <div className="p-3 bg-white border border-gray-300 rounded">
           <h5 className="font-semibold">Datasets</h5>
-          <p className="text-sm">UzWiki corpus, parallel corpora, news datasets</p>
+          <p className="text-sm ">UzWiki corpus, parallel corpora, news datasets</p>
          </div>
          <div className="p-3 bg-white border border-gray-300 rounded">
           <h5 className="font-semibold">Tools</h5>
-          <p className="text-sm">UzMorphAnalyser, spell checkers, transliterators</p>
+          <p className="text-sm ">UzMorphAnalyser, spell checkers, transliterators</p>
          </div>
         </div>
        </CardContent>

@@ -1,23 +1,23 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { AiIcon } from "@/components/ai-icon";
-import { ExpandableCard } from "../components/ExpandableCard";
-import { CodeExample } from "../components/CodeExample";
-import type { SectionContent } from "../components/types";
+import React from"react";
+import { Card, CardContent } from"@/components/ui/card";
+import { Alert, AlertDescription } from"@/components/ui/alert";
+import { Badge } from"@/components/ui/badge";
+import { AiIcon } from"@/components/ai-icon";
+import { ExpandableCard } from"../components/ExpandableCard";
+import { CodeExample } from"../components/CodeExample";
+import type { SectionContent } from"../components/types";
 
 export const zeroShot: SectionContent = {
- title: "ZERO SHOT",
+ title:"ZERO SHOT",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-6">
+<div>
      <div>
-      <p className="text-lg leading-relaxed">
+      <p className="text-lg ">
        Zero-shot prompting — AI'ga hech qanday misol bermasdan to'g'ridan-to'g'ri 
        vazifani bajarish ko'rsatmasi. Eng oddiy, lekin kuchli texnika.
       </p>
@@ -25,8 +25,8 @@ export const zeroShot: SectionContent = {
 
      <Card className="border-2 border-black">
       <CardContent className="p-6">
-       <h3 className="text-xl font-bold">ZERO-SHOT QACHON ISHLAYDI?</h3>
-       <ul className="space-y-2">
+       <h3 className="text-xl font-bold ">ZERO-SHOT QACHON ISHLAYDI?</h3>
+       <ul>
         <li className="flex items-start gap-2">
          <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
          <span>Oddiy va aniq vazifalar uchun</span>
@@ -59,8 +59,8 @@ Gap tarkibi:
      <div className="grid md:grid-cols-2 gap-4">
       <Card className="border-2 border-green-600">
        <CardContent className="p-4">
-        <h4 className="font-bold text-green-700">✅ AFZALLIKLARI</h4>
-        <ul className="text-sm space-y-1">
+        <h4 className="font-bold text-green-700 ">✅ AFZALLIKLARI</h4>
+        <ul className="text-sm">
          <li>• Tez va oson</li>
          <li>• Misollar tayyorlash shart emas</li>
          <li>• Kam token sarflaydi</li>
@@ -70,8 +70,8 @@ Gap tarkibi:
 
       <Card className="border-2 border-red-600">
        <CardContent className="p-4">
-        <h4 className="font-bold text-red-700">❌ KAMCHILIKLARI</h4>
-        <ul className="text-sm space-y-1">
+        <h4 className="font-bold text-red-700 ">❌ KAMCHILIKLARI</h4>
+        <ul className="text-sm">
          <li>• Murakkab vazifalar uchun yaramaydi</li>
          <li>• Format nazorati qiyin</li>
          <li>• Natija sifati o'zgaruvchan</li>
@@ -88,16 +88,16 @@ Gap tarkibi:
 };
 
 export const fewShot: SectionContent = {
- title: "FEW SHOT",
+ title:"FEW SHOT",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-6">
+<div>
      <div>
-      <p className="text-lg leading-relaxed">
+      <p className="text-lg ">
        Few-shot prompting — AI'ga bir nechta misol ko'rsatib, keyin vazifani 
        bajarishni so'rash. Bu AI'ga formatni va kutilgan natijani tushunishga yordam beradi.
       </p>
@@ -105,7 +105,7 @@ export const fewShot: SectionContent = {
 
      <Card className="border-2 border-black">
       <CardContent className="p-6">
-       <h3 className="text-xl font-bold">NECHTA MISOL KERAK?</h3>
+       <h3 className="text-xl font-bold ">NECHTA MISOL KERAK?</h3>
        <div className="grid md:grid-cols-3 gap-4">
         <div className="text-center">
          <div className="text-3xl font-bold">1-2</div>
@@ -160,16 +160,16 @@ Tasnif:"
 };
 
 export const chainOfThought: SectionContent = {
- title: "CHAIN OF THOUGHT",
+ title:"CHAIN OF THOUGHT",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-6">
+<div>
      <div>
-      <p className="text-lg leading-relaxed">
+      <p className="text-lg ">
        Chain-of-Thought (CoT) — AI'ni qadam-ba-qadam fikrlashga undash texnikasi. 
        Murakkab masalalar va mantiqiy xulosalar uchun juda samarali.
       </p>
@@ -177,9 +177,9 @@ export const chainOfThought: SectionContent = {
 
      <Card className="border-2 border-black bg-black text-white">
       <CardContent className="p-6">
-       <h3 className="text-xl font-bold">SEHRLI IBORA:</h3>
-       <p className="text-2xl font-mono">"Keling, qadam-ba-qadam fikrlaymiz"</p>
-       <p className="text-sm mt-2">Let's think step by step</p>
+       <h3 className="text-xl font-bold ">SEHRLI IBORA:</h3>
+       <p className="text-2xl font-mono ">"Keling, qadam-ba-qadam fikrlaymiz"</p>
+       <p className="text-sm mt-2 ">Let's think step by step</p>
       </CardContent>
      </Card>
 
@@ -203,8 +203,8 @@ Javob: 51 yosh"
      <div className="grid gap-4">
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h4 className="font-bold">COT QACHON FOYDALANISH:</h4>
-        <ul className="space-y-2 text-sm">
+        <h4 className="font-bold ">COT QACHON FOYDALANISH:</h4>
+        <ul className="text-sm">
          <li>• Matematik masalalar</li>
          <li>• Mantiqiy topshiriqlar</li>
          <li>• Ko'p bosqichli vazifalar</li>
@@ -215,9 +215,9 @@ Javob: 51 yosh"
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h4 className="font-bold">COT VARIANTLARI:</h4>
-        <ul className="space-y-2 text-sm">
-         <li>• <strong>Zero-shot CoT:</strong> "Qadam-ba-qadam tushuntir"</li>
+        <h4 className="font-bold ">COT VARIANTLARI:</h4>
+        <ul className="text-sm">
+         <li>• <strong>Zero-shot CoT:</strong>"Qadam-ba-qadam tushuntir"</li>
          <li>• <strong>Few-shot CoT:</strong> Misollar bilan</li>
          <li>• <strong>Self-consistency:</strong> Bir necha yechim, eng ko'p takrorlangan javob</li>
         </ul>
@@ -233,16 +233,16 @@ Javob: 51 yosh"
 };
 
 export const rolePlaying: SectionContent = {
- title: "ROLE PLAYING",
+ title:"ROLE PLAYING",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
      <>
-<div className="space-y-6">
+<div>
      <div>
-      <p className="text-lg leading-relaxed">
+      <p className="text-lg ">
        Role-playing — AI'ga ma'lum bir mutaxassis yoki shaxs rolini berish. 
        Bu javob sifati va uslubini sezilarli yaxshilaydi.
       </p>
@@ -251,8 +251,8 @@ export const rolePlaying: SectionContent = {
      <div className="grid md:grid-cols-2 gap-6">
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-lg font-bold">PROFESSIONAL ROLLAR</h3>
-        <ul className="space-y-2 text-sm">
+        <h3 className="text-lg font-bold ">PROFESSIONAL ROLLAR</h3>
+        <ul className="text-sm">
          <li>• Tajribali dasturchi</li>
          <li>• Marketing mutaxassisi</li>
          <li>• Moliya maslahatchisi</li>
@@ -264,8 +264,8 @@ export const rolePlaying: SectionContent = {
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-lg font-bold">KREATIV ROLLAR</h3>
-        <ul className="space-y-2 text-sm">
+        <h3 className="text-lg font-bold ">KREATIV ROLLAR</h3>
+        <ul className="text-sm">
          <li>• Stend-up komediyachi</li>
          <li>• Motivatsion spiker</li>
          <li>• Tarixchi</li>
@@ -303,7 +303,7 @@ Menga JavaScript'dagi array methodlari haqida tushuntir. Har bir method uchun:
       Bu bo'lim hozircha ishlab chiqilmoqda. Tez orada to'liq kontent qo'shiladi.
      </AlertDescription>
     </Alert>
-    <p className="text-lg mt-4">
+    <p className="text-lg mt-4 ">
      Hozircha boshqa bo'limlarni ko'rib chiqishingiz mumkin. Har bir bo'lim AI va prompting 
      bo'yicha foydali ma'lumotlar bilan to'ldiriladi.
     </p>
@@ -316,15 +316,15 @@ Menga JavaScript'dagi array methodlari haqida tushuntir. Har bir method uchun:
 };
 
 export const structuredOutput: SectionContent = {
- title: "STRUCTURED OUTPUT",
+ title:"STRUCTURED OUTPUT",
  sections: [
   {
    type: 'custom',
    content: {
     render: () => (
-     <div className="space-y-6">
+     <div>
       <div>
-       <p className="text-lg leading-relaxed">
+       <p className="text-lg ">
         Structured output - AI javoblarini aniq format (JSON, XML, CSV) da olish texnikasi. 
         Bu dasturlar bilan integratsiya uchun juda muhim.
        </p>
@@ -334,37 +334,31 @@ export const structuredOutput: SectionContent = {
        term="NIMA UCHUN KERAK?"
        definition="AI javoblarini to'g'ridan-to'g'ri dasturda ishlatish uchun strukturalangan formatda olish"
        icon={<AiIcon name="structure" size={24} />}
-       examples={[
-        "JSON API javoblari",
-        "Ma'lumotlar bazasi uchun CSV",
-        "Konfiguratsiya fayllari",
-        "Strukturalangan hisobotlar"
+       examples={["JSON API javoblari","Ma'lumotlar bazasi uchun CSV","Konfiguratsiya fayllari","Strukturalangan hisobotlar"
        ]}
       />
 
       <Card className="border-2 border-black">
        <CardContent className="p-6">
-        <h3 className="text-xl font-bold">ASOSIY USULLAR:</h3>
-        <div className="space-y-4">
+        <h3 className="text-xl font-bold ">ASOSIY USULLAR:</h3>
+        <div>
          <div className="border-2 border-black p-4">
-          <h4 className="font-bold">1. Format Ko'rsatish</h4>
-          <p className="text-sm">Promptda aniq format talab qilish</p>
-          <code className="block mt-2 p-2 bg-gray-100 text-xs">
-           "Javobni JSON formatida ber: {'{'}name, age, city{'}'}"
+          <h4 className="font-bold ">1. Format Ko'rsatish</h4>
+          <p className="text-sm ">Promptda aniq format talab qilish</p>
+          <code className="block mt-2 p-2 bg-gray-100 text-xs">"Javobni JSON formatida ber: {'{'}name, age, city{'}'}"
           </code>
          </div>
          <div className="border-2 border-black p-4">
-          <h4 className="font-bold">2. Schema Berish</h4>
-          <p className="text-sm">To'liq struktura sxemasini ko'rsatish</p>
-          <code className="block mt-2 p-2 bg-gray-100 text-xs">
-           "Quyidagi JSON sxemaga mos javob ber: ..."
+          <h4 className="font-bold ">2. Schema Berish</h4>
+          <p className="text-sm ">To'liq struktura sxemasini ko'rsatish</p>
+          <code className="block mt-2 p-2 bg-gray-100 text-xs">"Quyidagi JSON sxemaga mos javob ber: ..."
           </code>
          </div>
          <div className="border-2 border-black p-4">
-          <h4 className="font-bold">3. Function Calling</h4>
-          <p className="text-sm">OpenAI/Claude API maxsus funksiyalari</p>
+          <h4 className="font-bold ">3. Function Calling</h4>
+          <p className="text-sm ">OpenAI/Claude API maxsus funksiyalari</p>
           <code className="block mt-2 p-2 bg-gray-100 text-xs">
-           functions=[{'{'}"name": "get_weather", ...{'}'}]
+           functions=[{'{'}"name":"get_weather", ...{'}'}]
           </code>
          </div>
         </div>
@@ -373,29 +367,17 @@ export const structuredOutput: SectionContent = {
 
       <CodeExample
        title="JSON OUTPUT MISOLI"
-       badExample={`prompt = "Kitob haqida ma'lumot ber"
+       badExample={`prompt ="Kitob haqida ma'lumot ber"
 
-# Natija (strukturasiz):
-"'1984' - George Orwell tomonidan yozilgan distopik roman. 
+# Natija (strukturasiz):"'1984' - George Orwell tomonidan yozilgan distopik roman. 
 1949-yilda nashr etilgan. Totalitar jamiyat haqida..."`}
-       goodExample={`prompt = """
+       goodExample={`prompt ="""
 Kitob haqida ma'lumot ber. Javobni quyidagi JSON formatida:
-{
- "title": "kitob nomi",
- "author": "muallif",
- "year": nashr_yili,
- "genre": "janr",
- "summary": "qisqacha mazmun"
-}
-"""
+{"title":"kitob nomi","author":"muallif","year": nashr_yili,"genre":"janr","summary":"qisqacha mazmun"
+}"""
 
 # Natija:
-{
- "title": "1984",
- "author": "George Orwell",
- "year": 1949,
- "genre": "Dystopian fiction",
- "summary": "Totalitar jamiyatda yashovchi Winston Smith..."
+{"title":"1984","author":"George Orwell","year": 1949,"genre":"Dystopian fiction","summary":"Totalitar jamiyatda yashovchi Winston Smith..."
 }`}
        explanation="Aniq format ko'rsatish orqali parse qilish oson bo'lgan javoblar olinadi."
       />
@@ -403,8 +385,8 @@ Kitob haqida ma'lumot ber. Javobni quyidagi JSON formatida:
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
        <Card className="border-2 border-black">
         <CardContent className="p-4">
-         <h4 className="font-bold">✓ YAXSHI AMALIYOTLAR</h4>
-         <ul className="text-sm space-y-1">
+         <h4 className="font-bold ">✓ YAXSHI AMALIYOTLAR</h4>
+         <ul className="text-sm">
           <li>• Aniq misol ko'rsating</li>
           <li>• Validatsiya qoidalarini ayting</li>
           <li>• Type'larni aniq belgilang</li>
@@ -415,8 +397,8 @@ Kitob haqida ma'lumot ber. Javobni quyidagi JSON formatida:
        
        <Card className="border-2 border-black">
         <CardContent className="p-4">
-         <h4 className="font-bold">✗ XATOLAR</h4>
-         <ul className="text-sm space-y-1">
+         <h4 className="font-bold ">✗ XATOLAR</h4>
+         <ul className="text-sm">
           <li>• Murakkab nested strukturalar</li>
           <li>• Aniq bo'lmagan format</li>
           <li>• Validatsiyasiz ma'lumotlar</li>
@@ -430,47 +412,32 @@ Kitob haqida ma'lumot ber. Javobni quyidagi JSON formatida:
        <AiIcon name="lightbulb" size={20} />
        <AlertDescription>
         <strong>Pro tip:</strong> GPT-4 va Claude-3 JSON mode'ga ega - bu rejimda 
-        faqat valid JSON javob qaytaradi. API'da `response_format={'{'}type: "json_object"{'}'}` 
+        faqat valid JSON javob qaytaradi. API'da `response_format={'{'}type:"json_object"{'}'}` 
         parametrini ishlating.
        </AlertDescription>
       </Alert>
 
       <Card className="border-2 border-black bg-gray-50">
        <CardContent className="p-6">
-        <h3 className="text-lg font-bold">MURAKKAB MISOL:</h3>
+        <h3 className="text-lg font-bold ">MURAKKAB MISOL:</h3>
         <pre className="text-xs overflow-x-auto">
-{`prompt = """
+{`prompt ="""
 Quyidagi SQL so'rovni tahlil qil va JSON formatda javob ber:
 
 SELECT * FROM users WHERE age > 18
 
 Format:
-{
- "query_type": "SELECT|INSERT|UPDATE|DELETE",
- "tables": ["jadval nomlari"],
- "conditions": [
-  {
-   "column": "ustun nomi",
-   "operator": "operator",
-   "value": "qiymat"
+{"query_type":"SELECT|INSERT|UPDATE|DELETE","tables": ["jadval nomlari"],"conditions": [
+  {"column":"ustun nomi","operator":"operator","value":"qiymat"
   }
- ],
- "complexity": "simple|medium|complex"
-}
-"""
+ ],"complexity":"simple|medium|complex"
+}"""
 
 # AI javobi:
-{
- "query_type": "SELECT",
- "tables": ["users"],
- "conditions": [
-  {
-   "column": "age",
-   "operator":"">",
-   "value": "18"
+{"query_type":"SELECT","tables": ["users"],"conditions": [
+  {"column":"age","operator":"">","value":"18"
   }
- ],
- "complexity": "simple"
+ ],"complexity":"simple"
 }`}
         </pre>
        </CardContent>
