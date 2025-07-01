@@ -19,56 +19,51 @@ export default function ProtocolNavigation({ currentProtocolId }: ProtocolNaviga
     <motion.section 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="py-6 px-4 border-t-2 border-black"
+      className="mb-8"
     >
-      <div className="flex flex-col sm:flex-row items-center gap-4 max-w-4xl mx-auto">
-        {/* Navigation Container */}
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          {/* Previous Protocol */}
-          {previousProtocol ? (
-            <Link href={`/protocols/${previousProtocol.id}`} className="flex-1 sm:flex-initial">
-              <Button 
-                variant="outline" 
-                className="w-full sm:w-auto h-[48px] px-4 py-2 border-2 border-black bg-white hover:bg-gray-100 transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center sm:justify-start gap-2"
-              >
-                <ChevronLeft className="w-4 h-4 flex-shrink-0" />
-                <div className="text-left hidden sm:block">
-                  <div className="text-xs font-bold uppercase text-gray-600">OLDINGI</div>
-                  <div className="font-bold text-sm uppercase">{previousProtocol.number}. {previousProtocol.title.substring(0, 20)}...</div>
-                </div>
-                <span className="sm:hidden text-xs font-bold uppercase">OLDINGI</span>
-              </Button>
-            </Link>
-          ) : (
-            <div className="flex-1 sm:flex-initial sm:w-[200px]" />
-          )}
+      <div className="flex items-center justify-between gap-4">
+        {/* Previous Protocol */}
+        {previousProtocol ? (
+          <Link href={`/protocols/${previousProtocol.id}`} className="flex-1 max-w-[280px]">
+            <Button 
+              variant="outline" 
+              className="w-full h-[48px] px-6 py-2 border-2 border-black bg-white hover:bg-gray-100 transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-start gap-3 text-left"
+            >
+              <ChevronLeft className="w-5 h-5 flex-shrink-0" />
+              <div className="overflow-hidden">
+                <div className="text-xs font-bold uppercase text-gray-600">OLDINGI</div>
+                <div className="font-bold text-sm uppercase truncate">{previousProtocol.number.toString().padStart(2, '0')}. {previousProtocol.title}</div>
+              </div>
+            </Button>
+          </Link>
+        ) : (
+          <div className="flex-1 max-w-[280px]" />
+        )}
 
-          {/* Progress Indicator - Centered */}
-          <div className="flex-shrink-0 order-first sm:order-none">
-            <div className="px-4 py-2 bg-white border-2 border-black">
-              <span className="text-sm font-bold text-black">{currentIndex} / {totalProtocols}</span>
-            </div>
+        {/* Progress Indicator - Centered */}
+        <div className="flex-shrink-0">
+          <div className="px-6 py-3 bg-white border-2 border-black">
+            <span className="text-base font-bold text-black">{currentIndex} / {totalProtocols}</span>
           </div>
-
-          {/* Next Protocol */}
-          {nextProtocol ? (
-            <Link href={`/protocols/${nextProtocol.id}`} className="flex-1 sm:flex-initial">
-              <Button 
-                variant="outline" 
-                className="w-full sm:w-auto h-[48px] px-4 py-2 border-2 border-black bg-white hover:bg-gray-100 transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center sm:justify-start gap-2"
-              >
-                <span className="sm:hidden text-xs font-bold uppercase">KEYINGI</span>
-                <div className="text-right hidden sm:block">
-                  <div className="text-xs font-bold uppercase text-gray-600">KEYINGI</div>
-                  <div className="font-bold text-sm uppercase">{nextProtocol.number}. {nextProtocol.title.substring(0, 20)}...</div>
-                </div>
-                <ChevronRight className="w-4 h-4 flex-shrink-0" />
-              </Button>
-            </Link>
-          ) : (
-            <div className="flex-1 sm:flex-initial sm:w-[200px]" />
-          )}
         </div>
+
+        {/* Next Protocol */}
+        {nextProtocol ? (
+          <Link href={`/protocols/${nextProtocol.id}`} className="flex-1 max-w-[280px]">
+            <Button 
+              variant="outline" 
+              className="w-full h-[48px] px-6 py-2 border-2 border-black bg-white hover:bg-gray-100 transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-end gap-3 text-right"
+            >
+              <div className="overflow-hidden">
+                <div className="text-xs font-bold uppercase text-gray-600">KEYINGI</div>
+                <div className="font-bold text-sm uppercase truncate">{nextProtocol.number.toString().padStart(2, '0')}. {nextProtocol.title}</div>
+              </div>
+              <ChevronRight className="w-5 h-5 flex-shrink-0" />
+            </Button>
+          </Link>
+        ) : (
+          <div className="flex-1 max-w-[280px]" />
+        )}
       </div>
     </motion.section>
   );
