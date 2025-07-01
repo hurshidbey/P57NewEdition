@@ -558,7 +558,7 @@ export default function KnowledgeBase() {
       {/* Mobile Header with Menu Button */}
       <div className="lg:hidden sticky top-[64px] z-40 bg-white border-b-2 border-black">
         <div className="flex items-center justify-between p-4">
-          <h1 className="text-lg font-bold">BILIMLAR BAZASI</h1>
+          <h1 className="text-[1.125rem] font-bold leading-[1.75rem]">BILIMLAR BAZASI</h1>
           <button
             onClick={() => setSidebarOpen(true)}
             className="min-w-[48px] min-h-[48px] p-2 border-2 border-black hover:bg-gray-50 touch-manipulation flex items-center justify-center"
@@ -577,16 +577,21 @@ export default function KnowledgeBase() {
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-[300px] border-r-2 border-black bg-white overflow-y-auto">
           {/* Progress Bar */}
-          <div className="p-4 border-b-2 border-black">
-            <div className="mb-2 flex justify-between text-sm">
-              <span className="font-bold">UMUMIY PROGRESS</span>
-              <span className="font-mono">{calculateOverallProgress()}%</span>
+          <div className="p-4 border-b-2 border-black bg-gray-50">
+            <div className="mb-3 flex justify-between items-baseline">
+              <span className="text-[1rem] font-bold uppercase tracking-wide">Umumiy Progress</span>
+              <span className="text-[1.25rem] font-black font-mono">{calculateOverallProgress()}%</span>
             </div>
-            <div className="h-2 bg-gray-200 border border-black">
+            <div className="h-3 bg-white border-2 border-black rounded-sm overflow-hidden">
               <div 
-                className="h-full bg-black transition-all duration-300"
+                className="h-full bg-gradient-to-r from-accent to-orange-600 transition-all duration-500 ease-out relative overflow-hidden"
                 style={{ width: `${calculateOverallProgress()}%` }}
-              />
+              >
+                <div className="absolute inset-0 bg-white opacity-20 animate-pulse" />
+              </div>
+            </div>
+            <div className="mt-2 text-[0.75rem] text-gray-600">
+              {loadProgress().completedSections.size} ta bo'limdan {knowledgeBaseStructure.reduce((sum, cat) => sum + cat.sections.length, 0)} tasi o'qildi
             </div>
           </div>
 
@@ -612,7 +617,7 @@ export default function KnowledgeBase() {
               )}
             </div>
             {searchQuery && searchResults.length > 0 && (
-              <div className="mt-2 text-xs text-gray-600">
+              <div className="mt-2 text-[0.75rem] leading-[1rem] text-gray-600">
                 {searchResults.length} ta natija topildi
               </div>
             )}
@@ -621,7 +626,7 @@ export default function KnowledgeBase() {
           {/* Navigation */}
           <nav className="p-4">
             {knowledgeBaseStructure.map((category) => (
-              <div key={category.id} className="mb-4">
+              <div key={category.id} className="mb-4 relative">
                 <button
                   onClick={() => toggleCategory(category.id)}
                   className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
@@ -630,6 +635,9 @@ export default function KnowledgeBase() {
                   <div className="flex items-center gap-2">
                     <AiIcon name={category.icon as any} size={20} />
                     <span>{category.title}</span>
+                    <span className="ml-auto mr-8 text-[0.75rem] text-gray-500">
+                      {category.sections.filter(s => isSectionCompleted(category.id, s.id)).length}/{category.sections.length}
+                    </span>
                   </div>
                   <AiIcon 
                     name={expandedCategories.has(category.id) ? 'chevron-down' : 'chevron-right'} 
@@ -652,7 +660,9 @@ export default function KnowledgeBase() {
                       >
                         <span>{section.title}</span>
                         {isSectionCompleted(category.id, section.id) && (
-                          <AiIcon name="checked" size={16} />
+                          <div className="flex items-center gap-1">
+                            <AiIcon name="checked" size={16} className="text-green-600" />
+                          </div>
                         )}
                       </button>
                     ))}
@@ -679,7 +689,7 @@ export default function KnowledgeBase() {
 
             {/* Section Header */}
             <div className="mb-8">
-              <h1 className="text-3xl lg:text-4xl font-black mb-4">
+              <h1 className="text-[1.953rem] lg:text-[2.441rem] font-black mb-4 leading-[2.5rem] lg:leading-[3rem]">
                 {getCurrentSection()?.title}
               </h1>
               <div className="flex items-center gap-4 text-sm text-gray-700">
@@ -737,7 +747,7 @@ export default function KnowledgeBase() {
           <div className="relative w-[300px] bg-white h-full overflow-y-auto border-r-2 border-black">
             {/* Mobile sidebar content - same as desktop */}
             <div className="p-4 border-b-2 border-black flex justify-between items-center">
-              <h2 className="font-bold text-lg">MUNDARIJA</h2>
+              <h2 className="font-bold text-[1.125rem] leading-[1.75rem]">MUNDARIJA</h2>
               <button onClick={() => setSidebarOpen(false)} aria-label="Menyuni yopish" type="button">
                 <AiIcon name="close" size={24} />
               </button>
@@ -745,7 +755,7 @@ export default function KnowledgeBase() {
             
             <nav className="p-4">
               {knowledgeBaseStructure.map((category) => (
-                <div key={category.id} className="mb-4">
+                <div key={category.id} className="mb-4 relative">
                   <button
                     onClick={() => toggleCategory(category.id)}
                     className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
