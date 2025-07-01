@@ -245,7 +245,7 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
         </div>
         {showResult && explanation && (
           <Alert className="mt-4 border-2 border-black bg-gray-100">
-            <AiIcon name="info" size={20} />
+            <AiIcon name="info" size={24} />
             <AlertDescription>{explanation}</AlertDescription>
           </Alert>
         )}
@@ -574,23 +574,21 @@ export default function KnowledgeBase() {
       <AppHeaderNoTheme />
       
       {/* Mobile Header with Menu Button */}
-      <div className="lg:hidden sticky top-[64px] z-40 bg-white border-b-2 border-black">
-        <div className="flex items-center justify-between p-4">
+      <div className="lg:hidden sticky top-[64px] z-40 bg-black text-white border-b-2 border-black">
+        <div className="flex items-center justify-between p-4 h-16">
           <h1 className="text-xl font-black uppercase tracking-tight">BILIMLAR BAZASI</h1>
-          <div className="flex items-center gap-2">
-            {/* TODO: Re-enable dark mode toggle once theme issues are resolved */}
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="w-12 h-12 border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow touch-manipulation flex items-center justify-center"
-              aria-label="Menyuni ochish"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-              </svg>
-            </button>
-          </div>
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="w-12 h-12 border-2 border-white bg-black text-white hover:bg-white hover:text-black transition-colors touch-manipulation flex items-center justify-center"
+            aria-label="Menyuni ochish"
+            type="button"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
         </div>
       </div>
       
@@ -598,22 +596,30 @@ export default function KnowledgeBase() {
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-[300px] border-r-2 border-black bg-white overflow-y-auto">
           {/* Progress Bar */}
-          <div className="p-6 border-b-2 border-black bg-white">
-            <div className="mb-3 flex justify-between items-center">
-              <span className="text-lg font-black uppercase tracking-tight">UMUMIY PROGRESS</span>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-black font-mono">{calculateOverallProgress()}%</span>
-                {/* TODO: Re-enable dark mode toggle once theme issues are resolved */}
+          <div className="p-6 border-b-2 border-black bg-black text-white">
+            <div className="mb-4 flex justify-between items-center">
+              <span className="text-lg font-black uppercase tracking-tight">PROGRESS</span>
+              <div className="flex items-center gap-3">
+                <span className="text-3xl font-black font-mono tabular-nums">{calculateOverallProgress()}%</span>
               </div>
             </div>
-            <div className="h-4 bg-white border-2 border-black overflow-hidden">
+            <div className="h-6 bg-white border-2 border-black relative overflow-hidden">
               <div 
-                className="h-full bg-accent transition-all duration-500 ease-out"
+                className="h-full bg-accent relative transition-all duration-500 ease-out"
                 style={{ width: `${calculateOverallProgress()}%` }}
-              />
+              >
+                {/* Striped pattern for progress */}
+                <div className="absolute inset-0 bg-repeating-linear-gradient-45 from-transparent via-transparent to-black/20 bg-size-10"></div>
+              </div>
+              {/* Progress markers every 25% */}
+              <div className="absolute inset-0 flex">
+                <div className="w-1/4 border-r-2 border-black"></div>
+                <div className="w-1/4 border-r-2 border-black"></div>
+                <div className="w-1/4 border-r-2 border-black"></div>
+              </div>
             </div>
-            <div className="mt-2 text-sm text-black font-black uppercase">
-              {loadProgress().completedSections.size} ta bo'limdan {knowledgeBaseStructure.reduce((sum, cat) => sum + cat.sections.length, 0)} tasi o'qildi
+            <div className="mt-3 text-sm font-bold">
+              {loadProgress().completedSections.size} / {knowledgeBaseStructure.reduce((sum, cat) => sum + cat.sections.length, 0)} BO'LIM O'QILDI
             </div>
           </div>
 
@@ -655,7 +661,7 @@ export default function KnowledgeBase() {
                   type="button"
                 >
                   <div className="flex items-center gap-2">
-                    <AiIcon name={category.icon as any} size={18} />
+                    <AiIcon name={category.icon as any} size={24} />
                     <span>{category.title}</span>
                     <span className="ml-auto mr-8 text-xs text-black/60 font-bold">
                       {category.sections.filter(s => isSectionCompleted(category.id, s.id)).length}/{category.sections.length}
@@ -746,7 +752,7 @@ export default function KnowledgeBase() {
                 type="button"
                 className="h-12 px-6 border-2 border-black bg-white font-black uppercase flex items-center gap-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <AiIcon name="arrow-left" size={20} />
+                <AiIcon name="arrow-left" size={24} />
                 OLDINGI
               </button>
               
@@ -757,7 +763,7 @@ export default function KnowledgeBase() {
                 className="h-12 px-6 border-2 border-black bg-black text-white font-black uppercase flex items-center gap-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 KEYINGI
-                <AiIcon name="arrow-right" size={20} />
+                <AiIcon name="arrow-right" size={24} />
               </button>
             </div>
           </div>
@@ -786,7 +792,7 @@ export default function KnowledgeBase() {
                     type="button"
                   >
                     <div className="flex items-center gap-2">
-                      <AiIcon name={category.icon as any} size={18} />
+                      <AiIcon name={category.icon as any} size={24} />
                       <span>{category.title}</span>
                     </div>
                     <AiIcon 

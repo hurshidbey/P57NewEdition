@@ -24,11 +24,20 @@ export function ExpandableCard({ term, definition, icon, examples }: ExpandableC
           {icon && <div>{icon}</div>}
           <h3 className="text-2xl font-black uppercase text-black tracking-tight">{term}</h3>
         </div>
-        <AiIcon name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} />
+        <AiIcon 
+          name={isExpanded ? 'chevron-up' : 'chevron-down'} 
+          size={24} 
+          className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+        />
       </button>
       
-      {isExpanded && (
-        <div className="p-6 pt-0" id={`expandable-content-${term.replace(/\s+/g, '-').toLowerCase()}`}>
+      <div 
+        className={`overflow-hidden transition-all duration-300 ease-out ${
+          isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+        id={`expandable-content-${term.replace(/\s+/g, '-').toLowerCase()}`}
+      >
+        <div className="p-6 pt-0">
           <p className="text-base mb-4 text-black leading-relaxed">{definition}</p>
           {examples && examples.length > 0 && (
             <div className="mt-4 pt-4 border-t-2 border-black">
@@ -39,7 +48,7 @@ export function ExpandableCard({ term, definition, icon, examples }: ExpandableC
             </div>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

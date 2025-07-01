@@ -42,15 +42,15 @@ export const nimaUchunMuhim: SectionContent = {
               <h3 className="text-xl font-black mb-4 uppercase">NIMA UCHUN BU MUHIM?</h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
-                  <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
+                  <AiIcon name="checked" size={24} className="flex-shrink-0" />
                   <span>Vaqtingizni tejaysiz - 10 soatlik ishni 1 soatda bajaring</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
+                  <AiIcon name="checked" size={24} className="flex-shrink-0" />
                   <span>Sifatni oshirasiz - Professional natijalar oling</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
+                  <AiIcon name="checked" size={24} className="flex-shrink-0" />
                   <span>Kreativlikni rivojlantirasiz - Yangi g'oyalar toping</span>
                 </li>
               </ul>
@@ -111,25 +111,25 @@ export const promptingNima: SectionContent = {
               <h3 className="text-xl font-black mb-4 uppercase">YAXSHI PROMPT ELEMENTLARI:</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <AiIcon name="target" size={20} className="mt-1 flex-shrink-0" />
+                  <AiIcon name="target" size={24} className="flex-shrink-0" />
                   <div>
                     <strong>Aniq maqsad:</strong> Nimani xohlayotganingizni aniq ayting
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <AiIcon name="context" size={20} className="mt-1 flex-shrink-0" />
+                  <AiIcon name="context" size={24} className="flex-shrink-0" />
                   <div>
                     <strong>Kontekst:</strong> Vaziyat haqida ma'lumot bering
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <AiIcon name="format" size={20} className="mt-1 flex-shrink-0" />
+                  <AiIcon name="format" size={24} className="flex-shrink-0" />
                   <div>
                     <strong>Format:</strong> Qanday ko'rinishda javob kutayotganingizni ayting
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <AiIcon name="layers" size={20} className="mt-1 flex-shrink-0" />
+                  <AiIcon name="layers" size={24} className="flex-shrink-0" />
                   <div>
                     <strong>Misollar:</strong> Agar kerak bo'lsa, namuna ko'rsating
                   </div>
@@ -160,7 +160,7 @@ Format: Bullet point ro'yxat shaklida"
           />
 
           <Alert className="border-2 border-black bg-white">
-            <AiIcon name="lightbulb" size={20} />
+            <AiIcon name="lightbulb" size={24} />
             <AlertDescription className="text-black font-bold">
               <strong>Maslahat:</strong> Prompt yozishda o'zingizni AI o'rniga qo'ying. 
               Sizga shunday topshiriq berilsa, nimalar kerak bo'lardi?
@@ -294,16 +294,16 @@ export const aiInqilobi: SectionContent = {
             <CardContent className="p-6">
               <h3 className="text-xl font-black mb-4 uppercase">AI INQILOBINING 3 TO'LQINI:</h3>
               <div className="space-y-4">
-                <div className="border-l-4 border-black pl-4">
-                  <h4 className="font-bold">1-to'lqin: Tor AI (2010-2020)</h4>
+                <div className="border-l-2 border-black pl-4">
+                  <h4 className="font-black uppercase">1-TO'LQIN: TOR AI (2010-2020)</h4>
                   <p className="text-black/70">Bitta vazifaga ixtisoslashgan AI: rasm tanish, tarjima, tavsiyalar</p>
                 </div>
-                <div className="border-l-4 border-black pl-4">
-                  <h4 className="font-bold">2-to'lqin: Generativ AI (2020-2025)</h4>
+                <div className="border-l-2 border-black pl-4">
+                  <h4 className="font-black uppercase">2-TO'LQIN: GENERATIV AI (2020-2025)</h4>
                   <p className="text-black/70">Yangi kontent yaratadigan AI: ChatGPT, DALL-E, Midjourney</p>
                 </div>
-                <div className="border-l-4 border-black/30 pl-4">
-                  <h4 className="font-bold text-black/50">3-to'lqin: AGI (2025+)</h4>
+                <div className="border-l-2 border-black/30 pl-4">
+                  <h4 className="font-black text-black/50 uppercase">3-TO'LQIN: AGI (2025+)</h4>
                   <p className="text-black/70">Inson darajasidagi umumiy sun'iy intellekt</p>
                 </div>
               </div>
@@ -313,8 +313,8 @@ export const aiInqilobi: SectionContent = {
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
-                <h4 className="font-bold mb-4 flex items-center gap-2">
-                  <AiIcon name="world" size={20} />
+                <h4 className="font-black mb-4 flex items-center gap-2 uppercase">
+                  <AiIcon name="world" size={24} />
                   GLOBAL IMKONIYATLAR
                 </h4>
                 <ul className="space-y-2 text-sm">
@@ -328,8 +328,8 @@ export const aiInqilobi: SectionContent = {
 
             <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
-                <h4 className="font-bold mb-4 flex items-center gap-2">
-                  <AiIcon name="flag" size={20} />
+                <h4 className="font-black mb-4 flex items-center gap-2 uppercase">
+                  <AiIcon name="flag" size={24} />
                   O'ZBEKISTON UCHUN
                 </h4>
                 <ul className="space-y-2 text-sm">
@@ -343,7 +343,7 @@ export const aiInqilobi: SectionContent = {
           </div>
 
           <Alert className="border-2 border-black bg-white">
-            <AiIcon name="lightbulb" size={20} />
+            <AiIcon name="lightbulb" size={24} />
             <AlertDescription className="text-black font-bold">
               <strong>Muhim:</strong> AI inqilobida g'olib bo'lish uchun texnologiyani 
               tushunish yetarli emas — uni to'g'ri qo'llashni bilish kerak. Aynan shuning 
@@ -399,7 +399,7 @@ export const umumiyMaslahatlar: SectionContent = {
           <div className="grid gap-4">
             <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
-                <h4 className="font-bold mb-3">❌ QILMANG:</h4>
+                <h4 className="font-black mb-3 uppercase">❌ QILMANG:</h4>
                 <ul className="space-y-2 text-sm">
                   <li>• Noaniq so'rovlar bermang</li>
                   <li>• AI'ga ko'r-ko'rona ishonmang</li>
@@ -411,7 +411,7 @@ export const umumiyMaslahatlar: SectionContent = {
 
             <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
-                <h4 className="font-bold mb-3">✅ QILING:</h4>
+                <h4 className="font-black mb-3 uppercase">✅ QILING:</h4>
                 <ul className="space-y-2 text-sm">
                   <li>• Aniq maqsad belgilang</li>
                   <li>• Natijalarni tekshiring</li>
