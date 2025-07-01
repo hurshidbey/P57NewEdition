@@ -28,7 +28,7 @@ export const baholash: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-0 flex items-center gap-2">
                   <AiIcon name="checklist" size={24} />
                   BAHOLASH MEZONLARI
                 </h3>
@@ -36,7 +36,7 @@ export const baholash: SectionContent = {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-3">
                     <div className="border-2 border-gray-600 bg-white p-4 rounded">
-                      <h4 className="font-bold text-gray-800 mb-2">1. TO'G'RILIK</h4>
+                      <h4 className="font-bold text-gray-800 mb-0">1. TO'G'RILIK</h4>
                       <p className="text-sm">Faktlar va ma'lumotlarning aniqligi</p>
                       <div className="mt-2 flex gap-2">
                         <Badge variant="secondary">Faktlarni tekshirish</Badge>
@@ -45,7 +45,7 @@ export const baholash: SectionContent = {
                     </div>
 
                     <div className="border-2 border-gray-600 bg-white p-4 rounded">
-                      <h4 className="font-bold text-gray-800 mb-2">2. TO'LIQLIK</h4>
+                      <h4 className="font-bold text-gray-800 mb-0">2. TO'LIQLIK</h4>
                       <p className="text-sm">Savol to'liq javoblanganligi</p>
                       <div className="mt-2 flex gap-2">
                         <Badge variant="secondary">Qamrov</Badge>
@@ -56,7 +56,7 @@ export const baholash: SectionContent = {
 
                   <div className="space-y-3">
                     <div className="border-2 border-gray-600 bg-white p-4 rounded">
-                      <h4 className="font-bold text-gray-800 mb-2">3. RELEVANTLIK</h4>
+                      <h4 className="font-bold text-gray-800 mb-0">3. RELEVANTLIK</h4>
                       <p className="text-sm">Javobning savolga mosligi</p>
                       <div className="mt-2 flex gap-2">
                         <Badge variant="secondary">Kontekst</Badge>
@@ -65,7 +65,7 @@ export const baholash: SectionContent = {
                     </div>
 
                     <div className="border-2 border-gray-600 bg-white p-4 rounded">
-                      <h4 className="font-bold text-gray-800 mb-2">4. FOYDALILIK</h4>
+                      <h4 className="font-bold text-gray-800 mb-0">4. FOYDALILIK</h4>
                       <p className="text-sm">Amaliy qiymat va qo'llanilishi</p>
                       <div className="mt-2 flex gap-2">
                         <Badge variant="secondary">Amaliyot</Badge>
@@ -278,7 +278,7 @@ def select_model(task_complexity, budget, speed_required):
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-black">
+                <h3 className="text-xl font-bold mb-0 text-black">
                   MODEL TANLASH CHECKLIST
                 </h3>
                 <div className="space-y-3">
@@ -334,7 +334,7 @@ export const xatoAnaliz: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-center">XATO TURLARI VA SABABLARI</h3>
+                <h3 className="text-xl font-bold mb-0 text-center">XATO TURLARI VA SABABLARI</h3>
                 
                 <div className="space-y-4">
                   <div className="border-2 border-gray-600 bg-white rounded-lg p-4">

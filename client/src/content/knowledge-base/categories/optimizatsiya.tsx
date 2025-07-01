@@ -28,7 +28,7 @@ export const narxOptimallashtirish: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-0 flex items-center gap-2">
                   <AiIcon name="dollar" size={24} />
                   NARX OPTIMALLASHTIRISH STRATEGIYALARI
                 </h3>
@@ -182,7 +182,7 @@ def process_optimized(items):
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-black">
+                <h3 className="text-xl font-bold mb-0 text-black">
                   REAL DUNYO MISOLI: 90% TEJASH
                 </h3>
                 <div className="space-y-3">
@@ -246,31 +246,31 @@ export const tezlikOshirish: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-center">TEZLIK OPTIMIZATSIYA PIRAMIDASI</h3>
+                <h3 className="text-xl font-bold mb-0 text-center">TEZLIK OPTIMIZATSIYA PIRAMIDASI</h3>
                 
                 <div className="space-y-4">
                   <div className="bg-gray-800 text-white p-4 rounded-lg">
-                    <h4 className="font-bold mb-1">STREAMING (100ms)</h4>
+                    <h4 className="font-bold mb-0">STREAMING (100ms)</h4>
                     <p className="text-sm">Javobni bo'laklab yuborish - eng tez usul</p>
                   </div>
                   
                   <div className="bg-gray-700 text-white p-4 rounded-lg ml-4">
-                    <h4 className="font-bold mb-1">EDGE DEPLOYMENT (200ms)</h4>
+                    <h4 className="font-bold mb-0">EDGE DEPLOYMENT (200ms)</h4>
                     <p className="text-sm">Foydalanuvchiga yaqin serverlar</p>
                   </div>
                   
                   <div className="bg-gray-600 text-white p-4 rounded-lg ml-8">
-                    <h4 className="font-bold mb-1">SMART CACHING (300ms)</h4>
+                    <h4 className="font-bold mb-0">SMART CACHING (300ms)</h4>
                     <p className="text-sm">Oldingi javoblarni qayta ishlatish</p>
                   </div>
                   
                   <div className="bg-gray-500 text-white p-4 rounded-lg ml-12">
-                    <h4 className="font-bold mb-1">MODEL OPTIMIZATION (500ms)</h4>
+                    <h4 className="font-bold mb-0">MODEL OPTIMIZATION (500ms)</h4>
                     <p className="text-sm">Tezroq modellar va parametrlar</p>
                   </div>
                   
                   <div className="bg-gray-400 text-white p-4 rounded-lg ml-16">
-                    <h4 className="font-bold mb-1">PARALLEL PROCESSING (1s)</h4>
+                    <h4 className="font-bold mb-0">PARALLEL PROCESSING (1s)</h4>
                     <p className="text-sm">Bir necha so'rovlarni parallel yuborish</p>
                   </div>
                 </div>
@@ -463,7 +463,7 @@ export const xotiraBoshqaruv: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-0 flex items-center gap-2">
                   <AiIcon name="memory" size={24} />
                   KONTEKST OYNASI CHEGARALARI
                 </h3>
@@ -584,7 +584,7 @@ class MemoryManager:
                     <div className="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center">
                       <span className="text-white text-2xl"></span>
                     </div>
-                    <h4 className="font-bold mb-2">PINNED MEMORY</h4>
+                    <h4 className="font-bold mb-0">PINNED MEMORY</h4>
                     <p className="text-sm">Muhim ma'lumotlarni doim saqlash</p>
                     <div className="mt-3 p-2 bg-gray-50 rounded text-xs">
                       System prompt, User preferences, Key facts
@@ -595,7 +595,7 @@ class MemoryManager:
                     <div className="w-16 h-16 bg-gray-600 rounded-full mx-auto mb-3 flex items-center justify-center">
                       <span className="text-white text-2xl"></span>
                     </div>
-                    <h4 className="font-bold mb-2">ROLLING BUFFER</h4>
+                    <h4 className="font-bold mb-0">ROLLING BUFFER</h4>
                     <p className="text-sm">Oxirgi N ta xabarni saqlash</p>
                     <div className="mt-3 p-2 bg-gray-50 rounded text-xs">
                       Recent context, Active discussion
@@ -606,7 +606,7 @@ class MemoryManager:
                     <div className="w-16 h-16 bg-gray-500 rounded-full mx-auto mb-3 flex items-center justify-center">
                       <span className="text-white text-2xl"></span>
                     </div>
-                    <h4 className="font-bold mb-2">EPISODIC MEMORY</h4>
+                    <h4 className="font-bold mb-0">EPISODIC MEMORY</h4>
                     <p className="text-sm">Mavzu bo'yicha guruhlash</p>
                     <div className="mt-3 p-2 bg-gray-50 rounded text-xs">
                       Topic summaries, Session history
@@ -618,7 +618,7 @@ class MemoryManager:
 
             <Card className="border-2 border-gray-600 bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-gray-800">
+                <h3 className="text-xl font-bold mb-0 text-gray-800">
                   AMALIY MISOL: CUSTOMER SUPPORT BOT
                 </h3>
                 <div className="space-y-4">

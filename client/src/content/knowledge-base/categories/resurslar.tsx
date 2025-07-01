@@ -28,7 +28,7 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-0 flex items-center gap-2">
                   <AiIcon name="package" size={24} />
                   TOP AI/ML KUTUBXONALAR
                 </h3>
@@ -114,7 +114,7 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
             <div className="grid gap-4 md:grid-cols-3">
               <Card className="border-2 border-black hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2">VECTOR DATABASES</h4>
+                  <h4 className="font-bold mb-0">VECTOR DATABASES</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <span className="text-black">•</span>
@@ -138,7 +138,7 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
 
               <Card className="border-2 border-black hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2">DEPLOYMENT TOOLS</h4>
+                  <h4 className="font-bold mb-0">DEPLOYMENT TOOLS</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <span className="text-black">•</span>
@@ -162,7 +162,7 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
 
               <Card className="border-2 border-black hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2">MONITORING</h4>
+                  <h4 className="font-bold mb-0">MONITORING</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <span className="text-black">•</span>
@@ -252,7 +252,7 @@ export const dokumentatsiya: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-center">ASOSIY DOKUMENTATSIYALAR</h3>
+                <h3 className="text-xl font-bold mb-0 text-center">ASOSIY DOKUMENTATSIYALAR</h3>
                 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-3">
@@ -414,7 +414,7 @@ export const hamjamiyat: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-0 flex items-center gap-2">
                   <AiIcon name="community" size={24} />
                   AI HAMJAMIYATLAR
                 </h3>
@@ -505,7 +505,7 @@ export const hamjamiyat: SectionContent = {
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="text-center">
                     <div className="text-3xl mb-2"></div>
-                    <h4 className="font-bold mb-2">GLOBAL</h4>
+                    <h4 className="font-bold mb-0">GLOBAL</h4>
                     <ul className="text-sm space-y-1">
                       <li>• NeurIPS</li>
                       <li>• ICML</li>
@@ -515,7 +515,7 @@ export const hamjamiyat: SectionContent = {
                   </div>
                   <div className="text-center">
                     <div className="text-3xl mb-2"></div>
-                    <h4 className="font-bold mb-2">INDUSTRY</h4>
+                    <h4 className="font-bold mb-0">INDUSTRY</h4>
                     <ul className="text-sm space-y-1">
                       <li>• Google I/O</li>
                       <li>• OpenAI DevDay</li>
@@ -525,7 +525,7 @@ export const hamjamiyat: SectionContent = {
                   </div>
                   <div className="text-center">
                     <div className="text-3xl mb-2"></div>
-                    <h4 className="font-bold mb-2">LOCAL</h4>
+                    <h4 className="font-bold mb-0">LOCAL</h4>
                     <ul className="text-sm space-y-1">
                       <li>• IT Park Events</li>
                       <li>• GDG Tashkent</li>
@@ -572,7 +572,7 @@ export const vositalarAPI: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-center">AI DEVELOPMENT TOOLS</h3>
+                <h3 className="text-xl font-bold mb-0 text-center">AI DEVELOPMENT TOOLS</h3>
                 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-3">
@@ -775,14 +775,14 @@ export const ozbekistonAI: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-0 flex items-center gap-2">
                   <span className="text-2xl"></span>
                   O'ZBEKISTON AI EKOSISTEMASI
                 </h3>
                 
                 <div className="space-y-4">
                   <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
-                    <h4 className="font-bold text-gray-800 mb-2">DAVLAT TASHABBUSLARI</h4>
+                    <h4 className="font-bold text-gray-800 mb-0">DAVLAT TASHABBUSLARI</h4>
                     <div className="grid md:grid-cols-2 gap-3">
                       <div className="p-3 bg-gray-50 rounded">
                         <h5 className="font-semibold text-sm mb-1">IT Park</h5>
@@ -804,7 +804,7 @@ export const ozbekistonAI: SectionContent = {
                   </div>
 
                   <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
-                    <h4 className="font-bold text-gray-800 mb-2">KOMPANIYALAR VA STARTUPLAR</h4>
+                    <h4 className="font-bold text-gray-800 mb-0">KOMPANIYALAR VA STARTUPLAR</h4>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
                         <span className="font-semibold text-sm">UZINFOCOM</span>
@@ -826,7 +826,7 @@ export const ozbekistonAI: SectionContent = {
                   </div>
 
                   <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
-                    <h4 className="font-bold text-gray-800 mb-2">TA'LIM VA KADRLAR</h4>
+                    <h4 className="font-bold text-gray-800 mb-0">TA'LIM VA KADRLAR</h4>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="p-3 bg-gray-50 rounded text-center">
                         <div className="text-2xl mb-1"></div>
@@ -882,7 +882,7 @@ export const ozbekistonAI: SectionContent = {
 
             <Card className="border-2 border-gray-600 bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-gray-800">
+                <h3 className="text-xl font-bold mb-0 text-gray-800">
                   O'ZBEK TILI UCHUN AI RESURSLAR
                 </h3>
                 <div className="space-y-3">

@@ -25,7 +25,7 @@ export const zeroShot: SectionContent = {
 
           <Card className="border-2 border-black">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-2">ZERO-SHOT QACHON ISHLAYDI?</h3>
+              <h3 className="text-xl font-bold mb-0">ZERO-SHOT QACHON ISHLAYDI?</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
@@ -59,7 +59,7 @@ Gap tarkibi:
           <div className="grid md:grid-cols-2 gap-4">
             <Card className="border-2 border-green-600">
               <CardContent className="p-4">
-                <h4 className="font-bold mb-2 text-green-700">✅ AFZALLIKLARI</h4>
+                <h4 className="font-bold mb-0 text-green-700">✅ AFZALLIKLARI</h4>
                 <ul className="text-sm space-y-1">
                   <li>• Tez va oson</li>
                   <li>• Misollar tayyorlash shart emas</li>
@@ -70,7 +70,7 @@ Gap tarkibi:
 
             <Card className="border-2 border-red-600">
               <CardContent className="p-4">
-                <h4 className="font-bold mb-2 text-red-700">❌ KAMCHILIKLARI</h4>
+                <h4 className="font-bold mb-0 text-red-700">❌ KAMCHILIKLARI</h4>
                 <ul className="text-sm space-y-1">
                   <li>• Murakkab vazifalar uchun yaramaydi</li>
                   <li>• Format nazorati qiyin</li>
@@ -105,7 +105,7 @@ export const fewShot: SectionContent = {
 
           <Card className="border-2 border-black">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-2">NECHTA MISOL KERAK?</h3>
+              <h3 className="text-xl font-bold mb-0">NECHTA MISOL KERAK?</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="text-center">
                   <div className="text-3xl font-bold">1-2</div>
@@ -177,7 +177,7 @@ export const chainOfThought: SectionContent = {
 
           <Card className="border-2 border-black bg-black text-white">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-2">SEHRLI IBORA:</h3>
+              <h3 className="text-xl font-bold mb-0">SEHRLI IBORA:</h3>
               <p className="text-2xl font-mono">"Keling, qadam-ba-qadam fikrlaymiz"</p>
               <p className="text-sm mt-2">Let's think step by step</p>
             </CardContent>
@@ -203,7 +203,7 @@ Javob: 51 yosh"
           <div className="grid gap-4">
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h4 className="font-bold mb-2">COT QACHON FOYDALANISH:</h4>
+                <h4 className="font-bold mb-0">COT QACHON FOYDALANISH:</h4>
                 <ul className="space-y-2 text-sm">
                   <li>• Matematik masalalar</li>
                   <li>• Mantiqiy topshiriqlar</li>
@@ -215,7 +215,7 @@ Javob: 51 yosh"
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h4 className="font-bold mb-2">COT VARIANTLARI:</h4>
+                <h4 className="font-bold mb-0">COT VARIANTLARI:</h4>
                 <ul className="space-y-2 text-sm">
                   <li>• <strong>Zero-shot CoT:</strong> "Qadam-ba-qadam tushuntir"</li>
                   <li>• <strong>Few-shot CoT:</strong> Misollar bilan</li>
@@ -251,7 +251,7 @@ export const rolePlaying: SectionContent = {
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-2">PROFESSIONAL ROLLAR</h3>
+                <h3 className="text-lg font-bold mb-0">PROFESSIONAL ROLLAR</h3>
                 <ul className="space-y-2 text-sm">
                   <li>• Tajribali dasturchi</li>
                   <li>• Marketing mutaxassisi</li>
@@ -264,7 +264,7 @@ export const rolePlaying: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-2">KREATIV ROLLAR</h3>
+                <h3 className="text-lg font-bold mb-0">KREATIV ROLLAR</h3>
                 <ul className="space-y-2 text-sm">
                   <li>• Stend-up komediyachi</li>
                   <li>• Motivatsion spiker</li>
@@ -344,24 +344,24 @@ export const structuredOutput: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">ASOSIY USULLAR:</h3>
+                <h3 className="text-xl font-bold mb-0">ASOSIY USULLAR:</h3>
                 <div className="space-y-4">
                   <div className="border-2 border-black p-4">
-                    <h4 className="font-bold mb-2">1. Format Ko'rsatish</h4>
+                    <h4 className="font-bold mb-0">1. Format Ko'rsatish</h4>
                     <p className="text-sm">Promptda aniq format talab qilish</p>
                     <code className="block mt-2 p-2 bg-gray-100 text-xs">
                       "Javobni JSON formatida ber: {'{'}name, age, city{'}'}"
                     </code>
                   </div>
                   <div className="border-2 border-black p-4">
-                    <h4 className="font-bold mb-2">2. Schema Berish</h4>
+                    <h4 className="font-bold mb-0">2. Schema Berish</h4>
                     <p className="text-sm">To'liq struktura sxemasini ko'rsatish</p>
                     <code className="block mt-2 p-2 bg-gray-100 text-xs">
                       "Quyidagi JSON sxemaga mos javob ber: ..."
                     </code>
                   </div>
                   <div className="border-2 border-black p-4">
-                    <h4 className="font-bold mb-2">3. Function Calling</h4>
+                    <h4 className="font-bold mb-0">3. Function Calling</h4>
                     <p className="text-sm">OpenAI/Claude API maxsus funksiyalari</p>
                     <code className="block mt-2 p-2 bg-gray-100 text-xs">
                       functions=[{'{'}"name": "get_weather", ...{'}'}]
@@ -403,7 +403,7 @@ Kitob haqida ma'lumot ber. Javobni quyidagi JSON formatida:
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2">✓ YAXSHI AMALIYOTLAR</h4>
+                  <h4 className="font-bold mb-0">✓ YAXSHI AMALIYOTLAR</h4>
                   <ul className="text-sm space-y-1">
                     <li>• Aniq misol ko'rsating</li>
                     <li>• Validatsiya qoidalarini ayting</li>
@@ -415,7 +415,7 @@ Kitob haqida ma'lumot ber. Javobni quyidagi JSON formatida:
               
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2">✗ XATOLAR</h4>
+                  <h4 className="font-bold mb-0">✗ XATOLAR</h4>
                   <ul className="text-sm space-y-1">
                     <li>• Murakkab nested strukturalar</li>
                     <li>• Aniq bo'lmagan format</li>
@@ -437,7 +437,7 @@ Kitob haqida ma'lumot ber. Javobni quyidagi JSON formatida:
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-2">MURAKKAB MISOL:</h3>
+                <h3 className="text-lg font-bold mb-0">MURAKKAB MISOL:</h3>
                 <pre className="text-xs overflow-x-auto">
 {`prompt = """
 Quyidagi SQL so'rovni tahlil qil va JSON formatda javob ber:

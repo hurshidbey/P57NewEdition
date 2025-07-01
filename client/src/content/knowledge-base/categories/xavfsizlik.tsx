@@ -54,18 +54,18 @@ export const jailbreaking: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">UMUMIY JAILBREAK USULLARI:</h3>
+                <h3 className="text-xl font-bold mb-0">UMUMIY JAILBREAK USULLARI:</h3>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-bold mb-2">1. Rol O'ynash (Role-Playing)</h4>
+                    <h4 className="font-bold mb-0">1. Rol O'ynash (Role-Playing)</h4>
                     <p className="text-gray-700">AI'ga boshqa shaxs yoki tizim ekanligini aytish</p>
                   </div>
                   <div>
-                    <h4 className="font-bold mb-2">2. Ko'rsatmalarni Bekor Qilish</h4>
+                    <h4 className="font-bold mb-0">2. Ko'rsatmalarni Bekor Qilish</h4>
                     <p className="text-gray-700">Oldingi xavfsizlik ko'rsatmalarini "unutish"ni so'rash</p>
                   </div>
                   <div>
-                    <h4 className="font-bold mb-2">3. Kodlash va Shifrlash</h4>
+                    <h4 className="font-bold mb-0">3. Kodlash va Shifrlash</h4>
                     <p className="text-gray-700">Zararli so'rovlarni kod yoki shifr orqali yashirish</p>
                   </div>
                 </div>
@@ -131,7 +131,7 @@ export const responsibleAi: SectionContent = {
 
             <Card className="border-2 border-black">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">ASOSIY QOIDALAR:</h3>
+                <h3 className="text-xl font-bold mb-0">ASOSIY QOIDALAR:</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
@@ -182,7 +182,7 @@ Foydalanuvchi o'zi to'ldirishi uchun bo'sh joylar qoldiring:
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="border-2 border-black bg-green-50">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2 text-green-800">✓ TO'G'RI FOYDALANISH</h4>
+                  <h4 className="font-bold mb-0 text-green-800">✓ TO'G'RI FOYDALANISH</h4>
                   <ul className="space-y-1 text-sm">
                     <li>• Ta'lim va o'rganish</li>
                     <li>• Ijodkorlik va innovatsiya</li>
@@ -194,7 +194,7 @@ Foydalanuvchi o'zi to'ldirishi uchun bo'sh joylar qoldiring:
               
               <Card className="border-2 border-black bg-red-50">
                 <CardContent className="p-4">
-                  <h4 className="font-bold mb-2 text-red-800">✗ NOTO'G'RI FOYDALANISH</h4>
+                  <h4 className="font-bold mb-0 text-red-800">✗ NOTO'G'RI FOYDALANISH</h4>
                   <ul className="space-y-1 text-sm">
                     <li>• Aldash va firibgarlik</li>
                     <li>• Ruxsatsiz ma'lumot yig'ish</li>

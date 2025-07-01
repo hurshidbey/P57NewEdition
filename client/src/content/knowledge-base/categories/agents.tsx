@@ -28,25 +28,25 @@ export const agentTizimlar: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-0 flex items-center gap-2">
                   <AiIcon name="robot" size={24} />
                   AGENT KOMPONENTLARI
                 </h3>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="border-2 border-black bg-white p-4">
-                    <h4 className="font-bold mb-2">1. MIYAGA (LLM)</h4>
+                    <h4 className="font-bold mb-0">1. MIYAGA (LLM)</h4>
                     <p className="text-sm">Fikrlash va qaror qabul qilish markazi</p>
                   </div>
                   <div className="border-2 border-black bg-white p-4">
-                    <h4 className="font-bold mb-2">2. XOTIRA</h4>
+                    <h4 className="font-bold mb-0">2. XOTIRA</h4>
                     <p className="text-sm">Kontekst va o'tmish tajribalarni saqlash</p>
                   </div>
                   <div className="border-2 border-black bg-white p-4">
-                    <h4 className="font-bold mb-2">3. VOSITALAR</h4>
+                    <h4 className="font-bold mb-0">3. VOSITALAR</h4>
                     <p className="text-sm">Tashqi dunyo bilan o'zaro ta'sir qilish</p>
                   </div>
                   <div className="border-2 border-black bg-white p-4">
-                    <h4 className="font-bold mb-2">4. REJALASHTIRISH</h4>
+                    <h4 className="font-bold mb-0">4. REJALASHTIRISH</h4>
                     <p className="text-sm">Vazifalarni bosqichlarga bo'lish</p>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ agent:
             <div className="grid gap-4 md:grid-cols-2">
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
-                  <h4 className="font-bold text-black mb-2">AFZALLIKLAR</h4>
+                  <h4 className="font-bold text-black mb-0">AFZALLIKLAR</h4>
                   <ul className="text-sm space-y-1">
                     <li>- Real vaqt ma'lumotlari</li>
                     <li>- Aniq hisoblashlar</li>
@@ -190,7 +190,7 @@ agent:
 
               <Card className="border-2 border-black">
                 <CardContent className="p-4">
-                  <h4 className="font-bold text-black mb-2">CHEKLOVLAR</h4>
+                  <h4 className="font-bold text-black mb-0">CHEKLOVLAR</h4>
                   <ul className="text-sm space-y-1">
                     <li>- API limitlari</li>
                     <li>- Xavfsizlik masalalari</li>
@@ -236,12 +236,12 @@ export const orchestration: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-center">ORCHESTRATION ARXITEKTURASI</h3>
+                <h3 className="text-xl font-bold mb-0 text-center">ORCHESTRATION ARXITEKTURASI</h3>
                 
                 <div className="space-y-6">
                   {/* Orchestrator */}
                   <div className="border-3 border-black bg-white p-4 shadow-lg">
-                    <h4 className="font-bold text-center mb-2">ORCHESTRATOR</h4>
+                    <h4 className="font-bold text-center mb-0">ORCHESTRATOR</h4>
                     <p className="text-sm text-center">Vazifalarni taqsimlash va natijalarni birlashtirish</p>
                   </div>
 
@@ -266,7 +266,7 @@ export const orchestration: SectionContent = {
 
                   {/* Shared Resources */}
                   <div className="border-2 border-gray-600 bg-gray-100 p-4">
-                    <h4 className="font-bold text-center mb-2">UMUMIY RESURSLAR</h4>
+                    <h4 className="font-bold text-center mb-0">UMUMIY RESURSLAR</h4>
                     <p className="text-sm text-center">Xotira, Vositalar, Ma'lumotlar bazasi</p>
                   </div>
                 </div>

@@ -28,7 +28,7 @@ export const loyihalar: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-0 flex items-center gap-2">
                   <AiIcon name="sparkles" size={24} />
                   TOP AI LOYIHALAR 2024
                 </h3>
@@ -188,7 +188,7 @@ async def handle_request(request):
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">1</div>
                     <div className="flex-1">
-                      <h4 className="font-bold mb-2">IDEYA VA VALIDATSIYA</h4>
+                      <h4 className="font-bold mb-0">IDEYA VA VALIDATSIYA</h4>
                       <p className="text-sm text-gray-700 mb-2">Muammoni aniqlash va yechim taklif qilish</p>
                       <div className="bg-gray-50 p-3 rounded text-xs">
                         <strong>Tools:</strong> User interviews, Google Forms, Landing page
@@ -199,7 +199,7 @@ async def handle_request(request):
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">2</div>
                     <div className="flex-1">
-                      <h4 className="font-bold mb-2">PROTOTIP YARATISH</h4>
+                      <h4 className="font-bold mb-0">PROTOTIP YARATISH</h4>
                       <p className="text-sm text-gray-700 mb-2">Minimal funksiyalar bilan tez boshlash</p>
                       <div className="bg-gray-50 p-3 rounded text-xs">
                         <strong>Timeline:</strong> 1-2 hafta, Streamlit/Gradio demo
@@ -210,7 +210,7 @@ async def handle_request(request):
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">3</div>
                     <div className="flex-1">
-                      <h4 className="font-bold mb-2">MVP DEVELOPMENT</h4>
+                      <h4 className="font-bold mb-0">MVP DEVELOPMENT</h4>
                       <p className="text-sm text-gray-700 mb-2">Production-ready minimal product</p>
                       <div className="bg-gray-50 p-3 rounded text-xs">
                         <strong>Focus:</strong> Core features, Authentication, Payment
@@ -221,7 +221,7 @@ async def handle_request(request):
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">4</div>
                     <div className="flex-1">
-                      <h4 className="font-bold mb-2">LAUNCH VA ITERATE</h4>
+                      <h4 className="font-bold mb-0">LAUNCH VA ITERATE</h4>
                       <p className="text-sm text-gray-700 mb-2">Foydalanuvchilar bilan test qilish va yaxshilash</p>
                       <div className="bg-gray-50 p-3 rounded text-xs">
                         <strong>Metrics:</strong> User retention, Usage patterns, Feedback
@@ -267,7 +267,7 @@ export const debugging: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-0 flex items-center gap-2">
                   <AiIcon name="bug" size={24} />
                   AI DEBUGGING TOOLKIT
                 </h3>
@@ -468,7 +468,7 @@ class AIDebugger:
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-black">
+                <h3 className="text-xl font-bold mb-0 text-black">
                   REAL-TIME DEBUGGING DASHBOARD
                 </h3>
                 <div className="bg-white border-2 border-gray-300 rounded-lg p-4 font-mono text-sm">
@@ -529,7 +529,7 @@ export const sohalarAmaliyot: SectionContent = {
 
             <Card className="border-2 border-black bg-gray-50">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-center">AI SOHALARDA TATBIQI</h3>
+                <h3 className="text-xl font-bold mb-0 text-center">AI SOHALARDA TATBIQI</h3>
                 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
