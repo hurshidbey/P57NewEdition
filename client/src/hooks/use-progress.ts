@@ -280,6 +280,43 @@ export function useProgress() {
     };
   };
 
+  const toggleProtocolCompleted = async (protocolId: number, score: number = 70) => {
+    const isCurrentlyCompleted = isProtocolCompleted(protocolId);
+    
+    if (isCurrentlyCompleted) {
+      // Remove protocol from completed
+      const newProgress = new Map(protocolProgress);
+      newProgress.delete(protocolId);
+      setProtocolProgress(newProgress);
+      
+      // Update localStorage
+      const storageKey = getStorageKey(user?.id || null);
+      const progressArray = Array.from(newProgress.values());
+      const dataToStore: StoredProgress = {
+        completed: progressArray,
+        lastStudiedDate: lastStudiedDate,
+        currentStreak: currentStreak
+      };
+      localStorage.setItem(storageKey, JSON.stringify(dataToStore));
+      
+      // Recalculate streak
+      calculateStreak(newProgress);
+      
+      // CRITICAL: Also remove from server
+      if (user) {
+        try {
+          await apiRequest('DELETE', `/api/progress/${user.id}/${protocolId}`);
+        } catch (error) {
+          console.error('Failed to remove from server:', error);
+          // Local removal still worked, so don't block user
+        }
+      }
+    } else {
+      // Mark as completed
+      await markProtocolCompleted(protocolId, score);
+    }
+  };
+
   const resetProgress = () => {
     setProtocolProgress(new Map());
     setLastStudiedDate(null);
@@ -290,6 +327,7 @@ export function useProgress() {
 
   return {
     markProtocolCompleted,
+    toggleProtocolCompleted,
     isProtocolCompleted,
     getProtocolProgress,
     getProgressData,

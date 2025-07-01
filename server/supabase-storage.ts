@@ -278,6 +278,17 @@ export class SupabaseStorage implements IStorage {
     }
   }
 
+  async deleteProtocolProgress(userId: string, protocolId: number): Promise<{ success: boolean }> {
+    const { error } = await this.supabase
+      .from('user_progress')
+      .delete()
+      .eq('user_id', userId)
+      .eq('protocol_id', protocolId);
+    
+    if (error) throw error;
+    return { success: true };
+  }
+
   // Prompts methods
   async getPrompts(userTier: string): Promise<Prompt[]> {
     let query = this.supabase.from('prompts').select('*');

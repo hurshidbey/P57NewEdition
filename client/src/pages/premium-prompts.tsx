@@ -13,7 +13,7 @@ import { Link } from 'wouter';
 
 function UpgradeBanner() {
   return (
-    <Card className="bg-card border-2 border-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-none">
+    <Card className="bg-card border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-none">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -77,7 +77,7 @@ export default function PremiumPrompts() {
               <div className="h-8 bg-primary w-64"></div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-64 bg-card border-2 border-border shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></div>
+                  <div key={i} className="h-64 bg-card border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></div>
                 ))}
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function PremiumPrompts() {
               <p className="text-foreground mb-8">
                 Promptlarni yuklashda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.
               </p>
-              <Button onClick={() => window.location.reload()} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase border-2 border-border h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <Button onClick={() => window.location.reload()} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase border-2 border-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 Qayta yuklash
               </Button>
             </div>
@@ -145,13 +145,13 @@ export default function PremiumPrompts() {
                 placeholder="Promptlar bo'yicha qidirish..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 border-2 border-border font-bold uppercase placeholder:font-normal placeholder:normal-case focus:ring-2 focus:ring-black rounded-none h-[44px]"
+                className="pl-10 border-2 border-black font-bold uppercase placeholder:font-normal placeholder:normal-case focus:ring-2 focus:ring-black rounded-none h-[44px]"
               />
             </div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border-2 border-border bg-card text-foreground font-bold uppercase focus:outline-none focus:ring-2 focus:ring-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              className="px-4 py-2 border-2 border-black bg-card text-foreground font-bold uppercase focus:outline-none focus:ring-2 focus:ring-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               {categories.map(category => (
                 <option key={category} value={category}>
@@ -206,7 +206,7 @@ export default function PremiumPrompts() {
         {/* Empty State */}
         {filteredPrompts.length === 0 && (
           <section className="pb-16">
-            <div className="text-center max-w-md mx-auto bg-card border-2 border-border p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div className="text-center max-w-md mx-auto bg-card border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <div className="w-16 h-16 bg-primary flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-primary-foreground" />
               </div>

@@ -506,7 +506,7 @@ export default function Onboarding() {
 
           {/* Key Points Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="border-2 border-border hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
+            <Card className="border-2 border-black hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
               <CardContent className="p-6 text-center">
                 <AiIcon name="robot" size={48} className="mx-auto mb-4" />
                 <h3 className="font-bold text-lg mb-2 text-foreground">Robot, inson emas</h3>
@@ -514,7 +514,7 @@ export default function Onboarding() {
               </CardContent>
             </Card>
             
-            <Card className="border-2 border-border hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
+            <Card className="border-2 border-black hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
               <CardContent className="p-6 text-center">
                 <AiIcon name="target" size={48} className="mx-auto mb-4" />
                 <h3 className="font-bold text-lg mb-2 text-foreground">Buyruqlar asosida</h3>
@@ -522,7 +522,7 @@ export default function Onboarding() {
               </CardContent>
             </Card>
             
-            <Card className="border-2 border-border hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
+            <Card className="border-2 border-black hover:border-accent transition-all shadow-soft hover:shadow-medium hover-lift">
               <CardContent className="p-6 text-center">
                 <AiIcon name="rocket" size={48} className="mx-auto mb-4" />
                 <h3 className="font-bold text-lg mb-2 text-foreground">100x natija</h3>
@@ -594,7 +594,7 @@ export default function Onboarding() {
           </div>
 
           {/* Deep Dive: What is AI Really? */}
-          <Card className="border-2 border-border">
+          <Card className="border-2 border-black">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold mb-4 text-foreground">AI haqiqatda nima?</h3>
               <div className="space-y-4 text-muted-foreground">
@@ -697,7 +697,7 @@ export default function Onboarding() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div 
                   whileHover={{ scale: 1.02 }}
-                  className="text-center p-4 bg-background rounded-xl border-2 border-border shadow-soft hover:shadow-medium transition-all"
+                  className="text-center p-4 bg-background rounded-xl border-2 border-black shadow-soft hover:shadow-medium transition-all"
                 >
                   <p className="text-sm text-muted-foreground mb-1">Belgilar</p>
                   <p className="text-2xl font-bold text-foreground">{tokenText.length}</p>
@@ -711,7 +711,7 @@ export default function Onboarding() {
                 </div>
                 <div 
                   whileHover={{ scale: 1.02 }}
-                  className="text-center p-4 bg-background rounded-xl border-2 border-border shadow-soft hover:shadow-medium transition-all"
+                  className="text-center p-4 bg-background rounded-xl border-2 border-black shadow-soft hover:shadow-medium transition-all"
                 >
                   <p className="text-sm text-muted-foreground mb-1">Narxi (GPT-4)</p>
                   <p className="text-2xl font-bold text-foreground">${(calculateTokens(tokenText) * 0.00003).toFixed(4)}</p>
@@ -1011,7 +1011,7 @@ export default function Onboarding() {
           </div>
 
           {/* Main concept explanation */}
-          <Card className="border-2 border-border">
+          <Card className="border-2 border-black">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold mb-4 text-foreground">Nima uchun bu muhim?</h3>
               <div className="space-y-4 text-muted-foreground">
@@ -2604,7 +2604,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
           </div>
 
           {/* The Science Behind Prompting */}
-          <Card className="border-2 border-border">
+          <Card className="border-2 border-black">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold mb-4">Prompting ortidagi ilm</h3>
               <div className="space-y-4">
@@ -2706,7 +2706,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                 }
               }
             ].map((component) => (
-              <Card key={component.number} className="border-2 border-border hover:border-accent transition-all hover:shadow-lg overflow-hidden">
+              <Card key={component.number} className="border-2 border-black hover:border-accent transition-all hover:shadow-lg overflow-hidden">
                 <div className={`h-2 bg-gradient-to-r from-accent to-accent/60`} />
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-start gap-4">
@@ -2721,7 +2721,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                         <h3 className="font-bold text-xl text-black">{component.title}</h3>
                       </div>
                       <p className="text-muted-foreground mb-4">{component.description}</p>
-                      <div className="bg-muted p-4 rounded-lg border border-border mb-4">
+                      <div className="bg-muted p-4 rounded-lg border border-black mb-4">
                         <code className="text-sm text-foreground font-mono">"{component.example}"</code>
                       </div>
                       
@@ -2735,7 +2735,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                           <p className="text-sm text-muted-foreground italic">{component.deepDive.why}</p>
                           <div className="space-y-2">
                             {component.deepDive.examples.map((ex, idx) => (
-                              <div key={idx} className="bg-background p-3 rounded border border-border">
+                              <div key={idx} className="bg-background p-3 rounded border border-black">
                                 <p className="text-xs text-foreground">{ex}</p>
                               </div>
                             ))}
@@ -2884,7 +2884,7 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
           </div>
 
           {/* Techniques Overview */}
-          <Card className="border-2 border-border">
+          <Card className="border-2 border-black">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold mb-6">Prompting evolyutsiyasi</h3>
               <div className="relative">
@@ -2901,7 +2901,7 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                       <div className="w-16 h-16 bg-accent text-white rounded-full flex items-center justify-center font-bold z-10">
                         {item.year}
                       </div>
-                      <div className="flex-1 bg-muted rounded-lg p-4 border border-border">
+                      <div className="flex-1 bg-muted rounded-lg p-4 border border-black">
                         <h4 className="font-semibold">{item.tech}</h4>
                         <p className="text-sm text-muted-foreground">{item.desc}</p>
                       </div>
@@ -2971,15 +2971,15 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                 <div className="bg-muted rounded-lg p-6 mb-6">
                   <h4 className="font-semibold mb-3">Qachon ishlatish kerak:</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-background p-3 rounded border border-border">
+                    <div className="bg-background p-3 rounded border border-black">
                       <AiIcon name="file" size={24} className="mb-2" />
                       <p className="text-sm">Maxsus format kerak bo'lganda</p>
                     </div>
-                    <div className="bg-background p-3 rounded border border-border">
+                    <div className="bg-background p-3 rounded border border-black">
                       <AiIcon name="network" size={24} className="mb-2" />
                       <p className="text-sm">Murakkab pattern'lar uchun</p>
                     </div>
-                    <div className="bg-background p-3 rounded border border-border">
+                    <div className="bg-background p-3 rounded border border-black">
                       <AiIcon name="target" size={24} className="mb-2" />
                       <p className="text-sm">Aniq natija kerak bo'lganda</p>
                     </div>
@@ -3112,7 +3112,7 @@ Tahlil:`}
             </Card>
 
             {/* Advanced Techniques */}
-            <Card className="border-2 border-border">
+            <Card className="border-2 border-black">
               <CardContent className="p-4 sm:p-6">
                 <h3 className="font-bold text-xl mb-6">Ilg'or texnikalar</h3>
                 <Tabs defaultValue="tree" className="w-full">
@@ -3168,7 +3168,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
           </div>
 
           {/* Comparison Table */}
-          <Card className="border-2 border-border">
+          <Card className="border-2 border-black">
             <CardContent className="p-4 sm:p-6">
               <h3 className="font-bold text-xl mb-4">Texnikalarni taqqoslash</h3>
               <div className="overflow-x-auto">
@@ -3415,7 +3415,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="flex items-center justify-between mt-8 sm:mt-16 pt-6 sm:pt-8 border-t border-border"
+          className="flex items-center justify-between mt-8 sm:mt-16 pt-6 sm:pt-8 border-t border-black"
         >
           <Button
             onClick={handlePrevious}

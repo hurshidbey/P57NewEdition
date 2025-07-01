@@ -19,6 +19,7 @@ export interface IStorage {
   
   getUserProgress(userId: string): Promise<UserProgress[]>;
   updateProtocolProgress(userId: string, protocolId: number, score: number): Promise<UserProgress>;
+  deleteProtocolProgress(userId: string, protocolId: number): Promise<{ success: boolean }>;
   
   // Prompts methods
   getPrompts(userTier: string): Promise<Prompt[]>;
@@ -856,6 +857,34 @@ export class HybridStorage implements IStorage {
       lastScore: score,
       accessedProtocolsCount: 0
     };
+  }
+
+  async deleteProtocolProgress(userId: string, protocolId: number): Promise<{ success: boolean }> {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.deleteProtocolProgress(userId, protocolId);
+      } catch (error) {
+        throw error;
+      }
+    }
+    
+    // Fall back to direct database connection
+    if (isDatabaseConnected && db) {
+      try {
+        await db.delete(userProgress)
+          .where(and(
+            eq(userProgress.userId, userId),
+            eq(userProgress.protocolId, protocolId)
+          ));
+        return { success: true };
+      } catch (error) {
+        throw error;
+      }
+    }
+    
+    // For memory storage, just return success (no persistent storage to delete from)
+    return { success: true };
   }
 
   // Prompts methods
