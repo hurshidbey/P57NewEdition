@@ -48,9 +48,8 @@ export default {
         '9xl': ['8rem', { lineHeight: '8.5rem', letterSpacing: '-0.15em' }],
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        none: "0",
+        DEFAULT: "0",
       },
       colors: {
         background: "hsl(var(--background))",

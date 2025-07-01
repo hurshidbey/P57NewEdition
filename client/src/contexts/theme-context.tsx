@@ -26,19 +26,15 @@ export function ThemeProvider({
   storageKey = 'ui-theme',
   ...props
 }: ThemeProviderProps) {
-  // TODO: Dark mode temporarily disabled - force light mode
-  const [theme, setTheme] = useState<Theme>('light')
+  const [theme, setTheme] = useState<Theme>(
+    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+  )
 
   useEffect(() => {
     const root = window.document.documentElement
 
     root.classList.remove('light', 'dark')
 
-    // Force light mode until dark mode is fixed
-    root.classList.add('light')
-    return
-    
-    /* TODO: Re-enable when dark mode is fixed
     if (theme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
         .matches
@@ -50,7 +46,6 @@ export function ThemeProvider({
     }
 
     root.classList.add(theme)
-    */
   }, [theme])
 
   const value = {

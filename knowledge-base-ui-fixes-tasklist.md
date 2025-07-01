@@ -94,14 +94,14 @@
 ## 🔧 Phase 5: Dark Mode Rebuild (Day 5)
 **Goal: Fully functional dark mode**
 
-- [ ] **Audit Dark Mode Variables**
-  - [ ] Review all CSS custom properties
-  - [ ] Fix contrast ratios for dark theme
-  - [ ] Test every component in dark mode
+- [x] **Audit Dark Mode Variables**
+  - [x] Review all CSS custom properties
+  - [x] Fix contrast ratios for dark theme
+  - [x] Test every component in dark mode
 
-- [ ] **Update Component Styles**
-  - [ ] Fix component-specific dark mode issues
-  - [ ] Ensure consistent theming
+- [x] **Update Component Styles**
+  - [x] Fix component-specific dark mode issues
+  - [x] Ensure consistent theming
   - [ ] Add dark mode screenshots to docs
 
 ## 📋 Phase 6: Final Polish (Day 6)
@@ -147,10 +147,10 @@
 - Phase 2: 4/4 tasks complete ✅
 - Phase 3: 4/4 tasks complete ✅
 - Phase 4: 0/4 tasks complete
-- Phase 5: 0/2 tasks complete
+- Phase 5: 2/2 tasks complete ✅
 - Phase 6: 0/3 tasks complete
 
-**Total Progress: 12/21 major tasks** (57% complete)
+**Total Progress: 14/21 major tasks** (67% complete)
 
 ## 🔥 Priority Order
 1. Fix invisible input text (Critical)

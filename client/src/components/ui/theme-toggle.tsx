@@ -10,9 +10,6 @@ import { useTheme } from "@/contexts/theme-context"
 
 export function ThemeToggle() {
   const { setTheme } = useTheme()
-
-  // TODO: Dark mode temporarily disabled - needs fixing
-  return null; // Temporarily disabled
   
   return (
     <DropdownMenu>
@@ -27,11 +24,9 @@ export function ThemeToggle() {
         <DropdownMenuItem onClick={() => setTheme("light")}>
           Light
         </DropdownMenuItem>
-        {/* Dark mode temporarily disabled
         <DropdownMenuItem onClick={() => setTheme("dark")}>
           Dark
         </DropdownMenuItem>
-        */}
         <DropdownMenuItem onClick={() => setTheme("system")}>
           System
         </DropdownMenuItem>

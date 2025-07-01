@@ -17,13 +17,13 @@
   --secondary-foreground: 0 0% 9%;
   --muted: 0 0% 96%;
   --muted-foreground: 0 0% 35%; /* Updated for WCAG AA compliance */
-  --accent: 10 100% 59%; /* Brand Orange #FF4F30 */
-  --accent-foreground: 0 0% 100%;
+  --accent: 12 100% 59%; /* Brand Orange #FF4F30 */
+  --accent-foreground: 0 0% 100%; /* White text for contrast */
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
   --border: 0 0% 89%;
   --input: 0 0% 89%;
-  --ring: 10 100% 59%;
+  --ring: 162 100% 55%;
   
   /* Semantic Colors */
   --success: 142 76% 36%;
@@ -32,7 +32,7 @@
   --warning-foreground: 0 0% 9%;
   --info: 221 83% 53%;
   --info-foreground: 0 0% 98%;
-  --radius: 0.75rem;
+  --radius: 0;
   
   /* 8pt Grid System */
   --space-unit: 8px;
@@ -94,13 +94,13 @@
   --secondary-foreground: 0 0% 98%;
   --muted: 0 0% 14.9%;
   --muted-foreground: 0 0% 63.9%;
-  --accent: 10 100% 59%; /* Brand Orange #FF4F30 - same in dark mode */
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
+  --accent: 12 100% 59%; /* Brand Orange #FF4F30 - same in dark mode */
+  --accent-foreground: 0 0% 100%; /* White text for contrast in dark mode too */
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
   --border: 0 0% 14.9%;
   --input: 0 0% 14.9%;
-  --ring: 10 100% 59%;
+  --ring: 162 100% 55%;
   
   /* Semantic Colors - Dark Mode */
   --success: 142 76% 36%;
@@ -133,7 +133,7 @@
   select:focus-visible,
   [role="button"]:focus-visible,
   [tabindex]:focus-visible {
-    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-black ring-offset-2 ring-offset-background;
   }
   
   /* Ensure text is always visible in form inputs */

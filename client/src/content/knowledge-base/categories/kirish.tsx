@@ -15,13 +15,13 @@ export const nimaUchunMuhim: SectionContent = {
       content: {
         render: () => (
           <>
-<div className="space-y-6">
-          <div className="prose prose-lg max-w-none">
-            <p className="text-lg leading-relaxed">
+<div className="space-y-8">
+          <div className="prose prose-lg lg:prose-xl max-w-none">
+            <p className="text-base leading-relaxed mb-4">
               Hozirgi kunda sun'iy intellekt (AI) hayotimizning ajralmas qismiga aylanmoqda. 
               ChatGPT, Claude, Gemini kabi AI assistentlar kundalik ishlarimizni yengillashtirmoqda.
             </p>
-            <p className="text-lg leading-relaxed">
+            <p className="text-base leading-relaxed mb-4">
               Lekin ko'pchilik foydalanuvchilar AI'ning to'liq potensialidan foydalana olmayapti. 
               Sabab oddiy - ular AI bilan qanday muloqot qilishni bilishmaydi.
             </p>
@@ -37,10 +37,10 @@ export const nimaUchunMuhim: SectionContent = {
             ]}
           />
           
-          <Card className="border-2 border-black">
+          <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">NIMA UCHUN BU MUHIM?</h3>
-              <ul className="space-y-2">
+              <h3 className="text-xl font-black mb-4 uppercase">NIMA UCHUN BU MUHIM?</h3>
+              <ul className="space-y-3">
                 <li className="flex items-start gap-2">
                   <AiIcon name="checked" size={20} className="mt-1 flex-shrink-0" />
                   <span>Vaqtingizni tejaysiz - 10 soatlik ishni 1 soatda bajaring</span>
@@ -88,9 +88,9 @@ export const promptingNima: SectionContent = {
       content: {
         render: () => (
           <>
-<div className="space-y-6">
-          <div className="prose prose-lg max-w-none">
-            <p className="text-lg leading-relaxed">
+<div className="space-y-8">
+          <div className="prose prose-lg lg:prose-xl max-w-none">
+            <p className="text-base leading-relaxed mb-4">
               Prompting — bu AI bilan samarali muloqot qilish san'ati. To'g'ri prompt yozish orqali 
               siz AI'dan maksimal foyda olishingiz mumkin.
             </p>
@@ -106,9 +106,9 @@ export const promptingNima: SectionContent = {
             ]}
           />
 
-          <Card className="border-2 border-black">
+          <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">YAXSHI PROMPT ELEMENTLARI:</h3>
+              <h3 className="text-xl font-black mb-4 uppercase">YAXSHI PROMPT ELEMENTLARI:</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <AiIcon name="target" size={20} className="mt-1 flex-shrink-0" />
@@ -159,9 +159,9 @@ Format: Bullet point ro'yxat shaklida"
             explanation="Yaxshi promptda barcha kerakli ma'lumotlar, aniq ko'rsatmalar va kutilgan format ko'rsatilgan."
           />
 
-          <Alert className="border-2 border-black">
+          <Alert className="border-2 border-black bg-white">
             <AiIcon name="lightbulb" size={20} />
-            <AlertDescription>
+            <AlertDescription className="text-black font-bold">
               <strong>Maslahat:</strong> Prompt yozishda o'zingizni AI o'rniga qo'ying. 
               Sizga shunday topshiriq berilsa, nimalar kerak bo'lardi?
             </AlertDescription>
@@ -182,9 +182,9 @@ export const promptElementlari: SectionContent = {
       content: {
         render: () => (
           <>
-<div className="space-y-6">
-          <div className="prose prose-lg max-w-none">
-            <p className="text-lg leading-relaxed">
+<div className="space-y-8">
+          <div className="prose prose-lg lg:prose-xl max-w-none">
+            <p className="text-base leading-relaxed mb-4">
               Professional prompt 5 ta asosiy elementdan tashkil topadi. Har bir element 
               o'z vazifasiga ega va natija sifatiga ta'sir qiladi.
             </p>
@@ -249,7 +249,7 @@ export const promptElementlari: SectionContent = {
 
           <Card className="border-2 border-black bg-gray-50">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">TO'LIQ PROMPT NAMUNASI:</h3>
+              <h3 className="text-xl font-black mb-4 uppercase">TO'LIQ PROMPT NAMUNASI:</h3>
               <pre className="bg-white border-2 border-black p-4 overflow-x-auto text-sm">
 {`ROL: Sen tajribali content marketing mutaxassisisan.
 
@@ -282,36 +282,36 @@ export const aiInqilobi: SectionContent = {
       content: {
         render: () => (
           <>
-<div className="space-y-6">
-          <div className="prose prose-lg max-w-none">
-            <p className="text-lg leading-relaxed">
+<div className="space-y-8">
+          <div className="prose prose-lg lg:prose-xl max-w-none">
+            <p className="text-base leading-relaxed mb-4">
               AI inqilobi global miqyosda sodir bo'lmoqda. O'zbekiston ham bu jarayondan 
               chetda qolmasligi, balki faol ishtirok etishi muhim.
             </p>
           </div>
 
-          <Card className="border-2 border-black">
+          <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">AI INQILOBINING 3 TO'LQINI:</h3>
+              <h3 className="text-xl font-black mb-4 uppercase">AI INQILOBINING 3 TO'LQINI:</h3>
               <div className="space-y-4">
                 <div className="border-l-4 border-black pl-4">
                   <h4 className="font-bold">1-to'lqin: Tor AI (2010-2020)</h4>
-                  <p className="text-muted-foreground">Bitta vazifaga ixtisoslashgan AI: rasm tanish, tarjima, tavsiyalar</p>
+                  <p className="text-black/70">Bitta vazifaga ixtisoslashgan AI: rasm tanish, tarjima, tavsiyalar</p>
                 </div>
                 <div className="border-l-4 border-black pl-4">
                   <h4 className="font-bold">2-to'lqin: Generativ AI (2020-2025)</h4>
-                  <p className="text-muted-foreground">Yangi kontent yaratadigan AI: ChatGPT, DALL-E, Midjourney</p>
+                  <p className="text-black/70">Yangi kontent yaratadigan AI: ChatGPT, DALL-E, Midjourney</p>
                 </div>
-                <div className="border-l-4 border-gray-400 pl-4">
-                  <h4 className="font-bold text-gray-600">3-to'lqin: AGI (2025+)</h4>
-                  <p className="text-muted-foreground">Inson darajasidagi umumiy sun'iy intellekt</p>
+                <div className="border-l-4 border-black/30 pl-4">
+                  <h4 className="font-bold text-black/50">3-to'lqin: AGI (2025+)</h4>
+                  <p className="text-black/70">Inson darajasidagi umumiy sun'iy intellekt</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <Card className="border-2 border-black">
+            <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
                 <h4 className="font-bold mb-4 flex items-center gap-2">
                   <AiIcon name="world" size={20} />
@@ -326,7 +326,7 @@ export const aiInqilobi: SectionContent = {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-black">
+            <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
                 <h4 className="font-bold mb-4 flex items-center gap-2">
                   <AiIcon name="flag" size={20} />
@@ -342,9 +342,9 @@ export const aiInqilobi: SectionContent = {
             </Card>
           </div>
 
-          <Alert className="border-2 border-black">
+          <Alert className="border-2 border-black bg-white">
             <AiIcon name="lightbulb" size={20} />
-            <AlertDescription>
+            <AlertDescription className="text-black font-bold">
               <strong>Muhim:</strong> AI inqilobida g'olib bo'lish uchun texnologiyani 
               tushunish yetarli emas — uni to'g'ri qo'llashni bilish kerak. Aynan shuning 
               uchun prompting ko'nikmalari muhim.
@@ -366,9 +366,9 @@ export const umumiyMaslahatlar: SectionContent = {
       content: {
         render: () => (
           <>
-<div className="space-y-6">
-          <div className="prose prose-lg max-w-none">
-            <p className="text-lg leading-relaxed">
+<div className="space-y-8">
+          <div className="prose prose-lg lg:prose-xl max-w-none">
+            <p className="text-base leading-relaxed mb-4">
               AI bilan ishlashda muvaffaqiyatli bo'lish uchun ushbu asosiy tamoyillarga 
               amal qiling.
             </p>
@@ -376,7 +376,7 @@ export const umumiyMaslahatlar: SectionContent = {
 
           <Card className="border-2 border-black bg-black text-white">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">7 OLTIN QOIDA</h3>
+              <h3 className="text-xl font-black mb-4 uppercase">7 OLTIN QOIDA</h3>
               <div className="space-y-3">
                 {[
                   "Aniq va konkret bo'ling",
@@ -397,7 +397,7 @@ export const umumiyMaslahatlar: SectionContent = {
           </Card>
 
           <div className="grid gap-4">
-            <Card className="border-2 border-black">
+            <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
                 <h4 className="font-bold mb-3">❌ QILMANG:</h4>
                 <ul className="space-y-2 text-sm">
@@ -409,7 +409,7 @@ export const umumiyMaslahatlar: SectionContent = {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-black">
+            <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <CardContent className="p-6">
                 <h4 className="font-bold mb-3">✅ QILING:</h4>
                 <ul className="space-y-2 text-sm">

@@ -15,29 +15,29 @@ export const gptOilasi: SectionContent = {
       content: {
         render: () => (
           <div className="space-y-6">
-            <div className="prose prose-lg max-w-none">
-              <p className="text-lg leading-relaxed">
+            <div className="prose prose-lg lg:prose-xl max-w-none">
+              <p className="text-base leading-relaxed mb-2">
                 GPT (Generative Pre-trained Transformer) - OpenAI tomonidan yaratilgan eng mashhur 
                 AI model oilasi. GPT-3 dan boshlab GPT-4 gacha, har bir versiya yanada kuchli imkoniyatlar bilan kelgan.
               </p>
-              <p className="text-lg leading-relaxed">
+              <p className="text-base leading-relaxed mb-2">
                 GPT modellari matn generatsiya, tarjima, kod yozish, tahlil qilish va ko'plab 
                 boshqa vazifalarda yetakchi o'rinni egallaydi.
               </p>
             </div>
 
-            <Card className="border-2 border-black bg-gray-50">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <Card className="border-2 border-black bg-gray-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <CardContent className="p-4">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                   <AiIcon name="openai" size={24} />
                   GPT MODELLAR EVOLYUTSIYASI
                 </h3>
                 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="border-l-4 border-gray-600 pl-4">
                     <h4 className="font-bold text-gray-800">GPT-3 (2020)</h4>
                     <p className="text-sm text-gray-700">175 milliard parametr</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
+                    <div className="mt-1 flex flex-wrap gap-1">
                       <Badge className="bg-gray-100 text-gray-800">Birinchi katta til modeli</Badge>
                       <Badge className="bg-gray-100 text-gray-800">Few-shot learning</Badge>
                     </div>
@@ -46,7 +46,7 @@ export const gptOilasi: SectionContent = {
                   <div className="border-l-4 border-gray-600 pl-4">
                     <h4 className="font-bold text-gray-800">GPT-3.5 Turbo (2022)</h4>
                     <p className="text-sm text-gray-700">ChatGPT asosi</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
+                    <div className="mt-1 flex flex-wrap gap-1">
                       <Badge className="bg-gray-100 text-gray-800">10x tezroq</Badge>
                       <Badge className="bg-gray-100 text-gray-800">Suhbat uchun optimizatsiya</Badge>
                     </div>
@@ -55,7 +55,7 @@ export const gptOilasi: SectionContent = {
                   <div className="border-l-4 border-gray-600 pl-4">
                     <h4 className="font-bold text-gray-800">GPT-4 (2023)</h4>
                     <p className="text-sm text-gray-700">1.76 trillion parametr (taxmin)</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
+                    <div className="mt-1 flex flex-wrap gap-1">
                       <Badge className="bg-gray-100 text-gray-800">Multimodal (rasm+matn)</Badge>
                       <Badge className="bg-gray-100 text-gray-800">32K kontekst</Badge>
                     </div>
@@ -64,7 +64,7 @@ export const gptOilasi: SectionContent = {
                   <div className="border-l-4 border-gray-600 pl-4">
                     <h4 className="font-bold text-gray-800">GPT-4o (2024)</h4>
                     <p className="text-sm text-gray-700">Omni model - audio, video, matn</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
+                    <div className="mt-1 flex flex-wrap gap-1">
                       <Badge className="bg-gray-100 text-gray-800">Real-time javob</Badge>
                       <Badge className="bg-gray-100 text-gray-800">128K kontekst</Badge>
                     </div>
@@ -174,13 +174,13 @@ export const claudeOilasi: SectionContent = {
       content: {
         render: () => (
           <div className="space-y-6">
-            <div className="prose prose-lg max-w-none">
-              <p className="text-lg leading-relaxed">
+            <div className="prose prose-lg lg:prose-xl max-w-none">
+              <p className="text-base leading-relaxed mb-2">
                 Claude - Anthropic kompaniyasi tomonidan yaratilgan AI assistant oilasi. 
                 Xavfsizlik, foydalilik va halollikka alohida e'tibor berilgan bu modellar 
                 professional foydalanish uchun eng yaxshi tanlovlardan biri.
               </p>
-              <p className="text-lg leading-relaxed">
+              <p className="text-base leading-relaxed mb-2">
                 Claude modellari uzun kontekst bilan ishlash, kod yozish, ilmiy tahlil va 
                 ijodiy yozuvlarda ajoyib natijalar ko'rsatadi.
               </p>
@@ -188,7 +188,7 @@ export const claudeOilasi: SectionContent = {
 
             <Card className="border-2 border-black overflow-hidden">
               <div className="bg-black p-4">
-                <h3 className="text-white font-bold uppercase text-center">CLAUDE 3 MODEL OILASI</h3>
+                <h3 className="text-base font-bold uppercase text-center">CLAUDE 3 MODEL OILASI</h3>
               </div>
               <CardContent className="p-0">
                 <div className="grid md:grid-cols-3 divide-x-2 divide-black">
@@ -273,9 +273,9 @@ Savol: Bu qism qanday bog'langan asosiy tezis bilan?
               explanation="Claude'ning katta kontekst oynasidan samarali foydalaning, lekin ortiqcha yuklamang."
             />
 
-            <Card className="border-2 border-black bg-gray-50">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4 text-black">
+            <Card className="border-2 border-black bg-gray-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <CardContent className="p-4">
+                <h3 className="text-lg font-bold mb-3 text-black">
                   CLAUDE VS GPT: QACHON QAYSI?
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -323,22 +323,22 @@ export const ochiqModellar: SectionContent = {
       content: {
         render: () => (
           <div className="space-y-6">
-            <div className="prose prose-lg max-w-none">
-              <p className="text-lg leading-relaxed">
+            <div className="prose prose-lg lg:prose-xl max-w-none">
+              <p className="text-base leading-relaxed mb-2">
                 Ochiq manbali AI modellar - bepul yuklab olish, o'zgartirish va tijorat maqsadlarida 
                 foydalanish mumkin bo'lgan modellar. Ular maxfiylik, moslashuvchanlik va narx jihatidan katta afzalliklarga ega.
               </p>
-              <p className="text-lg leading-relaxed">
+              <p className="text-base leading-relaxed mb-2">
                 Meta'ning Llama, Mistral AI va boshqa kompaniyalar ochiq modellar sohasida 
                 inqilob qilmoqda, ba'zi modellari GPT-3.5 darajasiga yetib kelgan.
               </p>
             </div>
 
-            <Card className="border-2 border-black bg-gray-50">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-6 text-center">TOP OCHIQ MODELLAR 2024</h3>
+            <Card className="border-2 border-black bg-gray-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <CardContent className="p-4">
+                <h3 className="text-lg font-bold mb-4 text-center">TOP OCHIQ MODELLAR 2024</h3>
                 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="border-2 border-gray-600 rounded-lg p-4 bg-white">
                     <div className="flex items-start justify-between">
                       <div>
@@ -499,18 +499,18 @@ def select_open_model(gpu_memory, use_case):
               <div className="bg-black p-4">
                 <h3 className="text-white font-bold uppercase">O'ZBEK TILI UCHUN MODELLAR</h3>
               </div>
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 <p className="text-sm text-gray-700 mb-4">
                   O'zbek tili uchun maxsus treninig qilingan modellar kam, lekin multilingual modellar yaxshi ishlaydi:
                 </p>
-                <div className="space-y-3">
-                  <div className="p-3 bg-gray-50 border border-gray-300 rounded">
+                <div className="space-y-4">
+                  <div className="p-4 bg-gray-50 border-2 border-black">
                     <strong>Qwen 2.5:</strong> Eng yaxshi o'zbek tili qo'llab-quvvatlashi
                   </div>
-                  <div className="p-3 bg-gray-50 border border-gray-300 rounded">
+                  <div className="p-4 bg-gray-50 border-2 border-black">
                     <strong>Llama 3.1:</strong> Yaxshi multilingual qobiliyat
                   </div>
-                  <div className="p-3 bg-gray-50 border border-gray-300 rounded">
+                  <div className="p-4 bg-gray-50 border-2 border-black">
                     <strong>mT5:</strong> Tarjima va text2text vazifalar uchun
                   </div>
                 </div>

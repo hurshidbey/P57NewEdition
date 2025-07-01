@@ -416,7 +416,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         >
           {loading ? (
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin" />
               <span className="text-sm sm:text-base">Ro'yxatdan o'tilmoqda...</span>
             </div>
           ) : (
