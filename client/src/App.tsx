@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -22,7 +22,7 @@ import TermsOfService from "@/pages/terms-of-service";
 const Home = lazy(() => import("@/pages/home"));
 const ProtocolDetail = lazy(() => import("@/pages/protocol-detail"));
 const Admin = lazy(() => import("@/pages/admin"));
-const Onboarding = lazy(() => import("@/pages/onboarding"));
+// Onboarding now redirects to knowledge-base
 const KnowledgeBase = lazy(() => import("@/pages/knowledge-base"));
 const AtmosPayment = lazy(() => import("@/pages/atmos-payment"));
 const PremiumPrompts = lazy(() => import("@/pages/premium-prompts"));
@@ -109,9 +109,7 @@ function AppContent() {
       
       <Route path="/onboarding">
         {isAuthenticated ? (
-          <Suspense fallback={<PageLoader />}>
-            <Onboarding />
-          </Suspense>
+          <Redirect to="/knowledge-base" />
         ) : (
           <AuthPage />
         )}
