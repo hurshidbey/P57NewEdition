@@ -1,0 +1,56 @@
+/* CRITICAL FIX FOR INVISIBLE TEXT BUG */
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+pre,
+code {
+  color: #111827 !important;
+  opacity: 1 !important;
+}
+
+/* Fix for any white text on white background */
+textarea:not([readonly]),
+input:not([readonly]) {
+  color: #111827 !important;
+  background-color: white !important;
+  border: 2px solid #111827 !important;
+}
+
+/* Force pre/code blocks to be visible */
+pre {
+  color: #111827 !important;
+  background-color: #f9fafb !important;
+  border: 2px solid #111827 !important;
+}
+
+/* Override any inline styles */
+[style*="color: white"],
+[style*="color:#fff"],
+[style*="color:#ffffff"],
+[style*="color: #fff"],
+[style*="color: #ffffff"],
+[style*="color: rgb(255"],
+[style*="color:rgb(255"] {
+  color: #111827 !important;
+}
+
+/* Knowledge base specific fixes */
+.prose textarea,
+.prose input,
+.prose pre,
+.prose code {
+  color: #111827 !important;
+}
+
+/* Debug helper - add red border to any invisible text */
+*:not(path):not(svg) {
+  color: inherit;
+}
+
+/* Ensure placeholder text is visible */
+::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
