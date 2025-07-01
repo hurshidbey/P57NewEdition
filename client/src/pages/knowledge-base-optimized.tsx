@@ -279,7 +279,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryStat
           <div className="text-center max-w-md">
             <AiIcon name="warning" size={48} className="mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">XATOLIK YUZ BERDI</h2>
-            <p className="text-gray-700 mb-6">
+            <p className="text-gray-600 mb-6">
               Bilimlar bazasini yuklashda muammo yuz berdi. Sahifani qayta yuklang.
             </p>
             <button
@@ -514,8 +514,8 @@ export default function KnowledgeBase() {
     // No content available - show placeholder
     return (
       <div className="text-center py-12">
-        <AiIcon name="construction" size={48} className="mx-auto mb-4 text-gray-500" />
-        <p className="text-lg text-gray-700">Bu bo'lim hozircha tayyorlanmoqda...</p>
+        <AiIcon name="construction" size={48} className="mx-auto mb-4 text-gray-400" />
+        <p className="text-lg text-gray-600">Bu bo'lim hozircha tayyorlanmoqda...</p>
       </div>
     );
   }
@@ -524,25 +524,7 @@ export default function KnowledgeBase() {
     <div className="min-h-screen bg-white">
       <AppHeader />
       
-      {/* Mobile Header with Menu Button */}
-      <div className="lg:hidden sticky top-[64px] z-40 bg-white border-b-2 border-black">
-        <div className="flex items-center justify-between p-4">
-          <h1 className="text-lg font-bold">BILIMLAR BAZASI</h1>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="min-w-[48px] min-h-[48px] p-2 border-2 border-black hover:bg-gray-50 touch-manipulation flex items-center justify-center"
-            aria-label="Menyuni ochish"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-      </div>
-      
-      <div className="flex h-[calc(100vh-128px)] lg:h-[calc(100vh-64px)]">
+      <div className="flex h-[calc(100vh-64px)]">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-[300px] border-r-2 border-black bg-white overflow-y-auto">
           {/* Progress Bar */}
@@ -566,7 +548,7 @@ export default function KnowledgeBase() {
               placeholder="Qidirish..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 border-2 border-black text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+              className="w-full px-3 py-2 border-2 border-black text-sm focus:outline-none"
             />
           </div>
 
@@ -576,8 +558,7 @@ export default function KnowledgeBase() {
               <div key={category.id} className="mb-4">
                 <button
                   onClick={() => toggleCategory(category.id)}
-                  className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-                  type="button"
+                  className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between"
                 >
                   <div className="flex items-center gap-2">
                     <AiIcon name={category.icon as any} size={20} />
@@ -595,12 +576,11 @@ export default function KnowledgeBase() {
                       <button
                         key={section.id}
                         onClick={() => navigateToSection(category.id, section.id)}
-                        className={`w-full text-left p-3 min-h-[44px] text-sm hover:bg-gray-100 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset ${
+                        className={`w-full text-left p-2 text-sm hover:bg-gray-100 flex items-center justify-between ${
                           activeCategory === category.id && activeSection === section.id
                             ? 'bg-black text-white font-bold'
                             : ''
                         }`}
-                        aria-current={activeCategory === category.id && activeSection === section.id ? 'page' : undefined}
                       >
                         <span>{section.title}</span>
                         {isSectionCompleted(category.id, section.id) && (
@@ -616,10 +596,10 @@ export default function KnowledgeBase() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
+        <main className="flex-1 overflow-y-auto">
           <div className="max-w-4xl mx-auto p-4 lg:p-8 pb-24 lg:pb-8">
             {/* Breadcrumb */}
-            <div className="mb-6 text-sm text-gray-700 flex items-center gap-2">
+            <div className="mb-6 text-sm text-gray-600 flex items-center gap-2">
               <Link href="/">
                 <span className="hover:text-black cursor-pointer">Bosh sahifa</span>
               </Link>
@@ -634,14 +614,14 @@ export default function KnowledgeBase() {
               <h1 className="text-3xl lg:text-4xl font-black mb-4">
                 {getCurrentSection()?.title}
               </h1>
-              <div className="flex items-center gap-4 text-sm text-gray-700">
-                <Badge variant="outline" aria-label="Qiyinlik darajasi">
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                <Badge variant="outline">
                   {getCurrentSection()?.difficulty === 'beginner' && 'Boshlang\'ich'}
                   {getCurrentSection()?.difficulty === 'intermediate' && 'O\'rta'}
                   {getCurrentSection()?.difficulty === 'advanced' && 'Murakkab'}
                 </Badge>
-                <span className="flex items-center gap-1" aria-label="O'qish vaqti">
-                  <AiIcon name="clock" size={16} aria-hidden="true" />
+                <span className="flex items-center gap-1">
+                  <AiIcon name="clock" size={16} />
                   {getCurrentSection()?.readTime} daqiqa
                 </span>
               </div>
@@ -690,7 +670,7 @@ export default function KnowledgeBase() {
             {/* Mobile sidebar content - same as desktop */}
             <div className="p-4 border-b-2 border-black flex justify-between items-center">
               <h2 className="font-bold text-lg">MUNDARIJA</h2>
-              <button onClick={() => setSidebarOpen(false)} aria-label="Menyuni yopish" type="button">
+              <button onClick={() => setSidebarOpen(false)}>
                 <AiIcon name="close" size={24} />
               </button>
             </div>
@@ -700,8 +680,7 @@ export default function KnowledgeBase() {
                 <div key={category.id} className="mb-4">
                   <button
                     onClick={() => toggleCategory(category.id)}
-                    className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-                    type="button"
+                    className="w-full text-left p-3 border-2 border-black font-bold hover:bg-gray-50 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
                       <AiIcon name={category.icon as any} size={20} />
@@ -719,13 +698,11 @@ export default function KnowledgeBase() {
                         <button
                           key={section.id}
                           onClick={() => navigateToSection(category.id, section.id)}
-                          className={`w-full text-left p-3 min-h-[44px] text-sm hover:bg-gray-100 flex items-center justify-between ${
+                          className={`w-full text-left p-2 text-sm hover:bg-gray-100 flex items-center justify-between ${
                             activeCategory === category.id && activeSection === section.id
                               ? 'bg-black text-white font-bold'
                               : ''
                           }`}
-                          type="button"
-                          aria-current={activeCategory === category.id && activeSection === section.id ? 'page' : undefined}
                         >
                           <span>{section.title}</span>
                           {isSectionCompleted(category.id, section.id) && (
@@ -748,17 +725,14 @@ export default function KnowledgeBase() {
           <button
             onClick={navigateToPrevious}
             disabled={!hasPrevious()}
-            className="min-w-[48px] min-h-[48px] p-2 flex items-center justify-center disabled:opacity-50"
-            aria-label="Oldingi sahifa"
-            type="button"
+            className="p-2"
           >
             <AiIcon name="arrow-left" size={24} />
           </button>
           
           <button
             onClick={() => setSidebarOpen(true)}
-            className="min-h-[48px] px-4 py-2 border-2 border-black font-bold touch-manipulation"
-            type="button"
+            className="px-4 py-2 border-2 border-black font-bold"
           >
             MUNDARIJA
           </button>
@@ -766,9 +740,7 @@ export default function KnowledgeBase() {
           <button
             onClick={navigateToNext}
             disabled={!hasNext()}
-            className="min-w-[48px] min-h-[48px] p-2 flex items-center justify-center disabled:opacity-50"
-            aria-label="Keyingi sahifa"
-            type="button"
+            className="p-2"
           >
             <AiIcon name="arrow-right" size={24} />
           </button>
