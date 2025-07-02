@@ -75,7 +75,7 @@ app.use((req, res, next) => {
 
   let server;
   try {
-    server = await registerRoutes(app);
+    server = await setupRoutes(app);
 
   } catch (error) {
 
