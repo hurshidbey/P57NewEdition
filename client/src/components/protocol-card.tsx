@@ -1,16 +1,33 @@
-import { Link } from "wouter";
-import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle } from "lucide-react";
+import React from "react";
 import { Protocol } from "@shared/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, Lock, ArrowRight, Crown } from "lucide-react";
+import { Link } from "wouter";
 import { useProgress } from "@/hooks/use-progress";
+import { useProtocolAccess, useUserTier } from "@/hooks/use-user-tier";
+import { trackTierSystemEvent } from "@/utils/analytics";
 
 interface ProtocolCardProps {
   protocol: Protocol;
 }
 
 export default function ProtocolCard({ protocol }: ProtocolCardProps) {
-  const { isProtocolCompleted, toggleProtocolCompleted } = useProgress();
+  const { isProtocolCompleted, getProtocolProgress, markProtocolCompleted, toggleProtocolCompleted } = useProgress();
+  const { canAccess, isLocked, requiresUpgrade } = useProtocolAccess(protocol.id, protocol.isFreeAccess);
+  const { tier } = useUserTier();
   const isCompleted = isProtocolCompleted(protocol.id);
+  const progress = getProtocolProgress(protocol.id);
+
+  // Track protocol access attempt
+  React.useEffect(() => {
+    if (isLocked) {
+      const reason = !protocol.isFreeAccess ? 'premium_only' : 'limit_reached';
+      trackTierSystemEvent.protocolBlocked(protocol.id, reason);
+    } else {
+      trackTierSystemEvent.protocolAccess(protocol.id, tier, true);
+    }
+  }, [protocol.id, isLocked, protocol.isFreeAccess, tier]);
 
   const handleToggleCompleted = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -18,30 +35,36 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
     toggleProtocolCompleted(protocol.id, 70);
   };
 
+  const handleUpgradeClick = () => {
+    trackTierSystemEvent.upgradePromptClicked('protocol_card');
+  };
+
+  // Track upgrade prompt shown when locked protocol is displayed
+  React.useEffect(() => {
+    if (isLocked) {
+      trackTierSystemEvent.upgradePromptShown('protocol_card');
+    }
+  }, [isLocked]);
+  
+  const getCardStyles = () => {
+    if (isLocked) {
+      return 'opacity-50';
+    }
+    return '';
+  };
+
   return (
-    <Card className="group bg-card border-2 border-black hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all relative overflow-hidden">
-      <CardContent className="p-6">
-        <Link href={`/protocol/${protocol.id}`} className="block">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-4 flex-1">
-              <div className={`w-16 h-16 flex items-center justify-center font-black text-xl border-2 border-black ${
-                isCompleted 
-                  ? 'bg-accent text-foreground' 
-                  : 'bg-card text-foreground'
-              }`}>
-                {protocol.number.toString().padStart(2, "0")}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-black text-foreground uppercase leading-tight mb-2 group-hover:text-foreground transition-colors">
-                  {protocol.title}
-                </h3>
-                <p className="text-sm text-foreground leading-relaxed line-clamp-3">
-                  {protocol.description}
-                </p>
-              </div>
+    <Card className={`relative bg-card border-2 border-black transition-all duration-200 group h-full min-h-[320px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none flex flex-col ${getCardStyles()}`}>
+      <CardContent className="!p-5 flex flex-col h-full relative">
+        {/* Content wrapper with flex-grow to push buttons down */}
+        <div className="flex-grow flex flex-col">
+          {/* Lock or Checkmark Toggle */}
+          <div className="absolute top-5 right-5 z-10">
+          {isLocked ? (
+            <div className="flex items-center gap-1">
+              <Lock className="w-5 h-5 text-muted-foreground" />
             </div>
-            
-            {/* Toggle Button */}
+          ) : (
             <button
               onClick={handleToggleCompleted}
               className={`w-12 h-12 border-2 border-black transition-all hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center ${
@@ -57,8 +80,86 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
                 <div className="w-6 h-6 border-2 border-black bg-white"></div>
               )}
             </button>
+          )}
           </div>
-        </Link>
+          
+          <Link href={isLocked ? '#' : `/protocols/${protocol.id}`} className={`block h-full flex flex-col ${isLocked ? 'pointer-events-none' : ''}`}>
+            {/* Protocol Number */}
+            <div className="mb-3">
+            <div className={`w-14 h-14 flex items-center justify-center font-black text-xl border-2 ${
+              isLocked
+                ? 'bg-muted text-muted-foreground border-black'
+                : isCompleted 
+                ? 'bg-accent text-black border-black' 
+                : 'bg-background text-foreground border-black'
+            }`}>
+              {protocol.number.toString().padStart(2, '0')}
+            </div>
+            </div>
+            
+            {/* Difficulty Level Badge */}
+            <div className="mb-3 h-7">
+              {protocol.difficultyLevel && (
+                <span className={`inline-block px-3 py-1 text-xs font-bold uppercase border-2 ${
+                  protocol.difficultyLevel === 'BEGINNER' 
+                    ? 'bg-accent text-black border-black'
+                    : protocol.difficultyLevel === 'O\'RTA DARAJA'
+                    ? 'bg-background text-foreground border-black'
+                    : 'bg-primary text-primary-foreground border-black'
+                }`}>
+                  {protocol.difficultyLevel === 'BEGINNER' ? 'Boshlang\'ich' : 
+                   protocol.difficultyLevel === 'O\'RTA DARAJA' ? 'O\'rta daraja' : 'Yuqori daraja'}
+                </span>
+              )}
+            </div>
+          
+            {/* Content area with consistent height */}
+            <div className="flex-grow">
+              {/* Title - Hide for free users to prevent revealing protocol content */}
+              <h3 className={`text-lg font-bold mb-2 leading-tight pr-8 ${
+                isLocked ? 'text-muted-foreground' : 'text-foreground'
+              }`}>
+                {isLocked ? 'Premium Protokol' : protocol.title}
+              </h3>
+              
+              {/* Problem Statement - Hide content for free users */}
+              <p className={`leading-relaxed line-clamp-3 text-sm ${
+                isLocked ? 'text-muted-foreground/60' : 'text-muted-foreground'
+              }`}>
+                {isLocked ? 'Bu protokol Premium foydalanuvchilar uchun mo\'ljallangan. Barcha 57 protokolga kirish uchun Premium obuna oling.' : (protocol.problemStatement || protocol.description)}
+              </p>
+            </div>
+          </Link>
+        </div>
+        
+        {/* Action buttons - Always at bottom with consistent spacing */}
+        <div className="flex flex-col gap-2 mt-4">
+          {isLocked ? (
+            <div className="grid grid-cols-1 gap-2">
+              <Link href="/atmos-payment" className="w-full">
+                <Button 
+                  size="sm"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-black px-4 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                  onClick={handleUpgradeClick}
+                >
+                  <Crown className="w-3 h-3 mr-1" />
+                  Premium olish
+                </Button>
+              </Link>
+              <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                <Lock className="w-3 h-3" />
+                <span>Premium protokol</span>
+              </div>
+            </div>
+          ) : (
+            <Link href={`/protocols/${protocol.id}`}>
+              <Button size="sm" variant="outline" className="w-full px-3 py-2 h-[44px] text-sm font-bold uppercase border-2 border-black hover:bg-primary hover:text-primary-foreground touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                Ko'rish
+              </Button>
+            </Link>
+          )}
+        </div>
+        
       </CardContent>
     </Card>
   );
