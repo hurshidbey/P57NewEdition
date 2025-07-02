@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
-import { registerRoutes } from "./routes";
+import { setupRoutes } from "./routes";
 import { hybridPromptsStorage } from "./hybrid-storage";
 import { setupVite, serveStatic, log } from "./vite";
 
