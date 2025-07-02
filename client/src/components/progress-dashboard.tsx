@@ -58,7 +58,7 @@ export default function ProgressDashboard({ totalProtocols }: ProgressDashboardP
         {/* Header Section - 8pt Grid Spacing */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <div className="p-4 bg-accent/10 rounded-xl">
+            <div className="p-4 bg-accent/10 rounded-none">
               {tierCompletionPercentage === 100 ? (
                 <Trophy className="h-6 w-6 text-accent" />
               ) : (
@@ -119,7 +119,7 @@ export default function ProgressDashboard({ totalProtocols }: ProgressDashboardP
           {tier === 'free' && (
             <div className="space-y-3 mt-4">
               {/* Protocol access indicator */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 dark:bg-blue-900/20 dark:border-blue-800">
+              <div className="bg-blue-50 border border-blue-200 rounded-none p-3 dark:bg-blue-900/20 dark:border-blue-800">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -140,7 +140,7 @@ export default function ProgressDashboard({ totalProtocols }: ProgressDashboardP
               </div>
 
               {/* Premium protocols info */}
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 dark:bg-orange-900/20 dark:border-orange-800">
+              <div className="bg-orange-50 border border-orange-200 rounded-none p-3 dark:bg-orange-900/20 dark:border-orange-800">
                 <div className="flex items-start gap-2">
                   <Crown className="w-4 h-4 text-orange-600 mt-0.5 dark:text-orange-400" />
                   <div className="text-sm">
