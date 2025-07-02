@@ -49,7 +49,7 @@ describe('UpgradeCTA', () => {
       
       const container = screen.getByText('Premium olish').closest('div')
       expect(container).toHaveClass('bg-white')
-      expect(container).toHaveClass('rounded-2xl')
+      expect(container).toHaveClass('rounded-none')
     })
 
     it('should render inline variant correctly', () => {

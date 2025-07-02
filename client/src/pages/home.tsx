@@ -80,8 +80,8 @@ export default function Home() {
           {isLoading && currentPage === 1 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="bg-muted rounded-xl p-6 animate-pulse">
-                  <div className="w-12 h-12 bg-muted-foreground/20 rounded-xl mb-4"></div>
+                <div key={i} className="bg-muted rounded-none p-6 animate-pulse">
+                  <div className="w-12 h-12 bg-muted-foreground/20 rounded-none mb-4"></div>
                   <div className="h-6 bg-muted-foreground/20 rounded mb-3"></div>
                   <div className="space-y-2">
                     <div className="h-4 bg-muted-foreground/20 rounded"></div>
@@ -112,7 +112,7 @@ export default function Home() {
                   <Button
                     onClick={handleLoadMore}
                     disabled={isLoading}
-                    className="px-8 py-3 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold rounded-lg"
+                    className="px-8 py-3 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold rounded-none"
                   >
                     {isLoading ? "Yuklanmoqda..." : "Ko'proq protokollar yuklash"}
                   </Button>

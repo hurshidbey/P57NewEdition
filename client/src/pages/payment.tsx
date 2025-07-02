@@ -103,7 +103,7 @@ export default function PaymentPage() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-accent/5 to-accent/10 rounded-lg p-4 border border-accent/20">
+                <div className="bg-gradient-to-r from-accent/5 to-accent/10 rounded-none p-4 border border-accent/20">
                   <p className="text-sm font-medium text-accent">
                     💡 AI bilan professional ishlash ko'nikmalarini rivojlantiring
                   </p>
@@ -127,7 +127,7 @@ export default function PaymentPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Price */}
-                <div className="text-center py-6 bg-gray-50 rounded-xl">
+                <div className="text-center py-6 bg-gray-50 rounded-none">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <span className="text-4xl font-black text-black">149,000</span>
                     <span className="text-lg text-gray-600">so'm</span>
@@ -136,7 +136,7 @@ export default function PaymentPage() {
                 </div>
 
                 {/* Security Badge */}
-                <div className="flex items-center gap-2 text-sm text-gray-600 bg-green-50 p-3 rounded-lg border border-green-200">
+                <div className="flex items-center gap-2 text-sm text-gray-600 bg-green-50 p-3 rounded-none border border-green-200">
                   <Shield className="w-4 h-4 text-green-600" />
                   <span>ATMOS orqali xavfsiz to'lov</span>
                 </div>
@@ -201,7 +201,7 @@ export default function PaymentPage() {
           transition={{ delay: 0.6 }}
           className="mt-12 text-center"
         >
-          <div className="bg-white rounded-xl p-6 shadow-soft border border-gray-100">
+          <div className="bg-white rounded-none p-6 shadow-soft border border-gray-100">
             <h3 className="font-semibold mb-4">Xavfsiz to'lov</h3>
             <div className="flex items-center justify-center gap-8 text-sm text-gray-600">
               <div className="flex items-center gap-2">

@@ -377,7 +377,7 @@ export default function LandingPage() {
                   }`}
                   style={{ transitionDelay: `${idx * 150}ms` }}
                 >
-                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-xl">
+                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-none">
                     <feature.icon className="w-8 h-8 text-white" />
                   </div>
                   <div>
@@ -394,7 +394,7 @@ export default function LandingPage() {
                 isVisible['solution-visual'] ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
             >
-              <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-12 border border-gray-700 relative overflow-hidden">
+              <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-none p-12 border border-gray-700 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-accent/20 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
                 
@@ -403,7 +403,7 @@ export default function LandingPage() {
                   <div className="text-2xl text-gray-300 mb-8">Yaxshiroq natijalar</div>
                   
                   <div className="space-y-4">
-                    <div className="bg-black/50 backdrop-blur rounded-xl p-6">
+                    <div className="bg-black/50 backdrop-blur rounded-none p-6">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-gray-400">Samaradorlik</span>
                         <span className="text-3xl font-bold text-green-400">+400%</span>
@@ -413,7 +413,7 @@ export default function LandingPage() {
                       </div>
                     </div>
                     
-                    <div className="bg-black/50 backdrop-blur rounded-xl p-6">
+                    <div className="bg-black/50 backdrop-blur rounded-none p-6">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-gray-400">Vaqt tejash</span>
                         <span className="text-3xl font-bold text-blue-400">90%</span>
@@ -477,7 +477,7 @@ export default function LandingPage() {
                   <Button 
                     onClick={handleTryDemo}
                     variant="outline"
-                    className="w-full bg-transparent border-2 border-gray-600 text-white hover:bg-gray-800 py-7 text-lg rounded-xl transition-all hover:scale-105"
+                    className="w-full bg-transparent border-2 border-gray-600 text-white hover:bg-gray-800 py-7 text-lg rounded-none transition-all hover:scale-105"
                   >
                     Demo versiyani sinab ko'rish
                   </Button>
@@ -524,7 +524,7 @@ export default function LandingPage() {
 
                   <Button 
                     onClick={handleGetStarted}
-                    className="w-full bg-gradient-to-r from-accent to-red-600 hover:from-red-600 hover:to-accent text-white py-7 text-lg font-bold rounded-xl group transition-all hover:scale-105"
+                    className="w-full bg-gradient-to-r from-accent to-red-600 hover:from-red-600 hover:to-accent text-white py-7 text-lg font-bold rounded-none group transition-all hover:scale-105"
                   >
                     Premium hisobni xarid qilish
                     <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-2" />
@@ -590,8 +590,8 @@ export default function LandingPage() {
                 }`}
                 style={{ transitionDelay: `${idx * 150}ms` }}
               >
-                <div className="bg-gray-900/50 backdrop-blur rounded-2xl p-8 h-full hover:bg-gray-900/70 transition-all hover:scale-105 group">
-                  <div className={`bg-gradient-to-br ${benefit.gradient} p-4 rounded-xl w-fit mb-6 group-hover:scale-110 transition-transform`}>
+                <div className="bg-gray-900/50 backdrop-blur rounded-none p-8 h-full hover:bg-gray-900/70 transition-all hover:scale-105 group">
+                  <div className={`bg-gradient-to-br ${benefit.gradient} p-4 rounded-none w-fit mb-6 group-hover:scale-110 transition-transform`}>
                     <benefit.icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold mb-4">{benefit.title}</h3>

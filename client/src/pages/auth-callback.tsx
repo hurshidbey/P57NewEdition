@@ -72,7 +72,7 @@ export default function AuthCallback() {
             <p className="text-lg text-red-700">{message}</p>
             <button
               onClick={() => setLocation('/auth')}
-              className="px-4 py-2 bg-[#FF4F30] text-white rounded-md hover:bg-[#E63E20] transition-colors"
+              className="px-4 py-2 bg-[#FF4F30] text-white rounded-none hover:bg-[#E63E20] transition-colors"
             >
               Kirish sahifasiga qaytish
             </button>
@@ -83,7 +83,7 @@ export default function AuthCallback() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+      <div className="bg-white rounded-none shadow-lg p-8 w-full max-w-md">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Protokol 57</h1>
           <p className="text-gray-600 mt-2">AI Prompt Mastery Platform</p>

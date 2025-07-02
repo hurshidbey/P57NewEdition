@@ -185,7 +185,7 @@ export const vektorQidiruv: SectionContent = {
        <CardContent className="p-6">
         <div>
          <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">1</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold flex-shrink-0">1</div>
           <div>
            <h4 className="font-bold ">EMBEDDING YARATISH</h4>
            <p className="text-sm text-gray-700 ">Barcha hujjatlarni vektorlarga aylantirish</p>
@@ -196,7 +196,7 @@ export const vektorQidiruv: SectionContent = {
          </div>
 
          <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">2</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold flex-shrink-0">2</div>
           <div>
            <h4 className="font-bold ">VEKTOR BAZASIGA SAQLASH</h4>
            <p className="text-sm text-gray-700 ">Vektorlarni maxsus bazaga yozish</p>
@@ -207,7 +207,7 @@ export const vektorQidiruv: SectionContent = {
          </div>
 
          <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">3</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold flex-shrink-0">3</div>
           <div>
            <h4 className="font-bold ">QIDIRUV AMALGA OSHIRISH</h4>
            <p className="text-sm text-gray-700 ">Savol vektorini yaratib, eng yaqinlarini topish</p>
@@ -304,7 +304,7 @@ export const hybridSearch: SectionContent = {
        <CardContent className="p-6">
         <h3 className="text-xl font-bold text-center ">HYBRID SEARCH FORMULASI</h3>
         
-        <div className="bg-white border-2 border-black p-4 rounded-lg font-mono text-center">
+        <div className="bg-white border-2 border-black p-4 rounded-none font-mono text-center">
          <p className="text-lg ">
           score = α × BM25_score + (1-α) × vector_score
          </p>

@@ -290,7 +290,7 @@ export default function LandingTilda() {
             ].map((item, idx) => (
               <div 
                 key={idx} 
-                className="animate-fade-in-up p-8 rounded-2xl bg-gray-900/30 backdrop-blur border border-gray-800 hover:border-orange-500/30 transition-all"
+                className="animate-fade-in-up p-8 rounded-none bg-gray-900/30 backdrop-blur border border-gray-800 hover:border-orange-500/30 transition-all"
                 style={{ animationDelay: `${idx * 0.1}s` }}
               >
                 <div className="font-inter font-black text-4xl md:text-5xl mb-4 text-gradient">
@@ -321,7 +321,7 @@ export default function LandingTilda() {
             {testimonials.map((testimonial, idx) => (
               <div 
                 key={idx}
-                className="p-8 rounded-2xl bg-white backdrop-blur border border-gray-200 hover:border-orange-500/30 transition-all duration-300 hover:scale-105 shadow-sm"
+                className="p-8 rounded-none bg-white backdrop-blur border border-gray-200 hover:border-orange-500/30 transition-all duration-300 hover:scale-105 shadow-sm"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -393,7 +393,7 @@ export default function LandingTilda() {
             ].map((problem, idx) => (
               <div 
                 key={idx}
-                className="p-8 rounded-2xl bg-gray-900/50 backdrop-blur border border-gray-800 hover:border-red-500/50 transition-all duration-300"
+                className="p-8 rounded-none bg-gray-900/50 backdrop-blur border border-gray-800 hover:border-red-500/50 transition-all duration-300"
               >
                 <AlertTriangle className="w-8 h-8 text-red-500 mb-4" />
                 <p className="font-inter font-medium text-lg text-gray-300 leading-relaxed">
@@ -453,7 +453,7 @@ export default function LandingTilda() {
                 }
               ].map((feature, idx) => (
                 <div key={idx} className="flex items-start gap-6">
-                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-xl">
+                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-none">
                     <feature.icon className="w-8 h-8 text-white" />
                   </div>
                   <div>
@@ -469,7 +469,7 @@ export default function LandingTilda() {
             </div>
 
             <div className="relative">
-              <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-12 border border-gray-700 relative overflow-hidden">
+              <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-none p-12 border border-gray-700 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/20 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
                 
@@ -478,14 +478,14 @@ export default function LandingTilda() {
                   <div className="text-2xl text-gray-300 mb-8">Professional Protokol</div>
                   
                   <div className="space-y-4">
-                    <div className="bg-black/50 backdrop-blur rounded-xl p-6">
+                    <div className="bg-black/50 backdrop-blur rounded-none p-6">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-400">Samaradorlik</span>
                         <span className="text-2xl font-bold text-green-400">+500%</span>
                       </div>
                     </div>
                     
-                    <div className="bg-black/50 backdrop-blur rounded-xl p-6">
+                    <div className="bg-black/50 backdrop-blur rounded-none p-6">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-400">Vaqt tejash</span>
                         <span className="text-2xl font-bold text-blue-400">90%</span>
@@ -573,7 +573,7 @@ export default function LandingTilda() {
                 </div>
 
                 {/* Value Proposition */}
-                <div className="bg-green-600/10 border border-green-500/30 rounded-xl p-6 mb-8">
+                <div className="bg-green-600/10 border border-green-500/30 rounded-none p-6 mb-8">
                   <div className="text-center">
                     <h4 className="font-inter font-bold text-xl text-green-400 mb-2">💰 ROI Hisobi</h4>
                     <p className="text-gray-300 text-lg">
@@ -584,7 +584,7 @@ export default function LandingTilda() {
                 </div>
 
                 {/* Risk Reversal */}
-                <div className="bg-blue-600/10 border border-blue-500/30 rounded-xl p-6 mb-8">
+                <div className="bg-blue-600/10 border border-blue-500/30 rounded-none p-6 mb-8">
                   <div className="flex items-center justify-center gap-3 mb-3">
                     <Shield className="w-6 h-6 text-blue-400" />
                     <h4 className="font-inter font-bold text-xl text-blue-400">100% Xavfsiz Xarid</h4>
@@ -598,7 +598,7 @@ export default function LandingTilda() {
                 <div className="space-y-4">
                   <Button 
                     onClick={handleGetStarted}
-                    className="w-full gradient-accent text-white py-6 text-xl font-bold rounded-xl group transition-all hover:scale-105 shadow-2xl relative overflow-hidden"
+                    className="w-full gradient-accent text-white py-6 text-xl font-bold rounded-none group transition-all hover:scale-105 shadow-2xl relative overflow-hidden"
                   >
                     <span className="relative z-10 flex items-center justify-center">
                       <span className="tracking-tight">Premium olish - 570,000 so'm</span>
@@ -610,7 +610,7 @@ export default function LandingTilda() {
                   <Button 
                     onClick={handleTryDemo}
                     variant="outline"
-                    className="w-full font-inter font-medium bg-transparent border-2 border-gray-500 text-white hover:bg-gray-800 py-4 text-lg rounded-xl transition-all duration-300"
+                    className="w-full font-inter font-medium bg-transparent border-2 border-gray-500 text-white hover:bg-gray-800 py-4 text-lg rounded-none transition-all duration-300"
                   >
                     <Play className="mr-3 w-5 h-5" />
                     Avval bepul demo'ni sinab ko'raman
@@ -643,25 +643,25 @@ export default function LandingTilda() {
             </div>
 
             {/* Final Urgency */}
-            <div className="bg-red-600/10 border border-red-500/30 rounded-2xl p-8 mb-12">
+            <div className="bg-red-600/10 border border-red-500/30 rounded-none p-8 mb-12">
               <div className="flex items-center justify-center gap-4 mb-6">
                 <TrendingDown className="w-8 h-8 text-red-400" />
                 <h3 className="font-inter font-bold text-2xl text-red-400">Chegirma Tugaydi!</h3>
               </div>
               <div className="grid grid-cols-4 gap-4 max-w-md mx-auto mb-6">
-                <div className="bg-red-600/20 rounded-xl p-4 text-center">
+                <div className="bg-red-600/20 rounded-none p-4 text-center">
                   <div className="text-3xl font-black text-white">{timeLeft.days}</div>
                   <div className="text-sm text-gray-400">kun</div>
                 </div>
-                <div className="bg-red-600/20 rounded-xl p-4 text-center">
+                <div className="bg-red-600/20 rounded-none p-4 text-center">
                   <div className="text-3xl font-black text-white">{timeLeft.hours}</div>
                   <div className="text-sm text-gray-400">soat</div>
                 </div>
-                <div className="bg-red-600/20 rounded-xl p-4 text-center">
+                <div className="bg-red-600/20 rounded-none p-4 text-center">
                   <div className="text-3xl font-black text-white">{timeLeft.minutes}</div>
                   <div className="text-sm text-gray-400">daqiqa</div>
                 </div>
-                <div className="bg-red-600/20 rounded-xl p-4 text-center">
+                <div className="bg-red-600/20 rounded-none p-4 text-center">
                   <div className="text-3xl font-black text-white">{timeLeft.seconds}</div>
                   <div className="text-sm text-gray-400">soniya</div>
                 </div>
@@ -676,14 +676,14 @@ export default function LandingTilda() {
               <Button 
                 onClick={handleTryDemo}
                 variant="outline"
-                className="flex-1 font-inter font-medium bg-transparent border-2 border-gray-500 text-white hover:bg-gray-800 py-6 text-lg rounded-xl transition-all duration-300 hover:scale-105"
+                className="flex-1 font-inter font-medium bg-transparent border-2 border-gray-500 text-white hover:bg-gray-800 py-6 text-lg rounded-none transition-all duration-300 hover:scale-105"
               >
                 <Play className="mr-3 w-5 h-5" />
                 Avval demo'ni sinab ko'raman
               </Button>
               <Button 
                 onClick={handleGetStarted}
-                className="flex-1 font-inter font-bold gradient-accent text-white py-6 text-lg rounded-xl group transition-all duration-300 hover:scale-110 shadow-2xl animate-pulse"
+                className="flex-1 font-inter font-bold gradient-accent text-white py-6 text-lg rounded-none group transition-all duration-300 hover:scale-110 shadow-2xl animate-pulse"
               >
                 Premium olish va kelajakni boshqarish
                 <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-3" />
