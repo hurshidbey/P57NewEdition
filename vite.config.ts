@@ -31,7 +31,7 @@ export default defineConfig({
       output: {
         // Reduce chunk splitting to minimize HTTP requests
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom', 'wouter'],
+          vendor: ['react', 'react-dom', 'wouter'],
           ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-label']
         }
       }
