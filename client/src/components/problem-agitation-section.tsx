@@ -39,8 +39,8 @@ export default function ProblemAgitationSection() {
                     </div>
                     <div className="mt-12 h-fit md:absolute md:-inset-y-12 md:inset-x-0 md:mt-0">
                         <div aria-hidden className="bg-gradient-to-l z-1 to-background absolute inset-0 hidden from-transparent to-55% md:block"></div>
-                        <div className="border-border/50 relative rounded-2xl border border-dotted p-2">
-                            <div className="relative bg-black rounded-[12px] p-8 h-[400px] overflow-hidden">
+                        <div className="border-border/50 relative rounded-none border border-dotted p-2">
+                            <div className="relative bg-black rounded-none p-8 h-[400px] overflow-hidden">
                                 {/* Chart Header */}
                                 <div className="absolute top-4 right-4 flex items-center gap-2">
                                     <div className="text-xs text-gray-400">View Code</div>

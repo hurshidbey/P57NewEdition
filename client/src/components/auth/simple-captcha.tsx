@@ -108,7 +108,7 @@ export function SimpleCaptcha({ onValidationChange, className }: SimpleCaptchaPr
         Oddiy tekshirish
       </Label>
       
-      <div className="bg-muted/30 rounded-lg p-4 border border-border">
+      <div className="bg-muted/30 rounded-none p-4 border border-border">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <div className="text-lg font-mono font-bold text-foreground bg-background rounded px-3 py-2 border">

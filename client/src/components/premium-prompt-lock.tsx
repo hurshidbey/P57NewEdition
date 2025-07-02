@@ -77,7 +77,7 @@ export function PremiumPromptLock({
 
   if (variant === 'inline') {
     return (
-      <div className="flex items-center justify-center p-8 bg-muted/30 rounded-lg border-2 border-dashed border-muted-foreground/20">
+      <div className="flex items-center justify-center p-8 bg-muted/30 rounded-none border-2 border-dashed border-muted-foreground/20">
         <div className="text-center max-w-sm">
           <Lock className="w-12 h-12 text-orange-500 mx-auto mb-3" />
           <h3 className="font-semibold text-foreground mb-2">{title}</h3>
@@ -110,7 +110,7 @@ export function PremiumPromptLock({
               <div className="grid grid-cols-1 gap-3">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-center gap-3">
-                    <div className="p-2 bg-orange-50 rounded-lg">
+                    <div className="p-2 bg-orange-50 rounded-none">
                       <benefit.icon className="w-4 h-4 text-orange-600" />
                     </div>
                     <div className="flex-1">
@@ -150,7 +150,7 @@ export function PremiumPromptLock({
   // Modal variant (default)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-background rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-background rounded-none shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="text-center mb-6">
             <div className="mx-auto mb-4 p-4 rounded-full bg-orange-100">
@@ -165,8 +165,8 @@ export function PremiumPromptLock({
               <h3 className="font-semibold text-foreground mb-4">Premium rejada:</h3>
               <div className="grid grid-cols-1 gap-4">
                 {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-start gap-4 p-3 bg-muted/30 rounded-lg">
-                    <div className="p-2 bg-orange-100 rounded-lg flex-shrink-0">
+                  <div key={index} className="flex items-start gap-4 p-3 bg-muted/30 rounded-none">
+                    <div className="p-2 bg-orange-100 rounded-none flex-shrink-0">
                       <benefit.icon className="w-5 h-5 text-orange-600" />
                     </div>
                     <div>

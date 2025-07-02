@@ -83,7 +83,7 @@ export function ProtectedRoute({
           </div>
           
           {tier === 'free' && (
-            <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="p-3 bg-blue-50 rounded-none">
               <p className="text-sm text-blue-800">
                 <strong>Hozir:</strong> {getAccessedProtocolsCount()}/3 bepul protokol ishlatilgan
               </p>

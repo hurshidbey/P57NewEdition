@@ -41,7 +41,7 @@ export default function PromptComparison() {
         <div className="w-24 h-1 bg-accent mx-auto"></div>
       </div>
       
-      <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-800">
+      <div className="bg-gray-900/50 backdrop-blur-sm rounded-none p-8 border border-gray-800">
         <div className="grid md:grid-cols-2 gap-8">
           {/* Bad Example */}
           <div className="text-center">
@@ -51,7 +51,7 @@ export default function PromptComparison() {
               </div>
               <h3 className="text-lg font-semibold text-red-400">Yomon misol</h3>
             </div>
-            <div className="bg-gray-900 rounded-lg p-6 border border-red-500/20 min-h-[120px] flex items-center">
+            <div className="bg-gray-900 rounded-none p-6 border border-red-500/20 min-h-[120px] flex items-center">
               <AnimatePresence mode="wait">
                 <motion.p
                   key={`bad-${currentIndex}`}
@@ -75,7 +75,7 @@ export default function PromptComparison() {
               </div>
               <h3 className="text-lg font-semibold text-green-400">Yaxshi misol</h3>
             </div>
-            <div className="bg-gray-900 rounded-lg p-6 border border-green-500/20 min-h-[120px] flex items-center">
+            <div className="bg-gray-900 rounded-none p-6 border border-green-500/20 min-h-[120px] flex items-center">
               <AnimatePresence mode="wait">
                 <motion.p
                   key={`good-${currentIndex}`}

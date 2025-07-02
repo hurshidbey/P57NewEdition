@@ -196,7 +196,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-muted/50 rounded-lg p-4 sm:p-6 border border-black mx-2 sm:mx-0"
+          className="bg-muted/50 rounded-none p-4 sm:p-6 border border-black mx-2 sm:mx-0"
         >
           <p className="text-xs text-muted-foreground text-center">
             Ro'yxatdan o'tish orqali siz{" "}
@@ -432,7 +432,7 @@ export function RegisterForm({ onToggleMode, onRegistered }: RegisterFormProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7 }}
-        className="bg-muted/50 rounded-lg p-4 sm:p-6 border border-black mx-2 sm:mx-0"
+        className="bg-muted/50 rounded-none p-4 sm:p-6 border border-black mx-2 sm:mx-0"
       >
         <p className="text-xs sm:text-sm text-muted-foreground text-center leading-relaxed">
           Ro'yxatdan o'tish orqali siz{" "}
