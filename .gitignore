@@ -8,3 +8,7 @@ vite.config.ts.*
 .env.local
 .env.production.env
 ADMIN PAGE IMPROVEMENTS.md
+
+# Large files
+attached_assets/*.dmg
+*.dmg
