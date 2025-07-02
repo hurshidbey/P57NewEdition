@@ -49,7 +49,7 @@ export default function AuthPage() {
             </CardHeader>
             <CardContent className="p-12 pt-0">
               <div className="text-center space-y-6">
-                <div className="bg-muted rounded-xl p-6 border border-black">
+                <div className="bg-muted rounded-none p-6 border border-black">
                   <p className="text-sm text-muted-foreground">
                     Agar email kelmagan bo'lsa, spam papkasini tekshiring.
                   </p>

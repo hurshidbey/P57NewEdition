@@ -34,7 +34,7 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
         </h3>
         
         <div>
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-start justify-between">
            <h4 className="font-bold text-gray-800 ">LANGCHAIN</h4>
            <Badge className="bg-gray-100 text-gray-800">LLM Framework</Badge>
@@ -53,7 +53,7 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-start justify-between">
            <h4 className="font-bold text-gray-800 ">LLAMAINDEX</h4>
            <Badge className="bg-gray-100 text-gray-800">Data Framework</Badge>
@@ -71,7 +71,7 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-start justify-between">
            <h4 className="font-bold text-gray-800 ">TRANSFORMERS</h4>
            <Badge className="bg-gray-100 text-gray-800">Model Hub</Badge>
@@ -90,7 +90,7 @@ export const foydaliFoydaliKutubxonalar: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-start justify-between">
            <h4 className="font-bold text-gray-800 ">PANDAS AI</h4>
            <Badge className="bg-gray-100 text-gray-800">Data Analysis</Badge>
@@ -414,7 +414,7 @@ export const hamjamiyat: SectionContent = {
         </h3>
         
         <div>
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-center gap-3">
            <div className="text-2xl"></div>
            <div>
@@ -430,7 +430,7 @@ export const hamjamiyat: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-center gap-3">
            <div className="text-2xl"></div>
            <div>
@@ -446,7 +446,7 @@ export const hamjamiyat: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-center gap-3">
            <div className="text-2xl"></div>
            <div>
@@ -767,7 +767,7 @@ export const ozbekistonAI: SectionContent = {
         </h3>
         
         <div>
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <h4 className="font-bold text-gray-800 ">DAVLAT TASHABBUSLARI</h4>
           <div className="grid md:grid-cols-2 gap-3">
            <div className="p-3 bg-gray-50 rounded">
@@ -789,7 +789,7 @@ export const ozbekistonAI: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <h4 className="font-bold text-gray-800 ">KOMPANIYALAR VA STARTUPLAR</h4>
           <div>
            <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
@@ -811,7 +811,7 @@ export const ozbekistonAI: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <h4 className="font-bold text-gray-800 ">TA'LIM VA KADRLAR</h4>
           <div className="grid grid-cols-2 gap-3">
            <div className="p-3 bg-gray-50 rounded text-center">

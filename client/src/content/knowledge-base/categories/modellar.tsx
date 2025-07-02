@@ -326,7 +326,7 @@ export const ochiqModellar: SectionContent = {
         <h3 className="text-lg font-bold text-center ">TOP OCHIQ MODELLAR 2024</h3>
         
         <div>
-         <div className="border-2 border-gray-600 rounded-lg p-4 bg-white">
+         <div className="border-2 border-gray-600 rounded-none p-4 bg-white">
           <div className="flex items-start justify-between">
            <div>
             <h4 className="font-bold text-gray-800 ">LLAMA 3.1 (Meta)</h4>
@@ -341,7 +341,7 @@ export const ochiqModellar: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 rounded-lg p-4 bg-white">
+         <div className="border-2 border-gray-600 rounded-none p-4 bg-white">
           <div className="flex items-start justify-between">
            <div>
             <h4 className="font-bold text-gray-800 ">MISTRAL & MIXTRAL</h4>
@@ -356,7 +356,7 @@ export const ochiqModellar: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 rounded-lg p-4 bg-white">
+         <div className="border-2 border-gray-600 rounded-none p-4 bg-white">
           <div className="flex items-start justify-between">
            <div>
             <h4 className="font-bold text-gray-800 ">QWEN 2.5 (Alibaba)</h4>
@@ -371,7 +371,7 @@ export const ochiqModellar: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 rounded-lg p-4 bg-white">
+         <div className="border-2 border-gray-600 rounded-none p-4 bg-white">
           <div className="flex items-start justify-between">
            <div>
             <h4 className="font-bold text-gray-800 ">DEEPSEEK</h4>

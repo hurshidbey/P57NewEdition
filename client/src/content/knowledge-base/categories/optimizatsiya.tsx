@@ -245,27 +245,27 @@ export const tezlikOshirish: SectionContent = {
         <h3 className="text-xl font-bold text-center ">TEZLIK OPTIMIZATSIYA PIRAMIDASI</h3>
         
         <div>
-         <div className="bg-gray-800 text-white p-4 rounded-lg">
+         <div className="bg-gray-800 text-white p-4 rounded-none">
           <h4 className="font-bold ">STREAMING (100ms)</h4>
           <p className="text-sm ">Javobni bo'laklab yuborish - eng tez usul</p>
          </div>
          
-         <div className="bg-gray-700 text-white p-4 rounded-lg ml-4">
+         <div className="bg-gray-700 text-white p-4 rounded-none ml-4">
           <h4 className="font-bold ">EDGE DEPLOYMENT (200ms)</h4>
           <p className="text-sm ">Foydalanuvchiga yaqin serverlar</p>
          </div>
          
-         <div className="bg-gray-600 text-white p-4 rounded-lg ml-8">
+         <div className="bg-gray-600 text-white p-4 rounded-none ml-8">
           <h4 className="font-bold ">SMART CACHING (300ms)</h4>
           <p className="text-sm ">Oldingi javoblarni qayta ishlatish</p>
          </div>
          
-         <div className="bg-gray-500 text-white p-4 rounded-lg ml-12">
+         <div className="bg-gray-500 text-white p-4 rounded-none ml-12">
           <h4 className="font-bold ">MODEL OPTIMIZATION (500ms)</h4>
           <p className="text-sm ">Tezroq modellar va parametrlar</p>
          </div>
          
-         <div className="bg-gray-400 text-white p-4 rounded-lg ml-16">
+         <div className="bg-gray-400 text-white p-4 rounded-none ml-16">
           <h4 className="font-bold ">PARALLEL PROCESSING (1s)</h4>
           <p className="text-sm ">Bir necha so'rovlarni parallel yuborish</p>
          </div>

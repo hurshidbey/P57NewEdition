@@ -34,7 +34,7 @@ export const loyihalar: SectionContent = {
         </h3>
         
         <div>
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4 hover:shadow-lg transition-shadow">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4 hover:shadow-lg transition-shadow">
           <div className="flex items-start justify-between">
            <h4 className="font-bold text-gray-800 ">1. SMART CUSTOMER SUPPORT</h4>
            <Badge className="bg-gray-100 text-gray-800">SaaS</Badge>
@@ -58,7 +58,7 @@ export const loyihalar: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4 hover:shadow-lg transition-shadow">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4 hover:shadow-lg transition-shadow">
           <div className="flex items-start justify-between">
            <h4 className="font-bold text-gray-800 ">2. CONTENT GENERATION PLATFORM</h4>
            <Badge className="bg-gray-100 text-gray-800">Marketing</Badge>
@@ -82,7 +82,7 @@ export const loyihalar: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4 hover:shadow-lg transition-shadow">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4 hover:shadow-lg transition-shadow">
           <div className="flex items-start justify-between">
            <h4 className="font-bold text-gray-800 ">3. CODE REVIEW ASSISTANT</h4>
            <Badge className="bg-gray-100 text-gray-800">DevTools</Badge>
@@ -178,7 +178,7 @@ async def handle_request(request):
        <CardContent className="p-6">
         <div>
          <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">1</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold flex-shrink-0">1</div>
           <div className="flex-1">
            <h4 className="font-bold ">IDEYA VA VALIDATSIYA</h4>
            <p className="text-sm text-gray-700 ">Muammoni aniqlash va yechim taklif qilish</p>
@@ -189,7 +189,7 @@ async def handle_request(request):
          </div>
 
          <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">2</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold flex-shrink-0">2</div>
           <div className="flex-1">
            <h4 className="font-bold ">PROTOTIP YARATISH</h4>
            <p className="text-sm text-gray-700 ">Minimal funksiyalar bilan tez boshlash</p>
@@ -200,7 +200,7 @@ async def handle_request(request):
          </div>
 
          <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">3</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold flex-shrink-0">3</div>
           <div className="flex-1">
            <h4 className="font-bold ">MVP DEVELOPMENT</h4>
            <p className="text-sm text-gray-700 ">Production-ready minimal product</p>
@@ -211,7 +211,7 @@ async def handle_request(request):
          </div>
 
          <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">4</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold flex-shrink-0">4</div>
           <div className="flex-1">
            <h4 className="font-bold ">LAUNCH VA ITERATE</h4>
            <p className="text-sm text-gray-700 ">Foydalanuvchilar bilan test qilish va yaxshilash</p>
@@ -452,7 +452,7 @@ class AIDebugger:
         <h3 className="text-xl font-bold text-black ">
          REAL-TIME DEBUGGING DASHBOARD
         </h3>
-        <div className="bg-white border-2 border-gray-300 rounded-lg p-4 font-mono text-sm">
+        <div className="bg-white border-2 border-gray-300 rounded-none p-4 font-mono text-sm">
          <div className="mb-0">
           <span className="text-gray-600">REQUEST:</span> #2024-03-15-001
          </div>
@@ -513,7 +513,7 @@ export const sohalarAmaliyot: SectionContent = {
         <h3 className="text-xl font-bold text-center ">AI SOHALARDA TATBIQI</h3>
         
         <div className="grid md:grid-cols-2 gap-4">
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-center gap-3">
            <div className="text-3xl"></div>
            <h4 className="font-bold text-gray-800 ">TIBBIYOT</h4>
@@ -532,7 +532,7 @@ export const sohalarAmaliyot: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-center gap-3">
            <div className="text-3xl"></div>
            <h4 className="font-bold text-gray-800 ">MOLIYA</h4>
@@ -551,7 +551,7 @@ export const sohalarAmaliyot: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-center gap-3">
            <div className="text-3xl"></div>
            <h4 className="font-bold text-gray-800 ">TA'LIM</h4>
@@ -570,7 +570,7 @@ export const sohalarAmaliyot: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-center gap-3">
            <div className="text-3xl"></div>
            <h4 className="font-bold text-gray-800 ">E-COMMERCE</h4>

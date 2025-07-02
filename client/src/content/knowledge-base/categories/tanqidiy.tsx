@@ -325,7 +325,7 @@ export const xatoAnaliz: SectionContent = {
         <h3 className="text-xl font-bold text-center ">XATO TURLARI VA SABABLARI</h3>
         
         <div>
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-start gap-3">
            <div className="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center font-bold">1</div>
            <div className="flex-1">
@@ -339,7 +339,7 @@ export const xatoAnaliz: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-start gap-3">
            <div className="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center font-bold">2</div>
            <div className="flex-1">
@@ -353,7 +353,7 @@ export const xatoAnaliz: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-start gap-3">
            <div className="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center font-bold">3</div>
            <div className="flex-1">
@@ -367,7 +367,7 @@ export const xatoAnaliz: SectionContent = {
           </div>
          </div>
 
-         <div className="border-2 border-gray-600 bg-white rounded-lg p-4">
+         <div className="border-2 border-gray-600 bg-white rounded-none p-4">
           <div className="flex items-start gap-3">
            <div className="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center font-bold">4</div>
            <div className="flex-1">
@@ -472,28 +472,28 @@ ai:"To'g'ri, kechirasiz. O'qish uchun:
        <CardContent className="p-6">
         <div>
          <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold">1</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold">1</div>
           <div>
            <h4 className="font-bold ">ANIQLASH</h4>
            <p className="text-sm text-gray-600 ">Xato qayerda va qanday yuz berdi?</p>
           </div>
          </div>
          <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold">2</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold">2</div>
           <div>
            <h4 className="font-bold ">TASNIFLASH</h4>
            <p className="text-sm text-gray-600 ">Bu qaysi turdagi xato?</p>
           </div>
          </div>
          <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold">3</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold">3</div>
           <div>
            <h4 className="font-bold ">TAHLIL QILISH</h4>
            <p className="text-sm text-gray-600 ">Nima sabab bo'ldi?</p>
           </div>
          </div>
          <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center font-bold">4</div>
+          <div className="w-12 h-12 bg-gray-700 text-white rounded-none flex items-center justify-center font-bold">4</div>
           <div>
            <h4 className="font-bold ">TO'G'RILASH</h4>
            <p className="text-sm text-gray-600 ">Qanday hal qilish mumkin?</p>

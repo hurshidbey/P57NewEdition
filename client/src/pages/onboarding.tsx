@@ -94,7 +94,7 @@ function KnowledgeCheck({ question, options, correctAnswer, explanation, onAnswe
               disabled={showResult}
               whileHover={{ scale: showResult ? 1 : 1.01 }}
               whileTap={{ scale: showResult ? 1 : 0.99 }}
-              className={`w-full text-left p-4 sm:p-5 rounded-xl border-2 transition-all min-h-[60px] ${
+              className={`w-full text-left p-4 sm:p-5 rounded-none border-2 transition-all min-h-[60px] ${
                 showResult && index === correctAnswer
                   ? 'border-green-600 bg-green-50'
                   : showResult && index === selected && index !== correctAnswer
@@ -150,7 +150,7 @@ function InteractiveExample({ title, badPrompt, goodPrompt, explanation }: Inter
               <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center"><AiIcon name="close" size={16} /></div>
               <span className="text-sm font-medium text-gray-900">Yomon misol</span>
             </div>
-            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 sm:p-5 overflow-x-auto">
+            <div className="bg-red-50 border-2 border-red-200 rounded-none p-4 sm:p-5 overflow-x-auto">
               <p className="text-sm sm:text-base font-mono text-gray-900 break-words">{badPrompt}</p>
             </div>
           </div>
@@ -174,7 +174,7 @@ function InteractiveExample({ title, badPrompt, goodPrompt, explanation }: Inter
               <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center"><AiIcon name="checked" size={16} /></div>
               <span className="text-sm font-medium text-gray-900">Yaxshi misol</span>
             </div>
-            <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 sm:p-5 overflow-x-auto">
+            <div className="bg-green-50 border-2 border-green-200 rounded-none p-4 sm:p-5 overflow-x-auto">
               <p className="text-sm sm:text-base font-mono text-gray-900 break-words">{goodPrompt}</p>
             </div>
           </div>
@@ -251,7 +251,7 @@ function TryItYourself({ task, hints, sampleSolution }: TryItYourselfProps) {
         )}
 
         {showSolution && (
-          <div className="bg-gray-50 border-2 border-black rounded-lg p-5">
+          <div className="bg-gray-50 border-2 border-black rounded-none p-5">
             <p className="text-sm font-medium text-gray-600 mb-2">Namuna yechim:</p>
             <p className="text-sm sm:text-base font-mono text-black whitespace-pre-wrap">{sampleSolution}</p>
           </div>
@@ -307,7 +307,7 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
       </div>
 
       {/* Visual representation */}
-      <div className="relative h-24 bg-gradient-to-r from-blue-100 via-yellow-100 to-red-100 rounded-lg overflow-hidden border-2 border-black">
+      <div className="relative h-24 bg-gradient-to-r from-blue-100 via-yellow-100 to-red-100 rounded-none overflow-hidden border-2 border-black">
         <div
           className="absolute top-0 bottom-0 w-2 bg-black"
           animate={{
@@ -336,7 +336,7 @@ function InteractiveLLMSetting({ setting, min, max, step, default: defaultValue 
             onClick={() => setValue(example.value)}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`p-3 rounded-lg border-2 transition-all text-sm ${
+            className={`p-3 rounded-none border-2 transition-all text-sm ${
               Math.abs(value - example.value) < 0.05
                 ? 'border-black bg-gray-100'
                 : 'border-gray-300 hover:border-black'
@@ -551,7 +551,7 @@ export default function Onboarding() {
           </Card>
 
           {/* Learning Path Preview */}
-          <div className="bg-muted rounded-xl p-6">
+          <div className="bg-muted rounded-none p-6">
             <h3 className="font-bold text-lg mb-4 text-foreground">Nimalarni o'rganasiz:</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
@@ -602,7 +602,7 @@ export default function Onboarding() {
                   Sun'iy intellekt — bu kompyuterlarni inson kabi "o'ylash"ga o'rgatish san'ati. 
                   Lekin bu "o'ylash" aslida nima?
                 </p>
-                <div className="bg-muted p-6 rounded-lg">
+                <div className="bg-muted p-6 rounded-none">
                   <h4 className="font-semibold mb-3">AI qanday "o'ylaydi":</h4>
                   <ol className="space-y-3">
                     <li className="flex gap-3">
@@ -697,21 +697,21 @@ export default function Onboarding() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div 
                   whileHover={{ scale: 1.02 }}
-                  className="text-center p-4 bg-background rounded-xl border-2 border-black shadow-soft hover:shadow-medium transition-all"
+                  className="text-center p-4 bg-background rounded-none border-2 border-black shadow-soft hover:shadow-medium transition-all"
                 >
                   <p className="text-sm text-muted-foreground mb-1">Belgilar</p>
                   <p className="text-2xl font-bold text-foreground">{tokenText.length}</p>
                 </div>
                 <div 
                   whileHover={{ scale: 1.02 }}
-                  className="text-center p-4 bg-accent/10 rounded-xl border-2 border-accent/20 shadow-soft hover:shadow-medium transition-all"
+                  className="text-center p-4 bg-accent/10 rounded-none border-2 border-accent/20 shadow-soft hover:shadow-medium transition-all"
                 >
                   <p className="text-sm text-muted-foreground mb-1">Taxminiy tokenlar</p>
                   <p className="text-3xl font-bold text-accent">{calculateTokens(tokenText)}</p>
                 </div>
                 <div 
                   whileHover={{ scale: 1.02 }}
-                  className="text-center p-4 bg-background rounded-xl border-2 border-black shadow-soft hover:shadow-medium transition-all"
+                  className="text-center p-4 bg-background rounded-none border-2 border-black shadow-soft hover:shadow-medium transition-all"
                 >
                   <p className="text-sm text-muted-foreground mb-1">Narxi (GPT-4)</p>
                   <p className="text-2xl font-bold text-foreground">${(calculateTokens(tokenText) * 0.00003).toFixed(4)}</p>
@@ -719,7 +719,7 @@ export default function Onboarding() {
               </div>
               
               {/* Token Tips */}
-              <div className="bg-gray-50 border border-gray-300 rounded-lg p-4">
+              <div className="bg-gray-50 border border-gray-300 rounded-none p-4">
                 <h4 className="font-semibold text-black mb-2">Tokenlarni tejash uchun:</h4>
                 <ul className="space-y-1 text-sm text-black">
                   <li>• Aniq va qisqa yozing</li>
@@ -811,7 +811,7 @@ export default function Onboarding() {
                   </p>
                   
                   <div className="space-y-4">
-                    <div className="bg-gray-100 border border-gray-400 p-4 rounded-lg">
+                    <div className="bg-gray-100 border border-gray-400 p-4 rounded-none">
                       <h5 className="font-semibold text-black mb-2">Real misol:</h5>
                       <p className="text-sm text-black">
                         "2022-yilda Toshkentda bo'lib o'tgan AI konferensiyada..." - 
@@ -819,7 +819,7 @@ export default function Onboarding() {
                       </p>
                     </div>
                     
-                    <div className="bg-gray-50 border border-gray-300 p-4 rounded-lg">
+                    <div className="bg-gray-50 border border-gray-300 p-4 rounded-none">
                       <h5 className="font-semibold text-black mb-2">Himoya:</h5>
                       <ul className="text-sm text-black space-y-1">
                         <li>• Har doim faktlarni tekshiring</li>
@@ -845,7 +845,7 @@ export default function Onboarding() {
                   </p>
                   
                   <div className="space-y-4">
-                    <div className="bg-gray-100 border border-gray-400 p-4 rounded-lg">
+                    <div className="bg-gray-100 border border-gray-400 p-4 rounded-none">
                       <h5 className="font-semibold text-black mb-2">Real misol:</h5>
                       <p className="text-sm text-black">
                         "Shifokorlar odatda erkaklar..." - bu noto'g'ri stereotip.
@@ -853,7 +853,7 @@ export default function Onboarding() {
                       </p>
                     </div>
                     
-                    <div className="bg-gray-50 border border-gray-300 p-4 rounded-lg">
+                    <div className="bg-gray-50 border border-gray-300 p-4 rounded-none">
                       <h5 className="font-semibold text-black mb-2">Himoya:</h5>
                       <ul className="text-sm text-black space-y-1">
                         <li>• Tanqidiy fikrlang</li>
@@ -1771,7 +1771,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
                   <h4 className="font-bold mb-4 uppercase text-sm tracking-wide">Oddiy ChatGPT:</h4>
-                  <div className="bg-gray-100 p-4 border-2 border-gray-300 rounded-lg">
+                  <div className="bg-gray-100 p-4 border-2 border-gray-300 rounded-none">
                     <div className="flex items-center gap-3 mb-3">
                       <AiIcon name="brain" size={24} />
                       <span className="font-medium">Faqat o'z xotirasidan</span>
@@ -2050,7 +2050,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
             </div>
             <CardContent className="p-8">
               <div className="space-y-6">
-                <div className="bg-gray-50 border-2 border-gray-300 p-6 rounded-lg">
+                <div className="bg-gray-50 border-2 border-gray-300 p-6 rounded-none">
                   <p className="text-lg mb-4">
                     <strong>Tasavvur qiling:</strong> Telegram guruhingizda "Sensatsion yangilik!" degan xabar tarqaldi. 
                     Do'stlaringiz uni qayta yuborishmoqda. Siz nima qilasiz?
@@ -2171,7 +2171,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                     example: "WHO sayti yoki noma'lum blog?"
                   }
                 ].map((item, idx) => (
-                  <div key={idx} className="border-2 border-gray-300 rounded-lg p-6 hover:border-black transition-colors">
+                  <div key={idx} className="border-2 border-gray-300 rounded-none p-6 hover:border-black transition-colors">
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
                         {idx + 1}
@@ -2200,7 +2200,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                 <div>
                   <h4 className="font-bold text-lg mb-4">1. Instagram'da "Mo'jizaviy dori"</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-gray-100 border-2 border-gray-400 p-6 rounded-lg">
+                    <div className="bg-gray-100 border-2 border-gray-400 p-6 rounded-none">
                       <div className="flex items-center gap-2 mb-3">
                         <AiIcon name="close" size={24} />
                         <span className="font-bold text-black">Tanqidiy fikrsiz</span>
@@ -2208,7 +2208,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                       <p className="text-black">"Voy, 2 haftada -15kg! Sotib olaman!"</p>
                     </div>
                     
-                    <div className="bg-gray-50 border-2 border-gray-300 p-6 rounded-lg">
+                    <div className="bg-gray-50 border-2 border-gray-300 p-6 rounded-none">
                       <div className="flex items-center gap-2 mb-3">
                         <AiIcon name="checked" size={24} />
                         <span className="font-bold text-black">Tanqidiy fikr bilan</span>
@@ -2222,7 +2222,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                 <div>
                   <h4 className="font-bold text-lg mb-4">2. "Oyiga $5000 uydan ishlang!"</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-gray-100 border-2 border-gray-400 p-6 rounded-lg">
+                    <div className="bg-gray-100 border-2 border-gray-400 p-6 rounded-none">
                       <div className="flex items-center gap-2 mb-3">
                         <AiIcon name="close" size={24} />
                         <span className="font-bold text-black">Tanqidiy fikrsiz</span>
@@ -2230,7 +2230,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                       <p className="text-black">"Zo'r imkoniyat! Hoziroq ro'yxatdan o'taman!"</p>
                     </div>
                     
-                    <div className="bg-gray-50 border-2 border-gray-300 p-6 rounded-lg">
+                    <div className="bg-gray-50 border-2 border-gray-300 p-6 rounded-none">
                       <div className="flex items-center gap-2 mb-3">
                         <AiIcon name="checked" size={24} />
                         <span className="font-bold text-black">Tanqidiy fikr bilan</span>
@@ -2244,7 +2244,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                 <div>
                   <h4 className="font-bold text-lg mb-4">3. "Breaking: Dollar 20,000 so'm bo'ladi!"</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-gray-100 border-2 border-gray-400 p-6 rounded-lg">
+                    <div className="bg-gray-100 border-2 border-gray-400 p-6 rounded-none">
                       <div className="flex items-center gap-2 mb-3">
                         <AiIcon name="close" size={24} />
                         <span className="font-bold text-black">Tanqidiy fikrsiz</span>
@@ -2252,7 +2252,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                       <p className="text-black">"Hammaga ayt! Dollar sotib olish kerak!"</p>
                     </div>
                     
-                    <div className="bg-gray-50 border-2 border-gray-300 p-6 rounded-lg">
+                    <div className="bg-gray-50 border-2 border-gray-300 p-6 rounded-none">
                       <div className="flex items-center gap-2 mb-3">
                         <AiIcon name="checked" size={24} />
                         <span className="font-bold text-black">Tanqidiy fikr bilan</span>
@@ -2331,7 +2331,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-white p-4 rounded-lg border-2 border-gray-300">
+                  <div className="bg-white p-4 rounded-none border-2 border-gray-300">
                     <p className="font-bold flex items-center gap-2 mb-2">
                       <span className="text-gray-900 text-2xl">×</span>
                       Bu EMAS:
@@ -2343,7 +2343,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                     </ul>
                   </div>
                   
-                  <div className="bg-white p-4 rounded-lg border-2 border-gray-300">
+                  <div className="bg-white p-4 rounded-none border-2 border-gray-300">
                     <p className="font-bold flex items-center gap-2 mb-2">
                       <AiIcon name="checked" size={20} />
                       Bu SHULAR:
@@ -2407,7 +2407,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                   </div>
                 </div>
                 
-                <div className="mt-6 p-4 bg-black text-white rounded-lg">
+                <div className="mt-6 p-4 bg-black text-white rounded-none">
                   <p className="text-center font-bold text-lg">
                     Tanqidiy fikrlash = AI'ning zaif tomonlarini to'ldiradi
                   </p>
@@ -2451,7 +2451,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                       icon: "shield"
                     }
                   ].map((rule) => (
-                    <div key={rule.number} className="border-2 border-gray-300 rounded-lg p-6 hover:border-black transition-colors">
+                    <div key={rule.number} className="border-2 border-gray-300 rounded-none p-6 hover:border-black transition-colors">
                       <div className="flex items-start gap-4">
                         <div className="w-14 h-14 bg-black text-white rounded-full flex items-center justify-center flex-shrink-0">
                           <AiIcon name={rule.icon} size={24} className="invert" />
@@ -2505,7 +2505,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                         <div className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
                           {idx + 1}
                         </div>
-                        <div className={`flex-1 p-4 rounded-lg border-2 ${phase.color}`}>
+                        <div className={`flex-1 p-4 rounded-none border-2 ${phase.color}`}>
                           <h5 className="font-bold mb-2">{phase.step}</h5>
                           <div className="flex gap-2 flex-wrap">
                             {phase.actions.map((action, i) => (
@@ -2527,7 +2527,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
               <CardContent className="p-8">
                 <h4 className="text-2xl font-bold mb-6">Mashq qiling: AI javobini tanqidiy baholang</h4>
                 
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-300 mb-6">
+                <div className="bg-gray-50 p-6 rounded-none border border-gray-300 mb-6">
                   <p className="font-bold mb-2">Savol:</p>
                   <p className="italic">"Toshkentda eng yaxshi dasturlash kursini qayerdan topaman?"</p>
                   
@@ -2543,7 +2543,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                   <h5 className="font-bold">Bu javobni tanqidiy baholang:</h5>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-gray-100 border-2 border-gray-400 p-4 rounded-lg">
+                    <div className="bg-gray-100 border-2 border-gray-400 p-4 rounded-none">
                       <h6 className="font-bold text-black mb-2">🚨 Shubhali jihatlar:</h6>
                       <ul className="space-y-1 text-sm text-black">
                         <li>• "Eng yaxshi" - kim baholadi?</li>
@@ -2553,7 +2553,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                       </ul>
                     </div>
                     
-                    <div className="bg-gray-50 border-2 border-gray-300 p-4 rounded-lg">
+                    <div className="bg-gray-50 border-2 border-gray-300 p-4 rounded-none">
                       <h6 className="font-bold text-black mb-2">✅ To'g'ri yondashuv:</h6>
                       <ul className="space-y-1 text-sm text-black">
                         <li>• Bir nechta kurs solishtiring</li>
@@ -2575,7 +2575,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                   Endi siz AI'ning kuchidan to'liq foydalanishga tayyorsiz. 
                   Har bir AI javobi - bu sizning tanqidiy fikrlash mushaklaringizni mashq qilish imkoniyati.
                 </p>
-                <div className="inline-flex items-center gap-3 bg-white text-black px-6 py-3 rounded-lg font-bold">
+                <div className="inline-flex items-center gap-3 bg-white text-black px-6 py-3 rounded-none font-bold">
                   <AiIcon name="rocket" size={24} />
                   <span>AI + Tanqidiy Fikr = Cheksiz Imkoniyat</span>
                 </div>
@@ -2612,12 +2612,12 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                   Prompting — bu oddiy savol berish emas. Bu AI'ning "miya"siga to'g'ri signal yuborish san'ati.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-gray-50 rounded-none p-4">
                     <h4 className="font-semibold mb-2">Noto'g'ri yondashuv:</h4>
                     <p className="text-sm text-muted-foreground mb-2">"AI ga nima desam tushunadi"</p>
                     <p className="text-sm text-gray-900">❌ 30% samara</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-gray-50 rounded-none p-4">
                     <h4 className="font-semibold mb-2">To'g'ri yondashuv:</h4>
                     <p className="text-sm text-muted-foreground mb-2">"AI qanday signal kutayotganini bilaman"</p>
                     <p className="text-sm text-gray-900">✅ 90% samara</p>
@@ -2711,7 +2711,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0">
-                      <div className="w-14 h-14 bg-accent/10 text-accent rounded-xl flex items-center justify-center">
+                      <div className="w-14 h-14 bg-accent/10 text-accent rounded-none flex items-center justify-center">
                         {component.icon}
                       </div>
                     </div>
@@ -2721,7 +2721,7 @@ Sabab: LinkedIn orqali authority, Twitter orqali reach. Instagram vaqt ko'p olad
                         <h3 className="font-bold text-xl text-black">{component.title}</h3>
                       </div>
                       <p className="text-muted-foreground mb-4">{component.description}</p>
-                      <div className="bg-muted p-4 rounded-lg border border-black mb-4">
+                      <div className="bg-muted p-4 rounded-none border border-black mb-4">
                         <code className="text-sm text-foreground font-mono">"{component.example}"</code>
                       </div>
                       
@@ -2792,7 +2792,7 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                   ].map((item, index) => (
                     <div key={index} className="group relative mb-2">
                       <div
-                        className={`p-4 rounded-lg border-2 ${item.color} font-medium text-foreground transition-all hover:scale-105 cursor-pointer`}
+                        className={`p-4 rounded-none border-2 ${item.color} font-medium text-foreground transition-all hover:scale-105 cursor-pointer`}
                       >
                         {item.layer}
                       </div>
@@ -2836,7 +2836,7 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                     fix: "Sen tajribali o'qituvchisan. 10 yoshli bolaga tushuntir"
                   }
                 ].map((item, idx) => (
-                  <div key={idx} className="bg-background rounded-lg p-4 border border-gray-400">
+                  <div key={idx} className="bg-background rounded-none p-4 border border-gray-400">
                     <h4 className="font-semibold text-black mb-2">{item.mistake}</h4>
                     <p className="text-sm text-muted-foreground mb-1">❌ "{item.example}"</p>
                     <p className="text-sm text-gray-900">✅ "{item.fix}"</p>
@@ -2901,7 +2901,7 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                       <div className="w-16 h-16 bg-accent text-white rounded-full flex items-center justify-center font-bold z-10">
                         {item.year}
                       </div>
-                      <div className="flex-1 bg-muted rounded-lg p-4 border border-black">
+                      <div className="flex-1 bg-muted rounded-none p-4 border border-black">
                         <h4 className="font-semibold">{item.tech}</h4>
                         <p className="text-sm text-muted-foreground">{item.desc}</p>
                       </div>
@@ -2968,7 +2968,7 @@ Natija: Javoblar qisqa (2-3 gap), samimiy va foydali bo'lsin. Emoji ishlatma.`}
                   <strong>Nima bu?</strong> AI'ga bir necha misol ko'rsatib, keyin o'z vazifangizni berish.
                 </p>
                 
-                <div className="bg-muted rounded-lg p-6 mb-6">
+                <div className="bg-muted rounded-none p-6 mb-6">
                   <h4 className="font-semibold mb-3">Qachon ishlatish kerak:</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-background p-3 rounded border border-black">
@@ -3028,7 +3028,7 @@ Tahlil:`}
                   <strong>Nima bu?</strong> AI'ni bosqichma-bosqich fikrlashga undash. "Qadam-baqadam o'ylab ko'r" deyish.
                 </p>
                 
-                <div className="bg-gray-50 border border-gray-300 rounded-lg p-6 mb-6">
+                <div className="bg-gray-50 border border-gray-300 rounded-none p-6 mb-6">
                   <h4 className="font-semibold mb-3">CoT ning siri:</h4>
                   <div className="space-y-4">
                     <div className="flex gap-3">
@@ -3085,7 +3085,7 @@ Tahlil:`}
                   <strong>Nima bu?</strong> Bir xil savolni bir necha marta berib, eng ko'p takrorlangan javobni tanlash.
                 </p>
                 
-                <div className="bg-gray-50 rounded-lg p-6">
+                <div className="bg-gray-50 rounded-none p-6">
                   <h4 className="font-semibold mb-3">Qanday ishlaydi:</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                     <div>
@@ -3125,7 +3125,7 @@ Tahlil:`}
                   <TabsContent value="tree" className="space-y-4">
                     <h4 className="font-semibold">Tree-of-Thought - Tarmoqli fikrlash</h4>
                     <p className="text-muted-foreground">Bir necha yo'nalishda fikrlab, eng yaxshisini tanlash:</p>
-                    <div className="bg-muted p-4 rounded-lg">
+                    <div className="bg-muted p-4 rounded-none">
                       <pre className="text-sm whitespace-pre-wrap">
 {`"Bu masalani 3 xil yo'l bilan yeching:
 1-yo'l: [birinchi yondashuv]
@@ -3140,7 +3140,7 @@ Har bir yo'lni baholab, eng yaxshisini tanlang."`}
                   <TabsContent value="react" className="space-y-4">
                     <h4 className="font-semibold">ReAct - Reasoning + Acting</h4>
                     <p className="text-muted-foreground">Fikrlash va harakat qilishni birlashtirish:</p>
-                    <div className="bg-muted p-4 rounded-lg">
+                    <div className="bg-muted p-4 rounded-none">
                       <pre className="text-sm whitespace-pre-wrap">
 {`Fikr: Men bu masalani yechish uchun...
 Harakat: Birinchi qadamni bajaraman
@@ -3154,7 +3154,7 @@ Harakat: Ikkinchi qadamni bajaraman`}
                   <TabsContent value="meta" className="space-y-4">
                     <h4 className="font-semibold">Meta-Prompting</h4>
                     <p className="text-muted-foreground">AI'ga o'z promptini yaxshilashni buyurish:</p>
-                    <div className="bg-muted p-4 rounded-lg">
+                    <div className="bg-muted p-4 rounded-none">
                       <pre className="text-sm whitespace-pre-wrap">
 {`"Men [vazifa] qilmoqchiman. 
 Bu vazifa uchun eng yaxshi prompt qanday bo'ladi?
@@ -3242,7 +3242,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
                 Siz prompting asoslarini va ilg'or texnikalarni o'rgandingiz. 
                 Endi 57 ta maxsus protokol bilan tanishing!
               </p>
-              <div className="bg-background rounded-lg p-6 max-w-md mx-auto">
+              <div className="bg-background rounded-none p-6 max-w-md mx-auto">
                 <h4 className="font-semibold mb-3">Nimalarni o'rgandingiz:</h4>
                 <ul className="text-left space-y-2 text-muted-foreground">
                   <li>✅ AI va ChatGPT qanday ishlashi</li>
@@ -3297,7 +3297,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-20 right-4 z-50 bg-black text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
+            className="fixed top-20 right-4 z-50 bg-black text-white px-4 py-2 rounded-none shadow-lg flex items-center gap-2"
           >
             <AiIcon name="checked" size={16} className="invert" />
             <span className="text-sm">Progress saqlandi</span>
@@ -3313,7 +3313,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="mb-6 bg-black text-white p-4 rounded-xl flex items-center justify-between"
+              className="mb-6 bg-black text-white p-4 rounded-none flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
                 <AiIcon name="robot" size={24} className="invert" />
@@ -3338,7 +3338,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
         <div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-muted rounded-2xl p-8 shadow-soft"
+          className="mb-8 bg-muted rounded-none p-8 shadow-soft"
         >
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -3371,7 +3371,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="flex items-center justify-start sm:justify-center gap-1 mb-8 sm:mb-12 bg-muted rounded-2xl p-1 overflow-x-auto shadow-soft scrollbar-hide"
+          className="flex items-center justify-start sm:justify-center gap-1 mb-8 sm:mb-12 bg-muted rounded-none p-1 overflow-x-auto shadow-soft scrollbar-hide"
         >
           {sections.map((section, index) => (
             <button
@@ -3379,7 +3379,7 @@ O'z javobingizga asoslanib vazifani bajaring."`}
               onClick={() => setCurrentSection(index)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all flex-shrink-0 min-w-[120px] sm:min-w-[140px] ${
+              className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-none transition-all flex-shrink-0 min-w-[120px] sm:min-w-[140px] ${
                 index === currentSection 
                   ? 'bg-accent text-accent-foreground shadow-medium' 
                   : completedSections.has(index)
