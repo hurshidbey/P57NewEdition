@@ -28,10 +28,6 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Copy and set permissions for entrypoint before user switch
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
 # Copy assets to public directory before build
 RUN mkdir -p client/public/attached_assets
 RUN cp -r attached_assets/* client/public/attached_assets/ || true
@@ -50,6 +46,9 @@ RUN chown -R nextjs:nodejs /app
 
 # Switch to non-root user
 USER nextjs
+
+# Reset working directory after user switch (critical for ESM module resolution)
+WORKDIR /app
 
 # Expose port
 EXPOSE 5000
