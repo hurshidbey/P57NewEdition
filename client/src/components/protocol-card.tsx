@@ -91,7 +91,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
                 ? 'bg-muted text-muted-foreground border-theme'
                 : isCompleted 
                 ? 'bg-accent text-black border-theme' 
-                : 'bg-background text-foreground border-theme'
+                : 'bg-background text-black dark:text-white border-theme'
             }`}>
               {protocol.number.toString().padStart(2, '0')}
             </div>
