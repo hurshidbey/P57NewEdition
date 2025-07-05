@@ -8,7 +8,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
-  getProtocols(limit?: number, offset?: number): Promise<Protocol[]>;
+  getProtocols(limit?: number, offset?: number, search?: string, category?: string, difficulty?: string): Promise<Protocol[]>;
   getProtocol(id: number): Promise<Protocol | undefined>;
   createProtocol(protocol: InsertProtocol): Promise<Protocol>;
   updateProtocol(id: number, protocol: Partial<InsertProtocol>): Promise<Protocol | undefined>;
@@ -561,11 +561,11 @@ export class HybridStorage implements IStorage {
   }
 
   // Protocol methods
-  async getProtocols(limit = 20, offset = 0): Promise<Protocol[]> {
+  async getProtocols(limit = 20, offset = 0, search?: string, category?: string, difficulty?: string): Promise<Protocol[]> {
     // Try Supabase storage first
     if ((global as any).supabaseStorage) {
       try {
-        return await (global as any).supabaseStorage.getProtocols(limit, offset);
+        return await (global as any).supabaseStorage.getProtocols(limit, offset, search, category, difficulty);
       } catch (error) {
         console.error("[DB] Error getting protocols from Supabase:", (error as Error).message);
         // Don't mark as failed immediately, Supabase might be temporarily down
@@ -592,8 +592,23 @@ export class HybridStorage implements IStorage {
     
     // Fall back to memory storage
 
-    const allProtocols = Array.from(this.memoryProtocols.values())
+    let allProtocols = Array.from(this.memoryProtocols.values())
       .sort((a, b) => a.number - b.number);
+      
+    // Apply difficulty filter based on protocol number
+    if (difficulty) {
+      allProtocols = allProtocols.filter(p => {
+        if (difficulty === 'BEGINNER') {
+          return p.number >= 1 && p.number <= 20;
+        } else if (difficulty === "O'RTA DARAJA") {
+          return p.number >= 21 && p.number <= 40;
+        } else if (difficulty === 'YUQORI DARAJA') {
+          return p.number >= 41 && p.number <= 57;
+        }
+        return true;
+      });
+    }
+    
     return allProtocols.slice(offset, offset + limit);
   }
 

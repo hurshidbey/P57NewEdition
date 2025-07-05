@@ -54,12 +54,28 @@ export class SupabaseStorage implements IStorage {
     return data;
   }
 
-  async getProtocols(limit: number = 20, offset: number = 0): Promise<Protocol[]> {
-    const { data, error } = await this.supabase
+  async getProtocols(limit: number = 20, offset: number = 0, search?: string, category?: string, difficulty?: string): Promise<Protocol[]> {
+    let query = this.supabase
       .from('protocols')
-      .select('*')
+      .select('*');
+      
+    // Apply difficulty filter based on protocol number
+    if (difficulty) {
+      if (difficulty === 'BEGINNER') {
+        query = query.gte('number', 1).lte('number', 20);
+      } else if (difficulty === "O'RTA DARAJA") {
+        query = query.gte('number', 21).lte('number', 40);
+      } else if (difficulty === 'YUQORI DARAJA') {
+        query = query.gte('number', 41).lte('number', 57);
+      }
+    }
+    
+    // Apply ordering and pagination
+    query = query
       .order('number', { ascending: true })
       .range(offset, offset + limit - 1);
+    
+    const { data, error } = await query;
     
     if (error) throw error;
     return (data || []).map((item: any) => {
@@ -69,7 +85,8 @@ export class SupabaseStorage implements IStorage {
         badExample: item.bad_example,
         goodExample: item.good_example,
         createdAt: item.created_at,
-        isFreeAccess: item.is_free_access || false
+        isFreeAccess: item.is_free_access || false,
+        difficultyLevel: item.difficulty_level
       };
     });
   }
