@@ -63,5 +63,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Set environment variable for production
 ENV NODE_ENV=production
 
-# Start command for production (ESM modules)
-CMD ["node", "--enable-source-maps", "--experimental-specifier-resolution=node", "dist/index.js"]
+# Start command for production (ESM modules with .mjs extension)
+CMD ["node", "--enable-source-maps", "dist/index.mjs"]
