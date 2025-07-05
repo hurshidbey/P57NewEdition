@@ -366,7 +366,32 @@ a:not(.no-hover-effect) {
   @apply shadow-lg -translate-y-[2px];
 }
 
-/* Shadow utilities for consistent depth */
+/* Theme-aware border and shadow utilities */
+.border-theme {
+  @apply border-foreground;
+}
+
+.shadow-brutal {
+  box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+}
+
+.shadow-brutal-sm {
+  box-shadow: 2px 2px 0px 0px hsl(var(--foreground));
+}
+
+.shadow-brutal-lg {
+  box-shadow: 6px 6px 0px 0px hsl(var(--foreground));
+}
+
+.hover\:shadow-brutal:hover {
+  box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+}
+
+.hover\:shadow-brutal-sm:hover {
+  box-shadow: 2px 2px 0px 0px hsl(var(--foreground));
+}
+
+/* Legacy shadow utilities for consistent depth */
 .shadow-soft {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
