@@ -40,17 +40,8 @@ RUN npm run build
 # Copy package.json to dist directory so Node.js knows it's ESM
 RUN cp package.json dist/
 
-# Create non-root user
-RUN groupadd --gid 1001 nodejs && \
-    useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home nextjs
-
-# Change ownership of the entire app directory INCLUDING dist
-RUN chown -R nextjs:nodejs /app && \
-    chmod -R 755 /app && \
-    ls -la /app/dist/
-
-# Switch to non-root user
-USER nextjs
+# Verify dist exists
+RUN ls -la /app/dist/
 
 # Expose port
 EXPOSE 5000
@@ -66,4 +57,4 @@ ENV NODE_ENV=production
 ENTRYPOINT []
 
 # Start command for production
-CMD ["sh", "-c", "whoami && pwd && ls -la / && ls -la /app && ls -la /app/dist && cd /app/dist && node index.js"]
+CMD ["sh", "-c", "cd /app/dist && node index.js"]
