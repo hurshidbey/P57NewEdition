@@ -70,4 +70,4 @@ ENV NODE_ENV=production
 ENTRYPOINT []
 
 # Start command for production
-CMD ["node", "--experimental-specifier-resolution=node", "/app/dist/index.js"]
+CMD ["node", "/app/dist/index.js"]
