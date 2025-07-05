@@ -53,8 +53,11 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Set environment variable for production
 ENV NODE_ENV=production
 
+# Set working directory to dist
+WORKDIR /app/dist
+
 # Override the default node entrypoint
 ENTRYPOINT []
 
 # Start command for production
-CMD ["sh", "-c", "cd /app/dist && node index.js"]
+CMD ["node", "index.js"]
