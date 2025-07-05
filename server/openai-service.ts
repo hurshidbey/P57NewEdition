@@ -22,7 +22,43 @@ export interface PromptEvaluation {
   explanation: string;
 }
 
+// Main evaluatePrompt function that handles both signatures
 export async function evaluatePrompt(
+  contextOrUserPrompt: string,
+  userPromptOrProtocol?: string | Protocol
+): Promise<PromptEvaluation> {
+  // If second parameter is a string, we're using the simple context/userPrompt version
+  if (typeof userPromptOrProtocol === 'string') {
+    const context = contextOrUserPrompt;
+    const userPrompt = userPromptOrProtocol;
+    
+    // Create a mock protocol for evaluation
+    const mockProtocol: Protocol = {
+      id: 0,
+      number: 0,
+      title: 'Umumiy Prompt Baholash',
+      description: context,
+      goodExample: 'Aniq, maqsadli va kontekstga mos prompt',
+      badExample: 'Noaniq, uzun va tarqoq prompt',
+      difficulty: 'medium',
+      categoryId: 1,
+      isPremium: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    return evaluatePromptWithProtocol(userPrompt, mockProtocol);
+  }
+  
+  // Otherwise, it's the original version with userPrompt and protocol
+  const userPrompt = contextOrUserPrompt;
+  const protocol = userPromptOrProtocol as Protocol;
+  
+  return evaluatePromptWithProtocol(userPrompt, protocol);
+}
+
+// Internal implementation
+async function evaluatePromptWithProtocol(
   userPrompt: string,
   protocol: Protocol
 ): Promise<PromptEvaluation> {
@@ -53,56 +89,45 @@ Baholashingizni JSON obyekt sifatida bering:
   "score": raqam (1-100, har bir mezon bo'yicha aniq ball),
   "strengths": ["Aniq kuchli tomon 1", "Aniq kuchli tomon 2", "Aniq kuchli tomon 3"] (faqat haqiqiy yutuqlar),
   "improvements": ["Aniq va amaliy taklif 1", "Aniq va amaliy taklif 2"] (konkret o'zgarishlar),
-  "rewrittenPrompt": "Protokol tamoyillariga to'liq mos keluvchi yaxshilangan versiya",
-  "explanation": "Ball taqsimoti va asosiy kamchiliklar/afzalliklar haqida batafsil tushuntirish (3-4 jumla)"
-}
+  "rewrittenPrompt": "Taklif qilingan yaxshilangan prompt versiyasi",
+  "explanation": "Umumiy baholash va asosiy xulosa (2-3 gap)"
+}`;
 
-MUHIM: Har bir taklif konkret bo'lishi va promptni qanday o'zgartirish kerakligini aniq ko'rsatishi kerak. Barcha javoblar O'ZBEK TILIDA va professional darajada bo'lishi shart.`;
-
-    const response = await getOpenAIClient().chat.completions.create({
+    const client = getOpenAIClient();
+    const response = await client.chat.completions.create({
       model: 'gpt-4',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Ushbu promptni baholang: "${userPrompt}"` }
+        { role: 'user', content: `FOYDALANUVCHI PROMPTI:\n${userPrompt}` }
       ],
-      temperature: 0.2,
-      max_tokens: 1200,
+      temperature: 0.3,
+      max_tokens: 800,
+      response_format: { type: 'json_object' }
     });
 
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
-      throw new Error('No response from OpenAI');
+    const evaluation = JSON.parse(response.choices[0].message.content || '{}');
+    
+    // Validate the response
+    if (!evaluation.score || !evaluation.strengths || !evaluation.improvements) {
+      throw new Error('Invalid evaluation response from OpenAI');
     }
 
-    // Try to parse JSON response
-    try {
-      const evaluation = JSON.parse(content) as PromptEvaluation;
-      
-      // Validate the response structure
-      if (typeof evaluation.score !== 'number' || 
-          !Array.isArray(evaluation.strengths) ||
-          !Array.isArray(evaluation.improvements) ||
-          typeof evaluation.rewrittenPrompt !== 'string' ||
-          typeof evaluation.explanation !== 'string') {
-        throw new Error('Invalid response structure');
-      }
+    return evaluation;
 
-      // Ensure score is within range
-      evaluation.score = Math.max(1, Math.min(100, Math.round(evaluation.score)));
-
-      return evaluation;
-    } catch (parseError) {
-      // If JSON parsing fails, create a fallback response
+  } catch (error: any) {
+    // Log the error but don't expose it to the user
+    console.error('OpenAI API error:', error.message);
+    
+    // Check if it's specifically an API key error
+    if (error.message?.includes('API key') || error.status === 401) {
       return {
         score: 50,
-        strengths: ['Prompt strukturasi mavjud', 'Asosiy g\'oya aniq'],
-        improvements: ['Protokolning asosiy tamoyillarini qo\'llash kerak', 'Konkret ko\'rsatmalar va misollar qo\'shish lozim'],
+        strengths: ['Prompt yuborildi', 'Asosiy tuzilma mavjud'],
+        improvements: ['AI xizmati sozlanmagan', 'Administratorga murojaat qiling'],
         rewrittenPrompt: userPrompt,
         explanation: 'AI baholash xizmatida texnik xatolik yuz berdi. Prompt o\'rtacha darajada baholandi, lekin batafsil tahlil uchun qaytadan urinib ko\'ring.'
       };
     }
-
-  } catch (error) {
 
     // Return a fallback evaluation if API fails
     return {
@@ -124,7 +149,7 @@ export async function testOpenAIConnection(): Promise<boolean> {
     });
     return response.choices.length > 0;
   } catch (error) {
-
+    console.error('OpenAI connection test failed:', error);
     return false;
   }
 }
