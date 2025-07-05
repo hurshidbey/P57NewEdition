@@ -67,4 +67,4 @@ ENV NODE_ENV=production
 ENTRYPOINT []
 
 # Start command for production
-CMD ["node", "/app/dist/index.js"]
+CMD ["sh", "-c", "whoami && pwd && ls -la /app/ && ls -la /app/dist/ && cd /app/dist && node index.js"]
