@@ -60,4 +60,4 @@ WORKDIR /app/dist
 ENTRYPOINT []
 
 # Start command for production
-CMD ["node", "index.js"]
+CMD ["node", "--input-type=module", "--experimental-modules", "./index.js"]
