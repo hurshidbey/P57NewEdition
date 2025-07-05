@@ -383,6 +383,26 @@ a:not(.no-hover-effect) {
   box-shadow: 6px 6px 0px 0px hsl(var(--foreground));
 }
 
+/* Brutal checkbox animations */
+@keyframes brutal-bounce {
+  0%, 100% {
+    transform: rotate(3deg) scale(1.1);
+  }
+  25% {
+    transform: rotate(-3deg) scale(1.15);
+  }
+  50% {
+    transform: rotate(5deg) scale(1.2);
+  }
+  75% {
+    transform: rotate(-2deg) scale(1.15);
+  }
+}
+
+.animate-brutal-bounce {
+  animation: brutal-bounce 0.6s ease-in-out;
+}
+
 .hover\:shadow-brutal:hover {
   box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
 }

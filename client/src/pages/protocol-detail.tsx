@@ -12,7 +12,7 @@ import ProtocolNavigation from "@/components/protocol-navigation";
 import { UpgradeCTA } from "@/components/upgrade-cta";
 import { useProgress } from "@/hooks/use-progress";
 import { useProtocolAccess, useUserTier } from "@/hooks/use-user-tier";
-import { useConfetti } from "@/hooks/use-confetti";
+import { BrutalButton } from "@/components/brutal-button";
 
 // Helper function to parse the combined description into separate components
 function parseProtocolDescription(description: string) {
@@ -70,7 +70,6 @@ export default function ProtocolDetail() {
   const { id } = useParams<{ id: string }>();
   const { isProtocolCompleted, markProtocolCompleted, toggleProtocolCompleted } = useProgress();
   const { tier, getAccessedProtocolsCount, canAccessNewProtocol } = useUserTier();
-  const { trigger: triggerConfetti, ConfettiRenderer } = useConfetti();
 
   const {
     data: protocol,
@@ -239,21 +238,13 @@ export default function ProtocolDetail() {
               </div>
               
               <div className="flex-shrink-0">
-                <Button 
-                  onClick={() => {
-                    if (!isProtocolCompleted(protocol.id)) {
-                      triggerConfetti();
-                    }
-                    toggleProtocolCompleted(protocol.id, 70);
-                  }}
-                  className={`font-bold uppercase px-6 py-2 h-[44px] border-2 border-theme transition-all touch-manipulation hover:shadow-brutal ${
-                    isProtocolCompleted(protocol.id)
-                      ? 'bg-secondary hover:bg-secondary/90 text-foreground'
-                      : 'bg-accent hover:bg-accent/90 text-black'
-                  }`}
-                >
-                  {isProtocolCompleted(protocol.id) ? 'Takrorlash' : "O'rgandim"}
-                </Button>
+                <BrutalButton
+                  checked={isProtocolCompleted(protocol.id)}
+                  onChange={() => toggleProtocolCompleted(protocol.id, 70)}
+                  checkedText="Takrorlash"
+                  uncheckedText="O'rgandim"
+                  showConfetti={true}
+                />
               </div>
             </div>
           </div>
@@ -388,7 +379,6 @@ export default function ProtocolDetail() {
         </div>
       </main>
       <AppFooter />
-      <ConfettiRenderer />
     </div>
   );
 }

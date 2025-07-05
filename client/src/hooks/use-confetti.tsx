@@ -11,7 +11,7 @@ interface ConfettiParticle {
   rotationSpeed: number;
 }
 
-const COLORS = ['#1bffbb', '#FFB800', '#00D4AA', '#0066FF', '#9333EA', '#EF4444'];
+const COLORS = ['#1bffbb', '#000000', '#ffffff', '#1bffbb', '#000000'];
 
 export function useConfetti() {
   const [particles, setParticles] = useState<ConfettiParticle[]>([]);

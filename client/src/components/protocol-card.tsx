@@ -7,6 +7,7 @@ import { Link } from "wouter";
 import { useProgress } from "@/hooks/use-progress";
 import { useProtocolAccess, useUserTier } from "@/hooks/use-user-tier";
 import { trackTierSystemEvent } from "@/utils/analytics";
+import { BrutalCheckbox } from "@/components/brutal-checkbox";
 
 interface ProtocolCardProps {
   protocol: Protocol;
@@ -65,21 +66,10 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               <Lock className="w-5 h-5 text-muted-foreground" />
             </div>
           ) : (
-            <button
-              onClick={handleToggleCompleted}
-              className={`w-12 h-12 border-2 border-theme transition-all hover:shadow-brutal flex items-center justify-center ${
-                isCompleted 
-                  ? 'bg-accent text-black' 
-                  : 'bg-white text-black hover:bg-gray-100'
-              }`}
-              style={{ backgroundColor: isCompleted ? '#1bffbb' : '#ffffff' }}
-            >
-              {isCompleted ? (
-                <CheckCircle className="w-8 h-8 text-black" />
-              ) : (
-                <div className="w-6 h-6 border-2 border-theme bg-background"></div>
-              )}
-            </button>
+            <BrutalCheckbox 
+              checked={isCompleted}
+              onChange={() => toggleProtocolCompleted(protocol.id, 70)}
+            />
           )}
           </div>
           

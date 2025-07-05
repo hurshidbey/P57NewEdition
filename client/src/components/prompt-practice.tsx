@@ -128,19 +128,19 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
 
   return (
     <div className="space-y-6">
-      <Card className={`bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none ${shouldBlur ? "relative" : ""}`}>
+      <Card className={`bg-card border-2 border-theme shadow-brutal rounded-none ${shouldBlur ? "relative" : ""}`}>
         {shouldBlur && (
-          <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex items-center justify-center">
+          <div className="absolute inset-0 bg-background/90 backdrop-blur-sm z-10 flex items-center justify-center">
             <div className="text-center p-6 max-w-sm">
-              <div className="bg-black w-16 h-16 flex items-center justify-center mx-auto mb-4 border-2 border-black">
-                <Crown className="h-8 w-8 text-white" />
+              <div className="bg-foreground w-16 h-16 flex items-center justify-center mx-auto mb-4 border-2 border-theme">
+                <Crown className="h-8 w-8 text-background" />
               </div>
               <h3 className="text-lg font-black uppercase mb-2">Premium xususiyat</h3>
-              <p className="text-black text-sm mb-4">
+              <p className="text-foreground text-sm mb-4">
                 Har bir protokolni ko'proq marta baholash va AI tahlil olish uchun Premium obuna oling
               </p>
               <Link href="/atmos-payment">
-                <Button className="bg-black hover:bg-gray-900 text-white font-bold uppercase border-2 border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Button className="bg-foreground hover:bg-foreground/90 text-background font-bold uppercase border-2 border-theme hover:shadow-brutal-sm">
                   <Crown className="h-4 w-4 mr-2" />
                   Premium olish
                 </Button>
@@ -156,11 +156,11 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
             </div>
             <div className="flex items-center gap-2">
               {protocolProgress && (
-                <Badge variant="secondary" className="font-bold uppercase bg-accent text-black border-2 border-black">
+                <Badge variant="secondary" className="font-bold uppercase bg-accent text-black border-2 border-theme">
                   O'rganilgan
                 </Badge>
               )}
-              <Badge variant="outline" className="text-xs font-bold uppercase border-2 border-black">
+              <Badge variant="outline" className="text-xs font-bold uppercase border-2 border-theme">
                 {evaluationCount}/{evaluationLimit} baholash
               </Badge>
             </div>
@@ -171,14 +171,14 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
         </CardHeader>
         <CardContent className={`space-y-4 ${shouldBlur ? "blur-sm" : ""}`}>
           {tier === 'free' && evaluationCount === 0 && evaluationLimit === 1 && (
-            <div className="bg-yellow-100 border-2 border-black p-3 mb-4">
+            <div className="bg-yellow-100 dark:bg-yellow-900/20 border-2 border-theme p-3 mb-4">
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
                 <div className="text-sm">
-                  <p className="font-bold text-black mb-1">
+                  <p className="font-bold text-foreground mb-1">
                     Sizda 1 ta bepul baholash bor
                   </p>
-                  <p className="text-black">
+                  <p className="text-foreground">
                     Ko'proq baholash uchun Premium obuna oling va har bir protokolni 5 marta baholang
                   </p>
                 </div>
@@ -194,10 +194,10 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
               placeholder={`${protocol.title} protokoli asosida prompt yozing...`}
               value={userPrompt}
               onChange={(e) => setUserPrompt(e.target.value)}
-              className="min-h-[120px] resize-none"
+              className="min-h-[120px] resize-none bg-background text-foreground border-2 border-theme focus:border-theme focus:ring-0"
               disabled={evaluationMutation.isPending}
             />
-            <div className="flex justify-between items-center mt-2 text-xs text-gray-600 font-bold">
+            <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground font-bold">
               <span>{userPrompt.length}/300 belgi</span>
               <span>
                 {userPrompt.length > 300 && (
@@ -211,7 +211,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
             <Button
               onClick={handleSubmit}
               disabled={!userPrompt.trim() || evaluationMutation.isPending || userPrompt.length > 300}
-              className="flex-1 bg-accent hover:bg-accent/90 text-black font-bold uppercase border-2 border-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              className="flex-1 bg-accent hover:bg-accent/90 text-black font-bold uppercase border-2 border-theme h-[44px] hover:shadow-brutal-sm"
             >
               {evaluationMutation.isPending ? (
                 <>
@@ -226,7 +226,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
               )}
             </Button>
             {evaluation && (
-              <Button variant="outline" onClick={handleReset} className="border-2 border-black hover:bg-gray-100 font-bold uppercase h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <Button variant="outline" onClick={handleReset} className="border-2 border-theme hover:bg-secondary font-bold uppercase h-[44px] hover:shadow-brutal-sm">
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Tozalash
               </Button>
@@ -236,7 +236,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
       </Card>
 
       {evaluation && (
-        <Card className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none">
+        <Card className="bg-card border-2 border-theme shadow-brutal rounded-none">
           <CardHeader>
             <CardTitle className="flex items-center justify-between font-black uppercase">
               <span>Baholash natijalari</span>
@@ -244,7 +244,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
                 <span className={`text-2xl font-bold ${getScoreColor(evaluation.score)}`}>
                   {evaluation.score}/100
                 </span>
-                <Badge variant={evaluation.score >= 70 ? "default" : evaluation.score >= 50 ? "secondary" : "destructive"} className="font-bold uppercase border-2 border-black">
+                <Badge variant={evaluation.score >= 70 ? "default" : evaluation.score >= 50 ? "secondary" : "destructive"} className="font-bold uppercase border-2 border-theme">
                   {getScoreLabel(evaluation.score)}
                 </Badge>
               </div>
