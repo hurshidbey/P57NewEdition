@@ -60,4 +60,4 @@ WORKDIR /app
 ENTRYPOINT []
 
 # Start command for production - run the built mjs file
-CMD ["node", "dist/index.mjs"]
+CMD ["node", "./dist/index.mjs"]
