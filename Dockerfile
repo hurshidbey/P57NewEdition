@@ -37,6 +37,9 @@ RUN ls -la client/public/attached_assets/ || true
 # Build the application with embedded VITE variables
 RUN npm run build
 
+# Copy package.json to dist directory so Node.js knows it's ESM
+RUN cp package.json dist/
+
 # Create non-root user
 RUN groupadd --gid 1001 nodejs && \
     useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home nextjs
@@ -60,5 +63,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Set environment variable for production
 ENV NODE_ENV=production
 
-# Start command for production
-CMD ["node", "/app/dist/index.js"]
+# Start command for production (ESM modules)
+CMD ["node", "--enable-source-maps", "--experimental-specifier-resolution=node", "dist/index.js"]
