@@ -53,9 +53,6 @@ RUN ls -la /app/dist/
 # Switch to non-root user
 USER nextjs
 
-# Reset working directory after user switch (critical for ESM module resolution)
-WORKDIR /app
-
 # Expose port
 EXPOSE 5000
 
@@ -70,4 +67,4 @@ ENV NODE_ENV=production
 ENTRYPOINT []
 
 # Start command for production
-CMD ["sh", "-c", "cd /app && pwd && ls -la dist/ && node dist/index.js"]
+CMD ["node", "/app/dist/index.js"]
