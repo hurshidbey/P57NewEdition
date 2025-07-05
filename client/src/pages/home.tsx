@@ -16,7 +16,7 @@ export default function Home() {
   const { data: protocols, isLoading, error } = useQuery<Protocol[]>({
     queryKey: ["/api/protocols", { 
       limit: 20, 
-      offset: (currentPage - 1) * 20,
+      page: currentPage,
       difficulty: selectedDifficulty
     }],
   });
