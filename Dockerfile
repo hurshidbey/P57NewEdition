@@ -44,8 +44,11 @@ RUN cp package.json dist/
 RUN groupadd --gid 1001 nodejs && \
     useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home nextjs
 
-# Change ownership
+# Change ownership of the entire app directory
 RUN chown -R nextjs:nodejs /app
+
+# Verify dist exists and has correct permissions
+RUN ls -la /app/dist/
 
 # Switch to non-root user
 USER nextjs
@@ -64,4 +67,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 ENV NODE_ENV=production
 
 # Start command for production
-CMD ["sh", "-c", "ls -la /app/dist/ && node /app/dist/index.js"]
+CMD ["node", "/app/dist/index.js"]
