@@ -62,4 +62,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 ENTRYPOINT ["entrypoint.sh"]
 
 # Start command for production
-CMD ["npm", "run", "start"]
+CMD ["node", "dist/index.js"]
