@@ -415,7 +415,7 @@ export function setupRoutes(app: Express): Server {
   });
 
   // AI Evaluation endpoint
-  app.post("/api/evaluate-prompt", async (req, res) => {
+  app.post("/api/protocols/:id/evaluate", async (req, res) => {
     try {
       const { context, userPrompt } = req.body;
       
