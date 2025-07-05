@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && esbuild server/index.ts --define:process.env.SUPABASE_URL=process.env.SUPABASE_URL --define:process.env.SUPABASE_ANON_KEY=process.env.SUPABASE_ANON_KEY --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
+    "build": "vite build && esbuild server/index.ts --define:process.env.SUPABASE_URL=process.env.SUPABASE_URL --define:process.env.SUPABASE_ANON_KEY=process.env.SUPABASE_ANON_KEY --platform=node --packages=external --bundle --format=esm --outdir=dist --out-extension:.js=.mjs",
+    "start": "NODE_ENV=production node dist/index.mjs",
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "test": "vitest",
