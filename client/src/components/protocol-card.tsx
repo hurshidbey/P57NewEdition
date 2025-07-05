@@ -54,7 +54,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
   };
 
   return (
-    <Card className={`relative bg-card border-2 border-black transition-all duration-200 group h-full min-h-[320px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none flex flex-col ${getCardStyles()}`}>
+    <Card className={`relative bg-card border-2 border-theme transition-all duration-200 group h-full min-h-[320px] hover:shadow-brutal rounded-none flex flex-col ${getCardStyles()}`}>
       <CardContent className="!p-5 flex flex-col h-full relative">
         {/* Content wrapper with flex-grow to push buttons down */}
         <div className="flex-grow flex flex-col">
@@ -67,7 +67,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
           ) : (
             <button
               onClick={handleToggleCompleted}
-              className={`w-12 h-12 border-2 border-black transition-all hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center ${
+              className={`w-12 h-12 border-2 border-theme transition-all hover:shadow-brutal flex items-center justify-center ${
                 isCompleted 
                   ? 'bg-accent text-black' 
                   : 'bg-white text-black hover:bg-gray-100'
@@ -77,7 +77,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               {isCompleted ? (
                 <CheckCircle className="w-8 h-8 text-black" />
               ) : (
-                <div className="w-6 h-6 border-2 border-black bg-white"></div>
+                <div className="w-6 h-6 border-2 border-theme bg-background"></div>
               )}
             </button>
           )}
@@ -88,10 +88,10 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
             <div className="mb-3">
             <div className={`w-14 h-14 flex items-center justify-center font-black text-xl border-2 ${
               isLocked
-                ? 'bg-muted text-muted-foreground border-black'
+                ? 'bg-muted text-muted-foreground border-theme'
                 : isCompleted 
-                ? 'bg-accent text-black border-black' 
-                : 'bg-background text-foreground border-black'
+                ? 'bg-accent text-black border-theme' 
+                : 'bg-background text-foreground border-theme'
             }`}>
               {protocol.number.toString().padStart(2, '0')}
             </div>
@@ -102,10 +102,10 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               {protocol.difficultyLevel && (
                 <span className={`inline-block px-3 py-1 text-xs font-bold uppercase border-2 ${
                   protocol.difficultyLevel === 'BEGINNER' 
-                    ? 'bg-accent text-black border-black'
+                    ? 'bg-accent text-black border-theme'
                     : protocol.difficultyLevel === 'O\'RTA DARAJA'
-                    ? 'bg-background text-foreground border-black'
-                    : 'bg-primary text-primary-foreground border-black'
+                    ? 'bg-background text-foreground border-theme'
+                    : 'bg-primary text-primary-foreground border-theme'
                 }`}>
                   {protocol.difficultyLevel === 'BEGINNER' ? 'Boshlang\'ich' : 
                    protocol.difficultyLevel === 'O\'RTA DARAJA' ? 'O\'rta daraja' : 'Yuqori daraja'}
@@ -139,7 +139,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               <Link href="/atmos-payment" className="w-full">
                 <Button 
                   size="sm"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-black px-4 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-theme px-4 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-brutal-sm"
                   onClick={handleUpgradeClick}
                 >
                   <Crown className="w-3 h-3 mr-1" />
@@ -153,7 +153,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
             </div>
           ) : (
             <Link href={`/protocols/${protocol.id}`}>
-              <Button size="sm" variant="outline" className="w-full px-3 py-2 h-[44px] text-sm font-bold uppercase border-2 border-black hover:bg-primary hover:text-primary-foreground touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <Button size="sm" variant="outline" className="w-full px-3 py-2 h-[44px] text-sm font-bold uppercase border-2 border-theme hover:bg-primary hover:text-primary-foreground touch-manipulation hover:shadow-brutal-sm">
                 Ko'rish
               </Button>
             </Link>

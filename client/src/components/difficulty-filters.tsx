@@ -27,40 +27,40 @@ export default function DifficultyFilters({
         <div className="flex flex-wrap justify-center gap-2">
           <Button
             onClick={() => onDifficultyChange(null)}
-            className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] touch-manipulation ${
+            className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-brutal-sm touch-manipulation ${
               selectedDifficulty === null
-                ? "bg-accent text-black border-black hover:bg-accent/90"
-                : "bg-card text-foreground border-black hover:bg-secondary"
+                ? "bg-accent text-black border-theme hover:bg-accent/90"
+                : "bg-card text-foreground border-theme hover:bg-secondary"
             }`}
           >
             Barcha darajalar
           </Button>
           <Button
             onClick={() => onDifficultyChange("BEGINNER")}
-            className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] touch-manipulation ${
+            className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-brutal-sm touch-manipulation ${
               selectedDifficulty === "BEGINNER"
-                ? "bg-accent text-black border-black hover:bg-accent/90"
-                : "bg-card text-foreground border-black hover:bg-secondary"
+                ? "bg-accent text-black border-theme hover:bg-accent/90"
+                : "bg-card text-foreground border-theme hover:bg-secondary"
             }`}
           >
             Boshlang'ich (1-20)
           </Button>
           <Button
             onClick={() => onDifficultyChange("ORTA DARAJA")}
-            className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] touch-manipulation ${
+            className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-brutal-sm touch-manipulation ${
               selectedDifficulty === "ORTA DARAJA"
-                ? "bg-accent text-black border-black hover:bg-accent/90"
-                : "bg-card text-foreground border-black hover:bg-secondary"
+                ? "bg-accent text-black border-theme hover:bg-accent/90"
+                : "bg-card text-foreground border-theme hover:bg-secondary"
             }`}
           >
             O'rta daraja (21-40)
           </Button>
           <Button
             onClick={() => onDifficultyChange("YUQORI DARAJA")}
-            className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] touch-manipulation ${
+            className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-brutal-sm touch-manipulation ${
               selectedDifficulty === "YUQORI DARAJA"
-                ? "bg-accent text-black border-black hover:bg-accent/90"
-                : "bg-card text-foreground border-black hover:bg-secondary"
+                ? "bg-accent text-black border-theme hover:bg-accent/90"
+                : "bg-card text-foreground border-theme hover:bg-secondary"
             }`}
           >
             Yuqori daraja (41-57)
