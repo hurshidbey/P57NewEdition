@@ -59,5 +59,5 @@ WORKDIR /app
 # Override the default node entrypoint  
 ENTRYPOINT []
 
-# Start command for production - run the built mjs file
-CMD ["node", "./dist/index.mjs"]
+# Start command for production - run via wrapper to ensure ESM loading
+CMD ["node", "start.mjs"]
