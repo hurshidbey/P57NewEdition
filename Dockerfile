@@ -59,5 +59,5 @@ WORKDIR /app
 # Override the default node entrypoint  
 ENTRYPOINT []
 
-# Start command for production - use tsx which handles ESM properly
-CMD ["npx", "tsx", "server/index.ts"]
+# Start command for production - run the built mjs file
+CMD ["node", "dist/index.mjs"]
