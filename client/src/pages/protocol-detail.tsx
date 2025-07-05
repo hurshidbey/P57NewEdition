@@ -191,10 +191,10 @@ export default function ProtocolDetail() {
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8">
               <div className="flex items-start gap-6">
-                <div className={`w-24 h-24 flex items-center justify-center font-black text-3xl border-2 border-black ${
+                <div className={`w-24 h-24 flex items-center justify-center font-black text-3xl border-2 border-theme ${
                   isProtocolCompleted(protocol.id) 
-                    ? 'bg-accent text-foreground' 
-                    : 'bg-card text-foreground'
+                    ? 'bg-accent text-black' 
+                    : 'bg-card text-black'
                 }`}>
                   {protocol.number.toString().padStart(2, "0")}
                 </div>
@@ -204,10 +204,10 @@ export default function ProtocolDetail() {
                     <div className="mb-3">
                       <span className={`inline-block px-3 py-1 text-xs font-bold uppercase border-2 ${
                         protocol.difficultyLevel === 'BEGINNER' 
-                          ? 'bg-accent text-foreground border-black'
+                          ? 'bg-accent text-black border-theme'
                           : protocol.difficultyLevel === 'O\'RTA DARAJA'
-                          ? 'bg-card text-foreground border-black'
-                          : 'bg-primary text-primary-foreground border-black'
+                          ? 'bg-card text-foreground border-theme'
+                          : 'bg-primary text-primary-foreground border-theme'
                       }`}>
                         {protocol.difficultyLevel === 'BEGINNER' ? 'Boshlang\'ich' : 
                          protocol.difficultyLevel === 'O\'RTA DARAJA' ? 'O\'rta daraja' : 'Yuqori daraja'}
@@ -223,11 +223,11 @@ export default function ProtocolDetail() {
                     </span>
                     {tier === 'free' && (
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold uppercase bg-secondary text-foreground px-2 py-1 border border-black">
+                        <span className="text-xs font-bold uppercase bg-secondary text-foreground px-2 py-1 border border-theme">
                           {accessedCount}/3 protokol ishlatilgan
                         </span>
                         {!protocol.isFreeAccess && (
-                          <span className="text-xs font-bold uppercase bg-primary text-primary-foreground px-2 py-1 border border-black flex items-center gap-1">
+                          <span className="text-xs font-bold uppercase bg-primary text-primary-foreground px-2 py-1 border border-theme flex items-center gap-1">
                             <Crown className="w-3 h-3" />
                             Premium
                           </span>
@@ -246,7 +246,7 @@ export default function ProtocolDetail() {
                     }
                     toggleProtocolCompleted(protocol.id, 70);
                   }}
-                  className={`font-bold uppercase px-6 py-2 h-[44px] border-2 border-black transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+                  className={`font-bold uppercase px-6 py-2 h-[44px] border-2 border-theme transition-all touch-manipulation hover:shadow-brutal ${
                     isProtocolCompleted(protocol.id)
                       ? 'bg-secondary hover:bg-secondary/90 text-foreground'
                       : 'bg-accent hover:bg-accent/90 text-black'
@@ -276,7 +276,7 @@ export default function ProtocolDetail() {
               
               return (
                 <>
-                  <div className={`bg-card border-2 border-black p-8 space-y-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${shouldShowUpgrade ? 'filter blur-sm' : ''}`}>
+                  <div className={`bg-card border-2 border-theme p-8 space-y-8 shadow-brutal-lg ${shouldShowUpgrade ? 'filter blur-sm' : ''}`}>
                     {parsedContent.problemStatement && (
                       <div>
                         <h2 className="text-xl font-black text-foreground uppercase mb-4">
@@ -330,12 +330,12 @@ export default function ProtocolDetail() {
             
             {/* Bad Example */}
             {protocol.badExample && (
-              <div className="bg-card border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <div className="bg-card border-2 border-theme p-6 hover:shadow-brutal transition-all">
                 <h3 className="text-sm font-black uppercase text-foreground mb-4 flex items-center gap-2">
                   <XCircle className="w-5 h-5 text-red-600" />
                   Yomon misol
                 </h3>
-                <div className="bg-secondary border border-black p-4">
+                <div className="bg-secondary border border-theme p-4">
                   <p className="text-foreground text-base leading-relaxed font-mono">
                     "{protocol.badExample}"
                   </p>
@@ -345,12 +345,12 @@ export default function ProtocolDetail() {
 
             {/* Good Example */}
             {protocol.goodExample && (
-              <div className="bg-card border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <div className="bg-card border-2 border-theme p-6 hover:shadow-brutal transition-all">
                 <h3 className="text-sm font-black uppercase text-foreground mb-4 flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-accent" />
                   Yaxshi misol
                 </h3>
-                <div className="bg-secondary border border-black p-4">
+                <div className="bg-secondary border border-theme p-4">
                   <p className="text-foreground text-base leading-relaxed font-mono">
                     "{protocol.goodExample}"
                   </p>
@@ -366,7 +366,7 @@ export default function ProtocolDetail() {
 
           {/* Notes Section */}
           {protocol.notes && (
-            <section className="bg-card border-2 border-black p-8 mb-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <section className="bg-card border-2 border-theme p-8 mb-12 shadow-brutal">
               <h3 className="text-lg font-black text-foreground uppercase mb-4">Eslatmalar</h3>
               <p className="text-foreground leading-relaxed">{protocol.notes}</p>
             </section>
@@ -378,7 +378,7 @@ export default function ProtocolDetail() {
           {/* Back Button */}
           <section className="text-center mt-8 mb-8 px-4">
             <Link href="/">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase px-6 py-2 h-[44px] border-2 border-black transition-all touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase px-6 py-2 h-[44px] border-2 border-theme transition-all touch-manipulation hover:shadow-brutal">
                 <ArrowLeft className="w-4 h-4 mr-2 flex-shrink-0" />
                 Protokollarga qaytish
               </Button>
