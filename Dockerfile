@@ -64,4 +64,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 ENV NODE_ENV=production
 
 # Start command for production
-CMD ["node", "dist/index.js"]
+CMD ["sh", "-c", "ls -la /app/dist/ && node /app/dist/index.js"]
