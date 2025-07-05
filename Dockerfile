@@ -66,5 +66,8 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Set environment variable for production
 ENV NODE_ENV=production
 
+# Override the default node entrypoint
+ENTRYPOINT []
+
 # Start command for production
 CMD ["node", "--experimental-specifier-resolution=node", "/app/dist/index.js"]
