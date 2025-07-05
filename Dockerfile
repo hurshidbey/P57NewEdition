@@ -70,4 +70,4 @@ ENV NODE_ENV=production
 ENTRYPOINT []
 
 # Start command for production
-CMD ["node", "/app/dist/index.js"]
+CMD ["sh", "-c", "cd /app && pwd && ls -la dist/ && node dist/index.js"]
