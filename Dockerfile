@@ -52,9 +52,6 @@ RUN chown -R nextjs:nodejs /app && \
 # Switch to non-root user
 USER nextjs
 
-# Set working directory AFTER user switch
-WORKDIR /app
-
 # Expose port
 EXPOSE 5000
 
@@ -69,4 +66,4 @@ ENV NODE_ENV=production
 ENTRYPOINT []
 
 # Start command for production
-CMD ["sh", "-c", "cd dist && node index.js"]
+CMD ["sh", "-c", "cd /app/dist && node index.js"]
