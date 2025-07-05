@@ -46,9 +46,9 @@ export default function DifficultyFilters({
             Boshlang'ich (1-20)
           </Button>
           <Button
-            onClick={() => onDifficultyChange("ORTA DARAJA")}
+            onClick={() => onDifficultyChange("O'RTA DARAJA")}
             className={`px-6 py-3 min-h-[44px] text-sm font-black uppercase transition-all border-2 hover:shadow-brutal-sm touch-manipulation ${
-              selectedDifficulty === "ORTA DARAJA"
+              selectedDifficulty === "O'RTA DARAJA"
                 ? "bg-accent text-black border-theme hover:bg-accent/90"
                 : "bg-card text-foreground border-theme hover:bg-secondary"
             }`}
