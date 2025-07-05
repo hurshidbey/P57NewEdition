@@ -58,8 +58,8 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:5000/api/protocols || exit 1
 
-# Set entrypoint
-ENTRYPOINT ["entrypoint.sh"]
+# Set environment variable for production
+ENV NODE_ENV=production
 
 # Start command for production
-CMD ["node", "dist/index.js"]
+CMD ["node", "/app/dist/index.js"]
