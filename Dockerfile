@@ -53,11 +53,11 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Set environment variable for production
 ENV NODE_ENV=production
 
-# Set working directory to dist
-WORKDIR /app/dist
+# Set working directory back to app
+WORKDIR /app
 
-# Override the default node entrypoint
+# Override the default node entrypoint  
 ENTRYPOINT []
 
-# Start command for production
-CMD ["node", "index.mjs"]
+# Start command for production - use tsx which handles ESM properly
+CMD ["npx", "tsx", "server/index.ts"]
