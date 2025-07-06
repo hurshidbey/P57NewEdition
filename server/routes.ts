@@ -363,9 +363,44 @@ export function setupRoutes(app: Express): Server {
   // Prompts endpoints
   app.get("/api/prompts", async (req, res) => {
     try {
-      const userTier = (req.query.tier as string) || 'free';
-      const prompts = await hybridPromptsStorage.getPrompts(userTier);
-      res.json(prompts);
+      // Check if user is authenticated via Supabase (for admins)
+      const authHeader = req.headers.authorization;
+      let isAdmin = false;
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split(' ')[1];
+          const { createClient } = await import('@supabase/supabase-js');
+          const supabase = createClient(
+            process.env.SUPABASE_URL!,
+            process.env.SUPABASE_ANON_KEY!
+          );
+          
+          const { data: { user }, error } = await supabase.auth.getUser(token);
+          
+          if (!error && user) {
+            // Check if user is admin
+            const adminEmails = process.env.ADMIN_EMAILS 
+              ? process.env.ADMIN_EMAILS.split(',').map(email => email.trim())
+              : [];
+            
+            isAdmin = adminEmails.includes(user.email || '');
+          }
+        } catch (e) {
+          // Silent fail - not critical for this endpoint
+        }
+      }
+      
+      // If admin, return all prompts regardless of tier
+      if (isAdmin) {
+        const allPrompts = await hybridPromptsStorage.getAllPrompts();
+        res.json(allPrompts);
+      } else {
+        // For regular users, respect the tier parameter
+        const userTier = (req.query.tier as string) || 'free';
+        const prompts = await hybridPromptsStorage.getPrompts(userTier);
+        res.json(prompts);
+      }
     } catch (error: any) {
       res.status(500).json({ message: "Failed to fetch prompts", error: error.message });
     }
