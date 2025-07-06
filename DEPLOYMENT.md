@@ -144,6 +144,30 @@ Ensure `.env.production` includes:
 - `SESSION_SECRET` - Unique secret for sessions
 - All other required environment variables
 
+## 🔒 SSL Certificate Management
+
+### Certificate Status
+- **p57.uz**: Let's Encrypt certificate, expires Oct 4, 2025
+- **p57.birfoiz.uz**: Let's Encrypt certificate, expires Oct 4, 2025
+- **Auto-renewal**: Enabled via certbot timer
+
+### Check Certificate Expiry
+```bash
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "certbot certificates"
+```
+
+### Manual Renewal (if needed)
+```bash
+ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "certbot renew"
+```
+
+### NGINX SSL Configuration
+- Config file: `/etc/nginx/sites-available/landing`
+- Handles both landing page (p57.uz) and main platform (p57.birfoiz.uz)
+- Always test after changes: `nginx -t`
+
+For detailed SSL configuration, see [NGINX-SSL.md](./NGINX-SSL.md)
+
 ## 📊 Monitoring
 
 After deployment:

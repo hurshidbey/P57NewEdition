@@ -1,6 +1,0 @@
-version: '3.8'
-
-# Local development override - removes external network requirement
-networks:
-  default:
-    external: false

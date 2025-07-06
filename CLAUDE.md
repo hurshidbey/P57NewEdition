@@ -148,10 +148,20 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ## Deployment Workflow
 
 ### Live Deployment to VPS:
+
+**Quick Deployment**: Use the automated script:
+```bash
+./deploy-production.sh
+```
+
+**Manual Deployment**:
 1. **SSH to VPS**: `ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73`
 2. **Navigate**: `cd /opt/protokol57`  
-3. **Deploy**: `docker compose down && docker compose build --no-cache && docker compose up -d`
-4. **Verify**: Check https://p57.birfoiz.uz and https://srv852801.hstgr.cloud
+3. **Deploy**: `docker compose -f docker-compose.prod.yml down && docker compose -f docker-compose.prod.yml build --no-cache && docker compose -f docker-compose.prod.yml up -d`
+4. **Verify**: 
+   - Main platform: https://p57.birfoiz.uz
+   - Landing page: https://p57.uz
+   - Backup URL: https://srv852801.hstgr.cloud
 
 ### Local Development:
 1. **Start**: `docker-compose up`
@@ -417,10 +427,16 @@ ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && docker
 ### Landing Page vs Main Platform
 
 **CRITICAL DISTINCTION:**
-- **Landing Page**: `p57.uz` → nginx container → `/landing_page/` files
-- **Main Platform**: `p57.birfoiz.uz` → protokol57 container → React app
+- **Landing Page**: `p57.uz` → nginx (host) → `/opt/protokol57/landing_page/` files
+- **Main Platform**: `p57.birfoiz.uz` → protokol57 container → React app (port 5001)
 
 **Never confuse these two!** They are completely separate systems.
+
+### Domain & SSL Configuration
+- **Server IP**: `69.62.126.73`
+- **SSL Certificates**: Managed by Let's Encrypt (auto-renewal enabled)
+- **NGINX Config**: `/etc/nginx/sites-available/landing`
+- For SSL management details, see [NGINX-SSL.md](./NGINX-SSL.md)
 
 ## Development Tools
 
