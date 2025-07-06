@@ -44,8 +44,11 @@ export function setupAtmosRoutes(): Router {
       // Generate unique account ID for this payment
       const account = `P57-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
+      // Convert UZS to tiins (1 UZS = 100 tiins)
+      const amountInTiins = amount * 100;
+      
       const result = await atmosService.createTransaction(
-        amount,
+        amountInTiins,
         account
       );
 
