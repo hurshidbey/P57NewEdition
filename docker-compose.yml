@@ -9,10 +9,7 @@ services:
         VITE_TELEGRAM_BOT_USERNAME: protokol57bot
     ports:
       - "5001:5000"
-    # Remove volume mounts in production to prevent overriding built assets
-    volumes:
-      - .:/app
-      - /app/node_modules
+    # Volume mounts removed to prevent overriding built assets in production
     env_file:
       - .env.production
     environment:
@@ -36,7 +33,7 @@ services:
       - "traefik.http.routers.protokol57-main.tls.certresolver=mytlschallenge"
       - "traefik.http.services.protokol57-main.loadbalancer.server.port=5000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
       timeout: 20s
       retries: 3
