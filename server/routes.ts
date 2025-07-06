@@ -442,7 +442,8 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Setup Atmos payment routes
-  setupAtmosRoutes(app);
+  const atmosRouter = setupAtmosRoutes();
+  app.use('/api', atmosRouter);
 
   // Get user progress (with Supabase auth verification)
   app.get("/api/progress/:userId", async (req, res) => {
