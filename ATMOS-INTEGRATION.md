@@ -5,7 +5,28 @@ This document provides complete technical documentation for ATMOS payment gatewa
 
 ## Integration Date
 - **Completed**: June 9, 2025
+- **Updated**: July 6, 2025
 - **Status**: ✅ **PRODUCTION READY**
+
+## Recent Fixes (July 6, 2025)
+
+### 1. Route Mounting Issue
+**Problem**: ATMOS endpoints returning 404 errors
+**Cause**: Routes not properly mounted on Express app
+**Fix**: 
+```typescript
+// ✅ CORRECT
+const atmosRouter = setupAtmosRoutes();
+app.use('/api', atmosRouter);
+
+// ❌ WRONG (was causing 404)
+setupAtmosRoutes(app);
+```
+
+### 2. Amount Conversion Issue
+**Problem**: Incorrect charges (e.g., 500,000 UZS instead of 5,000 UZS)
+**Cause**: Double conversion - converting UZS to tiins when amount was already in tiins
+**Fix**: Pass amount directly without conversion - frontend already sends tiins
 
 ## Payment Details
 - **Test Price**: 5,000 UZS (for testing purposes)

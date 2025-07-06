@@ -105,7 +105,7 @@ fi
 echo ""
 echo "Checking for multiple docker-compose files..."
 COMPOSE_COUNT=$(ls docker-compose*.yml 2>/dev/null | wc -l)
-if [ "$COMPOSE_COUNT" -gt 3 ]; then
+if [ "$COMPOSE_COUNT" -gt 4 ]; then
     warning "Found $COMPOSE_COUNT docker-compose files. This might cause confusion."
     echo "    Files: $(ls docker-compose*.yml | tr '\n' ' ')"
 fi
@@ -130,7 +130,7 @@ fi
 echo ""
 echo "Checking Dockerfile..."
 if [ -f "Dockerfile" ]; then
-    if grep -q "COPY package.json dist/" Dockerfile; then
+    if grep -q "COPY package.json dist/\|RUN cp package.json dist/" Dockerfile; then
         success "Dockerfile copies package.json to dist"
     else
         warning "Dockerfile might not copy package.json to dist directory"

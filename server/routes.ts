@@ -282,6 +282,16 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin routes for protocol management
+  // Get all protocols for admin
+  app.get("/api/admin/protocols", isSupabaseAdmin, async (req, res) => {
+    try {
+      const protocols = await storage.getProtocols(1000); // Get all protocols for admin
+      res.json(protocols);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch protocols", error: error.message });
+    }
+  });
+
   app.post("/api/admin/protocols", isSupabaseAdmin, async (req, res) => {
     try {
       const protocolData = insertProtocolSchema.parse(req.body);
@@ -327,6 +337,24 @@ export function setupRoutes(app: Express): Server {
       res.json({ message: "Protocol deleted successfully" });
     } catch (error: any) {
       res.status(500).json({ message: "Failed to delete protocol", error: error.message });
+    }
+  });
+
+  // Toggle protocol free access
+  app.patch("/api/admin/protocols/:id/toggle-free", isSupabaseAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { isFreeAccess } = req.body;
+      
+      const protocol = await storage.updateProtocol(id, { isFreeAccess });
+      
+      if (!protocol) {
+        return res.status(404).json({ message: "Protocol not found" });
+      }
+      
+      res.json(protocol);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to update protocol access", error: error.message });
     }
   });
 
