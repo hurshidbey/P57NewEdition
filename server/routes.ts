@@ -7,6 +7,7 @@ import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
 import { eq } from "drizzle-orm";
+import { securityConfig } from "./utils/security-config";
 
 // Helper function to format uptime
 function formatUptime(seconds: number): string {
@@ -70,12 +71,14 @@ const isSupabaseAdmin = async (req: any, res: Response, next: NextFunction) => {
       return res.status(401).json({ error: 'Invalid token' });
     }
     
-    // Only allow admin users
-    const adminEmails = [
-      process.env.ADMIN_EMAIL,
-      'hurshidbey@gmail.com',
-      'mustafaabdurahmonov7777@gmail.com'
-    ].filter(Boolean); // Remove any undefined values
+    // Only allow admin users - configured via environment variables
+    const adminEmails = process.env.ADMIN_EMAILS 
+      ? process.env.ADMIN_EMAILS.split(',').map(email => email.trim())
+      : [];
+    
+    if (adminEmails.length === 0) {
+      console.warn('⚠️  WARNING: No admin emails configured in ADMIN_EMAILS environment variable');
+    }
     
     if (!adminEmails.includes(user.email)) {
       return res.status(403).json({ error: 'Access denied - admin only' });
@@ -241,9 +244,8 @@ export function setupRoutes(app: Express): Server {
         return res.status(401).json({ message: "Invalid credentials" });
       }
       
-      // For demo purposes, we'll use a simple password check
-      // In production, use proper password hashing (bcrypt, etc.)
-      const validPassword = password === user.password;
+      // Use bcrypt to compare password with stored hash
+      const validPassword = await securityConfig.comparePassword(password, user.password || '');
       
       if (!validPassword) {
         return res.status(401).json({ message: "Invalid credentials" });
