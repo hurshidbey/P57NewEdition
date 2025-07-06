@@ -44,9 +44,13 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
       const response = await apiRequest(
         "POST",
         `/api/protocols/${protocol.id}/evaluate`,
-        { prompt }
+        { 
+          context: protocol.description,
+          userPrompt: prompt 
+        }
       );
-      return response.json() as Promise<PromptEvaluation>;
+      const result = await response.json();
+      return result.evaluation as PromptEvaluation;
     },
     onSuccess: (data) => {
       setEvaluation(data);
