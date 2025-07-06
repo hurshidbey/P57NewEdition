@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt } from "@shared/schema";
+import { type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt, type Payment, type InsertPayment } from "@shared/schema";
 import { type IStorage } from './storage';
 
 export class SupabaseStorage implements IStorage {
@@ -320,7 +320,7 @@ export class SupabaseStorage implements IStorage {
     if (error) throw error;
     
     // Map database field names (snake_case) to TypeScript interface (camelCase)
-    return (data || []).map(item => ({
+    return (data || []).map((item: any) => ({
       id: item.id,
       title: item.title,
       content: item.content,
@@ -342,7 +342,7 @@ export class SupabaseStorage implements IStorage {
     if (error) throw error;
     
     // Map database field names (snake_case) to TypeScript interface (camelCase)
-    return (data || []).map(item => ({
+    return (data || []).map((item: any) => ({
       id: item.id,
       title: item.title,
       content: item.content,
@@ -412,5 +412,90 @@ export class SupabaseStorage implements IStorage {
       .eq('id', id);
     
     return !error;
+  }
+
+  // Payment methods
+  async storePayment(payment: InsertPayment): Promise<Payment> {
+    const { data, error } = await this.supabase
+      .from('payments')
+      .insert({
+        id: payment.id,
+        user_id: payment.userId,
+        user_email: payment.userEmail,
+        amount: payment.amount,
+        status: payment.status || 'pending',
+        transaction_id: payment.transactionId,
+        atmos_data: payment.atmosData
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to store payment:`, error);
+      throw error;
+    }
+    
+    console.log(`💾 [SUPABASE] Payment record stored:`, data);
+    
+    // Map database fields to TypeScript interface
+    return {
+      id: data.id,
+      userId: data.user_id,
+      userEmail: data.user_email,
+      amount: data.amount,
+      status: data.status,
+      transactionId: data.transaction_id,
+      atmosData: data.atmos_data,
+      createdAt: data.created_at
+    };
+  }
+
+  async getPayments(): Promise<Payment[]> {
+    const { data, error } = await this.supabase
+      .from('payments')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to get payments:`, error);
+      throw error;
+    }
+    
+    // Map database fields to TypeScript interface
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      userId: item.user_id,
+      userEmail: item.user_email,
+      amount: item.amount,
+      status: item.status,
+      transactionId: item.transaction_id,
+      atmosData: item.atmos_data,
+      createdAt: item.created_at
+    }));
+  }
+
+  async getUserPayments(userId: string): Promise<Payment[]> {
+    const { data, error } = await this.supabase
+      .from('payments')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to get user payments for ${userId}:`, error);
+      throw error;
+    }
+    
+    // Map database fields to TypeScript interface
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      userId: item.user_id,
+      userEmail: item.user_email,
+      amount: item.amount,
+      status: item.status,
+      transactionId: item.transaction_id,
+      atmosData: item.atmos_data,
+      createdAt: item.created_at
+    }));
   }
 }
