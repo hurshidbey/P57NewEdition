@@ -486,9 +486,14 @@ export function setupRoutes(app: Express): Server {
       
       const token = authHeader.split(' ')[1];
       const { createClient } = await import('@supabase/supabase-js');
+      
+      if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+        return res.status(500).json({ error: 'Server configuration error' });
+      }
+      
       const supabase = createClient(
-        'https://bazptglwzqstppwlvmvb.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+        process.env.SUPABASE_URL,
+        process.env.SUPABASE_ANON_KEY
       );
       
       const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -524,9 +529,14 @@ export function setupRoutes(app: Express): Server {
       
       const token = authHeader.split(' ')[1];
       const { createClient } = await import('@supabase/supabase-js');
+      
+      if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+        return res.status(500).json({ error: 'Server configuration error' });
+      }
+      
       const supabase = createClient(
-        'https://bazptglwzqstppwlvmvb.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+        process.env.SUPABASE_URL,
+        process.env.SUPABASE_ANON_KEY
       );
       
       const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -566,9 +576,14 @@ export function setupRoutes(app: Express): Server {
       
       const token = authHeader.split(' ')[1];
       const { createClient } = await import('@supabase/supabase-js');
+      
+      if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+        return res.status(500).json({ error: 'Server configuration error' });
+      }
+      
       const supabase = createClient(
-        'https://bazptglwzqstppwlvmvb.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhenB0Z2x3enFzdHBwd2x2bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTc1OTAsImV4cCI6MjA2NDU5MzU5MH0.xRh0LCDWP6YD3F4mDGrIK3krwwZw-DRx0iXy7MmIPY8'
+        process.env.SUPABASE_URL,
+        process.env.SUPABASE_ANON_KEY
       );
       
       const { data: { user }, error } = await supabase.auth.getUser(token);

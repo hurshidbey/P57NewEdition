@@ -1,25 +1,37 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
+import cors from "cors";
 import { setupRoutes } from "./routes";
 import { hybridPromptsStorage } from "./hybrid-storage";
 import { setupVite, serveStatic, log } from "./vite";
+import { securityHeaders, corsOptions, additionalSecurityHeaders, requestSizeLimits } from "./middleware/security";
+import { applyRateLimits } from "./middleware/rate-limit";
+import { sanitizeBody, preventSqlInjection } from "./middleware/validation";
+import { initializeSecurity } from "./utils/security-config";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
-// Configure session middleware
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'protokol57-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', // Enable secure cookies in production
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+// Initialize security checks
+initializeSecurity();
+
+// Apply security middleware first
+app.use(securityHeaders);
+app.use(cors(corsOptions));
+app.use(additionalSecurityHeaders);
+
+// Apply rate limiting
+app.use('/api/', applyRateLimits);
+
+// Body parsing with size limits
+app.use(express.json({ limit: requestSizeLimits.json }));
+app.use(express.urlencoded(requestSizeLimits.urlencoded));
+
+// Input sanitization and SQL injection prevention
+app.use(sanitizeBody);
+app.use(preventSqlInjection);
+
+// Session middleware will be configured in the async block below
 
 // Disable caching in development
 if (process.env.NODE_ENV === "development") {
@@ -40,9 +52,9 @@ app.use((req, res, next) => {
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
+  res.json = function (bodyJson: any, ...args: any[]) {
     capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
+    return originalResJson.apply(res, [bodyJson, ...args] as any);
   };
 
   res.on("finish", () => {
@@ -65,6 +77,26 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Configure session middleware with secure settings
+  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
+    console.error('⚠️  WARNING: SESSION_SECRET is not set or too short. Using a random secret.');
+    const crypto = await import('crypto');
+    process.env.SESSION_SECRET = crypto.randomBytes(32).toString('hex');
+  }
+
+  app.use(session({
+    secret: process.env.SESSION_SECRET!,
+    name: 'p57_session', // Custom session name
+    resave: false,
+    saveUninitialized: false,
+    rolling: true, // Reset expiry on activity
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      httpOnly: true, // Prevent XSS
+      sameSite: 'strict', // CSRF protection
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }));
 
   try {
     await hybridPromptsStorage.initialize();
@@ -82,7 +114,7 @@ app.use((req, res, next) => {
     throw error;
   }
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     
