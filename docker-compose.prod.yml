@@ -1,3 +1,10 @@
+# PRODUCTION DOCKER COMPOSE FILE
+# ⚠️ WARNING: DO NOT ADD VOLUME MOUNTS TO THIS FILE!
+# Volume mounts will override the production build and cause the app to fail.
+# This file is specifically for production deployments.
+#
+# Usage: docker-compose -f docker-compose.prod.yml up -d
+
 services:
   protokol57:
     build:
@@ -9,18 +16,25 @@ services:
         VITE_TELEGRAM_BOT_USERNAME: protokol57bot
     ports:
       - "5001:5000"
+    # ⚠️ NO VOLUME MOUNTS! They break production by overriding built assets
     env_file:
       - .env.production
     environment:
       - NODE_ENV=production
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - MAILTRAP_API_TOKEN=${MAILTRAP_API_TOKEN}
+      - MAILTRAP_SMTP_HOST=${MAILTRAP_SMTP_HOST}
+      - MAILTRAP_SMTP_PORT=${MAILTRAP_SMTP_PORT}
+      - MAILTRAP_SMTP_USERNAME=${MAILTRAP_SMTP_USERNAME}
+      - MAILTRAP_SMTP_PASSWORD=${MAILTRAP_SMTP_PASSWORD}
     restart: unless-stopped
     stdin_open: false
     tty: false
     networks:
       - protokol-network
+      - default
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -42,7 +56,18 @@ services:
       - no-new-privileges:true
     user: "node"
     read_only: false
+    # Traefik labels for production routing
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.protokol57-main.rule=Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`)"
+      - "traefik.http.routers.protokol57-main.entrypoints=web,websecure"
+      - "traefik.http.routers.protokol57-main.tls=true"
+      - "traefik.http.routers.protokol57-main.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.protokol57-main.loadbalancer.server.port=5000"
 
 networks:
   protokol-network:
     driver: bridge
+  default:
+    external:
+      name: root_default

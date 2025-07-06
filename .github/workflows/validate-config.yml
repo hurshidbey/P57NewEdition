@@ -1,0 +1,133 @@
+name: Validate Configuration
+
+on:
+  pull_request:
+    paths:
+      - 'docker-compose*.yml'
+      - 'package.json'
+      - 'server/vite.ts'
+      - 'Dockerfile'
+      - '.github/workflows/validate-config.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker-compose*.yml'
+      - 'package.json'
+      - 'server/vite.ts'
+      - 'Dockerfile'
+
+jobs:
+  validate:
+    name: Validate Configuration
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check for volume mounts in production files
+      run: |
+        echo "Checking for dangerous volume mounts..."
+        
+        # Function to check file
+        check_volumes() {
+          local file=$1
+          if [ -f "$file" ]; then
+            echo "Checking $file..."
+            if grep -q "volumes:" "$file" && grep -A5 "volumes:" "$file" | grep -q ":/app"; then
+              echo "❌ ERROR: $file contains volume mounts that will break production!"
+              grep -A5 "volumes:" "$file" | grep ":/app" || true
+              return 1
+            else
+              echo "✅ $file is safe"
+            fi
+          fi
+          return 0
+        }
+        
+        # Check main compose file
+        if ! check_volumes "docker-compose.yml"; then
+          if [[ "${{ github.base_ref }}" == "main" || "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "Volume mounts detected in main branch docker-compose.yml!"
+            exit 1
+          fi
+        fi
+        
+        # Check production compose file
+        if ! check_volumes "docker-compose.prod.yml"; then
+          echo "Production compose file MUST NOT have volume mounts!"
+          exit 1
+        fi
+        
+    - name: Check log function implementation
+      run: |
+        echo "Checking server/vite.ts log function..."
+        if [ -f "server/vite.ts" ]; then
+          if grep -q "console.log" server/vite.ts; then
+            echo "✅ Log function has console.log"
+          else
+            echo "❌ ERROR: server/vite.ts log function is missing console.log!"
+            echo "This will prevent the server from starting."
+            exit 1
+          fi
+        fi
+        
+    - name: Check ESM configuration
+      run: |
+        echo "Checking ESM configuration..."
+        if [ -f "package.json" ]; then
+          if grep -q '"type": "module"' package.json; then
+            echo "✅ package.json has ESM module type"
+          else
+            echo "⚠️  WARNING: package.json missing type: module"
+          fi
+          
+          if grep -q "format=esm" package.json; then
+            echo "✅ Build script uses ESM format"
+          else
+            echo "⚠️  WARNING: Build script might not be using ESM format"
+          fi
+        fi
+        
+    - name: Check health endpoint
+      run: |
+        echo "Checking health endpoint configuration..."
+        
+        # Check for correct endpoint in routes
+        if [ -f "server/routes.ts" ]; then
+          if grep -q '"/health"' server/routes.ts; then
+            echo "✅ Health endpoint found at /health"
+          else
+            echo "⚠️  WARNING: Health endpoint might be misconfigured"
+          fi
+        fi
+        
+        # Check docker-compose files for wrong endpoint
+        if grep -q "/api/health" docker-compose*.yml 2>/dev/null; then
+          echo "❌ ERROR: Docker healthcheck using /api/health instead of /health"
+          exit 1
+        fi
+        
+    - name: Run validation script
+      run: |
+        if [ -f "./validate-config.sh" ]; then
+          chmod +x ./validate-config.sh
+          ./validate-config.sh
+        else
+          echo "⚠️  WARNING: validate-config.sh not found"
+        fi
+        
+    - name: Summary
+      if: always()
+      run: |
+        echo ""
+        echo "===== Configuration Validation Summary ====="
+        echo ""
+        echo "Critical checks:"
+        echo "1. Volume mounts in production files - Must be removed"
+        echo "2. Log function implementation - Must have console.log"
+        echo "3. Health endpoint configuration - Should be /health"
+        echo "4. ESM configuration - Should be consistent"
+        echo ""
+        echo "Remember: Volume mounts are the #1 cause of production failures!"
