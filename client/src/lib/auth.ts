@@ -7,6 +7,7 @@ export interface AuthUser {
   name?: string
   tier?: string
   paidAt?: string
+  role?: string
 }
 
 export const authService = {
@@ -134,12 +135,18 @@ export const authService = {
     
     console.log(`🔍 [DEBUG] User ID assignment: ${user.id} -> ${userId} (${user.email})`);
     
+    // Check if user is admin based on their email
+    // Note: This is temporary - ideally this should come from user metadata or a database role
+    const adminEmails = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
+    const isAdmin = adminEmails.includes(user.email || '');
+    
     return {
       id: userId,
       email: user.email!,
       name: user.user_metadata?.name || user.email?.split('@')[0],
-      tier: user.user_metadata?.tier || 'free',
-      paidAt: user.user_metadata?.paidAt
+      tier: isAdmin ? 'paid' : (user.user_metadata?.tier || 'free'),
+      paidAt: user.user_metadata?.paidAt,
+      role: isAdmin ? 'admin' : undefined
     }
   },
 
@@ -154,12 +161,17 @@ export const authService = {
         
         console.log(`🔍 [DEBUG] Auth state change - User ID assignment: ${session.user.id} -> ${userId} (${session.user.email})`);
         
+        // Check if user is admin based on their email
+        const adminEmails = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
+        const isAdmin = adminEmails.includes(session.user.email || '');
+        
         const authUser: AuthUser = {
           id: userId,
           email: session.user.email!,
           name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
-          tier: session.user.user_metadata?.tier || 'free',
-          paidAt: session.user.user_metadata?.paidAt
+          tier: isAdmin ? 'paid' : (session.user.user_metadata?.tier || 'free'),
+          paidAt: session.user.user_metadata?.paidAt,
+          role: isAdmin ? 'admin' : undefined
         }
         callback(authUser)
       } else {
