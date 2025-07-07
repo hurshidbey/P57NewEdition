@@ -52,11 +52,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    security_opt:
-      - no-new-privileges:true
-    user: "node"
-    read_only: false
-    # Traefik labels for production routing
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.protokol57-main.rule=Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`)"
