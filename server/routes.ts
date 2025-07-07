@@ -408,7 +408,18 @@ export function setupRoutes(app: Express): Server {
 
   app.get("/api/prompts/:id", async (req, res) => {
     try {
+      // Validate ID parameter
+      if (!req.params.id || req.params.id === 'undefined') {
+        return res.status(400).json({ message: "Invalid prompt ID" });
+      }
+      
       const id = parseInt(req.params.id);
+      
+      // Check if ID is a valid number
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Prompt ID must be a number" });
+      }
+      
       const prompt = await hybridPromptsStorage.getPrompt(id);
       
       if (!prompt) {
