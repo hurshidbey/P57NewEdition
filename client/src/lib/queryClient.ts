@@ -103,14 +103,7 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: isDevelopment ? true : false,
       staleTime: isDevelopment ? 0 : 5 * 60 * 1000, // 0ms in dev, 5min in prod
       gcTime: isDevelopment ? 0 : 5 * 60 * 1000, // 0ms in dev, 5min in prod
-      retry: (failureCount, error: any) => {
-        // Don't retry on 4xx errors (client errors)
-        if (error?.message?.includes('400') || error?.message?.includes('401') || error?.message?.includes('403') || error?.message?.includes('404')) {
-          return false;
-        }
-        // Retry up to 2 times for other errors
-        return failureCount < 2;
-      },
+      retry: false,
     },
     mutations: {
       retry: false,
