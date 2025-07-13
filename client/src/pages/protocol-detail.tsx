@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Protocol } from "@shared/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, CheckCircle, XCircle, Lock, Crown, ArrowRight } from "lucide-react";
+import { ArrowLeft, CheckCircle, XCircle, Lock, Crown, ArrowRight, Copy, CheckIcon, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
@@ -70,6 +71,7 @@ export default function ProtocolDetail() {
   const { id } = useParams<{ id: string }>();
   const { isProtocolCompleted, markProtocolCompleted, toggleProtocolCompleted } = useProgress();
   const { tier, getAccessedProtocolsCount, canAccessNewProtocol } = useUserTier();
+  const [copiedGood, setCopiedGood] = useState(false);
 
   const {
     data: protocol,
@@ -109,6 +111,17 @@ export default function ProtocolDetail() {
 
   const upgradeReason = getUpgradeReason();
   const shouldShowUpgrade = tier === 'free' && upgradeReason && !hasCompletedThis;
+
+  const copyGoodExample = async () => {
+    if (!protocol?.goodExample) return;
+    try {
+      await navigator.clipboard.writeText(protocol.goodExample);
+      setCopiedGood(true);
+      setTimeout(() => setCopiedGood(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -328,7 +341,7 @@ export default function ProtocolDetail() {
                 </h3>
                 <div className="bg-secondary border border-theme p-4">
                   <p className="text-foreground text-base leading-relaxed font-mono">
-                    "{protocol.badExample}"
+                    {protocol.badExample}
                   </p>
                 </div>
               </div>
@@ -337,14 +350,50 @@ export default function ProtocolDetail() {
             {/* Good Example */}
             {protocol.goodExample && (
               <div className="bg-card border-2 border-theme p-6 hover:shadow-brutal transition-all">
-                <h3 className="text-sm font-black uppercase text-foreground mb-4 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-accent" />
-                  Yaxshi misol
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-black uppercase text-foreground flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-accent" />
+                    Yaxshi misol
+                  </h3>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={copyGoodExample}
+                    className="gap-2 font-bold uppercase border border-black h-[32px] hover:bg-primary hover:text-primary-foreground transition-all rounded-none"
+                  >
+                    {copiedGood ? (
+                      <>
+                        <CheckIcon className="w-3 h-3" />
+                        Nusxalandi
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        Nusxalash
+                      </>
+                    )}
+                  </Button>
+                </div>
                 <div className="bg-secondary border border-theme p-4">
                   <p className="text-foreground text-base leading-relaxed font-mono">
-                    "{protocol.goodExample}"
+                    {protocol.goodExample}
                   </p>
+                </div>
+                <div className="mt-4">
+                  <a
+                    href={`https://chat.openai.com/?q=${encodeURIComponent(protocol.goodExample)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex"
+                  >
+                    <Button 
+                      variant="outline" 
+                      className="gap-2 font-bold uppercase border-2 border-black hover:bg-accent hover:text-black transition-all rounded-none hover:shadow-brutal-sm"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      ChatGPT'da sinab ko'rish
+                    </Button>
+                  </a>
                 </div>
               </div>
             )}

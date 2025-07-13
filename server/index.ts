@@ -114,6 +114,22 @@ app.use((req, res, next) => {
     throw error;
   }
 
+  // importantly only setup vite in development and after
+  // setting up all the other routes so the catch-all route
+  // doesn't interfere with the other routes
+  const env = app.get("env");
+
+  // IMPORTANT: Set up static file serving BEFORE the error handler
+  if (env === "development") {
+
+    await setupVite(app, server);
+  } else {
+
+    serveStatic(app);
+
+  }
+
+  // Error handler MUST come AFTER static file serving
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -124,30 +140,22 @@ app.use((req, res, next) => {
 
     }
 
-    res.status(status).json({ 
-      message,
-      ...(process.env.NODE_ENV === 'development' ? { stack: err.stack } : {})
-    });
+    // Only send JSON responses for API routes
+    if (req.originalUrl.startsWith('/api/')) {
+      res.status(status).json({ 
+        message,
+        ...(process.env.NODE_ENV === 'development' ? { stack: err.stack } : {})
+      });
+    } else {
+      // For non-API routes, send a plain error response
+      res.status(status).send(message);
+    }
     
     // Don't throw in production - let the server continue running
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && req.originalUrl.startsWith('/api/')) {
       throw err;
     }
   });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  const env = app.get("env");
-
-  if (env === "development") {
-
-    await setupVite(app, server);
-  } else {
-
-    serveStatic(app);
-
-  }
 
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.

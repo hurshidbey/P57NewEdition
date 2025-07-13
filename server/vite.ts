@@ -75,7 +75,7 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+  const distPath = path.resolve(process.cwd(), "dist", "public");
 
   console.log(`[serveStatic] Directory exists: ${fs.existsSync(distPath)}`);
   
@@ -103,11 +103,22 @@ export function serveStatic(app: Express) {
     lastModified: true
   }));
 
-  // fall through to index.html if the file doesn't exist, but NOT for API routes
+  // fall through to index.html if the file doesn't exist, but NOT for API routes or assets
   app.use((req, res, next) => {
     // Skip this catch-all for API routes
     if (req.originalUrl.startsWith('/api/')) {
 
+      return next();
+    }
+    
+    // Skip this catch-all for static assets
+    if (req.originalUrl.includes('/assets/') || 
+        req.originalUrl.endsWith('.js') || 
+        req.originalUrl.endsWith('.css') || 
+        req.originalUrl.endsWith('.png') || 
+        req.originalUrl.endsWith('.jpg') || 
+        req.originalUrl.endsWith('.svg') ||
+        req.originalUrl.endsWith('.ico')) {
       return next();
     }
     
