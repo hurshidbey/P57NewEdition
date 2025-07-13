@@ -45,6 +45,8 @@ export const corsOptions: cors.CorsOptions = {
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      // Log the rejected origin for debugging
+      console.error(`CORS rejected origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },

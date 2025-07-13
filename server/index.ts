@@ -17,7 +17,23 @@ initializeSecurity();
 
 // Apply security middleware first
 app.use(securityHeaders);
-app.use(cors(corsOptions));
+
+// Apply CORS only to API routes, not static files
+app.use((req, res, next) => {
+  // Skip CORS for static files to fix Chrome issues
+  if (req.path.startsWith('/assets/') || 
+      req.path.endsWith('.js') || 
+      req.path.endsWith('.css') || 
+      req.path.endsWith('.png') || 
+      req.path.endsWith('.jpg') || 
+      req.path.endsWith('.svg') ||
+      req.path.endsWith('.ico') ||
+      req.path === '/') {
+    return next();
+  }
+  cors(corsOptions)(req, res, next);
+});
+
 app.use(additionalSecurityHeaders);
 
 // Apply rate limiting
