@@ -160,7 +160,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
             </div>
             <div className="flex items-center gap-2">
               {protocolProgress && (
-                <Badge variant="secondary" className="font-bold uppercase bg-accent text-black border-2 border-theme">
+                <Badge variant="secondary" className="font-bold uppercase bg-accent text-accent-foreground border-2 border-theme">
                   O'rganilgan
                 </Badge>
               )}
@@ -215,7 +215,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
             <Button
               onClick={handleSubmit}
               disabled={!userPrompt.trim() || evaluationMutation.isPending || userPrompt.length > 300}
-              className="flex-1 bg-accent hover:bg-accent/90 text-black font-bold uppercase border-2 border-theme h-[44px] hover:shadow-brutal-sm"
+              className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold uppercase border-2 border-theme h-[44px] hover:shadow-brutal-sm"
             >
               {evaluationMutation.isPending ? (
                 <>

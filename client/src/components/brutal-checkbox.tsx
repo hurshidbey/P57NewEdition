@@ -44,7 +44,7 @@ export function BrutalCheckbox({ checked, onChange, className = "" }: BrutalChec
     <button
       onClick={handleClick}
       className={`
-        relative w-12 h-12 border-4 border-black dark:border-white
+        relative w-12 h-12 border-4 border-theme
         transition-all duration-300 transform
         ${checked 
           ? 'bg-accent shadow-brutal rotate-3 scale-110' 
@@ -70,7 +70,7 @@ export function BrutalCheckbox({ checked, onChange, className = "" }: BrutalChec
           >
             <path 
               d="M6 16L12 22L26 8" 
-              stroke="black" 
+              stroke="currentColor" 
               strokeWidth="5" 
               strokeLinecap="square"
               strokeLinejoin="miter"
@@ -78,12 +78,12 @@ export function BrutalCheckbox({ checked, onChange, className = "" }: BrutalChec
           </svg>
         </div>
       ) : (
-        <div className="absolute inset-1 border-2 border-black dark:border-white bg-white dark:bg-gray-900" />
+        <div className="absolute inset-1 border-2 border-theme bg-background" />
       )}
       
       {/* Brutal shadow effect on hover */}
       {!checked && (
-        <div className="absolute -bottom-1 -right-1 w-full h-full border-4 border-black dark:border-white -z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute -bottom-1 -right-1 w-full h-full border-4 border-theme -z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
       )}
     </button>
   );

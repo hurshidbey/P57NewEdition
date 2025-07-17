@@ -3,9 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Link } from "wouter";
-import AppHeaderNoTheme from "@/components/app-header-no-theme";
+import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
-// import { ThemeToggle } from "@/components/ui/theme-toggle"; // TODO: Re-enable dark mode toggle once theme issues are resolved
 import { AiIcon } from "@/components/ai-icon";
 import { getContent } from "@/content/knowledge-base";
 import { ContentSkeleton } from "@/components/knowledge-base/ContentSkeleton";
@@ -571,8 +570,8 @@ export default function KnowledgeBase() {
   }
 
   return (
-    <div className="min-h-screen bg-white kb-container">
-      <AppHeaderNoTheme />
+    <div className="min-h-screen bg-background kb-container">
+      <AppHeader />
       
       {/* Mobile Header with Menu Button */}
       <div className="lg:hidden sticky top-[64px] z-40 bg-black text-white border-b-2 border-black">

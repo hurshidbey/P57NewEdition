@@ -28,11 +28,11 @@ export default function ProtocolNavigation({ currentProtocolId }: ProtocolNaviga
           <Link href={`/protocols/${previousProtocol.id}`} className="flex-1 max-w-[280px]">
             <Button 
               variant="outline" 
-              className="w-full h-[48px] px-6 py-2 border-2 border-theme bg-background dark:bg-accent hover:bg-secondary dark:hover:bg-accent/90 text-foreground dark:text-black transition-all touch-manipulation hover:shadow-brutal flex items-center justify-start gap-3 text-left"
+              className="w-full h-[48px] px-6 py-2 border-2 border-theme bg-background hover:bg-secondary text-foreground transition-all touch-manipulation hover:shadow-brutal flex items-center justify-start gap-3 text-left"
             >
               <ChevronLeft className="w-5 h-5 flex-shrink-0" />
               <div className="overflow-hidden">
-                <div className="text-xs font-bold uppercase text-muted-foreground dark:text-black/70">OLDINGI</div>
+                <div className="text-xs font-bold uppercase text-muted-foreground">OLDINGI</div>
                 <div className="font-bold text-sm uppercase truncate">{previousProtocol.number.toString().padStart(2, '0')}. {previousProtocol.title}</div>
               </div>
             </Button>
@@ -53,10 +53,10 @@ export default function ProtocolNavigation({ currentProtocolId }: ProtocolNaviga
           <Link href={`/protocols/${nextProtocol.id}`} className="flex-1 max-w-[280px]">
             <Button 
               variant="outline" 
-              className="w-full h-[48px] px-6 py-2 border-2 border-theme bg-background dark:bg-accent hover:bg-secondary dark:hover:bg-accent/90 text-foreground dark:text-black transition-all touch-manipulation hover:shadow-brutal flex items-center justify-end gap-3 text-right"
+              className="w-full h-[48px] px-6 py-2 border-2 border-theme bg-background hover:bg-secondary text-foreground transition-all touch-manipulation hover:shadow-brutal flex items-center justify-end gap-3 text-right"
             >
               <div className="overflow-hidden">
-                <div className="text-xs font-bold uppercase text-muted-foreground dark:text-black/70">KEYINGI</div>
+                <div className="text-xs font-bold uppercase text-muted-foreground">KEYINGI</div>
                 <div className="font-bold text-sm uppercase truncate">{nextProtocol.number.toString().padStart(2, '0')}. {nextProtocol.title}</div>
               </div>
               <ChevronRight className="w-5 h-5 flex-shrink-0" />
@@ -83,7 +83,7 @@ export default function ProtocolNavigation({ currentProtocolId }: ProtocolNaviga
             <Link href={`/protocols/${previousProtocol.id}`} className="flex-1">
               <Button 
                 variant="outline" 
-                className="w-full h-[48px] px-4 py-2 border-2 border-theme bg-background dark:bg-accent hover:bg-secondary dark:hover:bg-accent/90 text-foreground dark:text-black transition-all touch-manipulation flex items-center justify-center gap-2"
+                className="w-full h-[48px] px-4 py-2 border-2 border-theme bg-background hover:bg-secondary text-foreground transition-all touch-manipulation flex items-center justify-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4 flex-shrink-0" />
                 <span className="text-xs font-bold uppercase">OLDINGI</span>
@@ -98,7 +98,7 @@ export default function ProtocolNavigation({ currentProtocolId }: ProtocolNaviga
             <Link href={`/protocols/${nextProtocol.id}`} className="flex-1">
               <Button 
                 variant="outline" 
-                className="w-full h-[48px] px-4 py-2 border-2 border-theme bg-background dark:bg-accent hover:bg-secondary dark:hover:bg-accent/90 text-foreground dark:text-black transition-all touch-manipulation flex items-center justify-center gap-2"
+                className="w-full h-[48px] px-4 py-2 border-2 border-theme bg-background hover:bg-secondary text-foreground transition-all touch-manipulation flex items-center justify-center gap-2"
               >
                 <span className="text-xs font-bold uppercase">KEYINGI</span>
                 <ChevronRight className="w-4 h-4 flex-shrink-0" />

@@ -80,8 +80,8 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               isLocked
                 ? 'bg-muted text-muted-foreground border-theme'
                 : isCompleted 
-                ? 'bg-accent text-black border-theme' 
-                : 'bg-background text-black dark:text-white border-theme'
+                ? 'bg-accent text-accent-foreground border-theme' 
+                : 'bg-background text-foreground border-theme'
             }`}>
               {protocol.number.toString().padStart(2, '0')}
             </div>
@@ -92,7 +92,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               {protocol.difficultyLevel && (
                 <span className={`inline-block px-3 py-1 text-xs font-bold uppercase border-2 ${
                   protocol.difficultyLevel === 'BEGINNER' 
-                    ? 'bg-accent text-black border-theme'
+                    ? 'bg-accent text-accent-foreground border-theme'
                     : protocol.difficultyLevel === 'O\'RTA DARAJA'
                     ? 'bg-background text-foreground border-theme'
                     : 'bg-primary text-primary-foreground border-theme'

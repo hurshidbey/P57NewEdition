@@ -40,10 +40,10 @@ export function BrutalButton({
   return (
     <Button 
       onClick={handleClick}
-      className={`font-black uppercase px-8 py-3 h-[56px] border-4 border-black dark:border-white transition-all duration-300 transform touch-manipulation ${
+      className={`font-black uppercase px-8 py-3 h-[56px] border-4 border-theme transition-all duration-300 transform touch-manipulation ${
         checked
           ? 'bg-background hover:bg-secondary text-foreground hover:shadow-brutal hover:scale-105 hover:-rotate-1'
-          : 'bg-accent text-black hover:shadow-brutal hover:scale-105 hover:rotate-1'
+          : 'bg-accent text-accent-foreground hover:shadow-brutal hover:scale-105 hover:rotate-1'
       } ${className}`}
       style={{ 
         backgroundColor: checked ? undefined : '#1bffbb',
@@ -79,7 +79,7 @@ export function BrutalButton({
           >
             <path 
               d="M6 16L12 22L26 8" 
-              stroke="black" 
+              stroke="currentColor" 
               strokeWidth="5" 
               strokeLinecap="square"
               strokeLinejoin="miter"
