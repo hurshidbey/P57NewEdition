@@ -1,6 +1,12 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { users, protocols, categories, userProgress, prompts, payments, type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt, type Payment, type InsertPayment } from "@shared/schema";
+import { 
+  users, protocols, categories, userProgress, prompts, payments, coupons, couponUsages,
+  type User, type InsertUser, type Protocol, type InsertProtocol, type Category, 
+  type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt, 
+  type Payment, type InsertPayment, type Coupon, type InsertCoupon,
+  type CouponUsage, type InsertCouponUsage 
+} from "@shared/schema";
 import { eq, ilike, or, desc, and } from "drizzle-orm";
 
 export interface IStorage {
@@ -33,6 +39,19 @@ export interface IStorage {
   storePayment(payment: InsertPayment): Promise<Payment>;
   getPayments(): Promise<Payment[]>;
   getUserPayments(userId: string): Promise<Payment[]>;
+  
+  // Coupon methods
+  createCoupon(coupon: InsertCoupon): Promise<Coupon>;
+  getCoupons(): Promise<Coupon[]>;
+  getCouponByCode(code: string): Promise<Coupon | undefined>;
+  getCouponById(id: number): Promise<Coupon | undefined>;
+  updateCoupon(id: number, coupon: Partial<InsertCoupon>): Promise<Coupon | undefined>;
+  deleteCoupon(id: number): Promise<boolean>;
+  incrementCouponUsage(id: number): Promise<void>;
+  
+  // Coupon usage tracking
+  recordCouponUsage(usage: InsertCouponUsage): Promise<CouponUsage>;
+  getCouponUsageHistory(couponId: number): Promise<CouponUsage[]>;
 }
 
 // Database connection with fallback and retry logic
@@ -1034,6 +1053,136 @@ export class HybridStorage implements IStorage {
       }
     }
     
+    return [];
+  }
+
+  // Coupon methods implementation
+  async createCoupon(coupon: InsertCoupon): Promise<Coupon> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.insert(coupons).values(coupon).returning();
+        console.log(`✅ [STORAGE] Coupon created:`, result[0]);
+        return result[0];
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to create coupon:`, error);
+        throw error;
+      }
+    }
+    throw new Error("Database not available for coupon creation");
+  }
+
+  async getCoupons(): Promise<Coupon[]> {
+    if (isDatabaseConnected && db) {
+      try {
+        return await db.select().from(coupons).orderBy(desc(coupons.createdAt));
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to get coupons:`, error);
+      }
+    }
+    return [];
+  }
+
+  async getCouponByCode(code: string): Promise<Coupon | undefined> {
+    if (isDatabaseConnected && db) {
+      try {
+        // Case-insensitive search
+        const result = await db.select().from(coupons)
+          .where(eq(db.raw(`UPPER(${coupons.code})`), code.toUpperCase()))
+          .limit(1);
+        return result[0];
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to get coupon by code ${code}:`, error);
+      }
+    }
+    return undefined;
+  }
+
+  async getCouponById(id: number): Promise<Coupon | undefined> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.select().from(coupons)
+          .where(eq(coupons.id, id))
+          .limit(1);
+        return result[0];
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to get coupon by id ${id}:`, error);
+      }
+    }
+    return undefined;
+  }
+
+  async updateCoupon(id: number, coupon: Partial<InsertCoupon>): Promise<Coupon | undefined> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.update(coupons)
+          .set(coupon)
+          .where(eq(coupons.id, id))
+          .returning();
+        console.log(`✅ [STORAGE] Coupon updated:`, result[0]);
+        return result[0];
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to update coupon ${id}:`, error);
+      }
+    }
+    return undefined;
+  }
+
+  async deleteCoupon(id: number): Promise<boolean> {
+    if (isDatabaseConnected && db) {
+      try {
+        await db.delete(coupons).where(eq(coupons.id, id));
+        console.log(`✅ [STORAGE] Coupon ${id} deleted`);
+        return true;
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to delete coupon ${id}:`, error);
+      }
+    }
+    return false;
+  }
+
+  async incrementCouponUsage(id: number): Promise<void> {
+    if (isDatabaseConnected && db) {
+      try {
+        // First get current count
+        const current = await db.select().from(coupons).where(eq(coupons.id, id)).limit(1);
+        if (current[0]) {
+          await db.update(coupons)
+            .set({ usedCount: (current[0].usedCount || 0) + 1 })
+            .where(eq(coupons.id, id));
+          console.log(`✅ [STORAGE] Coupon ${id} usage incremented`);
+        }
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to increment coupon usage ${id}:`, error);
+        throw error;
+      }
+    }
+  }
+
+  // Coupon usage tracking
+  async recordCouponUsage(usage: InsertCouponUsage): Promise<CouponUsage> {
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.insert(couponUsages).values(usage).returning();
+        console.log(`✅ [STORAGE] Coupon usage recorded:`, result[0]);
+        return result[0];
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to record coupon usage:`, error);
+        throw error;
+      }
+    }
+    throw new Error("Database not available for coupon usage tracking");
+  }
+
+  async getCouponUsageHistory(couponId: number): Promise<CouponUsage[]> {
+    if (isDatabaseConnected && db) {
+      try {
+        return await db.select().from(couponUsages)
+          .where(eq(couponUsages.couponId, couponId))
+          .orderBy(desc(couponUsages.usedAt));
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to get coupon usage history for ${couponId}:`, error);
+      }
+    }
     return [];
   }
 }

@@ -695,6 +695,211 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
+  // ======= COUPON ENDPOINTS =======
+  
+  // Validate coupon code (public endpoint)
+  app.post("/api/coupons/validate", async (req, res) => {
+    try {
+      const { code, amount } = req.body;
+      
+      if (!code) {
+        return res.status(400).json({ 
+          valid: false, 
+          message: "Kupon kodi kiritilmagan" 
+        });
+      }
+
+      const coupon = await storage.getCouponByCode(code.trim().toUpperCase());
+      
+      if (!coupon) {
+        return res.status(404).json({ 
+          valid: false, 
+          message: "Bunday kupon kodi mavjud emas" 
+        });
+      }
+
+      // Check if coupon is active
+      if (!coupon.isActive) {
+        return res.status(400).json({ 
+          valid: false, 
+          message: "Bu kupon kodi faol emas" 
+        });
+      }
+
+      // Check expiration
+      if (coupon.validUntil && new Date(coupon.validUntil) < new Date()) {
+        return res.status(400).json({ 
+          valid: false, 
+          message: "Bu kupon kodining muddati tugagan" 
+        });
+      }
+
+      // Check if not yet valid
+      if (coupon.validFrom && new Date(coupon.validFrom) > new Date()) {
+        return res.status(400).json({ 
+          valid: false, 
+          message: "Bu kupon kodi hali faol emas" 
+        });
+      }
+
+      // Check usage limits
+      if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
+        return res.status(400).json({ 
+          valid: false, 
+          message: "Bu kupon kodining foydalanish limiti tugagan" 
+        });
+      }
+
+      // Calculate discount
+      const originalAmount = amount || coupon.originalPrice;
+      let discountAmount = 0;
+      let finalAmount = originalAmount;
+
+      if (coupon.discountType === 'percentage') {
+        discountAmount = Math.floor(originalAmount * (coupon.discountValue / 100));
+        finalAmount = originalAmount - discountAmount;
+      } else if (coupon.discountType === 'fixed') {
+        discountAmount = Math.min(coupon.discountValue, originalAmount);
+        finalAmount = originalAmount - discountAmount;
+      }
+
+      res.json({
+        valid: true,
+        coupon: {
+          id: coupon.id,
+          code: coupon.code,
+          description: coupon.description,
+          discountType: coupon.discountType,
+          discountValue: coupon.discountValue,
+          originalAmount,
+          discountAmount,
+          finalAmount,
+          discountPercent: coupon.discountType === 'percentage' 
+            ? coupon.discountValue 
+            : Math.round((discountAmount / originalAmount) * 100)
+        },
+        message: "Kupon kodi muvaffaqiyatli qo'llandi!"
+      });
+
+    } catch (error: any) {
+      console.error('❌ [COUPON] Validation error:', error);
+      res.status(500).json({ 
+        valid: false, 
+        message: "Kupon kodini tekshirishda xatolik" 
+      });
+    }
+  });
+
+  // Admin: Get all coupons
+  app.get("/api/admin/coupons", isSupabaseAdmin, async (req, res) => {
+    try {
+      const coupons = await storage.getCoupons();
+      res.json(coupons);
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to get coupons:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Create new coupon
+  app.post("/api/admin/coupons", isSupabaseAdmin, async (req, res) => {
+    try {
+      const { code, ...couponData } = req.body;
+      
+      // Ensure code is uppercase
+      const normalizedCode = code.trim().toUpperCase();
+      
+      // Check if code already exists
+      const existing = await storage.getCouponByCode(normalizedCode);
+      if (existing) {
+        return res.status(400).json({ 
+          error: "Bu kupon kodi allaqachon mavjud" 
+        });
+      }
+
+      const coupon = await storage.createCoupon({
+        ...couponData,
+        code: normalizedCode,
+        createdBy: req.user?.email || 'admin'
+      });
+      
+      res.json(coupon);
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to create coupon:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Update coupon
+  app.put("/api/admin/coupons/:id", isSupabaseAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { code, ...updateData } = req.body;
+      
+      // If code is being updated, normalize it
+      if (code) {
+        updateData.code = code.trim().toUpperCase();
+      }
+      
+      const coupon = await storage.updateCoupon(id, updateData);
+      if (!coupon) {
+        return res.status(404).json({ error: "Kupon topilmadi" });
+      }
+      
+      res.json(coupon);
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to update coupon:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Delete coupon
+  app.delete("/api/admin/coupons/:id", isSupabaseAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteCoupon(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Kupon topilmadi" });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to delete coupon:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Toggle coupon active status
+  app.patch("/api/admin/coupons/:id/toggle", isSupabaseAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { isActive } = req.body;
+      
+      const coupon = await storage.updateCoupon(id, { isActive });
+      if (!coupon) {
+        return res.status(404).json({ error: "Kupon topilmadi" });
+      }
+      
+      res.json(coupon);
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to toggle coupon:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Get coupon usage history
+  app.get("/api/admin/coupons/:id/usage", isSupabaseAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const usage = await storage.getCouponUsageHistory(id);
+      res.json(usage);
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to get coupon usage:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Simple auth endpoint (basic implementation)
   app.post("/api/auth/login", async (req: any, res) => {
     try {

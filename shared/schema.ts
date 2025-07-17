@@ -67,6 +67,40 @@ export const payments = pgTable("payments", {
   status: text("status").notNull().default('pending'), // 'pending' | 'completed' | 'failed'
   atmosData: text("atmos_data"), // JSON string of ATMOS response
   createdAt: timestamp("created_at").defaultNow(),
+  // Coupon fields
+  couponId: integer("coupon_id"),
+  originalAmount: integer("original_amount"),
+  discountAmount: integer("discount_amount"),
+});
+
+// Coupons table for discount codes
+export const coupons = pgTable("coupons", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  description: text("description"), // Admin note about the coupon
+  discountType: text("discount_type").notNull(), // 'percentage' | 'fixed'
+  discountValue: integer("discount_value").notNull(), // 60 for 60% or 100000 for 100k UZS
+  originalPrice: integer("original_price").notNull().default(1425000), // Default full price
+  maxUses: integer("max_uses"), // null = unlimited
+  usedCount: integer("used_count").default(0),
+  validFrom: timestamp("valid_from").defaultNow(),
+  validUntil: timestamp("valid_until"),
+  isActive: boolean("is_active").default(true),
+  createdBy: text("created_by"), // Admin who created it
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Track coupon usage
+export const couponUsages = pgTable("coupon_usages", {
+  id: serial("id").primaryKey(),
+  couponId: integer("coupon_id").notNull(),
+  userId: text("user_id"),
+  userEmail: text("user_email"),
+  paymentId: text("payment_id"),
+  originalAmount: integer("original_amount"),
+  discountAmount: integer("discount_amount"),
+  finalAmount: integer("final_amount"),
+  usedAt: timestamp("used_at").defaultNow(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -98,6 +132,17 @@ export const insertPaymentSchema = createInsertSchema(payments).omit({
   createdAt: true,
 });
 
+export const insertCouponSchema = createInsertSchema(coupons).omit({
+  id: true,
+  usedCount: true,
+  createdAt: true,
+});
+
+export const insertCouponUsageSchema = createInsertSchema(couponUsages).omit({
+  id: true,
+  usedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Protocol = typeof protocols.$inferSelect;
@@ -110,3 +155,7 @@ export type Prompt = typeof prompts.$inferSelect;
 export type InsertPrompt = z.infer<typeof insertPromptSchema>;
 export type Payment = typeof payments.$inferSelect;
 export type InsertPayment = z.infer<typeof insertPaymentSchema>;
+export type Coupon = typeof coupons.$inferSelect;
+export type InsertCoupon = z.infer<typeof insertCouponSchema>;
+export type CouponUsage = typeof couponUsages.$inferSelect;
+export type InsertCouponUsage = z.infer<typeof insertCouponUsageSchema>;

@@ -32,7 +32,7 @@ export function setupAtmosRoutes(): Router {
   // Create transaction for one-time payment
   router.post('/atmos/create-transaction', async (req, res) => {
     try {
-      const { amount, description } = req.body;
+      const { amount, description, couponCode } = req.body;
 
       if (!amount || amount <= 0) {
         return res.status(400).json({
@@ -41,11 +41,52 @@ export function setupAtmosRoutes(): Router {
         });
       }
 
+      let finalAmount = amount;
+      let appliedCoupon = null;
+      let originalAmount = amount;
+      let discountAmount = 0;
+
+      // Check if coupon code is provided
+      if (couponCode) {
+        const { storage } = await import('./storage');
+        const coupon = await storage.getCouponByCode(couponCode.trim().toUpperCase());
+        
+        if (coupon && coupon.isActive) {
+          // Validate coupon (same checks as validation endpoint)
+          const now = new Date();
+          
+          if (coupon.validUntil && new Date(coupon.validUntil) < now) {
+            console.log(`⚠️ [PAYMENT] Coupon ${couponCode} is expired`);
+          } else if (coupon.validFrom && new Date(coupon.validFrom) > now) {
+            console.log(`⚠️ [PAYMENT] Coupon ${couponCode} is not yet valid`);
+          } else if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
+            console.log(`⚠️ [PAYMENT] Coupon ${couponCode} usage limit reached`);
+          } else {
+            // Calculate discount
+            originalAmount = amount;
+            
+            if (coupon.discountType === 'percentage') {
+              discountAmount = Math.floor(originalAmount * (coupon.discountValue / 100));
+              finalAmount = originalAmount - discountAmount;
+            } else if (coupon.discountType === 'fixed') {
+              discountAmount = Math.min(coupon.discountValue, originalAmount);
+              finalAmount = originalAmount - discountAmount;
+            }
+            
+            appliedCoupon = coupon;
+            console.log(`✅ [PAYMENT] Coupon ${couponCode} applied: ${originalAmount} - ${discountAmount} = ${finalAmount}`);
+          }
+        } else {
+          console.log(`⚠️ [PAYMENT] Coupon ${couponCode} not found or inactive`);
+        }
+      }
+
       // Generate unique account ID for this payment
       const account = `P57-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
+      // Create transaction with final amount (after discount)
       const result = await atmosService.createTransaction(
-        amount,
+        finalAmount,
         account
       );
 
@@ -57,7 +98,15 @@ export function setupAtmosRoutes(): Router {
         success: true,
         result: result.result,
         transaction_id: result.transaction_id,
-        store_transaction: result.store_transaction
+        store_transaction: result.store_transaction,
+        // Include coupon info in response
+        coupon: appliedCoupon ? {
+          id: appliedCoupon.id,
+          code: appliedCoupon.code,
+          originalAmount,
+          discountAmount,
+          finalAmount
+        } : null
       });
 
     } catch (error: any) {
@@ -218,20 +267,46 @@ export function setupAtmosRoutes(): Router {
                 
                 // Store payment record for admin tracking
                 try {
+                  // Get coupon info from transaction data if available
+                  const couponInfo = req.body.couponInfo;
+                  
                   const paymentRecord = {
                     id: `payment_${transactionId}_${Date.now()}`,
                     userId: user.id,
                     userEmail: user.email || 'unknown@email.com',
-                    amount: 5000, // 5,000 UZS
+                    amount: couponInfo?.finalAmount || result.store_transaction?.amount || 1425000,
                     transactionId: transactionId.toString(),
                     status: 'completed',
-                    atmosData: JSON.stringify(result.store_transaction || {})
+                    atmosData: JSON.stringify(result.store_transaction || {}),
+                    // Add coupon fields
+                    couponId: couponInfo?.couponId || null,
+                    originalAmount: couponInfo?.originalAmount || null,
+                    discountAmount: couponInfo?.discountAmount || null
                   };
                   
                   // Store in database for admin panel
                   const { storage } = await import('./storage');
                   await storage.storePayment(paymentRecord);
                   console.log(`💾 [PAYMENT] Payment record stored for admin tracking`);
+                  
+                  // Track coupon usage if coupon was applied
+                  if (couponInfo?.couponId) {
+                    try {
+                      await storage.incrementCouponUsage(couponInfo.couponId);
+                      await storage.recordCouponUsage({
+                        couponId: couponInfo.couponId,
+                        userId: user.id,
+                        userEmail: user.email || 'unknown@email.com',
+                        paymentId: paymentRecord.id,
+                        originalAmount: couponInfo.originalAmount,
+                        discountAmount: couponInfo.discountAmount,
+                        finalAmount: couponInfo.finalAmount
+                      });
+                      console.log(`✅ [PAYMENT] Coupon usage tracked for coupon ${couponInfo.couponId}`);
+                    } catch (couponError) {
+                      console.error(`⚠️ [PAYMENT] Failed to track coupon usage:`, couponError);
+                    }
+                  }
                 } catch (dbError) {
                   console.error(`⚠️ [PAYMENT] Failed to store payment record (payment still successful):`, dbError);
                 }
@@ -248,18 +323,24 @@ export function setupAtmosRoutes(): Router {
           
           // CRITICAL: Store payment record even without auth for manual recovery
           try {
+            const couponInfo = req.body.couponInfo;
+            
             const paymentRecord = {
               id: `payment_${transactionId}_${Date.now()}`,
               userId: 'UNKNOWN_NO_AUTH',
               userEmail: 'payment_without_auth@unknown.com',
-              amount: 5000, // 5,000 UZS
+              amount: couponInfo?.finalAmount || result.store_transaction?.amount || 1425000,
               transactionId: transactionId.toString(),
               status: 'completed_no_auth',
               atmosData: JSON.stringify({
                 ...result.store_transaction,
                 error: 'NO_AUTH_HEADER',
                 timestamp: new Date().toISOString()
-              })
+              }),
+              // Add coupon fields
+              couponId: couponInfo?.couponId || null,
+              originalAmount: couponInfo?.originalAmount || null,
+              discountAmount: couponInfo?.discountAmount || null
             };
             
             const { storage } = await import('./storage');
