@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
 import { useUserTier } from "@/hooks/use-user-tier";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Crown, Star, FileText } from "lucide-react";
 
 export default function AppHeader() {
@@ -96,7 +95,6 @@ export default function AppHeader() {
                 </Button>
               </Link>
             )}
-            <ThemeToggle />
             <Button 
               variant="ghost" 
               className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"

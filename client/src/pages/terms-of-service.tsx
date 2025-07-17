@@ -17,8 +17,8 @@ export default function TermsOfService() {
           </p>
         </CardHeader>
         <CardContent className="prose prose-sm max-w-none text-xs leading-relaxed space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-none p-4 mb-6 dark:bg-blue-900/20 dark:border-blue-800">
-            <p className="text-blue-800 dark:text-blue-200 font-medium text-sm">
+          <div className="bg-blue-50 border border-blue-200 rounded-none p-4 mb-6">
+            <p className="text-blue-800 font-medium text-sm">
               <strong>Xush kelibsiz!</strong> Ushbu shartlar P57.uz platformasida xavfsiz va qulay ta'lim muhitini ta'minlash uchun yaratilgan. 
               Platformadan foydalanish orqali siz quyidagi shartlarni qabul qilasiz.
             </p>
@@ -192,7 +192,7 @@ export default function TermsOfService() {
 
           <Separator className="my-6" />
 
-          <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-none space-y-2">
+          <div className="bg-gray-50 p-4 rounded-none space-y-2">
             <p className="font-semibold text-sm">Aloqa ma'lumotlari:</p>
             <ul className="space-y-1">
               <li><strong>Huquqiy murojaatlar:</strong> legal@p57.uz</li>
@@ -202,8 +202,8 @@ export default function TermsOfService() {
             </ul>
           </div>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-none p-4 dark:bg-gray-900/20 dark:border-gray-800">
-            <p className="text-gray-800 dark:text-gray-200 font-medium text-sm">
+          <div className="bg-gray-50 border border-gray-200 rounded-none p-4">
+            <p className="text-gray-800 font-medium text-sm">
               <strong>Eslatma:</strong> Ushbu shartlarni diqqat bilan o'qib chiqing. 
               Savollaringiz bo'lsa, support@p57.uz orqali biz bilan bog'laning.
             </p>
@@ -214,7 +214,7 @@ export default function TermsOfService() {
             <p><strong>Oxirgi yangilanish:</strong> 2024-yil 29-dekabr</p>
             <p><strong>Platforma egasi:</strong> YATT XURSHID MAROZIQOV</p>
             <p><strong>Platforma nomi:</strong> P57.uz</p>
-            <p className="text-red-600 dark:text-red-400 font-medium">
+            <p className="text-red-600 font-medium">
               <strong>Huquqiy status:</strong> Ushbu hujjat yuridik jihatdan majburiy shartnoma hisoblanadi.
             </p>
           </div>

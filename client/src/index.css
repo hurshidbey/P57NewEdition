@@ -80,36 +80,6 @@
   --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.dark {
-  /* Color System - Dark Mode */
-  --background: 0 0% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 0 0% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 0 0% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 0 0% 98%;
-  --primary-foreground: 0 0% 9%;
-  --secondary: 0 0% 14.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 14.9%;
-  --muted-foreground: 0 0% 63.9%;
-  --accent: 162 100% 55%; /* Brand Cyan #1bffbb - same in dark mode */
-  --accent-foreground: 0 0% 0%; /* Black text for contrast in dark mode too */
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 14.9%;
-  --input: 0 0% 14.9%;
-  --ring: 162 100% 55%;
-  
-  /* Semantic Colors - Dark Mode */
-  --success: 142 76% 36%;
-  --success-foreground: 0 0% 98%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 0 0% 9%;
-  --info: 221 83% 53%;
-  --info-foreground: 0 0% 98%;
-}
 
 @layer base {
   * {

@@ -170,7 +170,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ThemeProvider defaultTheme="system" storageKey="protokol57-theme">
+        <ThemeProvider>
           <TooltipProvider>
             <Toaster />
             <AppContent />
