@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { CreditCard, Loader2, CheckCircle, XCircle, RefreshCw, Shield, Info, AlertCircle, Crown, FileText, BookOpen, Brain, Zap } from 'lucide-react';
+import { CreditCard, Loader2, CheckCircle, XCircle, RefreshCw, Shield, Info, AlertCircle, Crown, FileText, BookOpen, Brain, Zap, Tag } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
@@ -36,6 +36,19 @@ export default function AtmosPayment() {
   const [cardNumber, setCardNumber] = useState('');
   const [expiry, setExpiry] = useState('');
   const [otpCode, setOtpCode] = useState('');
+  
+  // Coupon state
+  const [couponCode, setCouponCode] = useState('');
+  const [couponValidating, setCouponValidating] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    id: number;
+    code: string;
+    originalAmount: number;
+    discountAmount: number;
+    finalAmount: number;
+    discountPercent: number;
+  } | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   // Format card number with spaces
   const formatCardNumber = (value: string) => {
@@ -53,6 +66,52 @@ export default function AtmosPayment() {
       return v.substring(0, 2) + '/' + v.substring(2, 4);
     }
     return v;
+  };
+
+  // Validate and apply coupon
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError('Kupon kodi kiritilmagan');
+      return;
+    }
+
+    setCouponValidating(true);
+    setCouponError(null);
+
+    try {
+      const response = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          code: couponCode.trim(),
+          amount: 1425000 // Original price
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.valid) {
+        setCouponError(result.message || 'Kupon kodi noto\'g\'ri');
+        setAppliedCoupon(null);
+        return;
+      }
+
+      // Successfully validated
+      setAppliedCoupon(result.coupon);
+      setCouponError(null);
+    } catch (error) {
+      setCouponError('Kupon kodini tekshirishda xatolik');
+      setAppliedCoupon(null);
+    } finally {
+      setCouponValidating(false);
+    }
+  };
+
+  // Remove applied coupon
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    setCouponError(null);
   };
 
   // Step 1: Submit card details
@@ -74,13 +133,14 @@ export default function AtmosPayment() {
         throw new Error('Amal qilish muddati MM/YY formatida bo\'lishi kerak');
       }
 
-      // Create transaction
+      // Create transaction with coupon if applied
       const createResponse = await fetch('/api/atmos/create-transaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: 500000, // 5,000 UZS in tiins (testing price)
-          description: 'Protokol 57 - Premium Access'
+          amount: appliedCoupon ? appliedCoupon.originalAmount * 100 : 142500000, // Convert to tiins
+          description: 'Protokol 57 - Premium Access',
+          couponCode: appliedCoupon ? appliedCoupon.code : null
         })
       });
 
@@ -156,7 +216,14 @@ export default function AtmosPayment() {
         headers,
         body: JSON.stringify({
           transactionId: paymentState.transactionId,
-          otpCode
+          otpCode,
+          // Pass coupon info if applied
+          couponInfo: appliedCoupon ? {
+            couponId: appliedCoupon.id,
+            originalAmount: appliedCoupon.originalAmount,
+            discountAmount: appliedCoupon.discountAmount,
+            finalAmount: appliedCoupon.finalAmount
+          } : null
         })
       });
 
@@ -270,6 +337,75 @@ export default function AtmosPayment() {
 
   const renderCardDetailsForm = () => (
     <div className="space-y-6">
+      {/* Coupon Section */}
+      <Card className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-none">
+        <CardHeader className="bg-muted border-b-2 border-black">
+          <div className="flex items-center gap-2">
+            <Tag className="h-5 w-5" />
+            <CardTitle className="text-lg font-black uppercase">Kupon kodi</CardTitle>
+          </div>
+          <CardDescription className="font-bold">
+            Chegirma kodingiz bo'lsa, bu yerga kiriting
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Kupon kodini kiriting"
+                value={couponCode}
+                onChange={(e) => {
+                  setCouponCode(e.target.value.toUpperCase());
+                  setCouponError(null);
+                }}
+                disabled={couponValidating || !!appliedCoupon}
+                className="font-mono text-lg border-2 border-foreground focus:border-foreground focus:ring-0 uppercase"
+              />
+              {!appliedCoupon ? (
+                <Button
+                  type="button"
+                  onClick={validateCoupon}
+                  disabled={couponValidating || !couponCode.trim()}
+                  className="bg-foreground text-background hover:bg-foreground/90 font-bold uppercase border-2 border-foreground min-w-[120px]"
+                >
+                  {couponValidating ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'QO\'LLASH'
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={removeCoupon}
+                  variant="destructive"
+                  className="font-bold uppercase border-2 border-red-600 min-w-[120px]"
+                >
+                  BEKOR QILISH
+                </Button>
+              )}
+            </div>
+            
+            {couponError && (
+              <Alert className="bg-red-50 border-2 border-red-600">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-600 font-bold">
+                  {couponError}
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {appliedCoupon && (
+              <Alert className="bg-green-50 border-2 border-green-600">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-600 font-bold">
+                  {appliedCoupon.discountPercent}% chegirma qo'llanildi!
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </CardContent>
+      </Card>
       <div className="space-y-3">
         <Label htmlFor="cardNumber" className="text-lg font-black text-foreground">KARTA RAQAMI</Label>
         <Input
@@ -542,11 +678,38 @@ export default function AtmosPayment() {
 
                 {/* Price */}
                 <div className="border-b-2 border-foreground p-6">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xl font-black text-foreground">JAMI SUMMA</span>
-                    <span className="text-2xl font-black text-foreground">5,000 UZS</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">Bir martalik to'lov</p>
+                  {appliedCoupon ? (
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-muted-foreground">
+                        <span className="font-bold">Asl narx</span>
+                        <span className="line-through">{appliedCoupon.originalAmount.toLocaleString('uz-UZ')} UZS</span>
+                      </div>
+                      <div className="flex justify-between items-center text-green-600">
+                        <span className="font-bold">Chegirma ({appliedCoupon.discountPercent}%)</span>
+                        <span className="font-bold">-{appliedCoupon.discountAmount.toLocaleString('uz-UZ')} UZS</span>
+                      </div>
+                      <div className="border-t-2 border-black pt-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xl font-black text-foreground">JAMI SUMMA</span>
+                          <span className="text-2xl font-black text-foreground">{appliedCoupon.finalAmount.toLocaleString('uz-UZ')} UZS</span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge className="bg-green-600 text-white hover:bg-green-700 font-bold">
+                            {appliedCoupon.code}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">kupon qo'llanildi</span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xl font-black text-foreground">JAMI SUMMA</span>
+                        <span className="text-2xl font-black text-foreground">1,425,000 UZS</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">Bir martalik to'lov</p>
+                    </>
+                  )}
                 </div>
 
                 {/* User Info */}

@@ -75,24 +75,27 @@ Implement a flexible coupon code system that allows promotional pricing with adm
 ## Phase 2: Customer-Facing Features
 
 ### Payment Page UI Tasks
-- [ ] **[HIGH]** Add coupon input section to payment page
+- [x] **[HIGH]** Add coupon input section to payment page
   - Input field with "Apply" button
   - Validation feedback (success/error)
   - Estimated: 2 hours
   - Dependencies: Validation API
+  - ✅ Completed: Added brutalist-styled coupon card with validation
   
-- [ ] **[HIGH]** Update price display to show discounts
+- [x] **[HIGH]** Update price display to show discounts
   - Original price with strikethrough
   - Discount amount and percentage
   - Final price prominently displayed
   - Estimated: 1 hour
   - Dependencies: Coupon input
+  - ✅ Completed: Dynamic price display with discount breakdown
 
-- [ ] **[MEDIUM]** Add loading states and error handling
+- [x] **[MEDIUM]** Add loading states and error handling
   - Show spinner during validation
   - Display clear error messages
   - Estimated: 1 hour
   - Dependencies: UI components
+  - ✅ Completed: Loading spinner, success/error alerts
 
 ---
 
