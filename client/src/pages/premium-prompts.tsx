@@ -8,8 +8,117 @@ import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 import { PromptCard, type Prompt } from '@/components/prompt-card';
 import { UpgradeCTA } from '@/components/upgrade-cta';
-import { Search, Crown, ArrowRight } from 'lucide-react';
+import { Search, Crown, ArrowRight, BookOpen, CheckCircle, AlertCircle, FileText } from 'lucide-react';
 import { Link } from 'wouter';
+
+function InstructionsSection() {
+  return (
+    <Card className="bg-card border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none mb-8">
+      <CardHeader className="bg-accent border-b-4 border-black p-6">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-black">
+            <BookOpen className="w-6 h-6 text-white" />
+          </div>
+          <CardTitle className="text-2xl font-black uppercase text-black">
+            Promptlardan Foydalanish Bo'yicha Qo'llanma
+          </CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className="p-6 space-y-6">
+        {/* Important Note */}
+        <div className="bg-yellow-50 border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-black mt-0.5 flex-shrink-0" />
+            <div className="space-y-2">
+              <p className="font-bold text-black uppercase">Muhim eslatma:</p>
+              <p className="text-black">
+                Promptlar <span className="font-bold bg-yellow-200 px-1">INGLIZ TILIDA</span> yozilgan, chunki AI modellari ingliz tilida eng yaxshi natija beradi. 
+                Lekin AI ning javoblari <span className="font-bold bg-yellow-200 px-1">O'ZBEK TILIDA</span> bo'ladi.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* How to Use */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-black uppercase flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            Qanday Foydalanish Kerak?
+          </h3>
+          
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="bg-primary text-primary-foreground w-8 h-8 flex items-center justify-center font-black text-sm flex-shrink-0">
+                1
+              </div>
+              <div>
+                <p className="font-bold mb-1">Promptni nusxalang</p>
+                <p className="text-sm text-muted-foreground">
+                  "Nusxalash" tugmasini bosing va prompt matnini clipboard ga oling.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="bg-primary text-primary-foreground w-8 h-8 flex items-center justify-center font-black text-sm flex-shrink-0">
+                2
+              </div>
+              <div>
+                <p className="font-bold mb-1">Placeholderlarni almashtiring</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Promptdagi <span className="font-mono bg-gray-100 px-1 text-xs">[KVADRAT_QAVS]</span> ichidagi qismlarni o'zingizga mos ma'lumotlar bilan almashtiring.
+                </p>
+                <div className="bg-gray-50 border-2 border-black p-3 text-sm font-mono">
+                  <p className="text-gray-600 mb-1">Misol:</p>
+                  <p className="text-red-600 line-through">[KOMPANIYA_NOMI]</p>
+                  <p className="text-green-600">→ Protokol 57</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="bg-primary text-primary-foreground w-8 h-8 flex items-center justify-center font-black text-sm flex-shrink-0">
+                3
+              </div>
+              <div>
+                <p className="font-bold mb-1">AI ga yuboring</p>
+                <p className="text-sm text-muted-foreground">
+                  Tayyor promptni ChatGPT, Claude yoki boshqa AI xizmatiga joylashtiring va natijani oling.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Best Practices */}
+        <div className="border-t-2 border-black pt-4">
+          <h3 className="text-lg font-black uppercase flex items-center gap-2 mb-3">
+            <CheckCircle className="w-5 h-5" />
+            Eng Yaxshi Natijalar Uchun
+          </h3>
+          <ul className="space-y-2 text-sm">
+            <li className="flex items-start gap-2">
+              <span className="text-accent font-black">•</span>
+              <span>Placeholderlarni iloji boricha <strong>batafsil</strong> to'ldiring</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-accent font-black">•</span>
+              <span>Agar kerak bo'lsa, promptga <strong>qo'shimcha kontekst</strong> qo'shing</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-accent font-black">•</span>
+              <span>AI javobini tekshiring va kerak bo'lsa <strong>aniqlashtiruvchi savollar</strong> bering</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-accent font-black">•</span>
+              <span>Har bir prompt o'z <strong>vazifasiga moslashtirilgan</strong>, maqsadga mos promptni tanlang</span>
+            </li>
+          </ul>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 function UpgradeBanner() {
   return (
@@ -136,6 +245,9 @@ export default function PremiumPrompts() {
           </div>
         </section>
 
+        {/* Instructions Section */}
+        <InstructionsSection />
+
         {/* Search and Filters */}
         <section className="pb-8">
           <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
@@ -152,6 +264,7 @@ export default function PremiumPrompts() {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="px-4 py-2 border-2 border-black bg-card text-foreground font-bold uppercase focus:outline-none focus:ring-2 focus:ring-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              aria-label="Kategoriya tanlash"
             >
               {categories.map(category => (
                 <option key={category} value={category}>
