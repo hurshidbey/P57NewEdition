@@ -14,7 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText, Edit, Trash2, Plus } from 'lucide-react';
+import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText, Edit, Trash2, Plus, Tag, Calendar, Percent, Hash } from 'lucide-react';
 import AnalyticsDashboard from '@/components/analytics-dashboard';
 
 interface Protocol {
@@ -69,6 +69,34 @@ interface User {
   createdAt: string;
 }
 
+interface Coupon {
+  id: number;
+  code: string;
+  description?: string;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  originalPrice: number;
+  maxUses?: number;
+  usedCount: number;
+  validFrom?: string;
+  validUntil?: string;
+  isActive: boolean;
+  createdBy?: string;
+  createdAt?: string;
+}
+
+interface CouponUsage {
+  id: number;
+  couponId: number;
+  userId: string;
+  userEmail: string;
+  paymentId: string;
+  originalAmount: number;
+  discountAmount: number;
+  finalAmount: number;
+  usedAt: string;
+}
+
 export default function Admin() {
   const { user, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -77,24 +105,33 @@ export default function Admin() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [couponUsages, setCouponUsages] = useState<CouponUsage[]>([]);
   const [activeTab, setActiveTab] = useState('protocols');
   const [stats, setStats] = useState({
     totalUsers: 0,
     paidUsers: 0,
     totalRevenue: 0,
     totalProtocols: 0,
-    freeProtocols: 0
+    freeProtocols: 0,
+    activeCoupons: 0,
+    totalCouponUsage: 0
   });
 
   // Dialog states
   const [protocolDialogOpen, setProtocolDialogOpen] = useState(false);
   const [promptDialogOpen, setPromptDialogOpen] = useState(false);
+  const [couponDialogOpen, setCouponDialogOpen] = useState(false);
+  const [couponUsageDialogOpen, setCouponUsageDialogOpen] = useState(false);
   const [editingProtocol, setEditingProtocol] = useState<Protocol | null>(null);
   const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
+  const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
+  const [selectedCouponId, setSelectedCouponId] = useState<number | null>(null);
 
   // Form states
   const [protocolForm, setProtocolForm] = useState<Partial<Protocol>>({});
   const [promptForm, setPromptForm] = useState<Partial<Prompt>>({});
+  const [couponForm, setCouponForm] = useState<Partial<Coupon>>({});
 
   // Check if user is admin
   const isAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL || 
@@ -195,6 +232,22 @@ export default function Admin() {
         setStats(prev => ({
           ...prev,
           totalRevenue: revenue
+        }));
+      }
+
+      // Load coupons
+      const couponsRes = await fetch('/api/admin/coupons', { headers });
+      if (couponsRes.ok) {
+        const data = await couponsRes.json();
+        setCoupons(data);
+        
+        const activeCount = data.filter((c: Coupon) => c.isActive).length;
+        const totalUsage = data.reduce((sum: number, c: Coupon) => sum + c.usedCount, 0);
+        
+        setStats(prev => ({
+          ...prev,
+          activeCoupons: activeCount,
+          totalCouponUsage: totalUsage
         }));
       }
     } catch (error) {
@@ -516,6 +569,214 @@ export default function Admin() {
     }
   };
 
+  // Coupon CRUD functions
+  const openCouponDialog = (coupon?: Coupon) => {
+    if (coupon) {
+      setEditingCoupon(coupon);
+      setCouponForm(coupon);
+    } else {
+      setEditingCoupon(null);
+      setCouponForm({
+        code: '',
+        description: '',
+        discountType: 'percentage',
+        discountValue: 60,
+        originalPrice: 1425000,
+        isActive: true
+      });
+    }
+    setCouponDialogOpen(true);
+  };
+
+  const generateCouponCode = () => {
+    const prefix = 'P57';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = prefix;
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setCouponForm(prev => ({ ...prev, code }));
+  };
+
+  const saveCoupon = async () => {
+    // Validation
+    if (!couponForm.code?.trim()) {
+      toast({
+        title: 'Xatolik',
+        description: 'Kupon kodi kiritilishi shart',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (!couponForm.discountValue || couponForm.discountValue <= 0) {
+      toast({
+        title: 'Xatolik',
+        description: 'Chegirma miqdori kiritilishi shart',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      if (!token) {
+        throw new Error('Autentifikatsiya xatosi - iltimos qaytadan kiring');
+      }
+
+      const url = editingCoupon 
+        ? `/api/admin/coupons/${editingCoupon.id}`
+        : '/api/admin/coupons';
+      
+      const method = editingCoupon ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(couponForm)
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Muvaffaqiyat',
+          description: `Kupon ${editingCoupon ? 'yangilandi' : 'yaratildi'}`
+        });
+        setCouponDialogOpen(false);
+        setCouponForm({});
+        setEditingCoupon(null);
+        loadData();
+      } else {
+        const error = await res.json();
+        throw new Error(error.error || 'Kuponni saqlashda xatolik yuz berdi');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Xatolik',
+        description: error.message || 'Kuponni saqlashda xatolik yuz berdi',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const deleteCoupon = async (couponId: number) => {
+    if (!confirm('Ushbu kuponni o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.')) return;
+
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await fetch(`/api/admin/coupons/${couponId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Muvaffaqiyat',
+          description: 'Kupon o\'chirildi'
+        });
+        loadData();
+      } else {
+        throw new Error('Kuponni o\'chirishda xatolik');
+      }
+    } catch (error) {
+      toast({
+        title: 'Xatolik',
+        description: 'Kuponni o\'chirishda xatolik yuz berdi',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const toggleCouponActive = async (couponId: number, currentActive: boolean) => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      
+      const res = await fetch(`/api/admin/coupons/${couponId}/toggle`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ isActive: !currentActive })
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Muvaffaqiyat',
+          description: `Kupon ${!currentActive ? 'faollashtirildi' : 'o\'chirildi'}`
+        });
+        loadData();
+      } else {
+        throw new Error('Failed to update');
+      }
+    } catch (error) {
+      toast({
+        title: 'Xatolik',
+        description: 'Kupon holatini o\'zgartirishda xatolik',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const viewCouponUsage = async (couponId: number) => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL!,
+        import.meta.env.VITE_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      
+      const res = await fetch(`/api/admin/coupons/${couponId}/usage`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCouponUsages(data);
+        setSelectedCouponId(couponId);
+        setCouponUsageDialogOpen(true);
+      } else {
+        throw new Error('Failed to fetch usage');
+      }
+    } catch (error) {
+      toast({
+        title: 'Xatolik',
+        description: 'Foydalanish tarixini yuklashda xatolik',
+        variant: 'destructive'
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -600,11 +861,12 @@ export default function Admin() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="protocols">Protokollar</TabsTrigger>
             <TabsTrigger value="prompts">Promptlar</TabsTrigger>
             <TabsTrigger value="users">Foydalanuvchilar</TabsTrigger>
             <TabsTrigger value="payments">To'lovlar</TabsTrigger>
+            <TabsTrigger value="coupons">Kuponlar</TabsTrigger>
             <TabsTrigger value="analytics">Analitika</TabsTrigger>
           </TabsList>
 
@@ -822,6 +1084,117 @@ export default function Admin() {
             </Card>
           </TabsContent>
 
+          {/* Coupons Tab */}
+          <TabsContent value="coupons">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Kuponlarni boshqarish</CardTitle>
+                  <CardDescription>Chegirma kuponlarini yaratish va boshqarish</CardDescription>
+                </div>
+                <Button onClick={() => openCouponDialog()}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Yangi kupon
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Kod</TableHead>
+                      <TableHead>Tavsif</TableHead>
+                      <TableHead>Chegirma</TableHead>
+                      <TableHead>Foydalanilgan</TableHead>
+                      <TableHead>Muddat</TableHead>
+                      <TableHead>Holat</TableHead>
+                      <TableHead>Harakatlar</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {coupons.map((coupon) => (
+                      <TableRow key={coupon.id}>
+                        <TableCell>
+                          <code className="font-mono font-bold text-lg">{coupon.code}</code>
+                        </TableCell>
+                        <TableCell>{coupon.description || '-'}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">
+                            {coupon.discountType === 'percentage' ? (
+                              <><Percent className="h-3 w-3 mr-1" />{coupon.discountValue}%</>
+                            ) : (
+                              <>{coupon.discountValue.toLocaleString()} UZS</>
+                            )}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span>{coupon.usedCount}</span>
+                            {coupon.maxUses && (
+                              <span className="text-muted-foreground">/ {coupon.maxUses}</span>
+                            )}
+                            {coupon.usedCount > 0 && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => viewCouponUsage(coupon.id)}
+                              >
+                                Ko'rish
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {(() => {
+                            const now = new Date();
+                            const validFrom = coupon.validFrom ? new Date(coupon.validFrom) : null;
+                            const validUntil = coupon.validUntil ? new Date(coupon.validUntil) : null;
+                            
+                            if (validUntil && validUntil < now) {
+                              return <Badge variant="destructive">Muddati tugagan</Badge>;
+                            } else if (validFrom && validFrom > now) {
+                              return <Badge variant="outline">Kutilmoqda</Badge>;
+                            } else if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
+                              return <Badge variant="secondary">Tugagan</Badge>;
+                            } else {
+                              return <Badge variant="default">Faol</Badge>;
+                            }
+                          })()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={coupon.isActive ? 'default' : 'secondary'}>
+                            {coupon.isActive ? 'Yoqilgan' : 'O\'chirilgan'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={coupon.isActive}
+                              onCheckedChange={() => toggleCouponActive(coupon.id, coupon.isActive)}
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openCouponDialog(coupon)}
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => deleteCoupon(coupon.id)}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Analytics Tab */}
           <TabsContent value="analytics">
             <AnalyticsDashboard />
@@ -1008,6 +1381,182 @@ export default function Admin() {
                 {editingPrompt ? 'Saqlash' : 'Yaratish'}
               </Button>
             </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Coupon Dialog */}
+        <Dialog open={couponDialogOpen} onOpenChange={setCouponDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {editingCoupon ? 'Kuponni tahrirlash' : 'Yangi kupon yaratish'}
+              </DialogTitle>
+              <DialogDescription>
+                Kupon ma'lumotlarini kiriting yoki tahrirlang
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="couponCode" className="text-right">Kod</Label>
+                <div className="col-span-3 flex gap-2">
+                  <Input
+                    id="couponCode"
+                    value={couponForm.code || ''}
+                    onChange={(e) => setCouponForm({...couponForm, code: e.target.value.toUpperCase()})}
+                    placeholder="Masalan: LAUNCH60"
+                    className="flex-1 font-mono uppercase"
+                  />
+                  {!editingCoupon && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={generateCouponCode}
+                    >
+                      <Hash className="h-4 w-4 mr-2" />
+                      Generatsiya
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="couponDescription" className="text-right">Tavsif</Label>
+                <Input
+                  id="couponDescription"
+                  value={couponForm.description || ''}
+                  onChange={(e) => setCouponForm({...couponForm, description: e.target.value})}
+                  className="col-span-3"
+                  placeholder="Masalan: Yangi foydalanuvchilar uchun 60% chegirma"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="discountType" className="text-right">Chegirma turi</Label>
+                <Select
+                  value={couponForm.discountType || 'percentage'}
+                  onValueChange={(value: 'percentage' | 'fixed') => setCouponForm({...couponForm, discountType: value})}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="percentage">Foizda (%)</SelectItem>
+                    <SelectItem value="fixed">Belgilangan summa (UZS)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="discountValue" className="text-right">Chegirma miqdori</Label>
+                <div className="col-span-3 flex gap-2 items-center">
+                  <Input
+                    id="discountValue"
+                    type="number"
+                    value={couponForm.discountValue || ''}
+                    onChange={(e) => setCouponForm({...couponForm, discountValue: parseInt(e.target.value) || 0})}
+                    className="flex-1"
+                  />
+                  <span className="text-muted-foreground">
+                    {couponForm.discountType === 'percentage' ? '%' : 'UZS'}
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="originalPrice" className="text-right">Asl narx</Label>
+                <div className="col-span-3 flex gap-2 items-center">
+                  <Input
+                    id="originalPrice"
+                    type="number"
+                    value={couponForm.originalPrice || 1425000}
+                    onChange={(e) => setCouponForm({...couponForm, originalPrice: parseInt(e.target.value) || 0})}
+                    className="flex-1"
+                  />
+                  <span className="text-muted-foreground">UZS</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="maxUses" className="text-right">Maksimal foydalanish</Label>
+                <Input
+                  id="maxUses"
+                  type="number"
+                  value={couponForm.maxUses || ''}
+                  onChange={(e) => setCouponForm({...couponForm, maxUses: e.target.value ? parseInt(e.target.value) : undefined})}
+                  className="col-span-3"
+                  placeholder="Cheklanmagan uchun bo'sh qoldiring"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="validFrom" className="text-right">Boshlanish sanasi</Label>
+                <Input
+                  id="validFrom"
+                  type="datetime-local"
+                  value={couponForm.validFrom ? new Date(couponForm.validFrom).toISOString().slice(0, 16) : ''}
+                  onChange={(e) => setCouponForm({...couponForm, validFrom: e.target.value ? new Date(e.target.value).toISOString() : undefined})}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="validUntil" className="text-right">Tugash sanasi</Label>
+                <Input
+                  id="validUntil"
+                  type="datetime-local"
+                  value={couponForm.validUntil ? new Date(couponForm.validUntil).toISOString().slice(0, 16) : ''}
+                  onChange={(e) => setCouponForm({...couponForm, validUntil: e.target.value ? new Date(e.target.value).toISOString() : undefined})}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="isActive" className="text-right">Faol</Label>
+                <Switch
+                  id="isActive"
+                  checked={couponForm.isActive !== false}
+                  onCheckedChange={(checked) => setCouponForm({...couponForm, isActive: checked})}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" onClick={saveCoupon}>
+                {editingCoupon ? 'Saqlash' : 'Yaratish'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Coupon Usage Dialog */}
+        <Dialog open={couponUsageDialogOpen} onOpenChange={setCouponUsageDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Kupon foydalanish tarixi</DialogTitle>
+              <DialogDescription>
+                {coupons.find(c => c.id === selectedCouponId)?.code} kuponi uchun foydalanish ma'lumotlari
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Foydalanuvchi</TableHead>
+                    <TableHead>Asl summa</TableHead>
+                    <TableHead>Chegirma</TableHead>
+                    <TableHead>To'langan</TableHead>
+                    <TableHead>Sana</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {couponUsages.map((usage) => (
+                    <TableRow key={usage.id}>
+                      <TableCell>{usage.userEmail}</TableCell>
+                      <TableCell>{usage.originalAmount.toLocaleString()} UZS</TableCell>
+                      <TableCell className="text-red-600">-{usage.discountAmount.toLocaleString()} UZS</TableCell>
+                      <TableCell className="font-bold">{usage.finalAmount.toLocaleString()} UZS</TableCell>
+                      <TableCell>{new Date(usage.usedAt).toLocaleDateString('uz-UZ')}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {couponUsages.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  Bu kupon hali ishlatilmagan
+                </div>
+              )}
+            </div>
           </DialogContent>
         </Dialog>
       </main>

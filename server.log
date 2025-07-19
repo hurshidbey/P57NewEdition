@@ -1,0 +1,21 @@
+
+> rest-express@2.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[DB] Attempting Supabase connection (1/3)...
+🚨 Security Configuration Errors:
+  - OPENAI_API_KEY appears to be invalid (should start with sk-)
+🔒 Security Status:
+  - Environment: development
+  - Session Secret: Configured
+  - HTTPS Only Cookies: Disabled
+  - Rate Limiting: Enabled
+  - CORS: Development mode
+[11:53:23 AM] [express] serving on port 5001
+[DB] Using Supabase - skipping seed (data already exists in Supabase)
+Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[11:53:41 AM] [express] POST /api/coupons/validate 404 in 1ms :: {"valid":false,"message":"Bunday kupon…
+OpenAI API error: 401 Incorrect API key provided: YOUR_OPE************HERE. You can find your API key at https://platform.openai.com/account/api-keys.
+[11:54:48 AM] [express] GET /api/test-openai 200 in 625ms :: {"success":true,"message":"OpenAI connecti…
