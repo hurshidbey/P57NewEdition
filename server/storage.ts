@@ -1058,6 +1058,26 @@ export class HybridStorage implements IStorage {
 
   // Coupon methods implementation
   async createCoupon(coupon: InsertCoupon): Promise<Coupon> {
+    // Check if we're using Supabase storage
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      try {
+        const { data, error } = await supabaseStorage.supabase
+          .from('coupons')
+          .insert(coupon)
+          .select()
+          .single();
+        
+        if (error) throw error;
+        console.log(`✅ [STORAGE] Coupon created via Supabase:`, data);
+        return data;
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to create coupon via Supabase:`, error);
+        throw error;
+      }
+    }
+    
+    // Fallback to direct database connection
     if (isDatabaseConnected && db) {
       try {
         const result = await db.insert(coupons).values(coupon).returning();
