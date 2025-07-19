@@ -8,8 +8,22 @@ const getClientId = (req: Request): string => {
     return `user_${req.session.user.id}`;
   }
   
-  // Otherwise use IP address
-  return req.ip || req.socket.remoteAddress || 'unknown';
+  // Get real IP address (trust proxy must be enabled)
+  const realIp = req.ip || 
+                 req.headers['x-forwarded-for'] as string || 
+                 req.headers['x-real-ip'] as string || 
+                 req.socket.remoteAddress || 
+                 'unknown';
+  
+  // Extract first IP if x-forwarded-for contains multiple IPs
+  const clientIp = realIp.split(',')[0].trim();
+  
+  // Log for debugging (remove in production if too verbose)
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[RateLimit] Client IP: ${clientIp}, Path: ${req.path}`);
+  }
+  
+  return clientIp;
 };
 
 // General API rate limit

@@ -13,6 +13,9 @@ import { createTimeoutMiddleware, timeoutConfigs } from "./middleware/timeout";
 
 const app = express();
 
+// Trust proxy headers - CRITICAL for proper IP detection behind NGINX
+app.set('trust proxy', true);
+
 // Initialize security checks
 initializeSecurity();
 
