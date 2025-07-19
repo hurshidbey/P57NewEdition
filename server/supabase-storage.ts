@@ -527,7 +527,22 @@ export class SupabaseStorage implements IStorage {
       throw error;
     }
     
-    return data || [];
+    // Map snake_case fields from database to camelCase for TypeScript
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      code: item.code,
+      description: item.description,
+      discountType: item.discount_type,
+      discountValue: item.discount_value,
+      originalPrice: item.original_price,
+      maxUses: item.max_uses,
+      usedCount: item.used_count,
+      validFrom: item.valid_from,
+      validUntil: item.valid_until,
+      isActive: item.is_active,
+      createdBy: item.created_by,
+      createdAt: item.created_at
+    }));
   }
 
   async getCouponByCode(code: string): Promise<Coupon | undefined> {
@@ -542,8 +557,27 @@ export class SupabaseStorage implements IStorage {
       throw error;
     }
     
-    console.log(`🔍 [SUPABASE] getCouponByCode ${code} result:`, data);
-    return data || undefined;
+    if (!data) return undefined;
+    
+    // Map snake_case fields from database to camelCase for TypeScript
+    const coupon: Coupon = {
+      id: data.id,
+      code: data.code,
+      description: data.description,
+      discountType: data.discount_type,
+      discountValue: data.discount_value,
+      originalPrice: data.original_price,
+      maxUses: data.max_uses,
+      usedCount: data.used_count,
+      validFrom: data.valid_from,
+      validUntil: data.valid_until,
+      isActive: data.is_active,
+      createdBy: data.created_by,
+      createdAt: data.created_at
+    };
+    
+    console.log(`🔍 [SUPABASE] getCouponByCode ${code} result:`, coupon);
+    return coupon;
   }
 
   async getCouponById(id: number): Promise<Coupon | undefined> {
