@@ -1,0 +1,16 @@
+http:
+  routers:
+    protokol57:
+      rule: "Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`) || Host(`app.1foiz.com`) || Host(`1foiz.com`)"
+      entryPoints:
+        - "web"
+        - "websecure"
+      service: protokol57
+      tls:
+        certResolver: mytlschallenge
+
+  services:
+    protokol57:
+      loadBalancer:
+        servers:
+          - url: "http://172.17.0.1:5001"
