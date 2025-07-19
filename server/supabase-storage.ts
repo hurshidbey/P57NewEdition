@@ -501,9 +501,23 @@ export class SupabaseStorage implements IStorage {
   
   // Coupon methods
   async createCoupon(coupon: InsertCoupon): Promise<Coupon> {
+    // Map camelCase fields from TypeScript to snake_case for database
+    const dbCoupon = {
+      code: coupon.code,
+      description: coupon.description,
+      discount_type: coupon.discountType,
+      discount_value: coupon.discountValue,
+      original_price: coupon.originalPrice,
+      max_uses: coupon.maxUses,
+      valid_from: coupon.validFrom,
+      valid_until: coupon.validUntil,
+      is_active: coupon.isActive,
+      created_by: coupon.createdBy
+    };
+    
     const { data, error } = await this.supabase
       .from('coupons')
-      .insert(coupon)
+      .insert(dbCoupon)
       .select()
       .single();
     
@@ -513,7 +527,23 @@ export class SupabaseStorage implements IStorage {
     }
     
     console.log(`✅ [SUPABASE] Coupon created:`, data);
-    return data;
+    
+    // Map snake_case response back to camelCase
+    return {
+      id: data.id,
+      code: data.code,
+      description: data.description,
+      discountType: data.discount_type,
+      discountValue: data.discount_value,
+      originalPrice: data.original_price,
+      maxUses: data.max_uses,
+      usedCount: data.used_count,
+      validFrom: data.valid_from,
+      validUntil: data.valid_until,
+      isActive: data.is_active,
+      createdBy: data.created_by,
+      createdAt: data.created_at
+    };
   }
 
   async getCoupons(): Promise<Coupon[]> {
@@ -592,13 +622,43 @@ export class SupabaseStorage implements IStorage {
       throw error;
     }
     
-    return data || undefined;
+    if (!data) return undefined;
+    
+    // Map snake_case fields from database to camelCase for TypeScript
+    return {
+      id: data.id,
+      code: data.code,
+      description: data.description,
+      discountType: data.discount_type,
+      discountValue: data.discount_value,
+      originalPrice: data.original_price,
+      maxUses: data.max_uses,
+      usedCount: data.used_count,
+      validFrom: data.valid_from,
+      validUntil: data.valid_until,
+      isActive: data.is_active,
+      createdBy: data.created_by,
+      createdAt: data.created_at
+    };
   }
 
   async updateCoupon(id: number, coupon: Partial<InsertCoupon>): Promise<Coupon | undefined> {
+    // Map camelCase fields from TypeScript to snake_case for database
+    const dbUpdate: any = {};
+    if (coupon.code !== undefined) dbUpdate.code = coupon.code;
+    if (coupon.description !== undefined) dbUpdate.description = coupon.description;
+    if (coupon.discountType !== undefined) dbUpdate.discount_type = coupon.discountType;
+    if (coupon.discountValue !== undefined) dbUpdate.discount_value = coupon.discountValue;
+    if (coupon.originalPrice !== undefined) dbUpdate.original_price = coupon.originalPrice;
+    if (coupon.maxUses !== undefined) dbUpdate.max_uses = coupon.maxUses;
+    if (coupon.validFrom !== undefined) dbUpdate.valid_from = coupon.validFrom;
+    if (coupon.validUntil !== undefined) dbUpdate.valid_until = coupon.validUntil;
+    if (coupon.isActive !== undefined) dbUpdate.is_active = coupon.isActive;
+    if (coupon.createdBy !== undefined) dbUpdate.created_by = coupon.createdBy;
+    
     const { data, error } = await this.supabase
       .from('coupons')
-      .update(coupon)
+      .update(dbUpdate)
       .eq('id', id)
       .select()
       .single();
@@ -609,7 +669,23 @@ export class SupabaseStorage implements IStorage {
     }
     
     console.log(`✅ [SUPABASE] Coupon ${id} updated`);
-    return data;
+    
+    // Map snake_case response back to camelCase
+    return {
+      id: data.id,
+      code: data.code,
+      description: data.description,
+      discountType: data.discount_type,
+      discountValue: data.discount_value,
+      originalPrice: data.original_price,
+      maxUses: data.max_uses,
+      usedCount: data.used_count,
+      validFrom: data.valid_from,
+      validUntil: data.valid_until,
+      isActive: data.is_active,
+      createdBy: data.created_by,
+      createdAt: data.created_at
+    };
   }
 
   async deleteCoupon(id: number): Promise<boolean> {
