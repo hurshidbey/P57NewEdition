@@ -1062,15 +1062,10 @@ export class HybridStorage implements IStorage {
     const supabaseStorage = (global as any).supabaseStorage;
     if (supabaseStorage) {
       try {
-        const { data, error } = await supabaseStorage.supabase
-          .from('coupons')
-          .insert(coupon)
-          .select()
-          .single();
-        
-        if (error) throw error;
-        console.log(`✅ [STORAGE] Coupon created via Supabase:`, data);
-        return data;
+        // Use the SupabaseStorage method which has proper field mapping
+        const result = await supabaseStorage.createCoupon(coupon);
+        console.log(`✅ [STORAGE] Coupon created via Supabase:`, result);
+        return result;
       } catch (error) {
         console.error(`❌ [STORAGE] Failed to create coupon via Supabase:`, error);
         throw error;
