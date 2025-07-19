@@ -606,7 +606,7 @@ export default function KnowledgeBase() {
           
           {/* Premium CTA Overlay */}
           <div className="kb-premium-overlay">
-            <div className="kb-teaser-text">
+            <div className="kb-teaser-text px-4">
               Bu {getCurrentSection()?.difficulty === 'beginner' ? 'boshlang\'ich' : 
                    getCurrentSection()?.difficulty === 'intermediate' ? 'o\'rta' :
                    'murakkab'} darajadagi {getCurrentSection()?.readTime} daqiqalik dars
@@ -617,6 +617,7 @@ export default function KnowledgeBase() {
               description={`"${getCurrentSection()?.title}" va boshqa 100+ darslarni o'qish uchun Premium obuna kerak`}
               reason="Barcha AI prompting texnikalarini o'rganing"
               showFeatures={true}
+              className="mx-auto"
             />
           </div>
         </div>
@@ -791,14 +792,14 @@ export default function KnowledgeBase() {
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
-          <div className="max-w-4xl mx-auto p-4 lg:p-8 pb-32 lg:pb-8">
+          <div className="max-w-4xl mx-auto px-4 py-4 lg:p-8 pb-32 lg:pb-8">
             {/* Breadcrumb */}
-            <div className="mb-4 text-sm text-black flex items-center gap-2 font-bold uppercase">
+            <div className="mb-4 text-xs sm:text-sm text-black flex flex-wrap items-center gap-1 sm:gap-2 font-bold uppercase">
               <Link href="/">
                 <span className="hover:text-black cursor-pointer font-bold">Bosh sahifa</span>
               </Link>
               <span>/</span>
-              <span className="font-medium">
+              <span className="font-medium break-words">
                 {knowledgeBaseStructure.find(c => c.id === activeCategory)?.title}
               </span>
             </div>

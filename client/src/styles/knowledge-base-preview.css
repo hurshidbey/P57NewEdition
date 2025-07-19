@@ -4,6 +4,7 @@
 .kb-premium-content-wrapper {
   position: relative;
   min-height: 500px;
+  isolation: isolate;
 }
 
 /* Blurred content preview */
