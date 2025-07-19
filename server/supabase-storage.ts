@@ -3,7 +3,7 @@ import { type User, type InsertUser, type Protocol, type InsertProtocol, type Ca
 import { type IStorage } from './storage';
 
 export class SupabaseStorage implements IStorage {
-  private supabase: any;
+  public supabase: any;
 
   constructor() {
     const supabaseUrl = process.env.SUPABASE_URL;
@@ -13,10 +13,14 @@ export class SupabaseStorage implements IStorage {
       throw new Error('Supabase credentials not found');
     }
 
+    // Create client without type generation to avoid schema cache issues
     this.supabase = createClient(supabaseUrl, supabaseKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false
+      },
+      db: {
+        schema: 'public'
       }
     });
   }
@@ -501,19 +505,26 @@ export class SupabaseStorage implements IStorage {
   
   // Coupon methods
   async createCoupon(coupon: InsertCoupon): Promise<Coupon> {
+    console.log(`🔍 [SUPABASE] Creating coupon with data:`, coupon);
+    
     // Map camelCase fields from TypeScript to snake_case for database
-    const dbCoupon = {
+    // Only include fields that are not undefined
+    const dbCoupon: any = {
       code: coupon.code,
       description: coupon.description,
       discount_type: coupon.discountType,
       discount_value: coupon.discountValue,
-      original_price: coupon.originalPrice,
-      max_uses: coupon.maxUses,
-      valid_from: coupon.validFrom,
-      valid_until: coupon.validUntil,
-      is_active: coupon.isActive,
-      created_by: coupon.createdBy
+      original_price: coupon.originalPrice || 1425000, // Default price
+      is_active: coupon.isActive !== undefined ? coupon.isActive : true, // Default to active
     };
+    
+    // Only add optional fields if they are defined
+    if (coupon.maxUses !== undefined) dbCoupon.max_uses = coupon.maxUses;
+    if (coupon.validFrom !== undefined) dbCoupon.valid_from = coupon.validFrom;
+    if (coupon.validUntil !== undefined) dbCoupon.valid_until = coupon.validUntil;
+    if (coupon.createdBy !== undefined) dbCoupon.created_by = coupon.createdBy;
+    
+    console.log(`🔍 [SUPABASE] Mapped database object:`, dbCoupon);
     
     const { data, error } = await this.supabase
       .from('coupons')
@@ -523,6 +534,7 @@ export class SupabaseStorage implements IStorage {
     
     if (error) {
       console.error(`❌ [SUPABASE] Failed to create coupon:`, error);
+      console.error(`❌ [SUPABASE] Error details:`, JSON.stringify(error, null, 2));
       throw error;
     }
     
@@ -537,7 +549,7 @@ export class SupabaseStorage implements IStorage {
       discountValue: data.discount_value,
       originalPrice: data.original_price,
       maxUses: data.max_uses,
-      usedCount: data.used_count,
+      usedCount: data.used_count || 0,
       validFrom: data.valid_from,
       validUntil: data.valid_until,
       isActive: data.is_active,

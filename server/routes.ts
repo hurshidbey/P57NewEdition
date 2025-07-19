@@ -805,7 +805,19 @@ export function setupRoutes(app: Express): Server {
   // Admin: Create new coupon
   app.post("/api/admin/coupons", isSupabaseAdmin, async (req, res) => {
     try {
-      const { code, ...couponData } = req.body;
+      const { 
+        code, 
+        description, 
+        discountType, 
+        discountValue, 
+        originalPrice,
+        maxUses,
+        validFrom,
+        validUntil,
+        isActive 
+      } = req.body;
+      
+      console.log('📝 [ADMIN] Creating coupon with data:', req.body);
       
       // Ensure code is uppercase
       const normalizedCode = code.trim().toUpperCase();
@@ -818,15 +830,36 @@ export function setupRoutes(app: Express): Server {
         });
       }
 
-      const coupon = await storage.createCoupon({
-        ...couponData,
+      // Create coupon with only the expected fields
+      const couponData: any = {
         code: normalizedCode,
+        description: description || '',
+        discountType: discountType || 'percentage',
+        discountValue: discountValue || 0,
+        originalPrice: originalPrice || 1425000,
+        isActive: isActive !== undefined ? isActive : true,
         createdBy: req.user?.email || 'admin'
-      });
+      };
+      
+      // Only add optional fields if they have values
+      if (maxUses !== undefined && maxUses !== null && maxUses !== '') {
+        couponData.maxUses = parseInt(maxUses);
+      }
+      if (validFrom) {
+        couponData.validFrom = validFrom;
+      }
+      if (validUntil) {
+        couponData.validUntil = validUntil;
+      }
+      
+      console.log('📝 [ADMIN] Processed coupon data:', couponData);
+      
+      const coupon = await storage.createCoupon(couponData);
       
       res.json(coupon);
     } catch (error: any) {
       console.error('❌ [ADMIN] Failed to create coupon:', error);
+      console.error('❌ [ADMIN] Error stack:', error.stack);
       res.status(500).json({ error: error.message });
     }
   });
