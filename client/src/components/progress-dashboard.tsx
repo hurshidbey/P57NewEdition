@@ -119,35 +119,35 @@ export default function ProgressDashboard({ totalProtocols }: ProgressDashboardP
           {tier === 'free' && (
             <div className="space-y-3 mt-4">
               {/* Protocol access indicator */}
-              <div className="bg-blue-50 border-2 border-black rounded-none p-3 shadow-brutal-sm">
+              <div className="bg-white border-2 border-black rounded-none p-4 shadow-brutal">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-black" />
-                    <span className="text-sm font-bold text-black">
+                    <BookOpen className="w-5 h-5 text-black" />
+                    <span className="text-base font-black text-black uppercase">
                       Protokol kirishi
                     </span>
                   </div>
-                  <span className="text-sm font-bold text-black">
+                  <span className="text-lg font-black text-black">
                     {accessedCount}/3
                   </span>
                 </div>
-                <div className="w-full bg-blue-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-blue-600 h-2 rounded-full" 
+                    className="bg-black h-2 rounded-full" 
                     style={{ width: `${Math.min((accessedCount / 3) * 100, 100)}%` }}
                   ></div>
                 </div>
               </div>
 
               {/* Premium protocols info */}
-              <div className="bg-orange-50 border-2 border-black rounded-none p-3 shadow-brutal-sm">
+              <div className="bg-white border-2 border-black rounded-none p-4 shadow-brutal">
                 <div className="flex items-start gap-2">
-                  <Crown className="w-4 h-4 text-black mt-0.5" />
-                  <div className="text-sm">
-                    <p className="font-bold text-black mb-1">
+                  <Crown className="w-5 h-5 text-black mt-0.5" />
+                  <div>
+                    <p className="text-base font-black text-black mb-1 uppercase">
                       {54} ta qo'shimcha protokol Premium rejimda
                     </p>
-                    <p className="font-semibold text-black">
+                    <p className="text-base font-bold text-black">
                       Barcha protokollar + har birini 5 marta baholash uchun Premium oling
                     </p>
                   </div>
