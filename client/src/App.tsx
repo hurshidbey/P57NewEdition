@@ -121,13 +121,9 @@ function AppContent() {
       
       <Route path="/knowledge-base">
         {isAuthenticated ? (
-          isPremiumUser ? (
-            <Suspense fallback={<PageLoader />}>
-              <KnowledgeBase />
-            </Suspense>
-          ) : (
-            <Redirect to="/atmos-payment" />
-          )
+          <Suspense fallback={<PageLoader />}>
+            <KnowledgeBase />
+          </Suspense>
         ) : (
           <AuthPage />
         )}
