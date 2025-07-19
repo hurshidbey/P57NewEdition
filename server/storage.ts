@@ -1141,6 +1141,19 @@ export class HybridStorage implements IStorage {
   }
 
   async updateCoupon(id: number, coupon: Partial<InsertCoupon>): Promise<Coupon | undefined> {
+    // Check if we're using Supabase storage
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      try {
+        const result = await supabaseStorage.updateCoupon(id, coupon);
+        console.log(`✅ [STORAGE] Coupon updated via Supabase:`, result);
+        return result;
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to update coupon via Supabase:`, error);
+        throw error;
+      }
+    }
+    
     if (isDatabaseConnected && db) {
       try {
         const result = await db.update(coupons)
@@ -1157,6 +1170,19 @@ export class HybridStorage implements IStorage {
   }
 
   async deleteCoupon(id: number): Promise<boolean> {
+    // Check if we're using Supabase storage
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      try {
+        const result = await supabaseStorage.deleteCoupon(id);
+        console.log(`✅ [STORAGE] Coupon deleted via Supabase`);
+        return result;
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to delete coupon via Supabase:`, error);
+        throw error;
+      }
+    }
+    
     if (isDatabaseConnected && db) {
       try {
         await db.delete(coupons).where(eq(coupons.id, id));
