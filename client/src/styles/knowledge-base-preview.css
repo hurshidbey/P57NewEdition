@@ -1,0 +1,91 @@
+/* Knowledge Base Preview Styles for Free Users */
+
+/* Container for premium content */
+.kb-premium-content-wrapper {
+  position: relative;
+  min-height: 500px;
+}
+
+/* Blurred content preview */
+.kb-content-preview {
+  position: relative;
+  overflow: hidden;
+  max-height: 300px;
+}
+
+.kb-content-blur {
+  filter: blur(4px);
+  opacity: 0.6;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Gradient overlay for smooth fade */
+.kb-content-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 30%,
+    rgba(255, 255, 255, 0.9) 60%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  pointer-events: none;
+}
+
+/* Premium overlay container */
+.kb-premium-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 90%;
+  max-width: 500px;
+}
+
+/* Lock icon watermark */
+.kb-content-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.kb-content-watermark svg {
+  width: 200px;
+  height: 200px;
+}
+
+/* Teaser text */
+.kb-teaser-text {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #000;
+  font-size: 0.875rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .kb-content-preview {
+    max-height: 200px;
+  }
+  
+  .kb-premium-overlay {
+    width: 95%;
+  }
+  
+  .kb-content-watermark svg {
+    width: 150px;
+    height: 150px;
+  }
+}

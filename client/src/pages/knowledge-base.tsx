@@ -11,8 +11,10 @@ import { ContentSkeleton } from "@/components/knowledge-base/ContentSkeleton";
 import { NoResults } from "@/components/knowledge-base/NoResults";
 import { useUserTier } from "@/hooks/use-user-tier";
 import { useAuth } from "@/contexts/auth-context";
-import { Crown } from "lucide-react";
+import { Crown, Lock } from "lucide-react";
 import "@/styles/knowledge-base-spacing.css";
+import "@/styles/knowledge-base-preview.css";
+import UpgradeCTA from "@/components/upgrade-cta";
 
 // Import the shared components
 import { ExpandableCard } from "@/content/knowledge-base/components/ExpandableCard";
@@ -307,16 +309,9 @@ export default function KnowledgeBase() {
   const { tier } = useUserTier();
   const [, navigate] = useLocation();
   
-  // Premium access check - double protection
+  // Premium access check
   const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
   const isPremiumUser = tier === 'paid' || isAdmin;
-  
-  // Redirect non-premium users to payment page
-  useEffect(() => {
-    if (!isPremiumUser) {
-      navigate('/atmos-payment');
-    }
-  }, [isPremiumUser, navigate]);
   
   // Force light mode for knowledge base
   useEffect(() => {
@@ -571,6 +566,64 @@ export default function KnowledgeBase() {
     // Get content from the modular system
     const content = getContent(activeCategory, activeSection);
     
+    // Check if user is premium
+    if (!isPremiumUser) {
+      // Show blurred preview for free users
+      return (
+        <div className="kb-premium-content-wrapper">
+          {/* Watermark */}
+          <div className="kb-content-watermark">
+            <Lock className="w-48 h-48" />
+          </div>
+          
+          {/* Blurred content preview */}
+          <div className="kb-content-preview">
+            <div className="kb-content-blur">
+              {content && content.sections && content.sections.length > 0 ? (
+                <div>
+                  <h3 className="text-xl font-bold mb-3">Premium Content Preview</h3>
+                  <p className="text-lg mb-4">
+                    Bu bo'limda siz {getCurrentSection()?.title} haqida to'liq ma'lumot olishingiz mumkin.
+                  </p>
+                  <p className="text-base mb-3">
+                    • AI texnologiyalari bilan ishlash usullari<br/>
+                    • Amaliy misollar va kod namunalari<br/>
+                    • Professional maslahatlar va yo'riqnomalar<br/>
+                    • Interaktiv mashqlar va testlar
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Premium obuna bilan barcha bilimlar bazasiga to'liq kirish imkoniyatiga ega bo'ling...
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-lg">Premium content mavjud...</p>
+                </div>
+              )}
+            </div>
+            <div className="kb-content-fade"></div>
+          </div>
+          
+          {/* Premium CTA Overlay */}
+          <div className="kb-premium-overlay">
+            <div className="kb-teaser-text">
+              Bu {getCurrentSection()?.difficulty === 'beginner' ? 'boshlang\'ich' : 
+                   getCurrentSection()?.difficulty === 'intermediate' ? 'o\'rta' :
+                   'murakkab'} darajadagi {getCurrentSection()?.readTime} daqiqalik dars
+            </div>
+            <UpgradeCTA 
+              variant="modal"
+              title="Premium bilimlar bazasi"
+              description={`"${getCurrentSection()?.title}" va boshqa 100+ darslarni o'qish uchun Premium obuna kerak`}
+              reason="Barcha AI prompting texnikalarini o'rganing"
+              showFeatures={true}
+            />
+          </div>
+        </div>
+      );
+    }
+    
+    // Premium users see full content
     if (content && content.sections && content.sections.length > 0) {
       const section = content.sections[0];
       if (section.type === 'custom' && section.content.render) {
@@ -587,23 +640,7 @@ export default function KnowledgeBase() {
     );
   }
 
-  // Show loading state while checking premium status
-  if (!isPremiumUser) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <Crown className="w-12 h-12 mx-auto mb-4 text-accent" />
-          <h2 className="text-2xl font-bold mb-2">Premium Content</h2>
-          <p className="text-muted-foreground mb-4">O'rganish bo'limi faqat premium foydalanuvchilar uchun</p>
-          <Link href="/atmos-payment">
-            <Button className="bg-accent hover:bg-accent/90">
-              Premium ga o'tish
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // We no longer block access entirely - free users can browse the structure
 
   return (
     <div className="min-h-screen bg-background kb-container">
@@ -631,33 +668,42 @@ export default function KnowledgeBase() {
       <div className="flex h-[calc(100vh-128px)] lg:h-[calc(100vh-64px)]">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-[300px] border-r-2 border-black bg-white overflow-y-auto">
-          {/* Progress Bar */}
-          <div className="kb-sidebar-section-header border-b-2 border-black bg-black text-white">
-            <div className="mb-2 flex justify-between items-center">
-              <span className="text-base font-black uppercase tracking-tight">PROGRESS</span>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-black font-mono tabular-nums">{calculateOverallProgress()}%</span>
+          {/* Progress Bar - Only for Premium Users */}
+          {isPremiumUser ? (
+            <div className="kb-sidebar-section-header border-b-2 border-black bg-black text-white">
+              <div className="mb-2 flex justify-between items-center">
+                <span className="text-base font-black uppercase tracking-tight">PROGRESS</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-black font-mono tabular-nums">{calculateOverallProgress()}%</span>
+                </div>
+              </div>
+              <div className="h-5 bg-white border-2 border-black relative overflow-hidden">
+                <div 
+                  className="h-full bg-[#ffeb3b] relative transition-all duration-500 ease-out"
+                  style={{ width: `${calculateOverallProgress()}%` }}
+                >
+                  {/* Striped pattern for progress */}
+                  <div className="absolute inset-0 bg-repeating-linear-gradient-45 from-transparent via-transparent to-black/20 bg-size-10"></div>
+                </div>
+                {/* Progress markers every 25% */}
+                <div className="absolute inset-0 flex">
+                  <div className="w-1/4 border-r-2 border-black"></div>
+                  <div className="w-1/4 border-r-2 border-black"></div>
+                  <div className="w-1/4 border-r-2 border-black"></div>
+                </div>
+              </div>
+              <div className="mt-2 text-xs font-bold">
+                {loadProgress().completedSections.size} / {knowledgeBaseStructure.reduce((sum, cat) => sum + cat.sections.length, 0)} BO'LIM O'QILDI
               </div>
             </div>
-            <div className="h-5 bg-white border-2 border-black relative overflow-hidden">
-              <div 
-                className="h-full bg-[#ffeb3b] relative transition-all duration-500 ease-out"
-                style={{ width: `${calculateOverallProgress()}%` }}
-              >
-                {/* Striped pattern for progress */}
-                <div className="absolute inset-0 bg-repeating-linear-gradient-45 from-transparent via-transparent to-black/20 bg-size-10"></div>
-              </div>
-              {/* Progress markers every 25% */}
-              <div className="absolute inset-0 flex">
-                <div className="w-1/4 border-r-2 border-black"></div>
-                <div className="w-1/4 border-r-2 border-black"></div>
-                <div className="w-1/4 border-r-2 border-black"></div>
+          ) : (
+            <div className="kb-sidebar-section-header border-b-2 border-black bg-accent">
+              <div className="p-3 flex items-center justify-center gap-2">
+                <Crown className="w-4 h-4" />
+                <span className="text-sm font-black uppercase">Premium Content</span>
               </div>
             </div>
-            <div className="mt-2 text-xs font-bold">
-              {loadProgress().completedSections.size} / {knowledgeBaseStructure.reduce((sum, cat) => sum + cat.sections.length, 0)} BO'LIM O'QILDI
-            </div>
-          </div>
+          )}
 
           {/* Search */}
           <div className="kb-sidebar-section border-b-2 border-black">
@@ -723,8 +769,13 @@ export default function KnowledgeBase() {
                         type="button"
                         aria-current={activeCategory === category.id && activeSection === section.id ? 'page' : undefined}
                       >
-                        <span>{section.title}</span>
-                        {isSectionCompleted(category.id, section.id) && (
+                        <span className="flex items-center gap-2">
+                          {section.title}
+                          {!isPremiumUser && (
+                            <Crown className="w-3 h-3 text-accent" aria-label="Premium content" />
+                          )}
+                        </span>
+                        {isSectionCompleted(category.id, section.id) && isPremiumUser && (
                           <div className="flex items-center gap-1">
                             <AiIcon name="checked" size={16} className="text-[#ffeb3b]" />
                           </div>
@@ -851,8 +902,13 @@ export default function KnowledgeBase() {
                           type="button"
                           aria-current={activeCategory === category.id && activeSection === section.id ? 'page' : undefined}
                         >
-                          <span>{section.title}</span>
-                          {isSectionCompleted(category.id, section.id) && (
+                          <span className="flex items-center gap-2">
+                            {section.title}
+                            {!isPremiumUser && (
+                              <Crown className="w-3 h-3 text-accent" aria-label="Premium content" />
+                            )}
+                          </span>
+                          {isSectionCompleted(category.id, section.id) && isPremiumUser && (
                             <AiIcon name="checked" size={16} />
                           )}
                         </button>
