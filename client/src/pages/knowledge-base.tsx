@@ -570,55 +570,59 @@ export default function KnowledgeBase() {
     if (!isPremiumUser) {
       // Show blurred preview for free users
       return (
-        <div className="kb-premium-content-wrapper">
-          {/* Watermark */}
-          <div className="kb-content-watermark">
-            <Lock className="w-48 h-48" />
-          </div>
-          
-          {/* Blurred content preview */}
-          <div className="kb-content-preview">
-            <div className="kb-content-blur">
+        <div className="relative min-h-[400px] sm:min-h-[500px]">
+          {/* Blurred content preview - mobile optimized */}
+          <div className="relative overflow-hidden rounded-lg border-2 border-black">
+            <div className="p-4 sm:p-6 filter blur-[3px] opacity-60 select-none pointer-events-none">
               {content && content.sections && content.sections.length > 0 ? (
                 <div>
-                  <h3 className="text-xl font-bold mb-3">Premium Content Preview</h3>
-                  <p className="text-lg mb-4">
+                  <h3 className="text-lg sm:text-xl font-bold mb-3">Premium Content Preview</h3>
+                  <p className="text-base sm:text-lg mb-4">
                     Bu bo'limda siz {getCurrentSection()?.title} haqida to'liq ma'lumot olishingiz mumkin.
                   </p>
-                  <p className="text-base mb-3">
-                    • AI texnologiyalari bilan ishlash usullari<br/>
-                    • Amaliy misollar va kod namunalari<br/>
-                    • Professional maslahatlar va yo'riqnomalar<br/>
-                    • Interaktiv mashqlar va testlar
-                  </p>
-                  <p className="text-sm text-gray-600">
+                  <div className="text-sm sm:text-base space-y-2 mb-3">
+                    <p>• AI texnologiyalari bilan ishlash usullari</p>
+                    <p>• Amaliy misollar va kod namunalari</p>
+                    <p>• Professional maslahatlar va yo'riqnomalar</p>
+                    <p>• Interaktiv mashqlar va testlar</p>
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-600">
                     Premium obuna bilan barcha bilimlar bazasiga to'liq kirish imkoniyatiga ega bo'ling...
                   </p>
                 </div>
               ) : (
                 <div>
-                  <p className="text-lg">Premium content mavjud...</p>
+                  <p className="text-base sm:text-lg">Premium content mavjud...</p>
                 </div>
               )}
             </div>
-            <div className="kb-content-fade"></div>
+            
+            {/* Gradient overlay */}
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
           </div>
           
-          {/* Premium CTA Overlay */}
-          <div className="kb-premium-overlay">
-            <div className="kb-teaser-text px-4">
-              Bu {getCurrentSection()?.difficulty === 'beginner' ? 'boshlang\'ich' : 
-                   getCurrentSection()?.difficulty === 'intermediate' ? 'o\'rta' :
-                   'murakkab'} darajadagi {getCurrentSection()?.readTime} daqiqalik dars
+          {/* Premium CTA - positioned below content on mobile */}
+          <div className="mt-6 sm:mt-8">
+            <div className="text-center mb-4">
+              <p className="text-sm sm:text-base font-medium text-black/80">
+                Bu {getCurrentSection()?.difficulty === 'beginner' ? 'boshlang\'ich' : 
+                     getCurrentSection()?.difficulty === 'intermediate' ? 'o\'rta' :
+                     'murakkab'} darajadagi {getCurrentSection()?.readTime} daqiqalik dars
+              </p>
             </div>
             <UpgradeCTA 
-              variant="modal"
+              variant="card"
               title="Premium bilimlar bazasi"
               description={`"${getCurrentSection()?.title}" va boshqa 100+ darslarni o'qish uchun Premium obuna kerak`}
               reason="Barcha AI prompting texnikalarini o'rganing"
-              showFeatures={true}
-              className="mx-auto"
+              showFeatures={false}
+              className="max-w-md mx-auto"
             />
+          </div>
+          
+          {/* Watermark behind content */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
+            <Lock className="w-32 h-32 sm:w-48 sm:h-48" />
           </div>
         </div>
       );
@@ -791,18 +795,20 @@ export default function KnowledgeBase() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
-          <div className="max-w-4xl mx-auto px-4 py-4 lg:p-8 pb-32 lg:pb-8">
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-4xl mx-auto px-4 py-6 lg:p-8 pb-28 lg:pb-8">
             {/* Breadcrumb */}
-            <div className="mb-4 text-[10px] sm:text-xs lg:text-sm text-black flex flex-wrap items-center gap-1 font-bold uppercase leading-tight">
-              <Link href="/">
-                <span className="hover:text-black cursor-pointer font-bold whitespace-nowrap">Bosh sahifa</span>
-              </Link>
-              <span className="mx-1">/</span>
-              <span className="font-medium">
-                {knowledgeBaseStructure.find(c => c.id === activeCategory)?.title}
-              </span>
-            </div>
+            <nav className="mb-6 sm:mb-4" aria-label="Breadcrumb">
+              <div className="text-sm sm:text-base text-black flex flex-wrap items-center gap-2 font-medium">
+                <Link href="/">
+                  <span className="hover:text-black/80 cursor-pointer underline underline-offset-2">Bosh sahifa</span>
+                </Link>
+                <span className="text-black/60">/</span>
+                <span className="text-black/80">
+                  {knowledgeBaseStructure.find(c => c.id === activeCategory)?.title}
+                </span>
+              </div>
+            </nav>
 
             {/* Section Header */}
             <div className="mb-4">
