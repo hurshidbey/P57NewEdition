@@ -115,6 +115,12 @@ export class HybridPromptsStorage {
 
     }
   }
+
+  // Close connections
+  async close(): Promise<void> {
+    // No specific connections to close for hybrid storage
+    // But we can add any cleanup logic here if needed in the future
+  }
 }
 
 export const hybridPromptsStorage = new HybridPromptsStorage();

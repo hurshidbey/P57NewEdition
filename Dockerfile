@@ -47,8 +47,8 @@ RUN ls -la /app/dist/
 EXPOSE 5000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:5000/api/protocols || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
+  CMD curl -f http://localhost:5000/health || exit 1
 
 # Set environment variable for production
 ENV NODE_ENV=production

@@ -9,6 +9,7 @@ import { securityHeaders, corsOptions, additionalSecurityHeaders, requestSizeLim
 import { applyRateLimits } from "./middleware/rate-limit";
 import { sanitizeBody, preventSqlInjection } from "./middleware/validation";
 import { initializeSecurity } from "./utils/security-config";
+import { createTimeoutMiddleware, timeoutConfigs } from "./middleware/timeout";
 
 const app = express();
 
@@ -46,6 +47,13 @@ app.use(express.urlencoded(requestSizeLimits.urlencoded));
 // Input sanitization and SQL injection prevention
 app.use(sanitizeBody);
 app.use(preventSqlInjection);
+
+// Apply timeout middleware with route-specific configurations
+app.use('/api/payments', createTimeoutMiddleware(timeoutConfigs.payment));
+app.use('/api/evaluate', createTimeoutMiddleware(timeoutConfigs.evaluation));
+app.use('/api', createTimeoutMiddleware(timeoutConfigs.api));
+app.use('/assets', createTimeoutMiddleware(timeoutConfigs.static));
+app.use(createTimeoutMiddleware(timeoutConfigs.api)); // Default timeout for everything else
 
 // Session middleware will be configured in the async block below
 
@@ -183,5 +191,71 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+  });
+
+  // Graceful shutdown handling
+  let isShuttingDown = false;
+  const connections = new Set();
+
+  server.on('connection', (conn) => {
+    connections.add(conn);
+    conn.on('close', () => {
+      connections.delete(conn);
+    });
+  });
+
+  const gracefulShutdown = async (signal: string) => {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
+
+    log(`${signal} received, starting graceful shutdown...`);
+
+    // Stop accepting new connections
+    server.close(() => {
+      log('HTTP server closed');
+    });
+
+    // Close existing connections gracefully
+    const closeTimeout = setTimeout(() => {
+      log('Forcing connections to close...');
+      connections.forEach(conn => conn.destroy());
+    }, 30000); // 30 second grace period
+
+    // Wait for existing connections to close
+    await new Promise<void>((resolve) => {
+      const checkInterval = setInterval(() => {
+        if (connections.size === 0) {
+          clearInterval(checkInterval);
+          clearTimeout(closeTimeout);
+          resolve();
+        }
+      }, 100);
+    });
+
+    // Close database connections if needed
+    try {
+      await hybridPromptsStorage.close();
+      log('Database connections closed');
+    } catch (error) {
+      log('Error closing database connections:', error);
+    }
+
+    log('Graceful shutdown complete');
+    process.exit(0);
+  };
+
+  // Handle shutdown signals
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+  // Handle uncaught errors
+  process.on('uncaughtException', (error) => {
+    log('Uncaught Exception:', error);
+    gracefulShutdown('uncaughtException');
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    log('Unhandled Rejection at:', promise, 'reason:', reason);
+    gracefulShutdown('unhandledRejection');
   });
 })();

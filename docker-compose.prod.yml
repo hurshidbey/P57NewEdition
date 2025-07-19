@@ -32,37 +32,26 @@ services:
     tty: false
     networks:
       - protokol-network
-      - default
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
-      timeout: 20s
-      retries: 3
-      start_period: 40s
+      timeout: 30s
+      retries: 5
+      start_period: 60s
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1024M
           cpus: '1.0'
         reservations:
-          memory: 256M
+          memory: 512M
           cpus: '0.5'
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.protokol57-main.rule=Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`)"
-      - "traefik.http.routers.protokol57-main.entrypoints=web,websecure"
-      - "traefik.http.routers.protokol57-main.tls=true"
-      - "traefik.http.routers.protokol57-main.tls.certresolver=mytlschallenge"
-      - "traefik.http.services.protokol57-main.loadbalancer.server.port=5000"
 
 networks:
   protokol-network:
     driver: bridge
-  default:
-    external:
-      name: root_default

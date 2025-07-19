@@ -52,6 +52,10 @@ export interface IStorage {
   // Coupon usage tracking
   recordCouponUsage(usage: InsertCouponUsage): Promise<CouponUsage>;
   getCouponUsageHistory(couponId: number): Promise<CouponUsage[]>;
+  
+  // Connection management
+  close(): Promise<void>;
+  isConnected(): boolean;
 }
 
 // Database connection with fallback and retry logic
@@ -1239,6 +1243,26 @@ export class HybridStorage implements IStorage {
       }
     }
     return [];
+  }
+
+  async close(): Promise<void> {
+    console.log('[STORAGE] Closing database connections...');
+    if (isDatabaseConnected && db) {
+      try {
+        // Close database connection if it has a close method
+        if (typeof db.close === 'function') {
+          await db.close();
+        }
+        isDatabaseConnected = false;
+        console.log('[STORAGE] Database connections closed successfully');
+      } catch (error) {
+        console.error('[STORAGE] Error closing database connections:', error);
+      }
+    }
+  }
+
+  isConnected(): boolean {
+    return isDatabaseConnected;
   }
 }
 

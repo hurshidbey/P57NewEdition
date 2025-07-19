@@ -8,6 +8,43 @@ import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
 import { eq } from "drizzle-orm";
 import { securityConfig } from "./utils/security-config";
+import os from "os";
+
+// Simple request counter for metrics
+class RequestCounter {
+  private total: number = 0;
+  private windowStart: number = Date.now();
+  private windowCount: number = 0;
+  private windowDuration: number = 60000; // 1 minute window
+
+  increment() {
+    this.total++;
+    this.windowCount++;
+    
+    // Reset window if expired
+    const now = Date.now();
+    if (now - this.windowStart > this.windowDuration) {
+      this.windowStart = now;
+      this.windowCount = 1;
+    }
+  }
+
+  getTotal() {
+    return this.total;
+  }
+
+  getRate() {
+    const elapsed = (Date.now() - this.windowStart) / 1000; // seconds
+    return elapsed > 0 ? (this.windowCount / elapsed).toFixed(2) : '0';
+  }
+}
+
+const requestCounter = new RequestCounter();
+let activeConnections = 0;
+
+function getActiveConnections() {
+  return activeConnections;
+}
 
 // Helper function to format uptime
 function formatUptime(seconds: number): string {
@@ -106,6 +143,22 @@ const isAdmin = (req: any, res: Response, next: NextFunction) => {
 };
 
 export function setupRoutes(app: Express): Server {
+  // Middleware to track requests and connections
+  app.use((req, res, next) => {
+    requestCounter.increment();
+    activeConnections++;
+    
+    res.on('finish', () => {
+      activeConnections--;
+    });
+    
+    res.on('close', () => {
+      activeConnections--;
+    });
+    
+    next();
+  });
+
   // Health check endpoint
   app.get("/health", (req, res) => {
     const uptime = process.uptime();
@@ -115,6 +168,86 @@ export function setupRoutes(app: Express): Server {
       timestamp: new Date().toISOString(),
       memory: process.memoryUsage(),
       environment: process.env.NODE_ENV || 'development'
+    });
+  });
+
+  // Detailed metrics endpoint for monitoring
+  app.get("/metrics", async (req, res) => {
+    const uptime = process.uptime();
+    const memoryUsage = process.memoryUsage();
+    const cpuUsage = process.cpuUsage();
+    
+    // Calculate requests per second (simple implementation)
+    const currentTime = Date.now();
+    const requestRate = requestCounter.getRate();
+    
+    // Get database connection status
+    let dbStatus = "unknown";
+    try {
+      const isConnected = await storage.isConnected();
+      dbStatus = isConnected ? "connected" : "disconnected";
+    } catch (error) {
+      dbStatus = "error";
+    }
+    
+    const metrics = {
+      system: {
+        hostname: os.hostname(),
+        platform: process.platform,
+        arch: process.arch,
+        nodeVersion: process.version,
+        pid: process.pid,
+        uptime: formatUptime(uptime),
+        uptimeSeconds: uptime
+      },
+      memory: {
+        rss: memoryUsage.rss,
+        heapTotal: memoryUsage.heapTotal,
+        heapUsed: memoryUsage.heapUsed,
+        external: memoryUsage.external,
+        arrayBuffers: memoryUsage.arrayBuffers,
+        heapUsedPercent: ((memoryUsage.heapUsed / memoryUsage.heapTotal) * 100).toFixed(2)
+      },
+      cpu: {
+        user: cpuUsage.user,
+        system: cpuUsage.system
+      },
+      requests: {
+        total: requestCounter.getTotal(),
+        rate: requestRate,
+        activeConnections: getActiveConnections()
+      },
+      database: {
+        status: dbStatus
+      },
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development'
+    };
+    
+    res.json(metrics);
+  });
+
+  // Readiness probe - checks if the app is ready to serve traffic
+  app.get("/ready", async (req, res) => {
+    const checks = {
+      server: true,
+      database: false,
+      timestamp: new Date().toISOString()
+    };
+    
+    try {
+      // Check database connection
+      checks.database = await storage.isConnected();
+    } catch (error) {
+      checks.database = false;
+    }
+    
+    const isReady = checks.server && checks.database;
+    
+    res.status(isReady ? 200 : 503).json({
+      ready: isReady,
+      checks,
+      message: isReady ? "Application is ready" : "Application is not ready"
     });
   });
 

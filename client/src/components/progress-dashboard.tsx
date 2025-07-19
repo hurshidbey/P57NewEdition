@@ -119,35 +119,35 @@ export default function ProgressDashboard({ totalProtocols }: ProgressDashboardP
           {tier === 'free' && (
             <div className="space-y-3 mt-4">
               {/* Protocol access indicator */}
-              <div className="bg-blue-50 border border-blue-200 rounded-none p-3 dark:bg-blue-900/20 dark:border-blue-800">
+              <div className="bg-blue-50 border-2 border-black rounded-none p-3 shadow-brutal-sm">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                    <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                    <BookOpen className="w-4 h-4 text-black" />
+                    <span className="text-sm font-bold text-black">
                       Protokol kirishi
                     </span>
                   </div>
-                  <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                  <span className="text-sm font-bold text-black">
                     {accessedCount}/3
                   </span>
                 </div>
-                <div className="w-full bg-blue-200 rounded-full h-2 dark:bg-blue-800">
+                <div className="w-full bg-blue-200 rounded-full h-2">
                   <div 
-                    className="bg-blue-600 h-2 rounded-full dark:bg-blue-400" 
+                    className="bg-blue-600 h-2 rounded-full" 
                     style={{ width: `${Math.min((accessedCount / 3) * 100, 100)}%` }}
                   ></div>
                 </div>
               </div>
 
               {/* Premium protocols info */}
-              <div className="bg-orange-50 border border-orange-200 rounded-none p-3 dark:bg-orange-900/20 dark:border-orange-800">
+              <div className="bg-orange-50 border-2 border-black rounded-none p-3 shadow-brutal-sm">
                 <div className="flex items-start gap-2">
-                  <Crown className="w-4 h-4 text-orange-600 mt-0.5 dark:text-orange-400" />
+                  <Crown className="w-4 h-4 text-black mt-0.5" />
                   <div className="text-sm">
-                    <p className="font-medium text-orange-800 dark:text-orange-200 mb-1">
+                    <p className="font-bold text-black mb-1">
                       {54} ta qo'shimcha protokol Premium rejimda
                     </p>
-                    <p className="text-orange-700 dark:text-orange-300">
+                    <p className="font-semibold text-black">
                       Barcha protokollar + har birini 5 marta baholash uchun Premium oling
                     </p>
                   </div>
