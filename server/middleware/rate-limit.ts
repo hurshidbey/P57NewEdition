@@ -18,9 +18,16 @@ const getClientId = (req: Request): string => {
   // Extract first IP if x-forwarded-for contains multiple IPs
   const clientIp = realIp.split(',')[0].trim();
   
-  // Log for debugging (remove in production if too verbose)
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`[RateLimit] Client IP: ${clientIp}, Path: ${req.path}`);
+  // Log for debugging - temporarily enabled in production to debug 429 errors
+  console.log(`[RateLimit] Client IP: ${clientIp}, Path: ${req.path}, Headers: X-Real-IP=${req.headers['x-real-ip']}, X-Forwarded-For=${req.headers['x-forwarded-for']}`);
+  
+  // Log when rate limit is being approached (80% threshold)
+  const limiter = req.rateLimit;
+  if (limiter && limiter.remaining !== undefined && limiter.limit !== undefined) {
+    const percentUsed = ((limiter.limit - limiter.remaining) / limiter.limit) * 100;
+    if (percentUsed >= 80) {
+      console.warn(`[RateLimit WARNING] Client ${clientIp} at ${percentUsed.toFixed(0)}% of rate limit for ${req.path} (${limiter.remaining}/${limiter.limit} remaining)`);
+    }
   }
   
   return clientIp;
@@ -29,7 +36,7 @@ const getClientId = (req: Request): string => {
 // General API rate limit
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 500, // Increased from 100 to 500 requests per windowMs
+  max: 1000, // Temporarily increased to 1000 to resolve 429 errors
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -60,7 +67,7 @@ export const paymentLimiter = rateLimit({
 // Rate limit for AI evaluation endpoints
 export const evaluationLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 20, // Limit to 20 evaluations per 5 minutes
+  max: 50, // Temporarily increased to 50 to resolve 429 errors
   message: 'Too many evaluation requests, please slow down.',
   standardHeaders: true,
   legacyHeaders: false,
