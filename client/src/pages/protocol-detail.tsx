@@ -206,7 +206,7 @@ export default function ProtocolDetail() {
                 <div className={`w-24 h-24 flex items-center justify-center font-black text-3xl border-2 border-theme ${
                   isProtocolCompleted(protocol.id) 
                     ? 'bg-accent text-black' 
-                    : 'bg-card text-black dark:text-white'
+                    : 'bg-white text-black border-black'
                 }`}>
                   {protocol.number.toString().padStart(2, "0")}
                 </div>

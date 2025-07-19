@@ -155,7 +155,7 @@ export default function PremiumPrompts() {
 
   // Always fetch all prompts, we'll handle access control in the UI
   const { data: prompts = [], isLoading, error } = useQuery<Prompt[]>({
-    queryKey: [`/api/prompts`, { userTier: 'paid' }], // Fetch all prompts
+    queryKey: [`/api/prompts`, { tier: 'paid' }], // Fetch all prompts with correct parameter name
   });
 
   // Filter prompts based on search and category
@@ -172,9 +172,14 @@ export default function PremiumPrompts() {
   // Get unique categories
   const categories = ['all', ...Array.from(new Set(prompts.map(p => p.category)))];
   
-  // Separate free and premium prompts based on specific IDs
-  const freePrompts = filteredPrompts.filter(p => p.id === 25 || p.id === 26 || p.id === 27);
-  const premiumPrompts = filteredPrompts.filter(p => p.id !== 25 && p.id !== 26 && p.id !== 27);
+  // Separate free and premium prompts based on user tier
+  // For paid users, show all prompts. For free users, only show the free prompts
+  const freePrompts = tier === 'free' 
+    ? filteredPrompts.filter(p => p.id === 25 || p.id === 26 || p.id === 27)
+    : []; // Don't separate for paid users
+  const premiumPrompts = tier === 'free'
+    ? filteredPrompts.filter(p => p.id !== 25 && p.id !== 26 && p.id !== 27)
+    : filteredPrompts; // Show all prompts for paid users
 
   if (isLoading) {
     return (
@@ -275,45 +280,68 @@ export default function PremiumPrompts() {
           </div>
         </section>
 
-        {/* Free Prompts Section */}
-        {freePrompts.length > 0 && (
+        {/* Prompts Display - Different layout for free vs paid users */}
+        {tier === 'paid' ? (
+          // For paid users, show all prompts in one section
           <section className="pb-16">
             <div className="mb-6">
               <h2 className="text-2xl font-black text-foreground uppercase mb-2">
-                Bepul Promptlar
+                Barcha Promptlar ({filteredPrompts.length})
               </h2>
               <p className="text-foreground">
-                Barcha foydalanuvchilar uchun ochiq promptlar
+                Premium obuna bilan barcha promptlarga kirish imkoniga egasiz
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {freePrompts.map((prompt) => (
+              {filteredPrompts.map((prompt) => (
                 <PromptCard key={prompt.id} prompt={prompt} showFullContent={true} />
               ))}
             </div>
           </section>
-        )}
+        ) : (
+          // For free users, show separated sections
+          <>
+            {/* Free Prompts Section */}
+            {freePrompts.length > 0 && (
+              <section className="pb-16">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-black text-foreground uppercase mb-2">
+                    Bepul Promptlar
+                  </h2>
+                  <p className="text-foreground">
+                    Barcha foydalanuvchilar uchun ochiq promptlar
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {freePrompts.map((prompt) => (
+                    <PromptCard key={prompt.id} prompt={prompt} showFullContent={true} />
+                  ))}
+                </div>
+              </section>
+            )}
 
-        {/* Premium Prompts Section */}
-        {premiumPrompts.length > 0 && (
-          <section className="pb-16">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 mb-2">
-                <Crown className="w-6 h-6 text-accent" />
-                <h2 className="text-2xl font-black text-foreground uppercase">
-                  Premium Promptlar
-                </h2>
-              </div>
-              <p className="text-foreground">
-                Premium obuna egalariga maxsus promptlar
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {premiumPrompts.map((prompt) => (
-                <PromptCard key={prompt.id} prompt={prompt} showFullContent={true} />
-              ))}
-            </div>
-          </section>
+            {/* Premium Prompts Section */}
+            {premiumPrompts.length > 0 && (
+              <section className="pb-16">
+                <div className="mb-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Crown className="w-6 h-6 text-accent" />
+                    <h2 className="text-2xl font-black text-foreground uppercase">
+                      Premium Promptlar
+                    </h2>
+                  </div>
+                  <p className="text-foreground">
+                    Premium obuna egalariga maxsus promptlar
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {premiumPrompts.map((prompt) => (
+                    <PromptCard key={prompt.id} prompt={prompt} showFullContent={false} />
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
         )}
 
         {/* Empty State */}

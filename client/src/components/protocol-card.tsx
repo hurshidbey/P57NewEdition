@@ -80,8 +80,8 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
               isLocked
                 ? 'bg-muted text-muted-foreground border-theme'
                 : isCompleted 
-                ? 'bg-accent text-accent-foreground border-theme' 
-                : 'bg-background text-foreground border-theme'
+                ? 'bg-accent text-black border-theme' 
+                : 'bg-white text-black border-black'
             }`}>
               {protocol.number.toString().padStart(2, '0')}
             </div>
