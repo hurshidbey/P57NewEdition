@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import type { User } from '@supabase/supabase-js';
+import { storeCurrentDomain } from '@/utils/domain-validation';
 
 export interface AuthUser {
   id: string
@@ -101,6 +102,14 @@ export const authService = {
   },
 
   async signInWithGoogle() {
+    // Store the current domain to preserve it after OAuth
+    // This prevents redirect to p57.birfoiz.uz when users access from protokol.1foiz.com
+    const domainStored = storeCurrentDomain();
+    
+    if (!domainStored) {
+      console.warn('[Auth] Current domain not allowed for OAuth');
+      // Continue anyway but domain won't be preserved
+    }
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -110,7 +119,8 @@ export const authService = {
     })
     
     if (error) {
-
+      // Clear stored domain on error
+      localStorage.removeItem('auth_origin_domain');
       throw error
     }
 

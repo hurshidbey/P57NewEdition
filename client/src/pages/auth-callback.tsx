@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { supabase } from '@/lib/supabase';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { getSafeRedirectDomain } from '@/utils/domain-validation';
 
 export default function AuthCallback() {
   const [, setLocation] = useLocation();
@@ -11,32 +12,48 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-
         // Get the session from the URL hash
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
-
           setStatus('error');
           setMessage('Kirishda xatolik yuz berdi');
           return;
         }
 
         if (data.session) {
-
           setStatus('success');
           setMessage('Muvaffaqiyatli kirildi!');
           
-          // Redirect to home page after success
-          setTimeout(() => {
-            setLocation('/');
-          }, 2000);
+          // Check if we need to redirect to the original domain
+          const storedOrigin = localStorage.getItem('auth_origin_domain');
+          const currentOrigin = window.location.origin;
+          
+          console.log('[AuthCallback] Stored origin:', storedOrigin);
+          console.log('[AuthCallback] Current origin:', currentOrigin);
+          
+          // Get safe redirect domain (validates against allowed list)
+          const safeRedirectDomain = getSafeRedirectDomain(storedOrigin);
+          
+          // If we're on a different domain than where auth started, redirect back
+          if (safeRedirectDomain !== currentOrigin) {
+            console.log('[AuthCallback] Redirecting to original domain:', safeRedirectDomain);
+            // Clean up stored domain
+            localStorage.removeItem('auth_origin_domain');
+            // Redirect to original domain
+            window.location.href = safeRedirectDomain + '/';
+          } else {
+            // Clean up stored domain
+            localStorage.removeItem('auth_origin_domain');
+            // Redirect to home page after success
+            setTimeout(() => {
+              setLocation('/');
+            }, 2000);
+          }
         } else {
-
           setLocation('/auth');
         }
       } catch (err) {
-
         setStatus('error');
         setMessage('Kutilmagan xatolik yuz berdi');
       }
