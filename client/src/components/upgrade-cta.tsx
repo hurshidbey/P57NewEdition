@@ -150,9 +150,6 @@ export function UpgradeCTA({
             </Button>
           </Link>
         </div>
-        <p className="text-xs text-foreground font-bold mt-3">
-          5,000 UZS/oy - Har qanday vaqt bekor qilishingiz mumkin
-        </p>
       </div>
     );
   }
@@ -223,9 +220,6 @@ export function UpgradeCTA({
             Premium olish
           </Button>
         </Link>
-        <p className="text-xs text-foreground font-bold mt-2">
-          5,000 UZS/oy
-        </p>
       </CardContent>
     </Card>
   );
