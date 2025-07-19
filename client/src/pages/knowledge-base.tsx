@@ -2,13 +2,16 @@ import React, { useState, useEffect, useRef, Component, ReactNode } from "react"
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import { AiIcon } from "@/components/ai-icon";
 import { getContent } from "@/content/knowledge-base";
 import { ContentSkeleton } from "@/components/knowledge-base/ContentSkeleton";
 import { NoResults } from "@/components/knowledge-base/NoResults";
+import { useUserTier } from "@/hooks/use-user-tier";
+import { useAuth } from "@/contexts/auth-context";
+import { Crown } from "lucide-react";
 import "@/styles/knowledge-base-spacing.css";
 
 // Import the shared components
@@ -300,6 +303,21 @@ class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryStat
 }
 
 export default function KnowledgeBase() {
+  const { user } = useAuth();
+  const { tier } = useUserTier();
+  const [, navigate] = useLocation();
+  
+  // Premium access check - double protection
+  const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
+  const isPremiumUser = tier === 'paid' || isAdmin;
+  
+  // Redirect non-premium users to payment page
+  useEffect(() => {
+    if (!isPremiumUser) {
+      navigate('/atmos-payment');
+    }
+  }, [isPremiumUser, navigate]);
+  
   // Force light mode for knowledge base
   useEffect(() => {
     const htmlElement = document.documentElement;
@@ -565,6 +583,24 @@ export default function KnowledgeBase() {
       <div className="text-center py-12">
         <AiIcon name="construction" size={48} className="mx-auto mb-4 text-black" />
         <p className="text-lg text-black font-black uppercase">Bu bo'lim hozircha tayyorlanmoqda...</p>
+      </div>
+    );
+  }
+
+  // Show loading state while checking premium status
+  if (!isPremiumUser) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Crown className="w-12 h-12 mx-auto mb-4 text-accent" />
+          <h2 className="text-2xl font-bold mb-2">Premium Content</h2>
+          <p className="text-muted-foreground mb-4">O'rganish bo'limi faqat premium foydalanuvchilar uchun</p>
+          <Link href="/atmos-payment">
+            <Button className="bg-accent hover:bg-accent/90">
+              Premium ga o'tish
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }

@@ -45,6 +45,10 @@ function AppContent() {
   // Check if current user is admin
   const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
   
+  // Check user tier for premium content access
+  const userTier = user?.tier || 'free';
+  const isPremiumUser = userTier === 'paid' || isAdmin;
+  
   // Debug logging
   console.log('[AppContent] Auth state:', { 
     isAuthenticated, 
@@ -117,9 +121,13 @@ function AppContent() {
       
       <Route path="/knowledge-base">
         {isAuthenticated ? (
-          <Suspense fallback={<PageLoader />}>
-            <KnowledgeBase />
-          </Suspense>
+          isPremiumUser ? (
+            <Suspense fallback={<PageLoader />}>
+              <KnowledgeBase />
+            </Suspense>
+          ) : (
+            <Redirect to="/atmos-payment" />
+          )
         ) : (
           <AuthPage />
         )}

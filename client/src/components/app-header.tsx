@@ -53,14 +53,17 @@ export default function AppHeader() {
               )}
             </div>
             
-            <Link href="/knowledge-base">
-              <Button 
-                variant="ghost" 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
-              >
-                O'rganish
-              </Button>
-            </Link>
+            {/* O'rganish - Only show for premium users */}
+            {tier === 'paid' && (
+              <Link href="/knowledge-base">
+                <Button 
+                  variant="ghost" 
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
+                >
+                  O'rganish
+                </Button>
+              </Link>
+            )}
             
             <Link href="/premium-prompts">
               <Button 
