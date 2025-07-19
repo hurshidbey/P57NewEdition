@@ -32,19 +32,20 @@ export default function AuthCallback() {
           console.log('[AuthCallback] Stored origin:', storedOrigin);
           console.log('[AuthCallback] Current origin:', currentOrigin);
           
+          // Clean up stored domain
+          localStorage.removeItem('auth_origin_domain');
+          
           // Get safe redirect domain (validates against allowed list)
           const safeRedirectDomain = getSafeRedirectDomain(storedOrigin);
           
           // If we're on a different domain than where auth started, redirect back
-          if (safeRedirectDomain !== currentOrigin) {
+          if (storedOrigin && safeRedirectDomain !== currentOrigin) {
             console.log('[AuthCallback] Redirecting to original domain:', safeRedirectDomain);
-            // Clean up stored domain
-            localStorage.removeItem('auth_origin_domain');
-            // Redirect to original domain
-            window.location.href = safeRedirectDomain + '/';
+            // Small delay to ensure session is established
+            setTimeout(() => {
+              window.location.href = safeRedirectDomain + '/';
+            }, 1000);
           } else {
-            // Clean up stored domain
-            localStorage.removeItem('auth_origin_domain');
             // Redirect to home page after success
             setTimeout(() => {
               setLocation('/');

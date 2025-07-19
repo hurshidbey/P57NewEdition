@@ -102,29 +102,34 @@ export const authService = {
   },
 
   async signInWithGoogle() {
-    // Store the current domain to preserve it after OAuth
-    // This prevents redirect to p57.birfoiz.uz when users access from protokol.1foiz.com
-    const domainStored = storeCurrentDomain();
-    
-    if (!domainStored) {
-      console.warn('[Auth] Current domain not allowed for OAuth');
-      // Continue anyway but domain won't be preserved
-    }
-
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`
+    try {
+      // Store the current domain to preserve it after OAuth
+      // This prevents redirect to p57.birfoiz.uz when users access from protokol.1foiz.com
+      const domainStored = storeCurrentDomain();
+      
+      if (!domainStored) {
+        console.warn('[Auth] Current domain not allowed for OAuth, but continuing anyway');
       }
-    })
-    
-    if (error) {
-      // Clear stored domain on error
-      localStorage.removeItem('auth_origin_domain');
-      throw error
-    }
 
-    return data
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+      
+      if (error) {
+        console.error('[Auth] OAuth error:', error);
+        // Clear stored domain on error
+        localStorage.removeItem('auth_origin_domain');
+        throw error
+      }
+
+      return data
+    } catch (err) {
+      console.error('[Auth] signInWithGoogle error:', err);
+      throw err;
+    }
   },
 
   async signOut() {

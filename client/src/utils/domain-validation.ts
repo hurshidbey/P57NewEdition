@@ -52,11 +52,17 @@ export function getSafeRedirectDomain(storedDomain: string | null): string {
 export function storeCurrentDomain(): boolean {
   const currentOrigin = window.location.origin;
   
+  console.log('[Domain Validation] Attempting to store domain:', currentOrigin);
+  console.log('[Domain Validation] Allowed domains:', ALLOWED_DOMAINS);
+  
+  // Always store the domain for now to avoid breaking OAuth
+  localStorage.setItem('auth_origin_domain', currentOrigin);
+  
   if (isAllowedDomain(currentOrigin)) {
-    localStorage.setItem('auth_origin_domain', currentOrigin);
+    console.log('[Domain Validation] Domain is allowed and stored');
     return true;
   }
   
-  console.warn('[Domain Validation] Current domain not allowed:', currentOrigin);
-  return false;
+  console.warn('[Domain Validation] Domain not in allowed list but stored anyway:', currentOrigin);
+  return true; // Return true to prevent breaking OAuth flow
 }
