@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt, type Payment, type InsertPayment } from "@shared/schema";
+import { type User, type InsertUser, type Protocol, type InsertProtocol, type Category, type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt, type Payment, type InsertPayment, type Coupon, type InsertCoupon, type CouponUsage, type InsertCouponUsage } from "@shared/schema";
 import { type IStorage } from './storage';
 
 export class SupabaseStorage implements IStorage {
@@ -497,5 +497,157 @@ export class SupabaseStorage implements IStorage {
       atmosData: item.atmos_data,
       createdAt: item.created_at
     }));
+  }
+  
+  // Coupon methods
+  async createCoupon(coupon: InsertCoupon): Promise<Coupon> {
+    const { data, error } = await this.supabase
+      .from('coupons')
+      .insert(coupon)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to create coupon:`, error);
+      throw error;
+    }
+    
+    console.log(`✅ [SUPABASE] Coupon created:`, data);
+    return data;
+  }
+
+  async getCoupons(): Promise<Coupon[]> {
+    const { data, error } = await this.supabase
+      .from('coupons')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to get coupons:`, error);
+      throw error;
+    }
+    
+    return data || [];
+  }
+
+  async getCouponByCode(code: string): Promise<Coupon | undefined> {
+    const { data, error } = await this.supabase
+      .from('coupons')
+      .select('*')
+      .ilike('code', code)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') { // PGRST116 = not found
+      console.error(`❌ [SUPABASE] Failed to get coupon by code ${code}:`, error);
+      throw error;
+    }
+    
+    console.log(`🔍 [SUPABASE] getCouponByCode ${code} result:`, data);
+    return data || undefined;
+  }
+
+  async getCouponById(id: number): Promise<Coupon | undefined> {
+    const { data, error } = await this.supabase
+      .from('coupons')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error(`❌ [SUPABASE] Failed to get coupon by id ${id}:`, error);
+      throw error;
+    }
+    
+    return data || undefined;
+  }
+
+  async updateCoupon(id: number, coupon: Partial<InsertCoupon>): Promise<Coupon | undefined> {
+    const { data, error } = await this.supabase
+      .from('coupons')
+      .update(coupon)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to update coupon ${id}:`, error);
+      throw error;
+    }
+    
+    console.log(`✅ [SUPABASE] Coupon ${id} updated`);
+    return data;
+  }
+
+  async deleteCoupon(id: number): Promise<boolean> {
+    const { error } = await this.supabase
+      .from('coupons')
+      .delete()
+      .eq('id', id);
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to delete coupon ${id}:`, error);
+      throw error;
+    }
+    
+    console.log(`✅ [SUPABASE] Coupon ${id} deleted`);
+    return true;
+  }
+
+  async incrementCouponUsage(id: number): Promise<void> {
+    // First get current count
+    const { data: current, error: fetchError } = await this.supabase
+      .from('coupons')
+      .select('used_count')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError) {
+      console.error(`❌ [SUPABASE] Failed to fetch coupon ${id} for increment:`, fetchError);
+      throw fetchError;
+    }
+    
+    // Then update with incremented value
+    const { error: updateError } = await this.supabase
+      .from('coupons')
+      .update({ used_count: (current.used_count || 0) + 1 })
+      .eq('id', id);
+    
+    if (updateError) {
+      console.error(`❌ [SUPABASE] Failed to increment coupon usage ${id}:`, updateError);
+      throw updateError;
+    }
+    
+    console.log(`✅ [SUPABASE] Coupon ${id} usage incremented`);
+  }
+
+  async recordCouponUsage(usage: InsertCouponUsage): Promise<CouponUsage> {
+    const { data, error } = await this.supabase
+      .from('coupon_usages')
+      .insert(usage)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to record coupon usage:`, error);
+      throw error;
+    }
+    
+    console.log(`✅ [SUPABASE] Coupon usage recorded:`, data);
+    return data;
+  }
+
+  async getCouponUsageHistory(couponId: number): Promise<CouponUsage[]> {
+    const { data, error } = await this.supabase
+      .from('coupon_usages')
+      .select('*')
+      .eq('coupon_id', couponId)
+      .order('used_at', { ascending: false });
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to get coupon usage history for ${couponId}:`, error);
+      throw error;
+    }
+    
+    return data || [];
   }
 }

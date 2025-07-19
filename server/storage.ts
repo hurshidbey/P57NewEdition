@@ -1092,6 +1092,13 @@ export class HybridStorage implements IStorage {
   }
 
   async getCoupons(): Promise<Coupon[]> {
+    // Check if we're using Supabase storage
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      return await supabaseStorage.getCoupons();
+    }
+    
+    // Fallback to direct database connection
     if (isDatabaseConnected && db) {
       try {
         return await db.select().from(coupons).orderBy(desc(coupons.createdAt));
@@ -1103,6 +1110,13 @@ export class HybridStorage implements IStorage {
   }
 
   async getCouponByCode(code: string): Promise<Coupon | undefined> {
+    // Check if we're using Supabase storage
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      return await supabaseStorage.getCouponByCode(code);
+    }
+    
+    // Fallback to direct database connection
     if (isDatabaseConnected && db) {
       try {
         // Case-insensitive search

@@ -709,6 +709,7 @@ export function setupRoutes(app: Express): Server {
         });
       }
 
+      console.log(`📝 [API] Validating coupon code: ${code}`);
       const coupon = await storage.getCouponByCode(code.trim().toUpperCase());
       
       if (!coupon) {
