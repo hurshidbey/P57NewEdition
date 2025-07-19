@@ -519,5 +519,136 @@ docker exec p57-protokol57-1 printenv | grep OPENAI
 3. Update .env.production and redeploy
 ```
 
+## 🎟️ Discount/Promo Code System
+
+The platform includes a comprehensive coupon system that allows administrators to create and manage discount codes for the premium payment flow.
+
+### Coupon Features
+
+1. **Flexible Discount Types**:
+   - **Percentage Discounts**: Apply a percentage off the original price (e.g., 20% off)
+   - **Fixed Amount Discounts**: Deduct a fixed amount from the price (e.g., 100,000 UZS off)
+
+2. **Usage Controls**:
+   - **Usage Limits**: Set maximum number of times a coupon can be used
+   - **Time Restrictions**: Set valid from/until dates for time-limited promotions
+   - **Active/Inactive Status**: Enable or disable coupons without deletion
+
+3. **Admin Management**:
+   - Create, edit, and delete coupons from the admin panel
+   - View usage statistics and track redemptions
+   - See which users have used each coupon
+
+### Database Schema
+
+The coupon system uses two main tables:
+
+```sql
+-- Coupons table
+coupons:
+  - id: number (auto-increment)
+  - code: string (unique, uppercase)
+  - description: string
+  - discountType: 'percentage' | 'fixed'
+  - discountValue: number (percentage 0-100 or fixed amount)
+  - validFrom: timestamp (optional)
+  - validUntil: timestamp (optional)
+  - maxUses: number (optional, null = unlimited)
+  - usedCount: number (default 0)
+  - isActive: boolean (default true)
+  - createdBy: string (user email)
+  - createdAt: timestamp
+
+-- Coupon usage tracking
+couponUsage:
+  - id: number (auto-increment)
+  - couponId: number (references coupons.id)
+  - userId: string
+  - userEmail: string
+  - paymentId: string
+  - originalAmount: number
+  - discountAmount: number
+  - finalAmount: number
+  - usedAt: timestamp
+```
+
+### Implementation Details
+
+#### Admin Panel (`/admin/coupons`)
+- List all coupons with search and filtering
+- Create new coupons with validation
+- Edit existing coupons
+- View usage statistics
+- Delete coupons (soft delete recommended)
+
+#### Payment Flow Integration
+1. **Coupon Validation** (`/api/coupons/validate`):
+   - Validates coupon code exists and is active
+   - Checks date validity (validFrom/validUntil)
+   - Verifies usage limits haven't been exceeded
+   - Calculates discount amount based on type
+
+2. **Payment Processing**:
+   - Coupon code is applied during transaction creation
+   - Original amount, discount, and final amount are tracked
+   - Coupon usage is recorded after successful payment
+   - Usage count is incremented atomically
+
+3. **User Experience**:
+   - Coupon input field on payment page
+   - Real-time validation and discount preview
+   - Clear error messages for invalid/expired coupons
+   - Shows applied discount in payment summary
+
+### API Endpoints
+
+```typescript
+// Validate a coupon code
+POST /api/coupons/validate
+Body: { code: string, amount: number }
+Response: { 
+  valid: boolean, 
+  message?: string,
+  coupon?: {
+    id: number,
+    code: string,
+    originalAmount: number,
+    discountAmount: number,
+    finalAmount: number,
+    discountPercent: number
+  }
+}
+
+// Admin endpoints (protected)
+GET /api/admin/coupons         // List all coupons
+POST /api/admin/coupons        // Create new coupon
+PUT /api/admin/coupons/:id     // Update coupon
+DELETE /api/admin/coupons/:id  // Delete coupon
+GET /api/admin/coupons/:id/usage // Get usage statistics
+```
+
+### Testing Coupons
+
+1. **Create Test Coupon** (Admin Panel):
+   - Code: `TEST20` (20% discount)
+   - Type: Percentage
+   - Value: 20
+   - Active: Yes
+
+2. **Test Payment Flow**:
+   - Go to payment page
+   - Enter coupon code
+   - Verify discount is applied
+   - Complete payment
+   - Check usage count increased
+
+### Security Considerations
+
+1. **Validation**: All coupon codes are validated server-side
+2. **Case Insensitive**: Codes are converted to uppercase for consistency
+3. **Rate Limiting**: Coupon validation endpoint has rate limiting
+4. **Audit Trail**: All coupon creation and usage is logged
+5. **Admin Only**: Coupon management requires admin authentication
+
 **Memories**:
 - **WHY THE FUCK YOU SHUOLD SAY SOMETHING LIVE WHEN IT IS NOT!**
