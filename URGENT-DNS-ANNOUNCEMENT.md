@@ -6,7 +6,7 @@ We are experiencing DNS resolution issues with p57.birfoiz.uz. Some users are un
 ## ✅ Immediate Solution
 
 ### Use our backup domain:
-# **https://app.1foiz.com**
+# **https://protokol.1foiz.com**
 
 This domain:
 - ✅ Works immediately

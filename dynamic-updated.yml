@@ -1,7 +1,7 @@
 http:
   routers:
     protokol57:
-      rule: "Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`) || Host(`app.1foiz.com`) || Host(`1foiz.com`)"
+      rule: "Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`) || Host(`protokol.1foiz.com`) || Host(`1foiz.com`)"
       entryPoints:
         - "web"
         - "websecure"

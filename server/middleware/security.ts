@@ -34,7 +34,7 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
       'https://p57.birfoiz.uz',
       'https://p57.uz',
       'https://srv852801.hstgr.cloud',
-      'https://app.1foiz.com',
+      'https://protokol.1foiz.com',
       'https://1foiz.com'
     ]
   : ['http://localhost:5000', 'http://localhost:5001', 'http://localhost:5173'];
