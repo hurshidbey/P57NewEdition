@@ -4,13 +4,61 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Environment files - NEVER commit these
 .env
+.env.*
 .env.local
-.env.production.env
+.env.development
 .env.production
+.env.production.env
+*.env
+
+# Sensitive files
+credentials.txt
+production.env
+secrets.txt
+config.secret.*
+*-secret.*
+
+# API keys and certificates
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+
+# Deployment scripts that might contain secrets
 deploy-production.sh
+deploy-*.sh
+
+# Documentation that might contain sensitive info
 ADMIN PAGE IMPROVEMENTS.md
 
 # Large files
 attached_assets/*.dmg
 *.dmg
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Log files that might contain sensitive data
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
