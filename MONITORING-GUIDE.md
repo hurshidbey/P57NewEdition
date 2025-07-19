@@ -24,7 +24,18 @@
 
 ## Monitoring Commands
 
-### Real-time monitoring (updates every 30s):
+### Enhanced Dashboard (NEW - with visual metrics):
+```bash
+./monitor-dashboard.sh
+```
+- Real-time system resource visualization
+- Progress bars for CPU, Memory, Disk usage
+- Color-coded health indicators
+- Live activity feed
+- Traffic analysis with visitor tracking
+- Error monitoring with recent error messages
+
+### Classic monitoring (updates every 30s):
 ```bash
 ./monitor-live.sh
 ```
@@ -33,6 +44,9 @@
 ```bash
 ./quick-stats.sh
 ```
+- Fast snapshot of current status
+- One-time execution (no loop)
+- Perfect for quick health checks
 
 ### Check specific errors:
 ```bash
