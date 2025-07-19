@@ -794,12 +794,12 @@ export default function KnowledgeBase() {
         <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
           <div className="max-w-4xl mx-auto px-4 py-4 lg:p-8 pb-32 lg:pb-8">
             {/* Breadcrumb */}
-            <div className="mb-4 text-xs sm:text-sm text-black flex flex-wrap items-center gap-1 sm:gap-2 font-bold uppercase">
+            <div className="mb-4 text-[10px] sm:text-xs lg:text-sm text-black flex flex-wrap items-center gap-1 font-bold uppercase leading-tight">
               <Link href="/">
-                <span className="hover:text-black cursor-pointer font-bold">Bosh sahifa</span>
+                <span className="hover:text-black cursor-pointer font-bold whitespace-nowrap">Bosh sahifa</span>
               </Link>
-              <span>/</span>
-              <span className="font-medium break-words">
+              <span className="mx-1">/</span>
+              <span className="font-medium">
                 {knowledgeBaseStructure.find(c => c.id === activeCategory)?.title}
               </span>
             </div>

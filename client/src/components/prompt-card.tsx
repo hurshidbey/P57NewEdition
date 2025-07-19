@@ -149,10 +149,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
             )}
 
             {canAccess && (
-              <div className="flex justify-between items-center mt-4">
-                <span className="text-xs text-muted-foreground">
-                  {new Date(prompt.createdAt).toLocaleDateString('uz-UZ')}
-                </span>
+              <div className="flex justify-end items-center mt-4">
                 <Button
                   variant="outline"
                   size="sm"
@@ -255,10 +252,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
           )}
 
           {canAccess && showContent && (
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-xs text-muted-foreground">
-                {new Date(prompt.createdAt).toLocaleDateString('uz-UZ')}
-              </span>
+            <div className="flex justify-end items-center mt-4">
               <div className="flex gap-2">
                 <Button
                   variant="outline"
