@@ -88,7 +88,19 @@ export default function AtmosPayment() {
         })
       });
 
-      const result = await response.json();
+      let result;
+      const responseText = await response.text();
+      
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON parsing error:', parseError);
+        console.error('Response text:', responseText);
+        setCouponError('Server javobi noto\'g\'ri. Iltimos qayta urinib ko\'ring.');
+        setAppliedCoupon(null);
+        setCouponValidating(false);
+        return;
+      }
 
       if (!response.ok || !result.valid) {
         setCouponError(result.message || 'Kupon kodi noto\'g\'ri');
@@ -100,6 +112,7 @@ export default function AtmosPayment() {
       setAppliedCoupon(result.coupon);
       setCouponError(null);
     } catch (error) {
+      console.error('Coupon validation error:', error);
       setCouponError('Kupon kodini tekshirishda xatolik');
       setAppliedCoupon(null);
     } finally {
@@ -167,9 +180,30 @@ export default function AtmosPayment() {
         })
       });
 
+      // Handle response with better error checking
+      let preApplyData;
+      const responseText = await preApplyResponse.text();
+      
+      try {
+        preApplyData = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Pre-apply response parsing error:', parseError);
+        console.error('Response text:', responseText);
+        
+        // Check for common error patterns
+        if (responseText.includes('Too many') || responseText.includes('rate limit')) {
+          throw new Error('Juda ko\'p urinish. Iltimos biroz kuting va qayta urinib ko\'ring.');
+        } else if (responseText.includes('401') || responseText.includes('Unauthorized')) {
+          throw new Error('Avtorizatsiya xatosi. Iltimos keyinroq urinib ko\'ring.');
+        } else if (responseText.includes('Token') || responseText.includes('credentials')) {
+          throw new Error('To\'lov tizimi vaqtincha ishlamayapti. Iltimos keyinroq urinib ko\'ring.');
+        } else {
+          throw new Error('Server xatosi. Iltimos qayta urinib ko\'ring.');
+        }
+      }
+
       if (!preApplyResponse.ok) {
-        const errorData = await preApplyResponse.json();
-        throw new Error(errorData.message || 'Karta ma\'lumotlarini tekshirishda xatolik');
+        throw new Error(preApplyData.message || preApplyData.details || 'Karta ma\'lumotlarini yuborishda xatolik');
       }
 
       // Move to OTP step

@@ -96,6 +96,11 @@ export class AtmosService {
       return this.accessToken;
     }
 
+    console.log('🔐 [ATMOS] Requesting new access token...');
+    console.log(`🔐 [ATMOS] Using Store ID: ${this.storeId}`);
+    console.log(`🔐 [ATMOS] Consumer Key: ${this.consumerKey.substring(0, 10)}...`);
+    console.log(`🔐 [ATMOS] Base URL: ${this.baseUrl}`);
+
     try {
       const credentials = Buffer.from(`${this.consumerKey}:${this.consumerSecret}`).toString('base64');
       
@@ -108,20 +113,33 @@ export class AtmosService {
         body: 'grant_type=client_credentials'
       });
 
+      const responseText = await response.text();
+      console.log(`🔐 [ATMOS] Token response status: ${response.status}`);
+      
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Token request failed: ${response.status} ${errorText}`);
+        console.error(`❌ [ATMOS] Token request failed:`, responseText);
+        throw new Error(`Token request failed: ${response.status} ${responseText}`);
       }
 
-      const data: AtmosTokenResponse = await response.json();
+      let data: AtmosTokenResponse;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error(`❌ [ATMOS] Failed to parse token response:`, responseText);
+        throw new Error('Invalid token response format');
+      }
       
       if (!data.access_token) {
+        console.error(`❌ [ATMOS] No access token in response:`, data);
         throw new Error('No access token received');
       }
 
       this.accessToken = data.access_token;
       // Set expiry to 55 minutes (5 minutes before actual expiry for safety)
       this.tokenExpiry = Date.now() + (55 * 60 * 1000);
+
+      console.log(`✅ [ATMOS] Access token obtained successfully`);
+      console.log(`✅ [ATMOS] Token expires at: ${new Date(this.tokenExpiry).toISOString()}`);
 
       return this.accessToken;
     } catch (error) {
@@ -211,12 +229,19 @@ export class AtmosService {
       store_id: this.storeId
     };
 
+    console.log(`📝 [ATMOS] Pre-apply request:`, {
+      transaction_id: transactionId,
+      card_number: cardNumber.substring(0, 4) + '****' + cardNumber.substring(12),
+      expiry: expiry,
+      store_id: this.storeId
+    });
+
     try {
       const result = await this.apiRequest('/merchant/pay/pre-apply', preApplyData);
-
+      console.log('✅ [ATMOS] Pre-apply result:', JSON.stringify(result, null, 2));
       return result;
     } catch (error) {
-
+      console.error('❌ [ATMOS] Pre-apply error:', error);
       throw error;
     }
   }

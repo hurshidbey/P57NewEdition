@@ -19,3 +19,6 @@ Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
 [11:53:41 AM] [express] POST /api/coupons/validate 404 in 1ms :: {"valid":false,"message":"Bunday kupon…
 OpenAI API error: 401 Incorrect API key provided: YOUR_OPE************HERE. You can find your API key at https://platform.openai.com/account/api-keys.
 [11:54:48 AM] [express] GET /api/test-openai 200 in 625ms :: {"success":true,"message":"OpenAI connecti…
+2:53:01 PM [vite] hmr update /src/pages/atmos-payment.tsx, /src/index.css?v=hDkoAcrfP-Rb-WAn85ni0
+2:59:23 PM [vite] hmr update /src/pages/atmos-payment.tsx, /src/index.css?v=hDkoAcrfP-Rb-WAn85ni0
+2:59:33 PM [vite] hmr update /src/pages/atmos-payment.tsx, /src/index.css?v=hDkoAcrfP-Rb-WAn85ni0

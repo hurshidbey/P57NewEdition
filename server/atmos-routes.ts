@@ -181,6 +181,10 @@ export function setupAtmosRoutes(): Router {
         message = 'SMS xizmati ulanmagan. Bankingizga murojaat qiling';
       } else if (errorMsg.includes('blok') || errorMsg.includes('block')) {
         message = 'Karta bloklangan';
+      } else if (errorMsg.includes('token') || errorMsg.includes('unauthorized') || errorMsg.includes('401')) {
+        message = 'To\'lov tizimi vaqtincha ishlamayapti. Iltimos keyinroq urinib ko\'ring';
+      } else if (errorMsg.includes('too many') || errorMsg.includes('rate limit')) {
+        message = 'Juda ko\'p urinish. Iltimos biroz kuting';
       }
 
       res.status(400).json({
