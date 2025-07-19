@@ -44,7 +44,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  width: 90%;
+  width: 85%;
   max-width: 500px;
 }
 
@@ -76,16 +76,30 @@
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
+  .kb-premium-content-wrapper {
+    min-height: 400px;
+  }
+  
   .kb-content-preview {
-    max-height: 200px;
+    max-height: 180px;
   }
   
   .kb-premium-overlay {
-    width: 95%;
+    width: 92%;
+    padding: 0 1rem;
   }
   
   .kb-content-watermark svg {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
+  }
+  
+  .kb-teaser-text {
+    font-size: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .kb-content-fade {
+    height: 120px;
   }
 }

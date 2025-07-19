@@ -78,25 +78,25 @@ export function UpgradeCTA({
   if (variant === 'banner') {
     return (
       <Card className={`bg-card border-2 border-theme shadow-brutal rounded-none ${className}`}>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-primary">
+        <CardHeader className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="p-2 sm:p-3 bg-primary flex-shrink-0">
                 {getIcon()}
               </div>
-              <div>
-                <CardTitle className="text-lg font-black uppercase">{title || getDefaultTitle()}</CardTitle>
-                <CardDescription>
+              <div className="flex-1">
+                <CardTitle className="text-base sm:text-lg font-black uppercase">{title || getDefaultTitle()}</CardTitle>
+                <CardDescription className="text-sm mt-1">
                   {description || getDefaultDescription()}
                 </CardDescription>
                 {reason && (
-                  <p className="text-sm text-foreground mt-1 font-bold">{reason}</p>
+                  <p className="text-xs sm:text-sm text-foreground mt-1 font-bold">{reason}</p>
                 )}
               </div>
             </div>
-            <Link href="/atmos-payment">
+            <Link href="/atmos-payment" className="w-full sm:w-auto">
               <Button 
-                className="bg-accent hover:bg-accent/90 text-black font-bold uppercase border-2 border-theme h-[44px] hover:shadow-brutal-sm"
+                className="bg-accent hover:bg-accent/90 text-black font-bold uppercase border-2 border-theme h-[44px] hover:shadow-brutal-sm w-full sm:w-auto text-sm"
                 onClick={handleUpgradeClick}
               >
                 Premium olish
@@ -111,26 +111,26 @@ export function UpgradeCTA({
 
   if (variant === 'modal') {
     return (
-      <div className={`bg-card border-2 border-theme p-8 max-w-md text-center shadow-brutal-lg ${className}`}>
+      <div className={`bg-card border-2 border-theme p-6 sm:p-8 max-w-md text-center shadow-brutal-lg ${className}`}>
         {getIcon()}
-        <h3 className="text-xl font-black uppercase text-foreground mb-2">
+        <h3 className="text-lg sm:text-xl font-black uppercase text-foreground mb-2">
           {title || getDefaultTitle()}
         </h3>
-        <p className="text-foreground mb-4">
+        <p className="text-sm sm:text-base text-foreground mb-4">
           {description || getDefaultDescription()}
         </p>
         {reason && (
-          <div className="bg-secondary border-2 border-theme p-3 mb-6">
-            <p className="text-sm text-foreground font-bold">
+          <div className="bg-secondary border-2 border-theme p-2 sm:p-3 mb-4 sm:mb-6">
+            <p className="text-xs sm:text-sm text-foreground font-bold">
               {reason}
             </p>
           </div>
         )}
 
         {showFeatures && (
-          <div className="space-y-3 mb-6">
-            <p className="text-sm font-bold uppercase text-foreground">Premium rejada:</p>
-            <ul className="text-sm text-foreground space-y-1">
+          <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+            <p className="text-xs sm:text-sm font-bold uppercase text-foreground">Premium rejada:</p>
+            <ul className="text-xs sm:text-sm text-foreground space-y-1 text-left">
               {features.map((feature, index) => (
                 <li key={index}>• {feature}</li>
               ))}
@@ -142,7 +142,7 @@ export function UpgradeCTA({
           <Link href="/atmos-payment" className="flex-1">
             <Button 
               size="lg"
-              className="bg-accent hover:bg-accent/90 text-black font-bold uppercase px-6 py-3 text-sm w-full border-2 border-theme h-[52px] hover:shadow-brutal-sm"
+              className="bg-accent hover:bg-accent/90 text-black font-bold uppercase px-4 sm:px-6 py-2 sm:py-3 text-sm w-full border-2 border-theme h-[44px] sm:h-[48px] hover:shadow-brutal-sm"
               onClick={handleUpgradeClick}
             >
               <Crown className="w-4 h-4 mr-2" />
@@ -184,17 +184,17 @@ export function UpgradeCTA({
   // Default card variant
   return (
     <Card className={`text-center bg-card border-2 border-theme shadow-brutal rounded-none ${className}`}>
-      <CardContent className="pt-6">
+      <CardContent className="p-4 sm:p-6">
         {getIcon()}
-        <h3 className="text-lg font-black uppercase text-foreground mb-2">
+        <h3 className="text-base sm:text-lg font-black uppercase text-foreground mb-2">
           {title || getDefaultTitle()}
         </h3>
-        <p className="text-foreground mb-4">
+        <p className="text-sm sm:text-base text-foreground mb-4">
           {description || getDefaultDescription()}
         </p>
         {reason && (
-          <div className="bg-secondary border-2 border-theme p-3 mb-4">
-            <p className="text-sm text-foreground font-bold">
+          <div className="bg-secondary border-2 border-theme p-2 sm:p-3 mb-4">
+            <p className="text-xs sm:text-sm text-foreground font-bold">
               {reason}
             </p>
           </div>
@@ -202,8 +202,8 @@ export function UpgradeCTA({
 
         {showFeatures && (
           <div className="space-y-2 mb-4">
-            <p className="text-sm font-bold uppercase text-foreground">Premium rejada:</p>
-            <ul className="text-sm text-foreground space-y-1">
+            <p className="text-xs sm:text-sm font-bold uppercase text-foreground">Premium rejada:</p>
+            <ul className="text-xs sm:text-sm text-foreground space-y-1 text-left">
               {features.map((feature, index) => (
                 <li key={index}>• {feature}</li>
               ))}
@@ -213,7 +213,7 @@ export function UpgradeCTA({
 
         <Link href="/atmos-payment">
           <Button 
-            className="bg-accent hover:bg-accent/90 text-black font-bold uppercase w-full border-2 border-theme h-[44px] hover:shadow-brutal-sm"
+            className="bg-accent hover:bg-accent/90 text-black font-bold uppercase w-full border-2 border-theme h-[44px] hover:shadow-brutal-sm text-sm"
             onClick={handleUpgradeClick}
           >
             <Crown className="w-4 h-4 mr-2" />

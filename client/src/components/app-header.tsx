@@ -29,18 +29,18 @@ export default function AppHeader() {
 
   return (
     <header className="border-b border-theme bg-background sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center">
             <Link href="/">
               <img 
                 src="https://bazptglwzqstppwlvmvb.supabase.co/storage/v1/object/public/assets/protokol57-logo.svg" 
                 alt="Protokol 57 Logo" 
-                className="h-8 w-auto transition-transform hover:scale-105 cursor-pointer"
+                className="h-7 sm:h-8 w-auto transition-transform hover:scale-105 cursor-pointer"
               />
             </Link>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* User greeting and tier badge - only show premium badge for premium users */}
             <div className="hidden sm:flex items-center gap-3">
               <span className="text-sm text-muted-foreground">
@@ -57,19 +57,20 @@ export default function AppHeader() {
             <Link href="/knowledge-base">
               <Button 
                 variant="ghost" 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
+                className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-2 sm:px-3 touch-manipulation"
               >
-                O'rganish
+                <span className="hidden sm:inline">O'rganish</span>
+                <span className="sm:hidden">KB</span>
               </Button>
             </Link>
             
             <Link href="/premium-prompts">
               <Button 
                 variant="ghost" 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
+                className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-2 sm:px-3 touch-manipulation"
               >
-                <FileText className="w-4 h-4 mr-1" />
-                Promptlar
+                <FileText className="w-4 h-4 sm:mr-1" />
+                <span className="hidden sm:inline">Promptlar</span>
               </Button>
             </Link>
             
@@ -79,10 +80,11 @@ export default function AppHeader() {
                 <Button 
                   variant="default" 
                   size="sm"
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground text-sm font-medium min-h-[44px] px-4 touch-manipulation"
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground text-xs sm:text-sm font-medium min-h-[44px] px-3 sm:px-4 touch-manipulation"
                 >
-                  <Crown className="w-3 h-3 mr-1" />
-                  Upgrade
+                  <Crown className="w-3 h-3 sm:mr-1" />
+                  <span className="hidden sm:inline">Upgrade</span>
+                  <span className="sm:hidden">UP</span>
                 </Button>
               </Link>
             )}
@@ -90,7 +92,7 @@ export default function AppHeader() {
               <Link href="/admin">
                 <Button 
                   variant="ghost" 
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
+                  className="hidden sm:flex text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
                 >
                   Boshqaruv
                 </Button>
@@ -98,10 +100,11 @@ export default function AppHeader() {
             )}
             <Button 
               variant="ghost" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-3 touch-manipulation"
+              className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-2 sm:px-3 touch-manipulation"
               onClick={signOut}
             >
-              Chiqish
+              <span className="hidden sm:inline">Chiqish</span>
+              <span className="sm:hidden">Out</span>
             </Button>
           </div>
         </div>

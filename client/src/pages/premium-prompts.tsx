@@ -13,18 +13,18 @@ import { Link } from 'wouter';
 
 function InstructionsSection() {
   return (
-    <Card className="bg-card border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none mb-8">
-      <CardHeader className="bg-accent border-b-4 border-black p-6">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-black">
-            <BookOpen className="w-6 h-6 text-white" />
+    <Card className="bg-card border-2 sm:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none mb-6 sm:mb-8">
+      <CardHeader className="bg-accent border-b-2 sm:border-b-4 border-black p-4 sm:p-6">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="p-2 sm:p-3 bg-black flex-shrink-0">
+            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
-          <CardTitle className="text-2xl font-black uppercase text-black">
+          <CardTitle className="text-lg sm:text-xl lg:text-2xl font-black uppercase text-black">
             Promptlardan Foydalanish Bo'yicha Qo'llanma
           </CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Important Note */}
         <div className="bg-yellow-50 border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-start gap-3">
@@ -230,22 +230,24 @@ export default function PremiumPrompts() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <section className="pt-8 pb-8">
+        <section className="pt-6 sm:pt-8 pb-6 sm:pb-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl font-black text-foreground uppercase leading-tight mb-4">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground uppercase leading-tight mb-3 sm:mb-4">
               Premium Promptlar
             </h1>
-            <p className="text-lg text-foreground leading-relaxed mb-8">
+            <p className="text-sm sm:text-base lg:text-lg text-foreground leading-relaxed mb-6 sm:mb-8 px-4 sm:px-0">
               AI bilan ishlash uchun maxsus tayyorlangan professional promptlar to'plami
             </p>
 
             {/* Show upgrade banner for free users */}
             {tier === 'free' && (
-              <UpgradeCTA 
-                variant="banner" 
-                title="Premium Promptlarga kirish"
-                description="Maxsus tayyorlangan premium promptlar bilan ishlash samaradorligingizni oshiring"
-              />
+              <div className="px-4 sm:px-0">
+                <UpgradeCTA 
+                  variant="banner" 
+                  title="Premium Promptlarga kirish"
+                  description="Maxsus tayyorlangan premium promptlar bilan ishlash samaradorligingizni oshiring"
+                />
+              </div>
             )}
           </div>
         </section>
@@ -254,21 +256,21 @@ export default function PremiumPrompts() {
         <InstructionsSection />
 
         {/* Search and Filters */}
-        <section className="pb-8">
-          <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
+        <section className="pb-6 sm:pb-8">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-2xl mx-auto">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Promptlar bo'yicha qidirish..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 border-2 border-black font-bold uppercase placeholder:font-normal placeholder:normal-case focus:ring-2 focus:ring-black rounded-none h-[44px]"
+                className="pl-10 border-2 border-black font-bold text-sm sm:text-base uppercase placeholder:font-normal placeholder:normal-case focus:ring-2 focus:ring-black rounded-none h-[44px]"
               />
             </div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border-2 border-black bg-card text-foreground font-bold uppercase focus:outline-none focus:ring-2 focus:ring-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              className="px-3 sm:px-4 py-2 border-2 border-black bg-card text-foreground font-bold text-sm sm:text-base uppercase focus:outline-none focus:ring-2 focus:ring-black h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
               aria-label="Kategoriya tanlash"
             >
               {categories.map(category => (
@@ -283,16 +285,16 @@ export default function PremiumPrompts() {
         {/* Prompts Display - Different layout for free vs paid users */}
         {tier === 'paid' ? (
           // For paid users, show all prompts in one section
-          <section className="pb-16">
-            <div className="mb-6">
-              <h2 className="text-2xl font-black text-foreground uppercase mb-2">
+          <section className="pb-12 sm:pb-16">
+            <div className="mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-black text-foreground uppercase mb-1 sm:mb-2">
                 Barcha Promptlar ({filteredPrompts.length})
               </h2>
-              <p className="text-foreground">
+              <p className="text-sm sm:text-base text-foreground">
                 Premium obuna bilan barcha promptlarga kirish imkoniga egasiz
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredPrompts.map((prompt) => (
                 <PromptCard key={prompt.id} prompt={prompt} showFullContent={true} />
               ))}
@@ -303,16 +305,16 @@ export default function PremiumPrompts() {
           <>
             {/* Free Prompts Section */}
             {freePrompts.length > 0 && (
-              <section className="pb-16">
-                <div className="mb-6">
-                  <h2 className="text-2xl font-black text-foreground uppercase mb-2">
+              <section className="pb-12 sm:pb-16">
+                <div className="mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl font-black text-foreground uppercase mb-1 sm:mb-2">
                     Bepul Promptlar
                   </h2>
-                  <p className="text-foreground">
+                  <p className="text-sm sm:text-base text-foreground">
                     Barcha foydalanuvchilar uchun ochiq promptlar
                   </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {freePrompts.map((prompt) => (
                     <PromptCard key={prompt.id} prompt={prompt} showFullContent={true} />
                   ))}
@@ -322,19 +324,19 @@ export default function PremiumPrompts() {
 
             {/* Premium Prompts Section */}
             {premiumPrompts.length > 0 && (
-              <section className="pb-16">
-                <div className="mb-6">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Crown className="w-6 h-6 text-accent" />
-                    <h2 className="text-2xl font-black text-foreground uppercase">
+              <section className="pb-12 sm:pb-16">
+                <div className="mb-4 sm:mb-6">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                    <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+                    <h2 className="text-xl sm:text-2xl font-black text-foreground uppercase">
                       Premium Promptlar
                     </h2>
                   </div>
-                  <p className="text-foreground">
+                  <p className="text-sm sm:text-base text-foreground">
                     Premium obuna egalariga maxsus promptlar
                   </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {premiumPrompts.map((prompt) => (
                     <PromptCard key={prompt.id} prompt={prompt} showFullContent={false} />
                   ))}

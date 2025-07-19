@@ -649,14 +649,14 @@ export default function KnowledgeBase() {
       {/* Mobile Header with Menu Button */}
       <div className="lg:hidden sticky top-[64px] z-40 bg-black text-white border-b-2 border-black">
         <div className="flex items-center justify-between p-3 h-14">
-          <h1 className="text-xl font-black uppercase tracking-tight">BILIMLAR BAZASI</h1>
+          <h1 className="text-lg sm:text-xl font-black uppercase tracking-tight">BILIMLAR BAZASI</h1>
           <button
             onClick={() => setSidebarOpen(true)}
-            className="w-12 h-12 border-2 border-white bg-black text-white hover:bg-white hover:text-black transition-colors touch-manipulation flex items-center justify-center"
+            className="w-11 h-11 sm:w-12 sm:h-12 border-2 border-white bg-black text-white hover:bg-white hover:text-black transition-colors touch-manipulation flex items-center justify-center"
             aria-label="Menyuni ochish"
             type="button"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -805,10 +805,10 @@ export default function KnowledgeBase() {
 
             {/* Section Header */}
             <div className="mb-4">
-              <h1 className="text-3xl lg:text-4xl font-black mb-2 leading-none uppercase tracking-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2 leading-none uppercase tracking-tight">
                 {getCurrentSection()?.title}
               </h1>
-              <div className="flex items-center gap-4 text-sm text-black">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-black">
                 <span className="px-2 py-1 border-2 border-black bg-white font-black uppercase text-xs" aria-label="Qiyinlik darajasi">
                   {getCurrentSection()?.difficulty === 'beginner' && 'Boshlang\'ich'}
                   {getCurrentSection()?.difficulty === 'intermediate' && 'O\'rta'}
@@ -923,21 +923,21 @@ export default function KnowledgeBase() {
       )}
       
       {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black p-4">
-        <div className="flex justify-between items-center">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black p-3 sm:p-4">
+        <div className="flex justify-between items-center gap-2">
           <button
             onClick={navigateToPrevious}
             disabled={!hasPrevious()}
-            className="w-12 h-12 border-2 border-black bg-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+            className="w-11 h-11 sm:w-12 sm:h-12 border-2 border-black bg-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-shadow touch-manipulation"
             aria-label="Oldingi sahifa"
             type="button"
           >
-            <AiIcon name="arrow-left" size={24} />
+            <AiIcon name="arrow-left" size={20} />
           </button>
           
           <button
             onClick={() => setSidebarOpen(true)}
-            className="h-12 px-6 border-2 border-black bg-white font-black uppercase touch-manipulation hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+            className="h-11 sm:h-12 px-4 sm:px-6 border-2 border-black bg-white font-black text-sm sm:text-base uppercase touch-manipulation hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-shadow"
             type="button"
           >
             MUNDARIJA
@@ -946,11 +946,11 @@ export default function KnowledgeBase() {
           <button
             onClick={navigateToNext}
             disabled={!hasNext()}
-            className="w-12 h-12 border-2 border-black bg-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+            className="w-11 h-11 sm:w-12 sm:h-12 border-2 border-black bg-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-shadow touch-manipulation"
             aria-label="Keyingi sahifa"
             type="button"
           >
-            <AiIcon name="arrow-right" size={24} />
+            <AiIcon name="arrow-right" size={20} />
           </button>
         </div>
       </div>
