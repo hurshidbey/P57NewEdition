@@ -67,6 +67,18 @@ export const securityConfig = {
       errors.push('OPENAI_API_KEY appears to be invalid (should start with sk-)');
     }
     
+    // Validate fallback admin configuration
+    if (process.env.FALLBACK_ADMIN_EMAIL && !process.env.FALLBACK_ADMIN_PASSWORD_HASH) {
+      errors.push('FALLBACK_ADMIN_EMAIL is set but FALLBACK_ADMIN_PASSWORD_HASH is missing');
+    }
+    
+    if (process.env.FALLBACK_ADMIN_PASSWORD_HASH) {
+      // Validate bcrypt hash format ($2a$, $2b$, or $2y$ followed by cost factor)
+      if (!process.env.FALLBACK_ADMIN_PASSWORD_HASH.match(/^\$2[aby]\$\d{2}\$/)) {
+        errors.push('FALLBACK_ADMIN_PASSWORD_HASH appears to be invalid (not a valid bcrypt hash)');
+      }
+    }
+    
     return {
       valid: errors.length === 0,
       errors
@@ -110,6 +122,7 @@ export const initializeSecurity = () => {
   console.log('🔒 Security Status:');
   console.log(`  - Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`  - Session Secret: ${process.env.SESSION_SECRET ? 'Configured' : 'NOT SET'}`);
+  console.log(`  - Fallback Admin: ${process.env.FALLBACK_ADMIN_EMAIL ? 'Configured' : 'Not configured'}`);
   console.log(`  - HTTPS Only Cookies: ${process.env.NODE_ENV === 'production' ? 'Enabled' : 'Disabled'}`);
   console.log(`  - Rate Limiting: Enabled`);
   console.log(`  - CORS: ${process.env.NODE_ENV === 'production' ? 'Production origins only' : 'Development mode'}`);

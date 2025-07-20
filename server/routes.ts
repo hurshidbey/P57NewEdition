@@ -1072,41 +1072,61 @@ export function setupRoutes(app: Express): Server {
     try {
       const { username, password } = req.body;
       
-      // Check if credentials match known users
-      if ((username === "admin" && password === "admin123") || 
-          (username === "hurshidbey@gmail.com" && password === "20031000a")) {
+      // First, try to authenticate against database users
+      let dbUser;
+      let isAuthenticated = false;
+      
+      try {
+        // Try to find existing user in database
+        dbUser = await storage.getUserByUsername(username);
         
-        // Try to find or create user in database
-        let dbUser;
-        try {
-          // First try to find existing user
-          dbUser = await storage.getUserByUsername(username);
-          
-          if (!dbUser) {
-            // Create new user if doesn't exist
-            dbUser = await storage.createUser({
-              username,
-              password // In production, this should be hashed!
-            });
+        if (dbUser && dbUser.password) {
+          // Check if the password is hashed (bcrypt hashes start with $2)
+          if (dbUser.password.startsWith('$2')) {
+            // Use bcrypt comparison for hashed passwords
+            isAuthenticated = await securityConfig.comparePassword(password, dbUser.password);
+          } else {
+            // Legacy plain text comparison (should be migrated to bcrypt)
+            isAuthenticated = password === dbUser.password;
+            console.warn(`⚠️ User ${username} has unhashed password - consider migrating to bcrypt`);
           }
-        } catch (dbError) {
-
-          // Fallback to consistent IDs if DB fails
-          // Create a consistent hash-based ID for users when DB is unavailable
-          const hashCode = username.split('').reduce((hash: number, char: string) => {
-            return ((hash << 5) - hash) + char.charCodeAt(0);
-          }, 0);
-          
-          dbUser = {
-            id: Math.abs(hashCode) % 1000000, // Ensure positive ID under 1M
-            username,
-            password
-          };
         }
+      } catch (dbError) {
+        console.error('Database authentication error:', dbError);
+      }
+      
+      // If not authenticated via database, check fallback admin credentials
+      if (!isAuthenticated && !dbUser) {
+        const fallbackEmail = process.env.FALLBACK_ADMIN_EMAIL;
+        const fallbackPasswordHash = process.env.FALLBACK_ADMIN_PASSWORD_HASH;
         
-        // Set up session for authenticated user
+        if (fallbackEmail && fallbackPasswordHash && username === fallbackEmail) {
+          try {
+            isAuthenticated = await securityConfig.comparePassword(password, fallbackPasswordHash);
+            if (isAuthenticated) {
+              console.log(`ℹ️ Fallback admin authentication used for ${username}`);
+              
+              // Create a consistent user object for fallback admin
+              const hashCode = username.split('').reduce((hash: number, char: string) => {
+                return ((hash << 5) - hash) + char.charCodeAt(0);
+              }, 0);
+              
+              dbUser = {
+                id: Math.abs(hashCode) % 1000000, // Ensure positive ID under 1M
+                username,
+                password: fallbackPasswordHash // Store the hash, not the plain password
+              };
+            }
+          } catch (error) {
+            console.error('Fallback authentication error:', error);
+          }
+        }
+      }
+      
+      // If authenticated, set up the session
+      if (isAuthenticated && dbUser) {
         const user = { 
-          id: String(dbUser?.id || (username === "admin" ? 1 : 2)), 
+          id: String(dbUser.id), 
           username: username, 
           role: "admin" 
         };
