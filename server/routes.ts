@@ -9,6 +9,10 @@ import { setupAtmosRoutes } from "./atmos-routes";
 import { eq } from "drizzle-orm";
 import { securityConfig } from "./utils/security-config";
 import os from "os";
+import { requireAuth, requirePermission, auditLog, isSupabaseAdmin as rbacIsSupabaseAdmin } from "./middleware/rbac";
+import { RESOURCES, ACTIONS } from "@shared/rbac-schema";
+import auditLogRoutes from "./routes/audit-logs";
+import roleRoutes from "./routes/roles";
 
 // Simple request counter for metrics
 class RequestCounter {
@@ -87,46 +91,8 @@ const isAuthenticated = (req: any, res: Response, next: NextFunction) => {
   next();
 };
 
-// Admin middleware function to check if user is an admin (using Supabase auth)
-const isSupabaseAdmin = async (req: any, res: Response, next: NextFunction) => {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'No authorization token provided' });
-    }
-    
-    const token = authHeader.split(' ')[1];
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY! // Use service role key for admin operations
-    );
-    
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    
-    if (error || !user) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-    
-    // Only allow admin users - configured via environment variables
-    const adminEmails = process.env.ADMIN_EMAILS 
-      ? process.env.ADMIN_EMAILS.split(',').map(email => email.trim())
-      : [];
-    
-    if (adminEmails.length === 0) {
-      console.warn('⚠️  WARNING: No admin emails configured in ADMIN_EMAILS environment variable');
-    }
-    
-    if (!adminEmails.includes(user.email)) {
-      return res.status(403).json({ error: 'Access denied - admin only' });
-    }
-    
-    req.user = user;
-    next();
-  } catch (error: any) {
-    res.status(500).json({ error: 'Authentication failed' });
-  }
-};
+// Use RBAC-based admin middleware (backward compatible with ADMIN_EMAILS)
+const isSupabaseAdmin = rbacIsSupabaseAdmin;
 
 // Admin middleware function to check if user is an admin (legacy session-based)
 const isAdmin = (req: any, res: Response, next: NextFunction) => {
@@ -418,7 +384,11 @@ export function setupRoutes(app: Express): Server {
 
   // Admin routes for protocol management
   // Get all protocols for admin
-  app.get("/api/admin/protocols", isSupabaseAdmin, async (req, res) => {
+  app.get("/api/admin/protocols", 
+    requireAuth,
+    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.READ),
+    auditLog(RESOURCES.PROTOCOLS, ACTIONS.READ),
+    async (req, res) => {
     try {
       const protocols = await storage.getProtocols(1000); // Get all protocols for admin
       res.json(protocols);
@@ -427,7 +397,11 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
-  app.post("/api/admin/protocols", isSupabaseAdmin, async (req, res) => {
+  app.post("/api/admin/protocols", 
+    requireAuth,
+    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.CREATE),
+    auditLog(RESOURCES.PROTOCOLS, ACTIONS.CREATE),
+    async (req, res) => {
     try {
       const protocolData = insertProtocolSchema.parse(req.body);
       const protocol = await storage.createProtocol(protocolData);
@@ -440,7 +414,11 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
-  app.put("/api/admin/protocols/:id", isSupabaseAdmin, async (req, res) => {
+  app.put("/api/admin/protocols/:id", 
+    requireAuth,
+    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.UPDATE),
+    auditLog(RESOURCES.PROTOCOLS, ACTIONS.UPDATE),
+    async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const protocolData = insertProtocolSchema.partial().parse(req.body);
@@ -460,7 +438,11 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
-  app.delete("/api/admin/protocols/:id", isSupabaseAdmin, async (req, res) => {
+  app.delete("/api/admin/protocols/:id", 
+    requireAuth,
+    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.DELETE),
+    auditLog(RESOURCES.PROTOCOLS, ACTIONS.DELETE),
+    async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const success = await storage.deleteProtocol(id);
@@ -476,7 +458,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Toggle protocol free access
-  app.patch("/api/admin/protocols/:id/toggle-free", isSupabaseAdmin, async (req, res) => {
+  app.patch("/api/admin/protocols/:id/toggle-free", 
+    requireAuth,
+    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.TOGGLE_FREE),
+    auditLog(RESOURCES.PROTOCOLS, ACTIONS.TOGGLE_FREE),
+    async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { isFreeAccess } = req.body;
@@ -653,6 +639,10 @@ export function setupRoutes(app: Express): Server {
   // Setup Atmos payment routes
   const atmosRouter = setupAtmosRoutes();
   app.use('/api', atmosRouter);
+  
+  // RBAC routes
+  app.use('/api/admin', auditLogRoutes);
+  app.use('/api/admin', roleRoutes);
 
   // Get user progress (with Supabase auth verification)
   app.get("/api/progress/:userId", async (req, res) => {
@@ -790,7 +780,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin: Get all users
-  app.get("/api/admin/users", isSupabaseAdmin, async (req, res) => {
+  app.get("/api/admin/users", 
+    requireAuth,
+    requirePermission(RESOURCES.USERS, ACTIONS.READ),
+    auditLog(RESOURCES.USERS, ACTIONS.READ),
+    async (req, res) => {
     try {
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(
@@ -817,7 +811,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin: Get all payments
-  app.get("/api/admin/payments", isSupabaseAdmin, async (req, res) => {
+  app.get("/api/admin/payments", 
+    requireAuth,
+    requirePermission(RESOURCES.PAYMENTS, ACTIONS.READ),
+    auditLog(RESOURCES.PAYMENTS, ACTIONS.READ),
+    async (req, res) => {
     try {
       const payments = await storage.getPayments();
       console.log(`📊 [ADMIN] Retrieved ${payments.length} payment records`);
@@ -925,7 +923,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin: Get all coupons
-  app.get("/api/admin/coupons", isSupabaseAdmin, async (req, res) => {
+  app.get("/api/admin/coupons", 
+    requireAuth,
+    requirePermission(RESOURCES.COUPONS, ACTIONS.READ),
+    auditLog(RESOURCES.COUPONS, ACTIONS.READ),
+    async (req, res) => {
     try {
       const coupons = await storage.getCoupons();
       res.json(coupons);
