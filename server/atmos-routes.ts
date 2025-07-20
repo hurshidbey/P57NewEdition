@@ -217,7 +217,10 @@ export function setupAtmosRoutes(): Router {
 
       const result = await atmosService.applyTransaction(transactionId, otpCode);
 
+      console.log(`📥 [ATMOS] Confirm result code: ${result.result?.code}, description: ${result.result?.description}`);
+
       if (result.result.code !== 'OK') {
+        console.error(`❌ [ATMOS] Confirmation failed:`, result);
         throw new Error(result.result.description || 'Transaction confirmation failed');
       }
 
@@ -367,6 +370,8 @@ export function setupAtmosRoutes(): Router {
       }
 
     } catch (error: any) {
+      console.error(`❌ [ATMOS] Confirm error:`, error);
+      console.error(`❌ [ATMOS] Error details:`, error.message, error.response?.data);
 
       // Handle specific OTP errors
       let message = 'SMS kodni tasdiqlashda xatolik';

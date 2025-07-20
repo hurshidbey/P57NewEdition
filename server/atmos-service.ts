@@ -340,9 +340,10 @@ export class AtmosService {
       // TEMPORARY: Reverting to old endpoint until IP whitelisting is complete
       const result = await this.apiRequest('/merchant/pay/confirm', applyData);
 
+      console.log('📥 [ATMOS] Apply transaction result:', JSON.stringify(result, null, 2));
       return result;
     } catch (error) {
-
+      console.error('❌ [ATMOS] Apply transaction error:', error);
       throw error;
     }
   }
