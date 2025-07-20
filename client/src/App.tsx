@@ -17,6 +17,7 @@ import LandingSimple from "@/pages/landing-simple";
 import LandingConversion from "@/pages/landing-conversion";
 import LandingTildaNew from "@/pages/landing-tilda-new";
 import TermsOfService from "@/pages/terms-of-service";
+import MaintenancePage from "@/pages/maintenance";
 
 // Dynamic imports for authenticated pages - ensures they're included in build
 const Home = lazy(() => import("@/pages/home"));
@@ -41,6 +42,21 @@ function PageLoader() {
 
 function AppContent() {
   const { isAuthenticated, loading, user } = useAuth();
+
+  // TEMPORARY: Enable maintenance mode
+  const MAINTENANCE_MODE = true;
+  const MAINTENANCE_ALLOWED_PATHS = ['/admin', '/auth/callback'];
+  const MAINTENANCE_ALLOWED_EMAILS = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
+  
+  // Check if current path is allowed during maintenance
+  const currentPath = window.location.pathname;
+  const isAllowedPath = MAINTENANCE_ALLOWED_PATHS.some(path => currentPath.startsWith(path));
+  const isAllowedUser = user?.email && MAINTENANCE_ALLOWED_EMAILS.includes(user.email);
+  
+  // Show maintenance page unless user/path is allowed
+  if (MAINTENANCE_MODE && !isAllowedPath && !isAllowedUser) {
+    return <MaintenancePage />;
+  }
 
   // Check if current user is admin
   const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
