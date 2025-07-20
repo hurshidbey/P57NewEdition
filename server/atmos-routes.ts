@@ -388,6 +388,54 @@ export function setupAtmosRoutes(): Router {
     }
   });
 
-  // Other routes remain the same...
+  // Resend OTP endpoint
+  router.post('/atmos/resend-otp', async (req, res) => {
+    try {
+      const { transactionId } = req.body;
+
+      if (!transactionId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Transaction ID talab qilinadi'
+        });
+      }
+
+      console.log(`📤 [ATMOS] Resending OTP for transaction: ${transactionId}`);
+
+      const result = await atmosService.resendOtp(transactionId);
+
+      if (result.result.code !== 'OK') {
+        throw new Error(result.result.description || 'Failed to resend OTP');
+      }
+
+      res.json({
+        success: true,
+        result: result.result,
+        message: 'SMS kod qayta yuborildi'
+      });
+
+    } catch (error: any) {
+      console.error(`❌ [ATMOS] Resend OTP error:`, error);
+      
+      // Handle specific errors
+      let message = 'SMS kodni qayta yuborishda xatolik';
+      const errorMsg = error.message?.toLowerCase() || '';
+      
+      if (errorMsg.includes('not found') || errorMsg.includes('topilmadi')) {
+        message = 'Tranzaksiya topilmadi';
+      } else if (errorMsg.includes('expired') || errorMsg.includes('muddati')) {
+        message = 'Tranzaksiya muddati tugagan';
+      } else if (errorMsg.includes('already') || errorMsg.includes('allaqachon')) {
+        message = 'SMS kod allaqachon yuborilgan';
+      }
+
+      res.status(400).json({
+        success: false,
+        message,
+        details: error.message
+      });
+    }
+  });
+
   return router;
 }

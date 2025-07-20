@@ -17,7 +17,9 @@ export const securityHeaders = helmet({
         "https://*.supabase.co",
         "wss://*.supabase.co",
         "https://api.openai.com",
-        "https://partner.atmos.uz",
+        "https://apigw.atmos.uz",
+        "https://test.apigw.atmos.uz",
+        "https://partner.atmos.uz", // Keep old domain for backward compatibility
         "https://test-partner.atmos.uz"
       ],
       frameSrc: ["'self'", "https://challenges.cloudflare.com"],
