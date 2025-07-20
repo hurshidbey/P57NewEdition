@@ -34,9 +34,9 @@ export class AtmosService {
     this.consumerSecret = process.env.ATMOS_CONSUMER_SECRET!;
     
     // Use different base URLs for test and production
-    // Updated to new Atmos API gateway URLs (changed from partner.atmos.uz)
+    // TEMPORARY: Reverting to old URLs until IP whitelisting is complete
     const env = process.env.ATMOS_ENV || 'production';
-    this.baseUrl = env === 'test' ? 'https://test.apigw.atmos.uz' : 'https://apigw.atmos.uz';
+    this.baseUrl = env === 'test' ? 'https://test-partner.atmos.uz' : 'https://partner.atmos.uz';
 
     if (!this.storeId || !this.consumerKey || !this.consumerSecret) {
       throw new Error('ATMOS credentials not configured');
@@ -337,8 +337,8 @@ export class AtmosService {
     console.log('Apply data:', JSON.stringify(applyData, null, 2));
 
     try {
-      // Updated endpoint from /merchant/pay/confirm to /merchant/pay/apply per Atmos API changes
-      const result = await this.apiRequest('/merchant/pay/apply', applyData);
+      // TEMPORARY: Reverting to old endpoint until IP whitelisting is complete
+      const result = await this.apiRequest('/merchant/pay/confirm', applyData);
 
       return result;
     } catch (error) {
