@@ -1,14 +1,10 @@
 // Domain validation utility for cross-domain OAuth
 // This ensures only trusted domains can be used for authentication redirects
 
-const ALLOWED_DOMAINS = [
-  'https://p57.birfoiz.uz',
-  'https://protokol.1foiz.com',
-  'https://srv852801.hstgr.cloud',
-  'http://localhost:5000',
-  'http://localhost:5001',
-  'http://localhost:5173'
-];
+import { DOMAINS } from '@shared/config/domains';
+
+// Get allowed domains from centralized config
+const ALLOWED_DOMAINS = DOMAINS.allowedOrigins;
 
 /**
  * Validates if a domain is in our allowed list
@@ -21,7 +17,7 @@ export function isAllowedDomain(domain: string): boolean {
   
   // Check if the domain is in our allowed list
   return ALLOWED_DOMAINS.some(allowed => 
-    normalizedDomain.toLowerCase() === allowed.toLowerCase()
+    normalizedDomain.toLowerCase() === allowed.toLowerCase().replace(/\/$/, '')
   );
 }
 

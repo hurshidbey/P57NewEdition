@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import { DOMAINS, isAllowedOrigin } from '../../shared/config/domains';
 
 // Security headers configuration
 export const securityHeaders = helmet({
@@ -31,15 +32,8 @@ export const securityHeaders = helmet({
 });
 
 // CORS configuration
-const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? [
-      'https://p57.birfoiz.uz',
-      'https://p57.uz',
-      'https://srv852801.hstgr.cloud',
-      'https://protokol.1foiz.com',
-      'https://1foiz.com'
-    ]
-  : ['http://localhost:5000', 'http://localhost:5001', 'http://localhost:5173'];
+// Use centralized domain configuration
+const allowedOrigins = DOMAINS.allowedOrigins;
 
 export const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {

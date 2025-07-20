@@ -55,8 +55,8 @@ export class AtmosService {
         method: options.method || 'GET',
         headers: {
           // Use configured domain or fallback to primary domain for Origin/Referer
-          'Origin': process.env.ATMOS_ALLOWED_ORIGIN || 'https://p57.birfoiz.uz',
-          'Referer': (process.env.ATMOS_ALLOWED_ORIGIN || 'https://p57.birfoiz.uz') + '/',
+          'Origin': process.env.ATMOS_ALLOWED_ORIGIN || process.env.APP_DOMAIN || 'https://app.p57.uz',
+          'Referer': (process.env.ATMOS_ALLOWED_ORIGIN || process.env.APP_DOMAIN || 'https://app.p57.uz') + '/',
           'User-Agent': 'Protokol57/1.0',
           ...options.headers
         }

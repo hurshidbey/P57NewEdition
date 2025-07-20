@@ -32,7 +32,7 @@ async function testMobileViewports() {
         
         try {
             // Test main page
-            await page.goto('https://p57.birfoiz.uz', { waitUntil: 'networkidle2' });
+            await page.goto('https://app.p57.uz', { waitUntil: 'networkidle2' });
             await page.screenshot({ path: `screenshots/${device.name}-home.png`, fullPage: true });
             
             // Check if mobile menu exists
@@ -56,7 +56,7 @@ async function testMobileViewports() {
             }
             
             // Test protocol page
-            await page.goto('https://p57.birfoiz.uz/protocols/1', { waitUntil: 'networkidle2' });
+            await page.goto('https://app.p57.uz/protocols/1', { waitUntil: 'networkidle2' });
             await page.screenshot({ path: `screenshots/${device.name}-protocol.png` });
             
             // Check horizontal scroll
@@ -67,7 +67,7 @@ async function testMobileViewports() {
             console.log(`  ${hasHorizontalScroll ? '❌ Has horizontal scroll' : '✓ No horizontal scroll'}`);
             
             // Test payment page
-            await page.goto('https://p57.birfoiz.uz/atmos-payment', { waitUntil: 'networkidle2' });
+            await page.goto('https://app.p57.uz/atmos-payment', { waitUntil: 'networkidle2' });
             await page.screenshot({ path: `screenshots/${device.name}-payment.png` });
             
             console.log(`  ✓ Screenshots saved\n`);

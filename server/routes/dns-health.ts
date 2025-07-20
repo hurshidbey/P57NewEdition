@@ -3,6 +3,7 @@ import dns from 'dns/promises';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import https from 'https';
+import { DOMAINS } from '../../shared/config/domains';
 
 const router = Router();
 const execAsync = promisify(exec);
@@ -37,10 +38,10 @@ interface DNSHealthCheck {
 
 // Domains to monitor
 const MONITORED_DOMAINS = [
-  'p57.birfoiz.uz',
-  'protokol.1foiz.com',
-  'srv852801.hstgr.cloud',
-  'p57.uz'
+  DOMAINS.primaryDomain,
+  DOMAINS.app.replace('https://', ''),
+  DOMAINS.api.replace('https://', ''),
+  ...DOMAINS.backupDomains.map(d => d.replace('https://', ''))
 ];
 
 // DNS servers to check propagation

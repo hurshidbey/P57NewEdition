@@ -4,6 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { DOMAINS } from '@/../../shared/config/domains';
 
 interface ConnectivityTest {
   name: string;
@@ -34,7 +35,7 @@ export function ConnectivityChecker() {
     },
     {
       name: 'Primary Domain',
-      description: 'Checking p57.birfoiz.uz',
+      description: `Checking ${DOMAINS.app.replace('https://', '')}`,
       status: 'pending'
     },
     {
@@ -60,9 +61,11 @@ export function ConnectivityChecker() {
 
   // Domains to test
   const domainsToTest = [
-    { url: 'https://p57.birfoiz.uz', name: 'Primary' },
-    { url: 'https://protokol.1foiz.com', name: 'Backup 1' },
-    { url: 'https://srv852801.hstgr.cloud', name: 'Backup 2' },
+    { url: DOMAINS.app, name: 'Primary' },
+    ...DOMAINS.backupDomains.map((domain, index) => ({
+      url: domain,
+      name: `Backup ${index + 1}`
+    }))
   ];
 
   const updateTestStatus = (index: number, updates: Partial<ConnectivityTest>) => {
@@ -140,7 +143,7 @@ export function ConnectivityChecker() {
     
     for (const domain of domainsToTest.slice(1)) {
       const result = await testDomain(domain.url);
-      backupResults.push({ domain: domain.name, ...result });
+      backupResults.push({ ...result, domain: domain.name });
       if (result.reachable) anyBackupWorking = true;
     }
 

@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { CreditCard, Loader2, CheckCircle, XCircle, RefreshCw, Shield, Info, AlertCircle, Crown, FileText, BookOpen, Brain, Zap, Tag } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import { DOMAINS } from '@/../../shared/config/domains';
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 
@@ -25,7 +26,9 @@ export default function AtmosPayment() {
   const [error, setError] = useState<string | null>(null);
   
   // Check if user is accessing from alternate domain
-  const isAlternateDomain = window.location.hostname === 'protokol.1foiz.com' || window.location.hostname === '1foiz.com';
+  const isAlternateDomain = window.location.hostname === 'protokol.1foiz.com' || 
+                            window.location.hostname === '1foiz.com' ||
+                            window.location.hostname === 'srv852801.hstgr.cloud';
   
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -596,7 +599,7 @@ export default function AtmosPayment() {
               <AlertDescription className="text-yellow-700">
                 <p className="font-bold mb-1">Diqqat: To'lov xizmati bilan muammo bo'lishi mumkin</p>
                 <p className="text-sm">
-                  Agar to'lov amalga oshmasa, <a href="https://p57.birfoiz.uz/atmos-payment" className="underline font-bold">p57.birfoiz.uz</a> orqali qayta urinib ko'ring.
+                  Agar to'lov amalga oshmasa, <a href={`${DOMAINS.app}/atmos-payment`} className="underline font-bold">{DOMAINS.app.replace('https://', '')}</a> orqali qayta urinib ko'ring.
                 </p>
               </AlertDescription>
             </Alert>
@@ -624,7 +627,7 @@ export default function AtmosPayment() {
                         <p className="font-bold mb-2">XATOLIK: {error}</p>
                         {error.includes('domen cheklovlari') && (
                           <p className="text-sm">
-                            Agar siz protokol.1foiz.com orqali kirsangiz, p57.birfoiz.uz orqali qayta urinib ko'ring.
+                            Agar siz {window.location.hostname} orqali kirsangiz, {DOMAINS.app.replace('https://', '')} orqali qayta urinib ko'ring.
                           </p>
                         )}
                         {error.includes('vaqtincha ishlamayapti') && (

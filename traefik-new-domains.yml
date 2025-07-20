@@ -1,0 +1,37 @@
+http:
+  routers:
+    # Main application - new domains
+    app-p57:
+      rule: "Host(`app.p57.uz`)"
+      entryPoints:
+        - "web"
+        - "websecure"
+      service: protokol57
+      tls:
+        certResolver: mytlschallenge
+    
+    # API endpoint
+    api-p57:
+      rule: "Host(`api.p57.uz`)"
+      entryPoints:
+        - "web"
+        - "websecure"
+      service: protokol57
+      tls:
+        certResolver: mytlschallenge
+    
+    # Legacy domains - keep working but will redirect via app
+    protokol57:
+      rule: "Host(`p57.birfoiz.uz`) || Host(`srv852801.hstgr.cloud`) || Host(`protokol.1foiz.com`) || Host(`1foiz.com`)"
+      entryPoints:
+        - "web"
+        - "websecure"
+      service: protokol57
+      tls:
+        certResolver: mytlschallenge
+
+  services:
+    protokol57:
+      loadBalancer:
+        servers:
+          - url: "http://172.17.0.1:5001"

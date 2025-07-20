@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { DOMAINS, getEmailAddresses } from "@shared/config/domains";
 
 export default function TermsOfService() {
   useEffect(() => {
@@ -195,17 +196,17 @@ export default function TermsOfService() {
           <div className="bg-gray-50 p-4 rounded-none space-y-2">
             <p className="font-semibold text-sm">Aloqa ma'lumotlari:</p>
             <ul className="space-y-1">
-              <li><strong>Huquqiy murojaatlar:</strong> legal@p57.uz</li>
-              <li><strong>Qo'llab-quvvatlash:</strong> support@p57.uz</li>
+              <li><strong>Huquqiy murojaatlar:</strong> {getEmailAddresses().legal}</li>
+              <li><strong>Qo'llab-quvvatlash:</strong> {getEmailAddresses().support}</li>
               <li><strong>Telegram:</strong> @protokol57bot</li>
-              <li><strong>Veb-sayt:</strong> https://p57.uz</li>
+              <li><strong>Veb-sayt:</strong> {DOMAINS.landing}</li>
             </ul>
           </div>
 
           <div className="bg-gray-50 border border-gray-200 rounded-none p-4">
             <p className="text-gray-800 font-medium text-sm">
               <strong>Eslatma:</strong> Ushbu shartlarni diqqat bilan o'qib chiqing. 
-              Savollaringiz bo'lsa, support@p57.uz orqali biz bilan bog'laning.
+              Savollaringiz bo'lsa, {getEmailAddresses().support} orqali biz bilan bog'laning.
             </p>
           </div>
 

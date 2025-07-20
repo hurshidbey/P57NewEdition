@@ -10,11 +10,11 @@ const fs = require('fs');
 const path = require('path');
 
 // Colors for output
-const RED = '\033[0;31m';
-const GREEN = '\033[0;32m';
-const YELLOW = '\033[1;33m';
-const BLUE = '\033[0;34m';
-const NC = '\033[0m'; // No Color
+const RED = '\x1b[31m';
+const GREEN = '\x1b[32m';
+const YELLOW = '\x1b[33m';
+const BLUE = '\x1b[34m';
+const NC = '\x1b[0m'; // No Color
 
 // Required environment variables by category
 const REQUIRED_VARS = {
