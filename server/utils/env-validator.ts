@@ -58,7 +58,7 @@ const envSchema = z.object({
   
   // External Services (Optional but validated if present)
   OPENAI_API_KEY: z.string()
-    .regex(/^sk-[a-zA-Z0-9]{48,}$/, 'Invalid OpenAI API key format')
+    .regex(/^sk-[a-zA-Z0-9\-_]{20,}$/, 'Invalid OpenAI API key format')
     .optional(),
   
   TELEGRAM_BOT_TOKEN: z.string()
