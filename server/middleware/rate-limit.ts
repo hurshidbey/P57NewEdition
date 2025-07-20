@@ -84,6 +84,16 @@ export const adminLimiter = rateLimit({
   keyGenerator: getClientId,
 });
 
+// OTP resend - more lenient since users often need multiple attempts
+export const otpResendLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 10, // Allow 10 OTP resends per 5 minutes
+  message: 'Too many OTP resend attempts, please wait a few minutes.',
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: getClientId,
+});
+
 // Middleware to apply different rate limits based on path
 export const applyRateLimits = (req: Request, res: Response, next: Function) => {
   const path = req.path;
@@ -91,6 +101,9 @@ export const applyRateLimits = (req: Request, res: Response, next: Function) => 
   // Apply specific rate limiters based on path
   if (path.includes('/auth/login') || path.includes('/auth/signup')) {
     return authLimiter(req, res, next);
+  } else if (path.includes('/atmos/resend-otp')) {
+    // Special case for OTP resend - more lenient
+    return otpResendLimiter(req, res, next);
   } else if (path.includes('/atmos/') || path.includes('/payment')) {
     return paymentLimiter(req, res, next);
   } else if (path.includes('/evaluate')) {
