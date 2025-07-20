@@ -10,6 +10,7 @@ import { applyRateLimits } from "./middleware/rate-limit";
 import { sanitizeBody, preventSqlInjection } from "./middleware/validation";
 import { initializeSecurity } from "./utils/security-config";
 import { createTimeoutMiddleware, timeoutConfigs } from "./middleware/timeout";
+import { initializeEnvValidation, getValidatedEnv } from "./utils/env-validator";
 
 const app = express();
 
@@ -104,12 +105,18 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Validate environment variables first
+  log('🔍 Validating environment configuration...');
+  const envValidation = initializeEnvValidation({
+    exitOnError: true,
+    loadEnvFile: process.env.NODE_ENV !== 'production'
+  });
+  
+  // Get validated environment
+  const validatedEnv = getValidatedEnv();
+  
   // Configure session middleware with secure settings
-  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
-    console.error('⚠️  WARNING: SESSION_SECRET is not set or too short. Using a random secret.');
-    const crypto = await import('crypto');
-    process.env.SESSION_SECRET = crypto.randomBytes(32).toString('hex');
-  }
+  // No need to check SESSION_SECRET anymore as it's validated above
 
   app.use(session({
     secret: process.env.SESSION_SECRET!,
