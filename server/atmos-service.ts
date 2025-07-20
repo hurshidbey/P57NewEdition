@@ -52,7 +52,13 @@ export class AtmosService {
         port: urlObj.port || 443,
         path: urlObj.pathname + urlObj.search,
         method: options.method || 'GET',
-        headers: options.headers || {}
+        headers: {
+          // Use configured domain or fallback to primary domain for Origin/Referer
+          'Origin': process.env.ATMOS_ALLOWED_ORIGIN || 'https://p57.birfoiz.uz',
+          'Referer': (process.env.ATMOS_ALLOWED_ORIGIN || 'https://p57.birfoiz.uz') + '/',
+          'User-Agent': 'Protokol57/1.0',
+          ...options.headers
+        }
       };
 
       const req = https.request(requestOptions, (res) => {
@@ -64,11 +70,20 @@ export class AtmosService {
         
         res.on('end', () => {
           try {
+            const contentType = res.headers['content-type'] || '';
             const result = {
               ok: res.statusCode! >= 200 && res.statusCode! < 300,
               status: res.statusCode,
-              json: () => Promise.resolve(JSON.parse(data)),
-              text: () => Promise.resolve(data)
+              contentType: contentType,
+              json: () => {
+                // Check if response is actually JSON before parsing
+                if (!contentType.includes('application/json') && !data.trim().startsWith('{') && !data.trim().startsWith('[')) {
+                  throw new Error(`Expected JSON but received ${contentType || 'unknown content type'}. Response: ${data.substring(0, 200)}...`);
+                }
+                return Promise.resolve(JSON.parse(data));
+              },
+              text: () => Promise.resolve(data),
+              headers: res.headers
             };
             resolve(result);
           } catch (error) {
@@ -114,10 +129,24 @@ export class AtmosService {
       });
 
       const responseText = await response.text();
-      console.log(`🔐 [ATMOS] Token response status: ${response.status}`);
+      console.log(`🔐 [ATMOS] Token response status: ${response.status}, Content-Type: ${response.contentType}`);
       
       if (!response.ok) {
-        console.error(`❌ [ATMOS] Token request failed:`, responseText);
+        console.error(`❌ [ATMOS] Token request failed with status ${response.status}`);
+        console.error(`❌ [ATMOS] Response content:`, responseText.substring(0, 500));
+        
+        // Check if response is HTML/XML (error page)
+        if (responseText.startsWith('<') || responseText.includes('<!DOCTYPE')) {
+          console.error(`❌ [ATMOS] Received HTML error page instead of JSON`);
+          
+          // Try to extract error from HTML
+          const titleMatch = responseText.match(/<title>([^<]+)<\/title>/);
+          const errorMatch = responseText.match(/<h1>([^<]+)<\/h1>/);
+          const errorMessage = titleMatch?.[1] || errorMatch?.[1] || 'Authentication failed - received HTML error page';
+          
+          throw new Error(`ATMOS Authentication Error: ${errorMessage}. This may be due to domain restrictions or invalid credentials.`);
+        }
+        
         throw new Error(`Token request failed: ${response.status} ${responseText}`);
       }
 
@@ -125,8 +154,15 @@ export class AtmosService {
       try {
         data = JSON.parse(responseText);
       } catch (parseError) {
-        console.error(`❌ [ATMOS] Failed to parse token response:`, responseText);
-        throw new Error('Invalid token response format');
+        console.error(`❌ [ATMOS] Failed to parse token response:`, responseText.substring(0, 200));
+        
+        // Check if it's an XML fault response
+        if (responseText.includes('<faultstring>')) {
+          const faultMatch = responseText.match(/<faultstring[^>]*>([^<]+)<\/faultstring>/);
+          throw new Error(`ATMOS API Error: ${faultMatch?.[1] || 'Unknown XML fault'}`);
+        }
+        
+        throw new Error('Invalid token response format - expected JSON but could not parse response');
       }
       
       if (!data.access_token) {
@@ -148,11 +184,13 @@ export class AtmosService {
     }
   }
 
-  // Make authenticated API request
-  private async apiRequest(endpoint: string, data: any, method: string = 'POST'): Promise<any> {
-    const token = await this.getAccessToken();
-    
+  // Make authenticated API request with retry logic
+  private async apiRequest(endpoint: string, data: any, method: string = 'POST', retryCount: number = 0): Promise<any> {
     try {
+      const token = await this.getAccessToken();
+      
+      console.log(`📤 [ATMOS] Making ${method} request to ${endpoint}`);
+      
       const response = await this.makeRequest(`${this.baseUrl}${endpoint}`, {
         method,
         headers: {
@@ -164,15 +202,56 @@ export class AtmosService {
 
       // First get the raw response text
       const responseText = await response.text();
+      console.log(`📥 [ATMOS] Response status: ${response.status}, Content-Type: ${response.contentType}`);
+      
+      // Check if response is HTML (error page)
+      if (responseText.startsWith('<!DOCTYPE') || responseText.includes('<html')) {
+        console.error(`❌ [ATMOS] Received HTML error page for ${endpoint}`);
+        console.error(`❌ [ATMOS] HTML content:`, responseText.substring(0, 500));
+        
+        // Extract error from HTML if possible
+        const titleMatch = responseText.match(/<title>([^<]+)<\/title>/);
+        const h1Match = responseText.match(/<h1>([^<]+)<\/h1>/);
+        const bodyMatch = responseText.match(/<body[^>]*>([^<]+)</);
+        
+        const errorInfo = titleMatch?.[1] || h1Match?.[1] || bodyMatch?.[1] || 'Unknown error';
+        
+        // Check for specific error patterns
+        if (response.status === 401 || errorInfo.toLowerCase().includes('unauthorized')) {
+          // Clear token cache and retry once
+          if (retryCount === 0) {
+            console.log(`🔄 [ATMOS] Got 401, clearing token cache and retrying...`);
+            this.accessToken = null;
+            this.tokenExpiry = 0;
+            return this.apiRequest(endpoint, data, method, retryCount + 1);
+          }
+          throw new Error(`ATMOS Authentication failed: ${errorInfo}. Please check API credentials.`);
+        }
+        
+        throw new Error(`ATMOS API Error: Received HTML page instead of JSON. ${errorInfo}`);
+      }
       
       // Check if response is XML (fault response)
-      if (responseText.startsWith('<')) {
-
+      if (responseText.startsWith('<') && !responseText.startsWith('<!')) {
+        console.error(`❌ [ATMOS] Received XML response for ${endpoint}`);
+        
         // Try to extract error message from XML
         const faultMatch = responseText.match(/<faultstring[^>]*>([^<]+)<\/faultstring>/);
-        const errorMessage = faultMatch ? faultMatch[1] : 'ATMOS API returned XML fault response';
+        const codeMatch = responseText.match(/<faultcode[^>]*>([^<]+)<\/faultcode>/);
+        const errorMessage = faultMatch?.[1] || 'Unknown XML fault';
+        const errorCode = codeMatch?.[1] || 'UNKNOWN';
         
-        throw new Error(errorMessage);
+        // Check for token expiration
+        if (errorCode === '900901' || errorMessage.toLowerCase().includes('token') || errorMessage.toLowerCase().includes('expired')) {
+          if (retryCount === 0) {
+            console.log(`🔄 [ATMOS] Token expired, refreshing and retrying...`);
+            this.accessToken = null;
+            this.tokenExpiry = 0;
+            return this.apiRequest(endpoint, data, method, retryCount + 1);
+          }
+        }
+        
+        throw new Error(`ATMOS API Fault (${errorCode}): ${errorMessage}`);
       }
       
       // Parse as JSON
@@ -180,18 +259,18 @@ export class AtmosService {
       try {
         responseData = JSON.parse(responseText);
       } catch (parseError) {
-
-        throw new Error('Invalid response format from ATMOS API');
+        console.error(`❌ [ATMOS] Failed to parse response as JSON:`, responseText.substring(0, 200));
+        throw new Error(`Invalid JSON response from ATMOS API: ${parseError.message}`);
       }
 
       if (!response.ok) {
-
-        throw new Error(responseData.result?.description || `API request failed: ${response.status}`);
+        console.error(`❌ [ATMOS] API request failed:`, responseData);
+        throw new Error(responseData.result?.description || responseData.message || `API request failed: ${response.status}`);
       }
 
       return responseData;
     } catch (error) {
-
+      console.error(`❌ [ATMOS] API request error for ${endpoint}:`, error);
       throw error;
     }
   }

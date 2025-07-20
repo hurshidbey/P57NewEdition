@@ -24,6 +24,9 @@ export default function AtmosPayment() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
+  // Check if user is accessing from alternate domain
+  const isAlternateDomain = window.location.hostname === 'protokol.1foiz.com' || window.location.hostname === '1foiz.com';
+  
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
@@ -197,6 +200,12 @@ export default function AtmosPayment() {
           throw new Error('Avtorizatsiya xatosi. Iltimos keyinroq urinib ko\'ring.');
         } else if (responseText.includes('Token') || responseText.includes('credentials')) {
           throw new Error('To\'lov tizimi vaqtincha ishlamayapti. Iltimos keyinroq urinib ko\'ring.');
+        } else if (responseText.includes('ATMOS Authentication Error')) {
+          throw new Error('To\'lov tizimi autentifikatsiya xatosi. Iltimos keyinroq urinib ko\'ring.');
+        } else if (responseText.includes('domain restrictions')) {
+          throw new Error('To\'lov tizimi domen cheklovlari tufayli rad etdi. Iltimos keyinroq urinib ko\'ring.');
+        } else if (responseText.includes('HTML') || responseText.includes('<!DOCTYPE')) {
+          throw new Error('To\'lov tizimi kutilmagan javob qaytardi. Iltimos keyinroq urinib ko\'ring.');
         } else {
           throw new Error('Server xatosi. Iltimos qayta urinib ko\'ring.');
         }
@@ -580,6 +589,19 @@ export default function AtmosPayment() {
       
       <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="max-w-6xl mx-auto">
+          {/* Domain Warning */}
+          {isAlternateDomain && (
+            <Alert className="mb-6 bg-yellow-50 border-2 border-yellow-600">
+              <Info className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-700">
+                <p className="font-bold mb-1">Diqqat: To'lov xizmati bilan muammo bo'lishi mumkin</p>
+                <p className="text-sm">
+                  Agar to'lov amalga oshmasa, <a href="https://p57.birfoiz.uz/atmos-payment" className="underline font-bold">p57.birfoiz.uz</a> orqali qayta urinib ko'ring.
+                </p>
+              </AlertDescription>
+            </Alert>
+          )}
+          
           {/* Header */}
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-4 sm:mb-6">
@@ -596,9 +618,27 @@ export default function AtmosPayment() {
                   <h2 className="text-xl font-black text-foreground mb-6">TO'LOV MA'LUMOTLARI</h2>
                   
                   {error && (
-                    <div className="bg-destructive/10 border-2 border-destructive/20 p-4 mb-6">
-                      <p className="text-destructive font-bold">XATOLIK: {error}</p>
-                    </div>
+                    <Alert className="mb-6 bg-red-50 border-2 border-red-600">
+                      <AlertCircle className="h-4 w-4 text-red-600" />
+                      <AlertDescription className="text-red-700">
+                        <p className="font-bold mb-2">XATOLIK: {error}</p>
+                        {error.includes('domen cheklovlari') && (
+                          <p className="text-sm">
+                            Agar siz protokol.1foiz.com orqali kirsangiz, p57.birfoiz.uz orqali qayta urinib ko'ring.
+                          </p>
+                        )}
+                        {error.includes('vaqtincha ishlamayapti') && (
+                          <p className="text-sm">
+                            To'lov tizimi vaqtinchalik muammolarni boshdan kechirmoqda. 5-10 daqiqadan so'ng qayta urinib ko'ring.
+                          </p>
+                        )}
+                        {error.includes('Juda ko\'p urinish') && (
+                          <p className="text-sm">
+                            Xavfsizlik sababli vaqtinchalik cheklov qo'yildi. 5 daqiqa kutib, qayta urinib ko'ring.
+                          </p>
+                        )}
+                      </AlertDescription>
+                    </Alert>
                   )}
 
                   {paymentState.step === 'card-details' && renderCardDetailsForm()}
