@@ -321,7 +321,7 @@ function sanitizeBody(body: any): any {
 export const isSupabaseAdmin = async (req: Request, res: Response, next: NextFunction) => {
   // First try RBAC system
   await requireAuth(req, res, async () => {
-    await loadUserPermissions(req, res, () => {
+    await loadUserPermissions(req, res, async () => {
       // Check if user has admin role or super_admin role
       if (req.userRoles?.includes('admin') || req.userRoles?.includes('super_admin')) {
         return next();
