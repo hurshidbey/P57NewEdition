@@ -110,7 +110,7 @@ export default function ProtocolDetail() {
   };
 
   const upgradeReason = getUpgradeReason();
-  const shouldShowUpgrade = tier === 'free' && upgradeReason && !hasCompletedThis;
+  const shouldShowUpgrade = tier === 'free' && upgradeReason;
 
   const copyGoodExample = async () => {
     if (!protocol?.goodExample) return;
@@ -253,10 +253,18 @@ export default function ProtocolDetail() {
               <div className="flex-shrink-0">
                 <BrutalButton
                   checked={isProtocolCompleted(protocol.id)}
-                  onChange={() => toggleProtocolCompleted(protocol.id, 70)}
+                  onChange={() => {
+                    // Prevent marking premium protocols as completed for free users
+                    if (shouldShowUpgrade) {
+                      // Don't toggle completion for locked premium content
+                      return;
+                    }
+                    toggleProtocolCompleted(protocol.id, 70);
+                  }}
                   checkedText="Takrorlash"
                   uncheckedText="O'rgandim"
-                  showConfetti={true}
+                  showConfetti={!shouldShowUpgrade}
+                  disabled={shouldShowUpgrade}
                 />
               </div>
             </div>

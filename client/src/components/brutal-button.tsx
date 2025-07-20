@@ -9,6 +9,7 @@ interface BrutalButtonProps {
   uncheckedText: string;
   className?: string;
   showConfetti?: boolean;
+  disabled?: boolean;
 }
 
 export function BrutalButton({ 
@@ -17,10 +18,13 @@ export function BrutalButton({
   checkedText, 
   uncheckedText, 
   className = "",
-  showConfetti = true
+  showConfetti = true,
+  disabled = false
 }: BrutalButtonProps) {
   
   const handleClick = () => {
+    if (disabled) return;
+    
     // Trigger confetti only when marking as complete (unchecked to checked)
     if (!checked && showConfetti) {
       confetti({
@@ -40,13 +44,16 @@ export function BrutalButton({
   return (
     <Button 
       onClick={handleClick}
+      disabled={disabled}
       className={`font-black uppercase px-8 py-3 h-[56px] border-4 border-theme transition-all duration-300 transform touch-manipulation ${
-        checked
-          ? 'bg-background hover:bg-secondary text-foreground hover:shadow-brutal hover:scale-105 hover:-rotate-1'
-          : 'bg-accent text-accent-foreground hover:shadow-brutal hover:scale-105 hover:rotate-1'
+        disabled 
+          ? 'opacity-50 cursor-not-allowed'
+          : checked
+            ? 'bg-background hover:bg-secondary text-foreground hover:shadow-brutal hover:scale-105 hover:-rotate-1'
+            : 'bg-accent text-accent-foreground hover:shadow-brutal hover:scale-105 hover:rotate-1'
       } ${className}`}
       style={{ 
-        backgroundColor: checked ? undefined : '#1bffbb',
+        backgroundColor: disabled ? '#ccc' : (checked ? undefined : '#1bffbb'),
         borderWidth: '4px'
       }}
     >

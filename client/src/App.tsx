@@ -44,7 +44,7 @@ function AppContent() {
   const { isAuthenticated, loading, user } = useAuth();
 
   // TEMPORARY: Enable maintenance mode
-  const MAINTENANCE_MODE = true;
+  const MAINTENANCE_MODE = false;
   const MAINTENANCE_ALLOWED_PATHS = ['/admin', '/auth/callback'];
   const MAINTENANCE_ALLOWED_EMAILS = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
   
