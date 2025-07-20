@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
 import { ThemeProvider } from "@/contexts/theme-context";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 
 // Static imports for non-authenticated pages
 import AuthPage from "@/pages/auth";
@@ -171,6 +171,38 @@ function AppContent() {
 }
 
 function App() {
+  // Cache refresh logic
+  useEffect(() => {
+    const STORAGE_KEY = 'protokol57-version';
+    const CURRENT_VERSION = 'v2025-01-20-atmos-fix';
+    
+    // Get stored version
+    const storedVersion = localStorage.getItem(STORAGE_KEY);
+    
+    // If version doesn't match, clear everything and reload
+    if (storedVersion !== CURRENT_VERSION) {
+      console.log('New version detected, clearing cache...');
+      
+      // Clear all caches
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          names.forEach(name => {
+            caches.delete(name);
+          });
+        });
+      }
+      
+      // Clear sessionStorage
+      sessionStorage.clear();
+      
+      // Set new version
+      localStorage.setItem(STORAGE_KEY, CURRENT_VERSION);
+      
+      // Force reload with cache bypass
+      window.location.reload();
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
