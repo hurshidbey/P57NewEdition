@@ -13,6 +13,7 @@ import { requireAuth, requirePermission, auditLog, isSupabaseAdmin as rbacIsSupa
 import { RESOURCES, ACTIONS } from "@shared/rbac-schema";
 import auditLogRoutes from "./routes/audit-logs";
 import roleRoutes from "./routes/roles";
+import dnsHealthRoutes from "./routes/dns-health";
 
 // Simple request counter for metrics
 class RequestCounter {
@@ -643,6 +644,9 @@ export function setupRoutes(app: Express): Server {
   // RBAC routes
   app.use('/api/admin', auditLogRoutes);
   app.use('/api/admin', roleRoutes);
+  
+  // DNS health monitoring routes (public)
+  app.use('/api', dnsHealthRoutes);
 
   // Get user progress (with Supabase auth verification)
   app.get("/api/progress/:userId", async (req, res) => {
