@@ -22,6 +22,7 @@ import AppFooter from "@/components/app-footer";
 export default function PaymentPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<'atmos' | 'click' | null>(null);
   const { user } = useAuth();
 
   const handleAtmosPayment = () => {
@@ -30,6 +31,44 @@ export default function PaymentPage() {
       return;
     }
     window.location.href = '/atmos-payment';
+  };
+
+  const handleClickPayment = async () => {
+    if (!user) {
+      setError("Iltimos, avval tizimga kiring");
+      return;
+    }
+    
+    setIsProcessing(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/click/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: 1425000, // Amount in soums
+          userId: user.id,
+          userEmail: user.email
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create payment session');
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && data.paymentUrl) {
+        // Redirect to Click.uz payment page
+        window.location.href = data.paymentUrl;
+      } else {
+        throw new Error(data.message || 'Payment creation failed');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Payment processing error');
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -138,7 +177,7 @@ export default function PaymentPage() {
                 {/* Security Badge */}
                 <div className="flex items-center gap-2 text-sm text-gray-600 bg-green-50 p-3 rounded-none border border-green-200">
                   <Shield className="w-4 h-4 text-green-600" />
-                  <span>ATMOS orqali xavfsiz to'lov</span>
+                  <span>Xavfsiz to'lov tizimlari</span>
                 </div>
 
                 {/* Error Display */}
@@ -150,18 +189,92 @@ export default function PaymentPage() {
                   </Alert>
                 )}
 
+                {/* Payment Method Selection */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-sm">To'lov usulini tanlang:</h4>
+                  
+                  {/* ATMOS Payment Option */}
+                  <div 
+                    className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                      selectedMethod === 'atmos' 
+                        ? 'border-accent bg-accent/5' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    onClick={() => setSelectedMethod('atmos')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 ${
+                          selectedMethod === 'atmos' 
+                            ? 'border-accent bg-accent' 
+                            : 'border-gray-300'
+                        }`}>
+                          {selectedMethod === 'atmos' && (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <h5 className="font-semibold">ATMOS</h5>
+                          <p className="text-sm text-gray-600">UzCard/Humo kartalar uchun</p>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="text-xs">SMS tasdiqlash</Badge>
+                    </div>
+                  </div>
+
+                  {/* Click.uz Payment Option */}
+                  <div 
+                    className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                      selectedMethod === 'click' 
+                        ? 'border-accent bg-accent/5' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    onClick={() => setSelectedMethod('click')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 ${
+                          selectedMethod === 'click' 
+                            ? 'border-accent bg-accent' 
+                            : 'border-gray-300'
+                        }`}>
+                          {selectedMethod === 'click' && (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <h5 className="font-semibold">Click.uz</h5>
+                          <p className="text-sm text-gray-600">Barcha kartalar uchun</p>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="text-xs bg-blue-50">Tavsiya etiladi</Badge>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Payment Button */}
                 <div className="space-y-3">
                   <Button
-                    onClick={handleAtmosPayment}
-                    disabled={!user}
+                    onClick={selectedMethod === 'atmos' ? handleAtmosPayment : handleClickPayment}
+                    disabled={!user || !selectedMethod || isProcessing}
                     className="w-full h-14 bg-accent hover:bg-gray-800 text-white font-semibold text-lg group"
                   >
-                    <div className="flex items-center gap-2">
-                      <CreditCard className="w-5 h-5" />
-                      ATMOS orqali to'lash (UzCard/Humo)
-                      <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    </div>
+                    {isProcessing ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        To'lov tayyorlanmoqda...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-5 h-5" />
+                        {selectedMethod === 'atmos' ? 'ATMOS' : selectedMethod === 'click' ? 'Click.uz' : 'To\'lov usulini tanlang'} orqali to'lash
+                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                      </div>
+                    )}
                   </Button>
                 </div>
 
@@ -210,7 +323,7 @@ export default function PaymentPage() {
               </div>
               <div className="flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-blue-500" />
-                <span>ATMOS himoyasi</span>
+                <span>ATMOS & Click.uz</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />

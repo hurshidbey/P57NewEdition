@@ -6,6 +6,7 @@ import { insertProtocolSchema, insertPromptSchema, users } from "@shared/schema"
 import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
+import { setupClickRoutes } from "./click-routes";
 import { eq } from "drizzle-orm";
 import { securityConfig } from "./utils/security-config";
 import os from "os";
@@ -640,6 +641,10 @@ export function setupRoutes(app: Express): Server {
   // Setup Atmos payment routes
   const atmosRouter = setupAtmosRoutes();
   app.use('/api', atmosRouter);
+  
+  // Setup Click.uz payment routes
+  const clickRouter = setupClickRoutes();
+  app.use('/api', clickRouter);
   
   // RBAC routes
   app.use('/api/admin', auditLogRoutes);
