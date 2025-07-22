@@ -30,6 +30,11 @@ export default function AtmosPayment() {
                             window.location.hostname === '1foiz.com' ||
                             window.location.hostname === 'srv852801.hstgr.cloud';
   
+  // Get URL parameters for pre-applied coupon
+  const urlParams = new URLSearchParams(window.location.search);
+  const preAppliedCouponCode = urlParams.get('coupon');
+  const preAppliedAmount = urlParams.get('amount');
+  
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
@@ -55,6 +60,27 @@ export default function AtmosPayment() {
     discountPercent: number;
   } | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
+  
+  // Apply pre-selected coupon from payment page
+  useEffect(() => {
+    if (preAppliedCouponCode && preAppliedAmount) {
+      // Set the coupon as already applied
+      const originalAmount = 1425000;
+      const finalAmount = parseInt(preAppliedAmount);
+      const discountAmount = originalAmount - finalAmount;
+      const discountPercent = Math.round((discountAmount / originalAmount) * 100);
+      
+      setAppliedCoupon({
+        id: 0, // We don't need the actual ID for pre-applied coupons
+        code: preAppliedCouponCode,
+        originalAmount,
+        discountAmount,
+        finalAmount,
+        discountPercent
+      });
+      setCouponCode(preAppliedCouponCode);
+    }
+  }, [preAppliedCouponCode, preAppliedAmount]);
 
   // Format card number with spaces
   const formatCardNumber = (value: string) => {
@@ -383,75 +409,87 @@ export default function AtmosPayment() {
 
   const renderCardDetailsForm = () => (
     <div className="space-y-6">
-      {/* Coupon Section */}
-      <Card className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-none">
-        <CardHeader className="bg-muted border-b-2 border-black">
-          <div className="flex items-center gap-2">
-            <Tag className="h-5 w-5" />
-            <CardTitle className="text-lg font-black uppercase">Kupon kodi</CardTitle>
-          </div>
-          <CardDescription className="font-bold">
-            Chegirma kodingiz bo'lsa, bu yerga kiriting
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Kupon kodini kiriting"
-                value={couponCode}
-                onChange={(e) => {
-                  setCouponCode(e.target.value.toUpperCase());
-                  setCouponError(null);
-                }}
-                disabled={couponValidating || !!appliedCoupon}
-                className="font-mono text-lg border-2 border-foreground focus:border-foreground focus:ring-0 uppercase"
-              />
-              {!appliedCoupon ? (
-                <Button
-                  type="button"
-                  onClick={validateCoupon}
-                  disabled={couponValidating || !couponCode.trim()}
-                  className="bg-foreground text-background hover:bg-foreground/90 font-bold uppercase border-2 border-foreground min-w-[120px]"
-                >
-                  {couponValidating ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    'QO\'LLASH'
-                  )}
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={removeCoupon}
-                  variant="destructive"
-                  className="font-bold uppercase border-2 border-red-600 min-w-[120px]"
-                >
-                  BEKOR QILISH
-                </Button>
+      {/* Coupon Section - Only show if not pre-applied */}
+      {!preAppliedCouponCode ? (
+        <Card className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-none">
+          <CardHeader className="bg-muted border-b-2 border-black">
+            <div className="flex items-center gap-2">
+              <Tag className="h-5 w-5" />
+              <CardTitle className="text-lg font-black uppercase">Kupon kodi</CardTitle>
+            </div>
+            <CardDescription className="font-bold">
+              Chegirma kodingiz bo'lsa, bu yerga kiriting
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Kupon kodini kiriting"
+                  value={couponCode}
+                  onChange={(e) => {
+                    setCouponCode(e.target.value.toUpperCase());
+                    setCouponError(null);
+                  }}
+                  disabled={couponValidating || !!appliedCoupon}
+                  className="font-mono text-lg border-2 border-foreground focus:border-foreground focus:ring-0 uppercase"
+                />
+                {!appliedCoupon ? (
+                  <Button
+                    type="button"
+                    onClick={validateCoupon}
+                    disabled={couponValidating || !couponCode.trim()}
+                    className="bg-foreground text-background hover:bg-foreground/90 font-bold uppercase border-2 border-foreground min-w-[120px]"
+                  >
+                    {couponValidating ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      'QO\'LLASH'
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={removeCoupon}
+                    variant="destructive"
+                    className="font-bold uppercase border-2 border-red-600 min-w-[120px]"
+                  >
+                    BEKOR QILISH
+                  </Button>
+                )}
+              </div>
+              
+              {couponError && (
+                <Alert className="bg-red-50 border-2 border-red-600">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-red-600 font-bold">
+                    {couponError}
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              {appliedCoupon && (
+                <Alert className="bg-green-50 border-2 border-green-600">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-600 font-bold">
+                    {appliedCoupon.discountPercent}% chegirma qo'llanildi!
+                  </AlertDescription>
+                </Alert>
               )}
             </div>
-            
-            {couponError && (
-              <Alert className="bg-red-50 border-2 border-red-600">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-600 font-bold">
-                  {couponError}
-                </AlertDescription>
-              </Alert>
-            )}
-            
-            {appliedCoupon && (
-              <Alert className="bg-green-50 border-2 border-green-600">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-600 font-bold">
-                  {appliedCoupon.discountPercent}% chegirma qo'llanildi!
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      ) : (
+        // Show pre-applied coupon info
+        appliedCoupon && (
+          <Alert className="bg-green-50 border-2 border-green-600">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-600 font-bold">
+              {appliedCoupon.code} kuponi qo'llanildi - {appliedCoupon.discountPercent}% chegirma!
+            </AlertDescription>
+          </Alert>
+        )
+      )}
       <div className="space-y-3">
         <Label htmlFor="cardNumber" className="text-lg font-black text-foreground">KARTA RAQAMI</Label>
         <Input

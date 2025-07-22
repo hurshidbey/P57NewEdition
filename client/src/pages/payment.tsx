@@ -78,7 +78,14 @@ export default function Payment() {
     // Small delay for visual feedback
     setTimeout(() => {
       if (method === 'atmos') {
-        setLocation('/atmos-payment');
+        // Pass coupon information to ATMOS page via URL params
+        const params = new URLSearchParams();
+        if (appliedCoupon) {
+          params.set('coupon', appliedCoupon.code);
+          params.set('amount', finalPrice.toString());
+        }
+        const queryString = params.toString();
+        setLocation(`/atmos-payment${queryString ? `?${queryString}` : ''}`);
       } else {
         // For Click, we'll handle the redirect differently
         handleClickPayment();
@@ -87,6 +94,15 @@ export default function Payment() {
   };
 
   const handleClickPayment = async () => {
+    // Check minimum amount for Click.uz (they seem to require at least 100,000 UZS for this merchant)
+    const CLICK_MIN_AMOUNT = 100000; // 100,000 UZS minimum
+    
+    if (finalPrice < CLICK_MIN_AMOUNT) {
+      alert(`Click.uz uchun minimal to'lov summasi ${CLICK_MIN_AMOUNT.toLocaleString('uz-UZ')} UZS. Sizning narxingiz: ${finalPrice.toLocaleString('uz-UZ')} UZS. Iltimos, kamroq chegirmali kupon ishlating yoki ATMOS orqali to'lang.`);
+      setSelectedMethod(null);
+      return;
+    }
+    
     try {
       // Create transaction and get payment URL
       const response = await fetch('/api/click/create-transaction', {
@@ -242,26 +258,32 @@ export default function Payment() {
           {/* Click Card */}
           <button
             onClick={() => handlePaymentSelect('click')}
-            disabled={selectedMethod !== null}
-            className="w-full transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+            disabled={selectedMethod !== null || finalPrice < 100000}
+            className="w-full transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            <Card className={`border-4 ${selectedMethod === 'click' ? 'border-green-600 bg-green-50' : 'border-foreground hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]`}>
+            <Card className={`border-4 ${selectedMethod === 'click' ? 'border-green-600 bg-green-50' : finalPrice < 100000 ? 'border-gray-300 bg-gray-50' : 'border-foreground hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${finalPrice >= 100000 ? 'hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]' : ''}`}>
               <CardContent className="p-6 sm:p-8">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="bg-[#00CEC9] text-white p-4 rounded">
+                    <div className={`${finalPrice < 100000 ? 'bg-gray-400' : 'bg-[#00CEC9]'} text-white p-4 rounded`}>
                       <Smartphone className="h-8 w-8" />
                     </div>
                     <div className="text-left">
                       <h3 className="text-2xl font-black">Click.uz</h3>
                       <p className="text-muted-foreground font-bold">Tezkor to'lov tizimi</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Zap className="h-4 w-4 text-yellow-600" />
-                        <span className="text-sm font-bold text-muted-foreground">Onlayn to'lov</span>
-                      </div>
+                      {finalPrice < 100000 ? (
+                        <p className="text-sm font-bold text-red-600 mt-2">
+                          Min. 100,000 UZS talab qilinadi
+                        </p>
+                      ) : (
+                        <div className="flex items-center gap-2 mt-2">
+                          <Zap className="h-4 w-4 text-yellow-600" />
+                          <span className="text-sm font-bold text-muted-foreground">Onlayn to'lov</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  <ChevronRight className={`h-8 w-8 ${selectedMethod === 'click' ? 'text-green-600' : 'text-muted-foreground'}`} />
+                  <ChevronRight className={`h-8 w-8 ${selectedMethod === 'click' ? 'text-green-600' : finalPrice < 100000 ? 'text-gray-400' : 'text-muted-foreground'}`} />
                 </div>
                 {selectedMethod === 'click' && (
                   <div className="mt-4 flex items-center gap-2 text-green-600">

@@ -65,6 +65,14 @@ export class ClickService {
       ? 'https://my.click.uz/services/pay/test'
       : 'https://my.click.uz/services/pay';
 
+    console.log(`🔧 [CLICK] Service initialized:`, {
+      env,
+      baseUrl: this.baseUrl,
+      serviceId: this.serviceId,
+      merchantId: this.merchantId,
+      returnUrl: this.returnUrl
+    });
+
     if (!this.serviceId || !this.merchantId || !this.secretKey || !this.merchantUserId) {
       throw new Error('Click.uz credentials not configured');
     }
@@ -231,6 +239,12 @@ export class ClickService {
 
   // Generate payment URL for redirect
   generatePaymentUrl(amount: number, orderId: string, userId: string): string {
+    // IMPORTANT: Click.uz has a minimum amount requirement
+    // If amount is too low (especially after discount), we need to handle it
+    if (amount < 100000) { // Less than 1000 soums * 100 (if they expect tiins)
+      console.warn(`⚠️ [CLICK] Amount ${amount} might be below Click.uz minimum. Original amount in soums: ${amount}`);
+    }
+    
     // Build Click payment URL with parameters
     // According to Click.uz docs, we need to use a specific URL format
     const params = new URLSearchParams({
@@ -249,6 +263,8 @@ export class ClickService {
       service_id: this.serviceId,
       merchant_id: this.merchantId,
       amount: amount.toString(),
+      amount_in_soums: amount,
+      amount_if_divided_by_100: amount / 100,
       transaction_param: orderId,
       return_url: this.returnUrl
     });
