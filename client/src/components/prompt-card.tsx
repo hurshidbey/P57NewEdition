@@ -138,7 +138,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                 <div className="bg-card border-2 border-black p-4 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   <Lock className="w-8 h-8 text-foreground mx-auto mb-2" />
                   <p className="text-sm font-bold uppercase text-foreground mb-2">Premium prompt</p>
-                  <Link href="/atmos-payment">
+                  <Link href="/payment">
                     <Button size="sm" className="bg-accent hover:bg-accent/90 text-foreground font-bold uppercase border-2 border-black h-[36px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                       <Crown className="w-3 h-3 mr-1" />
                       Premium olish
@@ -241,7 +241,7 @@ export function PromptCard({ prompt, variant = 'default', showFullContent = fals
                 <p className="text-xs text-foreground mb-3">
                   Bu promptni ko'rish uchun Premium obuna kerak
                 </p>
-                <Link href="/atmos-payment">
+                <Link href="/payment">
                   <Button size="sm" className="bg-accent hover:bg-accent/90 text-foreground font-bold uppercase border-2 border-black h-[36px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                     <Crown className="w-3 h-3 mr-1" />
                     Premium olish

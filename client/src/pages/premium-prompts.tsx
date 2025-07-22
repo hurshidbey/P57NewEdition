@@ -136,7 +136,7 @@ function UpgradeBanner() {
               </CardDescription>
             </div>
           </div>
-          <Link href="/atmos-payment">
+          <Link href="/payment">
             <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold uppercase border-2 border-accent h-[44px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               Premium olish
               <ArrowRight className="w-4 h-4 ml-2" />

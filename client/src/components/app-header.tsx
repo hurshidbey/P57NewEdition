@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
@@ -9,11 +9,18 @@ import { Crown, Star, FileText } from "lucide-react";
 export default function AppHeader() {
   const { user, signOut, isAuthenticated, refreshUser } = useAuth();
   const { tier, getTierStatus } = useUserTier();
+  const [, setLocation] = useLocation();
   
   // Check if current user is admin
   const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
   
   const tierStatus = getTierStatus();
+  
+  const handleSignOut = async () => {
+    await signOut();
+    // Redirect to auth page after logout
+    setLocation('/auth');
+  };
 
   // If authenticated but no user data, try to refresh
   useEffect(() => {
@@ -76,7 +83,7 @@ export default function AppHeader() {
             
             {/* Upgrade button for free tier only */}
             {tier === 'free' && (
-              <Link href="/atmos-payment">
+              <Link href="/payment">
                 <Button 
                   variant="default" 
                   size="sm"
@@ -101,7 +108,7 @@ export default function AppHeader() {
             <Button 
               variant="ghost" 
               className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] px-2 sm:px-3 touch-manipulation"
-              onClick={signOut}
+              onClick={handleSignOut}
             >
               <span className="hidden sm:inline">Chiqish</span>
               <span className="sm:hidden">Out</span>

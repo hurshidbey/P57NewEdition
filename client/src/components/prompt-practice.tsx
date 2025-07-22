@@ -143,7 +143,7 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
               <p className="text-foreground text-sm mb-4">
                 Har bir protokolni ko'proq marta baholash va AI tahlil olish uchun Premium obuna oling
               </p>
-              <Link href="/atmos-payment">
+              <Link href="/payment">
                 <Button className="bg-foreground hover:bg-foreground/90 text-background font-bold uppercase border-2 border-theme hover:shadow-brutal-sm">
                   <Crown className="h-4 w-4 mr-2" />
                   Premium olish

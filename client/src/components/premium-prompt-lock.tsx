@@ -63,7 +63,7 @@ export function PremiumPromptLock({
                 <p className="text-muted-foreground">{description}</p>
               </div>
             </div>
-            <Link href="/atmos-payment">
+            <Link href="/payment">
               <Button className="bg-orange-600 hover:bg-orange-700 text-white">
                 Premium olish
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -82,7 +82,7 @@ export function PremiumPromptLock({
           <Lock className="w-12 h-12 text-orange-500 mx-auto mb-3" />
           <h3 className="font-semibold text-foreground mb-2">{title}</h3>
           <p className="text-sm text-muted-foreground mb-4">{description}</p>
-          <Link href="/atmos-payment">
+          <Link href="/payment">
             <Button className="bg-orange-600 hover:bg-orange-700 text-white">
               <Crown className="w-4 h-4 mr-2" />
               Premium olish
@@ -124,7 +124,7 @@ export function PremiumPromptLock({
           )}
 
           <div className="space-y-3">
-            <Link href="/atmos-payment" className="block">
+            <Link href="/payment" className="block">
               <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white">
                 <Crown className="w-4 h-4 mr-2" />
                 Premium olish - 5,000 UZS/oy
@@ -180,7 +180,7 @@ export function PremiumPromptLock({
           )}
 
           <div className="space-y-3">
-            <Link href="/atmos-payment" className="block">
+            <Link href="/payment" className="block">
               <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white text-lg py-6">
                 <Crown className="w-5 h-5 mr-2" />
                 Premium olish - 5,000 UZS/oy

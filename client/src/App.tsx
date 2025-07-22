@@ -26,6 +26,7 @@ const Admin = lazy(() => import("@/pages/admin"));
 // Onboarding now redirects to knowledge-base
 const KnowledgeBase = lazy(() => import("@/pages/knowledge-base"));
 const AtmosPayment = lazy(() => import("@/pages/atmos-payment"));
+const Payment = lazy(() => import("@/pages/payment"));
 const PremiumPrompts = lazy(() => import("@/pages/premium-prompts"));
 
 // Loading component for Suspense
@@ -168,6 +169,12 @@ function AppContent() {
       <Route path="/atmos-payment">
         <Suspense fallback={<PageLoader />}>
           <AtmosPayment />
+        </Suspense>
+      </Route>
+      
+      <Route path="/payment">
+        <Suspense fallback={<PageLoader />}>
+          <Payment />
         </Suspense>
       </Route>
       

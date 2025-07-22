@@ -105,7 +105,7 @@ export default function ProgressDashboard({ totalProtocols }: ProgressDashboardP
               {getMotivationalMessage()}
             </p>
             {tier === 'free' && completedCount >= 3 && (
-              <Link href="/atmos-payment">
+              <Link href="/payment">
                 <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                   <Crown className="w-3 h-3 mr-1" />
                   Premium olish

@@ -1,339 +1,311 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { motion } from "framer-motion";
+import { useState } from 'react';
+import { useLocation } from 'wouter';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { 
   CreditCard, 
   Shield, 
   CheckCircle, 
-  ArrowRight, 
+  Tag,
+  ChevronRight,
   Zap,
-  Star,
-  Users,
-  BookOpen,
-  Target
-} from "lucide-react";
-import { useAuth } from "@/contexts/auth-context";
-import AppHeader from "@/components/app-header";
-import AppFooter from "@/components/app-footer";
+  Smartphone
+} from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
+import AppHeader from '@/components/app-header';
+import AppFooter from '@/components/app-footer';
 
-export default function PaymentPage() {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedMethod, setSelectedMethod] = useState<'atmos' | 'click' | null>(null);
+export default function Payment() {
+  const [, setLocation] = useLocation();
   const { user } = useAuth();
+  const [selectedMethod, setSelectedMethod] = useState<'atmos' | 'click' | null>(null);
+  const [showCoupon, setShowCoupon] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponValidating, setCouponValidating] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    originalAmount: number;
+    discountAmount: number;
+    finalAmount: number;
+    discountPercent: number;
+  } | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
 
-  const handleAtmosPayment = () => {
-    if (!user) {
-      setError("Iltimos, avval tizimga kiring");
-      return;
+  const basePrice = 1425000; // 1,425,000 UZS
+  const finalPrice = appliedCoupon ? appliedCoupon.finalAmount : basePrice;
+
+  // Validate coupon
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) return;
+
+    setCouponValidating(true);
+    setCouponError(null);
+
+    try {
+      const response = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          code: couponCode.trim(),
+          amount: basePrice
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.valid) {
+        setCouponError(result.message || 'Kupon kodi noto\'g\'ri');
+        setAppliedCoupon(null);
+        return;
+      }
+
+      setAppliedCoupon(result.coupon);
+      setCouponError(null);
+    } catch (error) {
+      setCouponError('Kupon kodini tekshirishda xatolik');
+      setAppliedCoupon(null);
+    } finally {
+      setCouponValidating(false);
     }
-    window.location.href = '/atmos-payment';
+  };
+
+  const handlePaymentSelect = (method: 'atmos' | 'click') => {
+    setSelectedMethod(method);
+    
+    // Small delay for visual feedback
+    setTimeout(() => {
+      if (method === 'atmos') {
+        setLocation('/atmos-payment');
+      } else {
+        // For Click, we'll handle the redirect differently
+        handleClickPayment();
+      }
+    }, 300);
   };
 
   const handleClickPayment = async () => {
-    if (!user) {
-      setError("Iltimos, avval tizimga kiring");
-      return;
-    }
-    
-    setIsProcessing(true);
-    setError(null);
-    
     try {
-      const response = await fetch('/api/click/create-payment', {
+      // Create transaction and get payment URL
+      const response = await fetch('/api/click/create-transaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: 1425000, // Amount in soums
-          userId: user.id,
-          userEmail: user.email
+          amount: finalPrice,
+          userId: user?.id || 'guest',
+          couponCode: appliedCoupon?.code
         })
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to create payment session');
-      }
-      
+
       const data = await response.json();
       
       if (data.success && data.paymentUrl) {
         // Redirect to Click.uz payment page
         window.location.href = data.paymentUrl;
       } else {
-        throw new Error(data.message || 'Payment creation failed');
+        alert('To\'lov tizimiga ulanishda xatolik. Iltimos qayta urinib ko\'ring.');
+        setSelectedMethod(null);
       }
-    } catch (err: any) {
-      setError(err.message || 'Payment processing error');
-      setIsProcessing(false);
+    } catch (error) {
+      console.error('Click payment error:', error);
+      alert('To\'lov tizimiga ulanishda xatolik. Iltimos qayta urinib ko\'ring.');
+      setSelectedMethod(null);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-background flex flex-col">
       <AppHeader />
       
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">
-            Premium Access
-          </Badge>
-          <h1 className="text-4xl font-black text-black mb-4">
-            Protokol 57 Premium
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            AI bilan professional ishlashni o'rganish platformasiga to'liq kirish
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Features */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Card className="border-2 border-gray-100 shadow-medium h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Star className="w-6 h-6 text-accent" />
-                  Premium imkoniyatlar
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <BookOpen className="w-5 h-5 text-green-500 mt-0.5" />
-                    <div>
-                      <h3 className="font-semibold">57 ta AI Protokol</h3>
-                      <p className="text-sm text-gray-600">Barcha professional AI texnikalariga kirish</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <Target className="w-5 h-5 text-blue-500 mt-0.5" />
-                    <div>
-                      <h3 className="font-semibold">AI Baholash Tizimi</h3>
-                      <p className="text-sm text-gray-600">Promptlaringizni real vaqtda baholash</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <Users className="w-5 h-5 text-purple-500 mt-0.5" />
-                    <div>
-                      <h3 className="font-semibold">Progress Tracking</h3>
-                      <p className="text-sm text-gray-600">O'rganish jarayonini kuzatish</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <Zap className="w-5 h-5 text-yellow-500 mt-0.5" />
-                    <div>
-                      <h3 className="font-semibold">Unlimited Access</h3>
-                      <p className="text-sm text-gray-600">Cheksiz foydalanish imkoniyati</p>
-                    </div>
-                  </div>
+      <main className="flex-1 container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
+        {/* Price Display - HUGE and CLEAR */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-black mb-2">PREMIUM TO'LOV</h1>
+          <div className="inline-block">
+            {appliedCoupon ? (
+              <div className="space-y-2">
+                <div className="text-muted-foreground">
+                  <span className="line-through text-2xl">{basePrice.toLocaleString('uz-UZ')} UZS</span>
                 </div>
-
-                <div className="bg-gradient-to-r from-accent/5 to-accent/10 rounded-none p-4 border border-accent/20">
-                  <p className="text-sm font-medium text-accent">
-                    💡 AI bilan professional ishlash ko'nikmalarini rivojlantiring
-                  </p>
+                <div className="text-4xl sm:text-5xl font-black text-foreground">
+                  {finalPrice.toLocaleString('uz-UZ')} UZS
                 </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Payment */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Card className="border-2 border-gray-100 shadow-medium">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <CreditCard className="w-6 h-6 text-accent" />
-                  To'lov
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Price */}
-                <div className="text-center py-6 bg-gray-50 rounded-none">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-4xl font-black text-black">149,000</span>
-                    <span className="text-lg text-gray-600">so'm</span>
-                  </div>
-                  <p className="text-sm text-gray-600">Bir martalik to'lov</p>
-                </div>
-
-                {/* Security Badge */}
-                <div className="flex items-center gap-2 text-sm text-gray-600 bg-green-50 p-3 rounded-none border border-green-200">
-                  <Shield className="w-4 h-4 text-green-600" />
-                  <span>Xavfsiz to'lov tizimlari</span>
-                </div>
-
-                {/* Error Display */}
-                {error && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertDescription className="text-red-700">
-                      {error}
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {/* Payment Method Selection */}
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-sm">To'lov usulini tanlang:</h4>
-                  
-                  {/* ATMOS Payment Option */}
-                  <div 
-                    className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                      selectedMethod === 'atmos' 
-                        ? 'border-accent bg-accent/5' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                    onClick={() => setSelectedMethod('atmos')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded-full border-2 ${
-                          selectedMethod === 'atmos' 
-                            ? 'border-accent bg-accent' 
-                            : 'border-gray-300'
-                        }`}>
-                          {selectedMethod === 'atmos' && (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <div className="w-2 h-2 bg-white rounded-full"></div>
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <h5 className="font-semibold">ATMOS</h5>
-                          <p className="text-sm text-gray-600">UzCard/Humo kartalar uchun</p>
-                        </div>
-                      </div>
-                      <Badge variant="outline" className="text-xs">SMS tasdiqlash</Badge>
-                    </div>
-                  </div>
-
-                  {/* Click.uz Payment Option */}
-                  <div 
-                    className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                      selectedMethod === 'click' 
-                        ? 'border-accent bg-accent/5' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                    onClick={() => setSelectedMethod('click')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded-full border-2 ${
-                          selectedMethod === 'click' 
-                            ? 'border-accent bg-accent' 
-                            : 'border-gray-300'
-                        }`}>
-                          {selectedMethod === 'click' && (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <div className="w-2 h-2 bg-white rounded-full"></div>
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <h5 className="font-semibold">Click.uz</h5>
-                          <p className="text-sm text-gray-600">Barcha kartalar uchun</p>
-                        </div>
-                      </div>
-                      <Badge variant="outline" className="text-xs bg-blue-50">Tavsiya etiladi</Badge>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payment Button */}
-                <div className="space-y-3">
-                  <Button
-                    onClick={selectedMethod === 'atmos' ? handleAtmosPayment : handleClickPayment}
-                    disabled={!user || !selectedMethod || isProcessing}
-                    className="w-full h-14 bg-accent hover:bg-gray-800 text-white font-semibold text-lg group"
-                  >
-                    {isProcessing ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        To'lov tayyorlanmoqda...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="w-5 h-5" />
-                        {selectedMethod === 'atmos' ? 'ATMOS' : selectedMethod === 'click' ? 'Click.uz' : 'To\'lov usulini tanlang'} orqali to'lash
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                      </div>
-                    )}
-                  </Button>
-                </div>
-
-                {!user && (
-                  <Alert className="border-blue-200 bg-blue-50">
-                    <AlertDescription className="text-blue-700">
-                      To'lov qilish uchun tizimga kirish kerak
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {/* Features List */}
-                <div className="space-y-2 pt-4 border-t border-gray-200">
-                  <h4 className="font-semibold text-sm">To'lovga kiradi:</h4>
-                  {[
-                    "57 ta AI protokolga kirish",
-                    "AI prompt baholash tizimi",
-                    "Progress tracking",
-                    "Unlimited access",
-                    "Professional texnikalar"
-                  ].map((feature, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-sm text-gray-600">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+                <Badge className="bg-green-600 text-white text-sm">
+                  {appliedCoupon.discountPercent}% CHEGIRMA
+                </Badge>
+              </div>
+            ) : (
+              <div className="text-4xl sm:text-5xl font-black text-foreground">
+                {basePrice.toLocaleString('uz-UZ')} UZS
+              </div>
+            )}
+            <p className="text-muted-foreground mt-2 font-bold">Bir martalik to'lov</p>
+          </div>
         </div>
 
-        {/* Trust Indicators */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="mt-12 text-center"
-        >
-          <div className="bg-white rounded-none p-6 shadow-soft border border-gray-100">
-            <h3 className="font-semibold mb-4">Xavfsiz to'lov</h3>
-            <div className="flex items-center justify-center gap-8 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-green-500" />
-                <span>SSL shifrlash</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-blue-500" />
-                <span>ATMOS & Click.uz</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500" />
-                <span>Darhol kirish</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        {/* Coupon Section - Hidden by default */}
+        <div className="mb-8">
+          {!showCoupon && !appliedCoupon && (
+            <button
+              onClick={() => setShowCoupon(true)}
+              className="mx-auto flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-bold"
+            >
+              <Tag className="h-4 w-4" />
+              Kupon kodingiz bormi?
+            </button>
+          )}
+          
+          {(showCoupon || appliedCoupon) && (
+            <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <CardContent className="p-4">
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="KUPON KODI"
+                    value={couponCode}
+                    onChange={(e) => {
+                      setCouponCode(e.target.value.toUpperCase());
+                      setCouponError(null);
+                    }}
+                    disabled={couponValidating || !!appliedCoupon}
+                    className="font-mono text-lg border-2 border-foreground uppercase"
+                  />
+                  {!appliedCoupon ? (
+                    <Button
+                      onClick={validateCoupon}
+                      disabled={couponValidating || !couponCode.trim()}
+                      className="font-black border-2 border-foreground"
+                    >
+                      QO'LLASH
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        setAppliedCoupon(null);
+                        setCouponCode('');
+                        setShowCoupon(false);
+                      }}
+                      variant="destructive"
+                      className="font-black"
+                    >
+                      BEKOR
+                    </Button>
+                  )}
+                </div>
+                {couponError && (
+                  <p className="text-red-600 text-sm mt-2 font-bold">{couponError}</p>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Payment Method Selection - BIG CARDS */}
+        <div className="space-y-4 mb-8">
+          <h2 className="text-xl font-black text-center mb-6">TO'LOV USULINI TANLANG</h2>
+          
+          {/* ATMOS Card */}
+          <button
+            onClick={() => handlePaymentSelect('atmos')}
+            disabled={selectedMethod !== null}
+            className="w-full transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Card className={`border-4 ${selectedMethod === 'atmos' ? 'border-green-600 bg-green-50' : 'border-foreground hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]`}>
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-foreground text-background p-4 rounded">
+                      <CreditCard className="h-8 w-8" />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-2xl font-black">ATMOS</h3>
+                      <p className="text-muted-foreground font-bold">Bank kartalari orqali</p>
+                      <div className="flex gap-2 mt-2">
+                        <Badge variant="outline" className="font-bold">UzCard</Badge>
+                        <Badge variant="outline" className="font-bold">Humo</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight className={`h-8 w-8 ${selectedMethod === 'atmos' ? 'text-green-600' : 'text-muted-foreground'}`} />
+                </div>
+                {selectedMethod === 'atmos' && (
+                  <div className="mt-4 flex items-center gap-2 text-green-600">
+                    <CheckCircle className="h-5 w-5" />
+                    <span className="font-bold">Tanlandi</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </button>
+
+          {/* Click Card */}
+          <button
+            onClick={() => handlePaymentSelect('click')}
+            disabled={selectedMethod !== null}
+            className="w-full transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Card className={`border-4 ${selectedMethod === 'click' ? 'border-green-600 bg-green-50' : 'border-foreground hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]`}>
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-[#00CEC9] text-white p-4 rounded">
+                      <Smartphone className="h-8 w-8" />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-2xl font-black">Click.uz</h3>
+                      <p className="text-muted-foreground font-bold">Tezkor to'lov tizimi</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Zap className="h-4 w-4 text-yellow-600" />
+                        <span className="text-sm font-bold text-muted-foreground">Onlayn to'lov</span>
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight className={`h-8 w-8 ${selectedMethod === 'click' ? 'text-green-600' : 'text-muted-foreground'}`} />
+                </div>
+                {selectedMethod === 'click' && (
+                  <div className="mt-4 flex items-center gap-2 text-green-600">
+                    <CheckCircle className="h-5 w-5" />
+                    <span className="font-bold">Tanlandi</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </button>
+        </div>
+
+        {/* What's Included */}
+        <Card className="border-2 border-muted mb-8">
+          <CardContent className="p-6">
+            <h3 className="font-black text-lg mb-4">NIMALAR KIRADI:</h3>
+            <ul className="space-y-2">
+              <li className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <span className="font-bold">57 ta AI protokol - to'liq dostup</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <span className="font-bold">50+ Premium promptlar</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <span className="font-bold">AI bilan amaliy mashqlar</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <span className="font-bold">Umrbod dostup</span>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+
+        {/* Security Badge */}
+        <div className="flex items-center justify-center gap-2 text-muted-foreground">
+          <Shield className="h-5 w-5" />
+          <span className="font-bold">100% xavfsiz to'lov</span>
+        </div>
       </main>
-      
+
       <AppFooter />
     </div>
   );

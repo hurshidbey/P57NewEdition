@@ -34,7 +34,7 @@ export default function AtmosPayment() {
   useEffect(() => {
     if (!authLoading && !user) {
       console.warn('🚫 Payment page accessed without authentication');
-      setLocation('/auth/login?redirect=/atmos-payment');
+      setLocation('/auth/login?redirect=/payment');
     }
   }, [user, authLoading, setLocation]);
   
@@ -577,7 +577,7 @@ export default function AtmosPayment() {
             <p className="text-muted-foreground text-center mb-4">
               To'lovni amalga oshirish uchun tizimga kiring
             </p>
-            <Button onClick={() => setLocation('/auth/login?redirect=/atmos-payment')}>
+            <Button onClick={() => setLocation('/auth/login?redirect=/payment')}>
               Tizimga kirish
             </Button>
           </CardContent>

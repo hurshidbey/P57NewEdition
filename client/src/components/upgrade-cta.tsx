@@ -94,7 +94,7 @@ export function UpgradeCTA({
                 )}
               </div>
             </div>
-            <Link href="/atmos-payment" className="w-full sm:w-auto">
+            <Link href="/payment" className="w-full sm:w-auto">
               <Button 
                 className="bg-accent hover:bg-accent/90 text-black font-bold uppercase border-2 border-theme h-[44px] hover:shadow-brutal-sm w-full sm:w-auto text-sm"
                 onClick={handleUpgradeClick}
@@ -139,7 +139,7 @@ export function UpgradeCTA({
         )}
 
         <div className="flex gap-2">
-          <Link href="/atmos-payment" className="flex-1">
+          <Link href="/payment" className="flex-1">
             <Button 
               size="lg"
               className="bg-accent hover:bg-accent/90 text-black font-bold uppercase px-4 sm:px-6 py-2 sm:py-3 text-sm w-full border-2 border-theme h-[44px] sm:h-[48px] hover:shadow-brutal-sm"
@@ -168,7 +168,7 @@ export function UpgradeCTA({
             </p>
           )}
         </div>
-        <Link href="/atmos-payment">
+        <Link href="/payment">
           <Button 
             size="sm" 
             className="bg-accent hover:bg-accent/90 text-black font-bold uppercase border-2 border-theme h-[40px] hover:shadow-brutal-sm"
@@ -211,7 +211,7 @@ export function UpgradeCTA({
           </div>
         )}
 
-        <Link href="/atmos-payment">
+        <Link href="/payment">
           <Button 
             className="bg-accent hover:bg-accent/90 text-black font-bold uppercase w-full border-2 border-theme h-[44px] hover:shadow-brutal-sm text-sm"
             onClick={handleUpgradeClick}

@@ -126,7 +126,7 @@ export default function ProtocolCard({ protocol }: ProtocolCardProps) {
         <div className="flex flex-col gap-2 mt-4">
           {isLocked ? (
             <div className="grid grid-cols-1 gap-2">
-              <Link href="/atmos-payment" className="w-full">
+              <Link href="/payment" className="w-full">
                 <Button 
                   size="sm"
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-theme px-4 py-2 h-[44px] text-sm font-bold uppercase touch-manipulation hover:shadow-brutal-sm"

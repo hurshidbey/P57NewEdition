@@ -16,6 +16,96 @@ export function setupClickRoutes(): Router {
     });
   });
 
+  // Create transaction endpoint - generates payment URL
+  router.post('/click/create-transaction', async (req, res) => {
+    try {
+      const { amount, userId, couponCode } = req.body;
+      
+      console.log(`📝 [CLICK] Creating transaction:`, {
+        amount,
+        userId,
+        couponCode
+      });
+
+      // Validate input
+      if (!amount || amount <= 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid amount'
+        });
+      }
+
+      // Generate unique order ID
+      // Format: "P57-{userId}-{timestamp}-{random}"
+      const orderId = `P57-${userId || 'guest'}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      
+      // If coupon is provided, validate and apply discount
+      let finalAmount = amount;
+      let appliedCoupon = null;
+      
+      if (couponCode) {
+        const { storage } = await import('./storage');
+        const coupon = await storage.getCouponByCode(couponCode.trim().toUpperCase());
+        
+        if (coupon && coupon.isActive) {
+          const now = new Date();
+          
+          // Validate coupon dates and usage
+          if (coupon.validUntil && new Date(coupon.validUntil) < now) {
+            console.log(`⚠️ [CLICK] Coupon ${couponCode} is expired`);
+          } else if (coupon.validFrom && new Date(coupon.validFrom) > now) {
+            console.log(`⚠️ [CLICK] Coupon ${couponCode} is not yet valid`);
+          } else if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
+            console.log(`⚠️ [CLICK] Coupon ${couponCode} usage limit reached`);
+          } else {
+            // Apply discount
+            if (coupon.discountType === 'percentage') {
+              const discountAmount = Math.floor(amount * (coupon.discountValue / 100));
+              finalAmount = amount - discountAmount;
+            } else if (coupon.discountType === 'fixed') {
+              const discountAmount = Math.min(coupon.discountValue, amount);
+              finalAmount = amount - discountAmount;
+            }
+            
+            appliedCoupon = coupon;
+            console.log(`✅ [CLICK] Coupon ${couponCode} applied: ${amount} -> ${finalAmount}`);
+          }
+        }
+      }
+
+      // Generate payment URL
+      const paymentUrl = clickService.generatePaymentUrl(finalAmount, orderId, userId || 'guest');
+      
+      console.log(`✅ [CLICK] Transaction created:`, {
+        orderId,
+        originalAmount: amount,
+        finalAmount,
+        paymentUrl
+      });
+
+      res.json({
+        success: true,
+        paymentUrl,
+        orderId,
+        amount: finalAmount,
+        appliedCoupon: appliedCoupon ? {
+          code: appliedCoupon.code,
+          discountAmount: amount - finalAmount,
+          discountPercent: appliedCoupon.discountType === 'percentage' 
+            ? appliedCoupon.discountValue 
+            : Math.round(((amount - finalAmount) / amount) * 100)
+        } : null
+      });
+
+    } catch (error: any) {
+      console.error(`❌ [CLICK] Create transaction error:`, error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to create transaction'
+      });
+    }
+  });
+
   // Unified endpoint for both prepare and complete requests
   router.post('/click/pay', async (req, res) => {
     try {
