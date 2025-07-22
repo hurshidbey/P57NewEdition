@@ -554,7 +554,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin prompts endpoints
-  app.get("/api/admin/prompts", isSupabaseAdmin, async (req, res) => {
+  app.get("/api/admin/prompts", 
+    requireAuth,
+    requirePermission(RESOURCES.PROMPTS, ACTIONS.READ),
+    auditLog(RESOURCES.PROMPTS, ACTIONS.READ),
+    async (req, res) => {
     try {
       const prompts = await hybridPromptsStorage.getAllPrompts();
       res.json(prompts);
@@ -563,7 +567,11 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
-  app.post("/api/admin/prompts", isSupabaseAdmin, async (req, res) => {
+  app.post("/api/admin/prompts", 
+    requireAuth,
+    requirePermission(RESOURCES.PROMPTS, ACTIONS.CREATE),
+    auditLog(RESOURCES.PROMPTS, ACTIONS.CREATE),
+    async (req, res) => {
     try {
       const promptData = insertPromptSchema.parse(req.body);
       const prompt = await hybridPromptsStorage.createPrompt(promptData);
@@ -576,7 +584,11 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
-  app.put("/api/admin/prompts/:id", isSupabaseAdmin, async (req, res) => {
+  app.put("/api/admin/prompts/:id", 
+    requireAuth,
+    requirePermission(RESOURCES.PROMPTS, ACTIONS.UPDATE),
+    auditLog(RESOURCES.PROMPTS, ACTIONS.UPDATE),
+    async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const promptData = insertPromptSchema.partial().parse(req.body);
@@ -596,7 +608,11 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
-  app.delete("/api/admin/prompts/:id", isSupabaseAdmin, async (req, res) => {
+  app.delete("/api/admin/prompts/:id", 
+    requireAuth,
+    requirePermission(RESOURCES.PROMPTS, ACTIONS.DELETE),
+    auditLog(RESOURCES.PROMPTS, ACTIONS.DELETE),
+    async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const success = await hybridPromptsStorage.deletePrompt(id);
@@ -819,7 +835,7 @@ export function setupRoutes(app: Express): Server {
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(
         process.env.SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY! // Fixed: Use correct env var name
+        process.env.SUPABASE_SERVICE_ROLE_KEY! // Use service role key for admin operations
       );
       
       const { data: users, error } = await supabase.auth.admin.listUsers();
@@ -968,7 +984,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin: Create new coupon
-  app.post("/api/admin/coupons", isSupabaseAdmin, async (req, res) => {
+  app.post("/api/admin/coupons", 
+    requireAuth,
+    requirePermission(RESOURCES.COUPONS, ACTIONS.CREATE),
+    auditLog(RESOURCES.COUPONS, ACTIONS.CREATE),
+    async (req, res) => {
     try {
       const { 
         code, 
@@ -1030,7 +1050,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin: Update coupon
-  app.put("/api/admin/coupons/:id", isSupabaseAdmin, async (req, res) => {
+  app.put("/api/admin/coupons/:id", 
+    requireAuth,
+    requirePermission(RESOURCES.COUPONS, ACTIONS.UPDATE),
+    auditLog(RESOURCES.COUPONS, ACTIONS.UPDATE),
+    async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { code, ...updateData } = req.body;
@@ -1053,7 +1077,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin: Delete coupon
-  app.delete("/api/admin/coupons/:id", isSupabaseAdmin, async (req, res) => {
+  app.delete("/api/admin/coupons/:id", 
+    requireAuth,
+    requirePermission(RESOURCES.COUPONS, ACTIONS.DELETE),
+    auditLog(RESOURCES.COUPONS, ACTIONS.DELETE),
+    async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const success = await storage.deleteCoupon(id);
@@ -1070,7 +1098,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin: Toggle coupon active status
-  app.patch("/api/admin/coupons/:id/toggle", isSupabaseAdmin, async (req, res) => {
+  app.patch("/api/admin/coupons/:id/toggle", 
+    requireAuth,
+    requirePermission(RESOURCES.COUPONS, ACTIONS.TOGGLE),
+    auditLog(RESOURCES.COUPONS, ACTIONS.TOGGLE),
+    async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { isActive } = req.body;
@@ -1088,7 +1120,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Admin: Get coupon usage history
-  app.get("/api/admin/coupons/:id/usage", isSupabaseAdmin, async (req, res) => {
+  app.get("/api/admin/coupons/:id/usage", 
+    requireAuth,
+    requirePermission(RESOURCES.COUPONS, ACTIONS.READ),
+    auditLog(RESOURCES.COUPONS, ACTIONS.READ),
+    async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const usage = await storage.getCouponUsageHistory(id);

@@ -14,7 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText, Edit, Trash2, Plus, Tag, Calendar, Percent, Hash } from 'lucide-react';
+import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText, Edit, Trash2, Plus, Tag, Calendar, Percent, Hash, RefreshCw, AlertCircle } from 'lucide-react';
 import AnalyticsDashboard from '@/components/analytics-dashboard';
 
 interface Protocol {
@@ -117,6 +117,26 @@ export default function Admin() {
     activeCoupons: 0,
     totalCouponUsage: 0
   });
+  
+  // Individual loading states
+  const [loadingStates, setLoadingStates] = useState({
+    protocols: false,
+    prompts: false,
+    categories: false,
+    users: false,
+    payments: false,
+    coupons: false
+  });
+  
+  // Error states
+  const [errors, setErrors] = useState({
+    protocols: null as string | null,
+    prompts: null as string | null,
+    categories: null as string | null,
+    users: null as string | null,
+    payments: null as string | null,
+    coupons: null as string | null
+  });
 
   // Dialog states
   const [protocolDialogOpen, setProtocolDialogOpen] = useState(false);
@@ -155,6 +175,17 @@ export default function Admin() {
 
   const loadData = async () => {
     setLoading(true);
+    
+    // Reset errors
+    setErrors({
+      protocols: null,
+      prompts: null,
+      categories: null,
+      users: null,
+      payments: null,
+      coupons: null
+    });
+    
     try {
       // Import supabase client
       const { createClient } = await import('@supabase/supabase-js');
@@ -176,84 +207,161 @@ export default function Admin() {
         'Content-Type': 'application/json'
       };
 
-      // Load protocols
-      const protocolsRes = await fetch('/api/admin/protocols', { headers });
-      if (protocolsRes.ok) {
-        const data = await protocolsRes.json();
-        setProtocols(data);
-        
-        // Calculate stats
-        const freeCount = data.filter((p: Protocol) => p.isFreeAccess).length;
-        setStats(prev => ({
-          ...prev,
-          totalProtocols: data.length,
-          freeProtocols: freeCount
-        }));
-      }
+      // Load data in parallel with individual error handling
+      const loadProtocols = async () => {
+        setLoadingStates(prev => ({ ...prev, protocols: true }));
+        try {
+          const protocolsRes = await fetch('/api/admin/protocols', { headers });
+          if (!protocolsRes.ok) {
+            const error = await protocolsRes.json();
+            throw new Error(error.message || error.error || 'Failed to load protocols');
+          }
+          const data = await protocolsRes.json();
+          setProtocols(data);
+          
+          // Calculate stats
+          const freeCount = data.filter((p: Protocol) => p.isFreeAccess).length;
+          setStats(prev => ({
+            ...prev,
+            totalProtocols: data.length,
+            freeProtocols: freeCount
+          }));
+        } catch (error: any) {
+          setErrors(prev => ({ ...prev, protocols: error.message }));
+          console.error('Failed to load protocols:', error);
+        } finally {
+          setLoadingStates(prev => ({ ...prev, protocols: false }));
+        }
+      };
 
-      // Load categories
-      const categoriesRes = await fetch('/api/categories', { headers });
-      if (categoriesRes.ok) {
-        const data = await categoriesRes.json();
-        setCategories(data);
-      }
+      const loadCategories = async () => {
+        setLoadingStates(prev => ({ ...prev, categories: true }));
+        try {
+          const categoriesRes = await fetch('/api/categories', { headers });
+          if (!categoriesRes.ok) {
+            throw new Error('Failed to load categories');
+          }
+          const data = await categoriesRes.json();
+          setCategories(data);
+        } catch (error: any) {
+          setErrors(prev => ({ ...prev, categories: error.message }));
+          console.error('Failed to load categories:', error);
+        } finally {
+          setLoadingStates(prev => ({ ...prev, categories: false }));
+        }
+      };
 
-      // Load prompts
-      const promptsRes = await fetch('/api/admin/prompts', { headers });
-      if (promptsRes.ok) {
-        const data = await promptsRes.json();
-        setPrompts(data);
-      }
+      const loadPrompts = async () => {
+        setLoadingStates(prev => ({ ...prev, prompts: true }));
+        try {
+          const promptsRes = await fetch('/api/admin/prompts', { headers });
+          if (!promptsRes.ok) {
+            const error = await promptsRes.json();
+            throw new Error(error.message || error.error || 'Failed to load prompts');
+          }
+          const data = await promptsRes.json();
+          setPrompts(data);
+        } catch (error: any) {
+          setErrors(prev => ({ ...prev, prompts: error.message }));
+          console.error('Failed to load prompts:', error);
+        } finally {
+          setLoadingStates(prev => ({ ...prev, prompts: false }));
+        }
+      };
 
-      // Load users
-      const usersRes = await fetch('/api/admin/users', { headers });
-      if (usersRes.ok) {
-        const data = await usersRes.json();
-        setUsers(data);
-        
-        const paidCount = data.filter((u: User) => u.tier === 'paid').length;
-        setStats(prev => ({
-          ...prev,
-          totalUsers: data.length,
-          paidUsers: paidCount
-        }));
-      }
+      const loadUsers = async () => {
+        setLoadingStates(prev => ({ ...prev, users: true }));
+        try {
+          const usersRes = await fetch('/api/admin/users', { headers });
+          if (!usersRes.ok) {
+            const error = await usersRes.json();
+            throw new Error(error.message || error.error || 'Failed to load users');
+          }
+          const data = await usersRes.json();
+          setUsers(data);
+          
+          const paidCount = data.filter((u: User) => u.tier === 'paid').length;
+          setStats(prev => ({
+            ...prev,
+            totalUsers: data.length,
+            paidUsers: paidCount
+          }));
+        } catch (error: any) {
+          setErrors(prev => ({ ...prev, users: error.message }));
+          console.error('Failed to load users:', error);
+        } finally {
+          setLoadingStates(prev => ({ ...prev, users: false }));
+        }
+      };
 
-      // Load payments
-      const paymentsRes = await fetch('/api/admin/payments', { headers });
-      if (paymentsRes.ok) {
-        const data = await paymentsRes.json();
-        setPayments(data);
-        
-        const revenue = data
-          .filter((p: Payment) => p.status === 'completed')
-          .reduce((sum: number, p: Payment) => sum + p.amount, 0);
-        
-        setStats(prev => ({
-          ...prev,
-          totalRevenue: revenue
-        }));
-      }
+      const loadPayments = async () => {
+        setLoadingStates(prev => ({ ...prev, payments: true }));
+        try {
+          const paymentsRes = await fetch('/api/admin/payments', { headers });
+          if (!paymentsRes.ok) {
+            const error = await paymentsRes.json();
+            throw new Error(error.message || error.error || 'Failed to load payments');
+          }
+          const data = await paymentsRes.json();
+          setPayments(data);
+          
+          const revenue = data
+            .filter((p: Payment) => p.status === 'completed')
+            .reduce((sum: number, p: Payment) => sum + p.amount, 0);
+          
+          setStats(prev => ({
+            ...prev,
+            totalRevenue: revenue
+          }));
+        } catch (error: any) {
+          setErrors(prev => ({ ...prev, payments: error.message }));
+          console.error('Failed to load payments:', error);
+        } finally {
+          setLoadingStates(prev => ({ ...prev, payments: false }));
+        }
+      };
 
-      // Load coupons
-      const couponsRes = await fetch('/api/admin/coupons', { headers });
-      if (couponsRes.ok) {
-        const data = await couponsRes.json();
-        setCoupons(data);
-        
-        const activeCount = data.filter((c: Coupon) => c.isActive).length;
-        const totalUsage = data.reduce((sum: number, c: Coupon) => sum + c.usedCount, 0);
-        
-        setStats(prev => ({
-          ...prev,
-          activeCoupons: activeCount,
-          totalCouponUsage: totalUsage
-        }));
-      }
-    } catch (error) {
+      const loadCoupons = async () => {
+        setLoadingStates(prev => ({ ...prev, coupons: true }));
+        try {
+          const couponsRes = await fetch('/api/admin/coupons', { headers });
+          if (!couponsRes.ok) {
+            const error = await couponsRes.json();
+            throw new Error(error.message || error.error || 'Failed to load coupons');
+          }
+          const data = await couponsRes.json();
+          setCoupons(data);
+          
+          const activeCount = data.filter((c: Coupon) => c.isActive).length;
+          const totalUsage = data.reduce((sum: number, c: Coupon) => sum + c.usedCount, 0);
+          
+          setStats(prev => ({
+            ...prev,
+            activeCoupons: activeCount,
+            totalCouponUsage: totalUsage
+          }));
+        } catch (error: any) {
+          setErrors(prev => ({ ...prev, coupons: error.message }));
+          console.error('Failed to load coupons:', error);
+        } finally {
+          setLoadingStates(prev => ({ ...prev, coupons: false }));
+        }
+      };
+
+      // Load all data in parallel
+      await Promise.all([
+        loadProtocols(),
+        loadCategories(),
+        loadPrompts(),
+        loadUsers(),
+        loadPayments(),
+        loadCoupons()
+      ]);
+      
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to load admin data',
+        description: error.message || 'Failed to load admin data',
         variant: 'destructive'
       });
     } finally {
@@ -878,69 +986,97 @@ export default function Admin() {
                   <CardTitle>Protokollarni boshqarish</CardTitle>
                   <CardDescription>Protokollarni yaratish, tahrirlash va boshqarish</CardDescription>
                 </div>
-                <Button onClick={() => openProtocolDialog()}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Yangi protokol
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadData}
+                    disabled={loadingStates.protocols}
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${loadingStates.protocols ? 'animate-spin' : ''}`} />
+                    Yangilash
+                  </Button>
+                  <Button onClick={() => openProtocolDialog()}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Yangi protokol
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>№</TableHead>
-                      <TableHead>Nomi</TableHead>
-                      <TableHead>Kategoriya</TableHead>
-                      <TableHead>Kirish</TableHead>
-                      <TableHead>Yaratilgan</TableHead>
-                      <TableHead>Harakatlar</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {protocols.map((protocol) => (
-                      <TableRow key={protocol.id}>
-                        <TableCell>{protocol.number}</TableCell>
-                        <TableCell className="font-medium">{protocol.title}</TableCell>
-                        <TableCell>
-                          {categories.find(c => c.id === protocol.categoryId)?.name || protocol.categoryId}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={protocol.isFreeAccess ? 'default' : 'secondary'}>
-                            {protocol.isFreeAccess ? (
-                              <><Unlock className="h-3 w-3 mr-1" /> Bepul</>
-                            ) : (
-                              <><Lock className="h-3 w-3 mr-1" /> PRO</>
-                            )}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {protocol.createdAt ? new Date(protocol.createdAt).toLocaleDateString('uz-UZ') : '-'}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Switch
-                              checked={protocol.isFreeAccess}
-                              onCheckedChange={() => toggleProtocolAccess(protocol.id, protocol.isFreeAccess)}
-                            />
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => openProtocolDialog(protocol)}
-                            >
-                              <Edit className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => deleteProtocol(protocol.id)}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                {errors.protocols && (
+                  <div className="mb-4 p-4 bg-destructive/10 text-destructive rounded-md flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5" />
+                    <p>{errors.protocols}</p>
+                  </div>
+                )}
+                
+                {loadingStates.protocols ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : protocols.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Hech qanday protokol topilmadi
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>№</TableHead>
+                        <TableHead>Nomi</TableHead>
+                        <TableHead>Kategoriya</TableHead>
+                        <TableHead>Kirish</TableHead>
+                        <TableHead>Yaratilgan</TableHead>
+                        <TableHead>Harakatlar</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {protocols.map((protocol) => (
+                        <TableRow key={protocol.id}>
+                          <TableCell>{protocol.number}</TableCell>
+                          <TableCell className="font-medium">{protocol.title}</TableCell>
+                          <TableCell>
+                            {categories.find(c => c.id === protocol.categoryId)?.name || protocol.categoryId}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={protocol.isFreeAccess ? 'default' : 'secondary'}>
+                              {protocol.isFreeAccess ? (
+                                <><Unlock className="h-3 w-3 mr-1" /> Bepul</>
+                              ) : (
+                                <><Lock className="h-3 w-3 mr-1" /> PRO</>
+                              )}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {protocol.createdAt ? new Date(protocol.createdAt).toLocaleDateString('uz-UZ') : '-'}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Switch
+                                checked={protocol.isFreeAccess}
+                                onCheckedChange={() => toggleProtocolAccess(protocol.id, protocol.isFreeAccess)}
+                              />
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openProtocolDialog(protocol)}
+                              >
+                                <Edit className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => deleteProtocol(protocol.id)}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -1017,33 +1153,61 @@ export default function Admin() {
           {/* Users Tab */}
           <TabsContent value="users">
             <Card>
-              <CardHeader>
-                <CardTitle>Foydalanuvchilar</CardTitle>
-                <CardDescription>Barcha ro'yxatdan o'tgan foydalanuvchilar</CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Foydalanuvchilar</CardTitle>
+                  <CardDescription>Barcha ro'yxatdan o'tgan foydalanuvchilar</CardDescription>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={loadData}
+                  disabled={loadingStates.users}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${loadingStates.users ? 'animate-spin' : ''}`} />
+                  Yangilash
+                </Button>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Daraja</TableHead>
-                      <TableHead>Ro'yxatdan o'tgan</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {users.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>
-                          <Badge variant={user.tier === 'paid' ? 'default' : 'secondary'}>
-                            {user.tier === 'paid' ? 'PRO' : 'Bepul'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{new Date(user.createdAt).toLocaleDateString('uz-UZ')}</TableCell>
+                {errors.users && (
+                  <div className="mb-4 p-4 bg-destructive/10 text-destructive rounded-md flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5" />
+                    <p>{errors.users}</p>
+                  </div>
+                )}
+                
+                {loadingStates.users ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : users.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Hech qanday foydalanuvchi topilmadi
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Daraja</TableHead>
+                        <TableHead>Ro'yxatdan o'tgan</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {users.map((user) => (
+                        <TableRow key={user.id}>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>
+                            <Badge variant={user.tier === 'paid' ? 'default' : 'secondary'}>
+                              {user.tier === 'paid' ? 'PRO' : 'Bepul'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{new Date(user.createdAt).toLocaleDateString('uz-UZ')}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

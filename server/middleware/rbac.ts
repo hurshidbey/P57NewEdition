@@ -333,7 +333,7 @@ export const isSupabaseAdmin = async (req: Request, res: Response, next: NextFun
         : [];
 
       if (adminEmails.includes(req.user?.email)) {
-        console.warn(`⚠️  User ${req.user.email} using legacy email-based admin access`);
+        console.log(`✅ User ${req.user.email} granted admin access via ADMIN_EMAILS`);
         return next();
       }
 
