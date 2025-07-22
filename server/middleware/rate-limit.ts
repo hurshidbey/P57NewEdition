@@ -94,9 +94,25 @@ export const otpResendLimiter = rateLimit({
   keyGenerator: getClientId,
 });
 
+// Special rate limiter for Click.uz - very permissive
+export const clickLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 10000, // Very high limit for Click.uz servers
+  message: 'Click.uz rate limit exceeded',
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => 'click-uz-server', // All Click.uz requests share same rate limit
+});
+
 // Middleware to apply different rate limits based on path
 export const applyRateLimits = (req: Request, res: Response, next: Function) => {
   const path = req.path;
+  
+  // Skip rate limiting for Click.uz callback endpoints
+  if (path.includes('/click/pay') || path.includes('/click/test')) {
+    console.log(`✅ [RATE-LIMIT] Skipping rate limit for Click.uz endpoint: ${path}`);
+    return next();
+  }
   
   // Apply specific rate limiters based on path
   if (path.includes('/auth/login') || path.includes('/auth/signup')) {

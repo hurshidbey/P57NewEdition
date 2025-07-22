@@ -642,8 +642,29 @@ export function setupRoutes(app: Express): Server {
   const atmosRouter = setupAtmosRoutes();
   app.use('/api', atmosRouter);
   
-  // Setup Click.uz payment routes
+  // Setup Click.uz payment routes with special handling
   const clickRouter = setupClickRoutes();
+  
+  // Add specific middleware for Click.uz endpoints
+  app.use('/api', (req, res, next) => {
+    // Special handling for Click.uz requests
+    if (req.path.includes('/click/')) {
+      // Log all Click.uz requests at the routing level
+      console.log(`🔵 [CLICK-ROUTER] ${req.method} ${req.path} from ${req.ip}`);
+      
+      // Allow Click.uz servers to access our endpoints
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      res.header('Access-Control-Allow-Headers', '*');
+      
+      // Handle preflight
+      if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+      }
+    }
+    next();
+  });
+  
   app.use('/api', clickRouter);
   
   // RBAC routes

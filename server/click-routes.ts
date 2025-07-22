@@ -2,9 +2,42 @@
 import { Router } from 'express';
 import { ClickService, CLICK_ERRORS } from './click-service';
 
+// Middleware to parse Click.uz requests which might come as form-encoded
+function parseClickRequest(req: any, res: any, next: any) {
+  // Log raw request data
+  console.log(`🌐 [CLICK-PARSER] Original body type:`, typeof req.body);
+  console.log(`🌐 [CLICK-PARSER] Content-Type:`, req.headers['content-type']);
+  
+  // If body is a string (form-encoded data parsed as string), try to parse it
+  if (typeof req.body === 'string') {
+    try {
+      req.body = JSON.parse(req.body);
+      console.log(`🌐 [CLICK-PARSER] Parsed string body to JSON`);
+    } catch (e) {
+      console.log(`🌐 [CLICK-PARSER] Failed to parse string body as JSON`);
+    }
+  }
+  
+  // Convert string numbers to actual numbers for Click.uz fields
+  if (req.body) {
+    const numericFields = ['action', 'amount', 'service_id', 'click_paydoc_id', 'error'];
+    numericFields.forEach(field => {
+      if (req.body[field] && typeof req.body[field] === 'string') {
+        req.body[field] = parseFloat(req.body[field]);
+        console.log(`🌐 [CLICK-PARSER] Converted ${field} from string to number:`, req.body[field]);
+      }
+    });
+  }
+  
+  next();
+}
+
 export function setupClickRoutes(): Router {
   const router = Router();
   const clickService = new ClickService();
+  
+  // Apply parsing middleware to all Click routes
+  router.use(parseClickRequest);
 
   // Test route
   router.get('/click/test', (_req, res) => {
@@ -126,10 +159,48 @@ export function setupClickRoutes(): Router {
     }
   });
 
+  // Test endpoint to verify Click.uz can reach us
+  router.all('/click/test-connectivity', (req, res) => {
+    console.log(`🧐 [CLICK-TEST] Connectivity test from ${req.ip}`);
+    console.log(`🧐 [CLICK-TEST] Method: ${req.method}`);
+    console.log(`🧐 [CLICK-TEST] Headers:`, req.headers);
+    console.log(`🧐 [CLICK-TEST] Body:`, req.body);
+    
+    res.json({
+      success: true,
+      message: 'Click.uz connectivity test successful',
+      timestamp: new Date().toISOString(),
+      your_ip: req.ip,
+      method: req.method
+    });
+  });
+
+  // Also handle GET requests in case Click.uz sends them
+  router.get('/click/pay', (req, res) => {
+    console.log(`⚠️ [CLICK] Received GET request to /click/pay`);
+    console.log(`⚠️ [CLICK] Query params:`, req.query);
+    res.status(405).json({
+      error: -9,
+      error_note: 'Method not allowed. Use POST'
+    });
+  });
+
   // Unified endpoint for both prepare and complete requests
   router.post('/click/pay', async (req, res) => {
     try {
+      // Log everything about this request
+      console.log(`\n⚡ [CLICK-PAY] ========== NEW REQUEST ==========`);
+      console.log(`⚡ [CLICK-PAY] Time: ${new Date().toISOString()}`);
+      console.log(`⚡ [CLICK-PAY] IP: ${req.ip}`);
+      console.log(`⚡ [CLICK-PAY] Method: ${req.method}`);
+      console.log(`⚡ [CLICK-PAY] Content-Type: ${req.headers['content-type']}`);
+      console.log(`⚡ [CLICK-PAY] User-Agent: ${req.headers['user-agent']}`);
+      console.log(`⚡ [CLICK-PAY] Body:`, JSON.stringify(req.body, null, 2));
+      
       const { action } = req.body;
+      
+      // Ensure action is a number
+      const actionNum = typeof action === 'string' ? parseInt(action, 10) : action;
       
       console.log(`📥 [CLICK] Incoming request:`, {
         action,
@@ -144,20 +215,20 @@ export function setupClickRoutes(): Router {
 
       let result;
       
-      if (action === 0) {
+      if (actionNum === 0) {
         // Prepare request
         result = await clickService.handlePrepare(req.body);
-      } else if (action === 1) {
+      } else if (actionNum === 1) {
         // Complete request
         result = await clickService.handleComplete(req.body);
         
         // If payment completed successfully, upgrade user tier
         if (result.error === CLICK_ERRORS.SUCCESS) {
           try {
-            // Extract user info from merchant_trans_id
-            // Format: "P57-{userId}-{timestamp}-{random}"
-            const parts = req.body.merchant_trans_id.split('-');
-            const userId = parts[1]; // This should be the user ID
+            // Since we shortened the format, we can't extract userId from merchant_trans_id
+            // We'll need to look it up from the transaction record or skip user upgrade
+            console.log(`⚠️ [CLICK] Cannot extract userId from shortened merchant_trans_id format`);
+            const userId = null; // Will need to implement transaction lookup
             
             if (userId && userId !== 'guest') {
               // Import necessary modules
@@ -222,8 +293,19 @@ export function setupClickRoutes(): Router {
         };
       }
 
-      console.log(`📤 [CLICK] Response:`, result);
-      res.json(result);
+      console.log(`📤 [CLICK] Response:`, JSON.stringify(result, null, 2));
+      console.log(`⚡ [CLICK-PAY] ========== END REQUEST ==========\n`);
+      
+      // Set proper headers for Click.uz
+      res.set({
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+      
+      // Send response with proper status code
+      res.status(200).json(result);
 
     } catch (error: any) {
       console.error(`❌ [CLICK] Route error:`, error);
@@ -381,6 +463,21 @@ export function setupClickRoutes(): Router {
         message: 'Failed to check payment status'
       });
     }
+  });
+
+  // Catch-all for any Click.uz requests we might be missing
+  router.all('/click/*', (req, res) => {
+    console.log(`🎆 [CLICK-CATCHALL] Unhandled Click.uz request`);
+    console.log(`🎆 [CLICK-CATCHALL] Path: ${req.path}`);
+    console.log(`🎆 [CLICK-CATCHALL] Method: ${req.method}`);
+    console.log(`🎆 [CLICK-CATCHALL] Headers:`, req.headers);
+    console.log(`🎆 [CLICK-CATCHALL] Body:`, req.body);
+    
+    // Return a generic error response
+    res.json({
+      error: -9,
+      error_note: 'Unknown endpoint'
+    });
   });
 
   return router;

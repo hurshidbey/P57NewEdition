@@ -46,7 +46,30 @@ app.use('/api/', applyRateLimits);
 
 // Body parsing with size limits
 app.use(express.json({ limit: requestSizeLimits.json }));
-app.use(express.urlencoded(requestSizeLimits.urlencoded));
+app.use(express.urlencoded({ ...requestSizeLimits.urlencoded, extended: true }));
+
+// Special logging for Click.uz requests
+app.use((req, res, next) => {
+  if (req.path.includes('/click/') || req.path.includes('/api/click/')) {
+    console.log(`\n🔔 [CLICK-REQUEST] ${req.method} ${req.path}`);
+    console.log(`📋 [CLICK-HEADERS]:`, JSON.stringify(req.headers, null, 2));
+    console.log(`📦 [CLICK-BODY]:`, JSON.stringify(req.body, null, 2));
+    console.log(`🌐 [CLICK-IP]: ${req.ip || req.socket.remoteAddress}`);
+    console.log(`🔗 [CLICK-QUERY]:`, JSON.stringify(req.query, null, 2));
+    
+    // Log raw body for debugging
+    let rawBody = '';
+    req.on('data', chunk => {
+      rawBody += chunk.toString();
+    });
+    req.on('end', () => {
+      if (rawBody) {
+        console.log(`📄 [CLICK-RAW-BODY]:`, rawBody);
+      }
+    });
+  }
+  next();
+});
 
 // Input sanitization and SQL injection prevention
 app.use(sanitizeBody);
