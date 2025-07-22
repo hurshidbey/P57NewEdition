@@ -232,18 +232,27 @@ export class ClickService {
   // Generate payment URL for redirect
   generatePaymentUrl(amount: number, orderId: string, userId: string): string {
     // Build Click payment URL with parameters
+    // According to Click.uz docs, we need to use a specific URL format
     const params = new URLSearchParams({
       service_id: this.serviceId,
       merchant_id: this.merchantId,
       amount: amount.toString(),
       transaction_param: orderId,
-      merchant_user_id: userId,
       return_url: this.returnUrl
     });
 
-    const paymentUrl = `${this.baseUrl}?${params.toString()}`;
+    // Use the correct Click.uz payment URL format
+    const paymentUrl = `https://my.click.uz/services/pay?${params.toString()}`;
     
     console.log(`🔗 [CLICK] Generated payment URL:`, paymentUrl);
+    console.log(`🔍 [CLICK] Payment parameters:`, {
+      service_id: this.serviceId,
+      merchant_id: this.merchantId,
+      amount: amount.toString(),
+      transaction_param: orderId,
+      return_url: this.returnUrl
+    });
+    
     return paymentUrl;
   }
 
