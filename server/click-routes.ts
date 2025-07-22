@@ -16,6 +16,26 @@ export function setupClickRoutes(): Router {
     });
   });
 
+  // Click.uz callback test endpoint - helps verify connectivity
+  router.all('/click/callback-test', (req, res) => {
+    console.log(`🧪 [CLICK] Callback test:`, {
+      method: req.method,
+      headers: req.headers,
+      body: req.body,
+      query: req.query,
+      ip: req.ip,
+      timestamp: new Date().toISOString()
+    });
+    
+    res.json({
+      success: true,
+      message: 'Callback endpoint is accessible',
+      method: req.method,
+      receivedAt: new Date().toISOString(),
+      yourIp: req.ip
+    });
+  });
+
   // Create transaction endpoint - generates payment URL
   router.post('/click/create-transaction', async (req, res) => {
     try {
@@ -114,7 +134,12 @@ export function setupClickRoutes(): Router {
       console.log(`📥 [CLICK] Incoming request:`, {
         action,
         body: req.body,
-        headers: req.headers
+        headers: req.headers,
+        ip: req.ip,
+        ips: req.ips,
+        method: req.method,
+        url: req.url,
+        timestamp: new Date().toISOString()
       });
 
       let result;
@@ -320,7 +345,7 @@ export function setupClickRoutes(): Router {
       console.log(`🔙 [CLICK] Return from payment:`, result);
       
       // Redirect to frontend with status
-      const frontendUrl = process.env.APP_DOMAIN || 'https://p57.birfoiz.uz';
+      const frontendUrl = process.env.APP_DOMAIN || 'https://app.p57.uz';
       
       if (result.success) {
         res.redirect(`${frontendUrl}/?payment=success&method=click&transaction=${result.transactionId}`);
@@ -330,7 +355,7 @@ export function setupClickRoutes(): Router {
 
     } catch (error: any) {
       console.error(`❌ [CLICK] Return handler error:`, error);
-      const frontendUrl = process.env.APP_DOMAIN || 'https://p57.birfoiz.uz';
+      const frontendUrl = process.env.APP_DOMAIN || 'https://app.p57.uz';
       res.redirect(`${frontendUrl}/payment?error=Payment%20processing%20failed&method=click`);
     }
   });

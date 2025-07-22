@@ -58,7 +58,7 @@ export class ClickService {
     this.merchantId = process.env.CLICK_MERCHANT_ID!;
     this.secretKey = process.env.CLICK_SECRET_KEY!;
     this.merchantUserId = process.env.CLICK_MERCHANT_USER_ID!;
-    this.returnUrl = process.env.CLICK_RETURN_URL || 'https://p57.birfoiz.uz/payment/click/return';
+    this.returnUrl = process.env.CLICK_RETURN_URL || 'https://app.p57.uz/api/click/return';
     
     const env = process.env.CLICK_ENV || 'production';
     this.baseUrl = env === 'test' 
