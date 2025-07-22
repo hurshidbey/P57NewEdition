@@ -100,9 +100,9 @@ export default function Payment() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: finalPrice,
+          amount: basePrice, // Send original price
           userId: user?.id || 'guest',
-          couponCode: appliedCoupon?.code
+          couponCode: appliedCoupon?.code // Backend will apply discount
         })
       });
 
