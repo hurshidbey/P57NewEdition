@@ -56,8 +56,8 @@ export function setupClickRoutes(): Router {
       }
 
       // Generate unique order ID
-      // Format: "P57-{userId}-{timestamp}-{random}"
-      const orderId = `P57-${userId || 'guest'}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      // Format: "P57-{timestamp}-{random}" (shorter to avoid Click.uz length limits)
+      const orderId = `P57-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
       
       // If coupon is provided, validate and apply discount
       let finalAmount = amount;
@@ -278,8 +278,8 @@ export function setupClickRoutes(): Router {
         }
       }
 
-      // Generate order ID
-      const orderId = `P57-${userId || 'guest'}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      // Generate order ID (keep it short for Click.uz)
+      const orderId = `P57-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
       
       // Generate payment URL
       const paymentUrl = clickService.generatePaymentUrl(
