@@ -239,18 +239,22 @@ export class ClickService {
 
   // Generate payment URL for redirect
   generatePaymentUrl(amount: number, orderId: string, userId: string): string {
-    // IMPORTANT: Click.uz has a minimum amount requirement
-    // If amount is too low (especially after discount), we need to handle it
-    if (amount < 100000) { // Less than 1000 soums * 100 (if they expect tiins)
-      console.warn(`⚠️ [CLICK] Amount ${amount} might be below Click.uz minimum. Original amount in soums: ${amount}`);
-    }
+    // CRITICAL FIX: Click.uz expects amount as a decimal string with 2 decimal places
+    // Example: 14250 should be sent as "14250.00"
+    const formattedAmount = amount.toFixed(2);
+    
+    console.log(`💰 [CLICK] Payment URL parameters:`, {
+      amount_raw: amount,
+      amount_formatted: formattedAmount,
+      service_id: this.serviceId,
+      merchant_id: this.merchantId
+    });
     
     // Build Click payment URL with parameters
-    // According to Click.uz docs, we need to use a specific URL format
     const params = new URLSearchParams({
       service_id: this.serviceId,
       merchant_id: this.merchantId,
-      amount: amount.toString(),
+      amount: formattedAmount,
       transaction_param: orderId,
       return_url: this.returnUrl
     });
@@ -259,14 +263,10 @@ export class ClickService {
     const paymentUrl = `https://my.click.uz/services/pay?${params.toString()}`;
     
     console.log(`🔗 [CLICK] Generated payment URL:`, paymentUrl);
-    console.log(`🔍 [CLICK] Payment parameters:`, {
-      service_id: this.serviceId,
-      merchant_id: this.merchantId,
-      amount: amount.toString(),
-      amount_in_soums: amount,
-      amount_if_divided_by_100: amount / 100,
-      transaction_param: orderId,
-      return_url: this.returnUrl
+    console.log(`🎯 [CLICK] Full URL breakdown:`, {
+      base: 'https://my.click.uz/services/pay',
+      params: params.toString(),
+      decoded_amount: formattedAmount
     });
     
     return paymentUrl;
