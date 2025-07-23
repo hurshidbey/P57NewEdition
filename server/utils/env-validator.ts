@@ -57,9 +57,7 @@ const envSchema = z.object({
   ATMOS_ENV: z.enum(['production', 'test']).default('production'),
   
   // External Services (Optional but validated if present)
-  OPENAI_API_KEY: z.string()
-    .regex(/^sk-[a-zA-Z0-9\-_]{20,}$/, 'Invalid OpenAI API key format')
-    .optional(),
+  OPENAI_API_KEY: z.string().optional(),
   
   TELEGRAM_BOT_TOKEN: z.string()
     .regex(/^\d+:[a-zA-Z0-9_-]+$/, 'Invalid Telegram bot token format')
@@ -262,8 +260,12 @@ export function initializeEnvValidation(options?: {
   } = options || {};
   
   // Load .env file in development
-  if (loadEnvFile) {
-    loadEnvFile(envFilePath);
+  if (loadEnvFile && envFilePath) {
+    try {
+      require('dotenv').config({ path: envFilePath });
+    } catch (error) {
+      console.warn('Failed to load env file:', error);
+    }
   }
   
   // Validate environment

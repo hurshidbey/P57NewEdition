@@ -20,7 +20,13 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Use connection pooler for better reliability
+const connectionString = process.env.DATABASE_URL?.replace(
+  'db.bazptglwzqstppwlvmvb.supabase.co',
+  'aws-0-us-west-1.pooler.supabase.com'
+);
+
+const pool = new Pool({ connectionString });
 const db = drizzle(pool);
 
 async function ensureRBACPermissions() {

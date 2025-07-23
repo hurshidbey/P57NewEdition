@@ -36,7 +36,6 @@ export const securityConfig = {
       'SUPABASE_ANON_KEY',
       'SUPABASE_SERVICE_ROLE_KEY',
       'DATABASE_URL',
-      'OPENAI_API_KEY',
       'ATMOS_STORE_ID',
       'ATMOS_CONSUMER_KEY',
       'ATMOS_CONSUMER_SECRET'
@@ -62,8 +61,8 @@ export const securityConfig = {
       errors.push('SUPABASE_SERVICE_ROLE_KEY appears to be invalid (should be a JWT token)');
     }
     
-    // Validate OpenAI API key format
-    if (process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.startsWith('sk-')) {
+    // Validate OpenAI API key format (only in production)
+    if (process.env.NODE_ENV === 'production' && process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.startsWith('sk-')) {
       errors.push('OPENAI_API_KEY appears to be invalid (should start with sk-)');
     }
     

@@ -73,8 +73,13 @@ export class ClickService {
       returnUrl: this.returnUrl
     });
 
+    // Only require credentials in production
     if (!this.serviceId || !this.merchantId || !this.secretKey || !this.merchantUserId) {
-      throw new Error('Click.uz credentials not configured');
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Click.uz credentials not configured');
+      } else {
+        console.warn('⚠️  [CLICK] Service running in development mode without credentials');
+      }
     }
   }
 

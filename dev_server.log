@@ -1,25 +1,40 @@
 
-> rest-express@1.0.0 dev
+> rest-express@2.0.0 dev
 > NODE_ENV=development tsx server/index.ts
 
-Forced re-optimization of dependencies
-node:events:502
-      throw er; // Unhandled 'error' event
-      ^
+[DB] Attempting Supabase connection (1/3)...
+✅ Security configuration validated successfully
+🔒 Security Status:
+  - Environment: development
+  - Session Secret: Configured
+  - Fallback Admin: Not configured
+  - HTTPS Only Cookies: Disabled
+  - Rate Limiting: Enabled
+  - CORS: Development mode
+[9:02:49 AM] [express] 🔍 Validating environment configuration...
+✅ Environment validation completed in 1ms
+✅ Environment validation completed in 0ms
 
-Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
-    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
-    at listenInCluster (node:net:1965:12)
-    at doListen (node:net:2139:7)
-    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
-Emitted 'error' event on Server instance at:
-    at emitErrorNT (node:net:1944:8)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
-  code: 'EADDRINUSE',
-  errno: -48,
-  syscall: 'listen',
-  address: '0.0.0.0',
-  port: 5000
+⚠️  Environment Warnings:
+  - ADMIN_EMAILS not configured - using fallback admin authentication only
+
+[DB] Using Supabase - skipping seed (data already exists in Supabase)
+🔧 [CLICK] Service initialized: {
+  env: 'production',
+  baseUrl: 'https://my.click.uz/services/pay',
+  serviceId: undefined,
+  merchantId: undefined,
+  returnUrl: 'https://app.p57.uz/api/click/return'
 }
-
-Node.js v20.19.2
+⚠️  [CLICK] Service running in development mode without credentials
+[9:02:50 AM] [express] serving on port 5001
+[RateLimit] Client IP: 127.0.0.1, Path: /categories, Headers: X-Real-IP=undefined, X-Forwarded-For=undefined
+[9:03:10 AM] [express] GET /api/categories 200 in 813ms :: [{"id":1,"name":"Auditoriya","description":…
+Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[9:04:50 AM] [express] SIGTERM received, starting graceful shutdown...
+[9:05:20 AM] [express] Forcing connections to close...
+[9:05:20 AM] [express] HTTP server closed
+[9:05:20 AM] [express] Database connections closed
+[9:05:20 AM] [express] Graceful shutdown complete

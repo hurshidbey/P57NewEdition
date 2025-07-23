@@ -159,7 +159,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 2. **Navigate**: `cd /opt/protokol57`  
 3. **Deploy**: `docker compose -f docker-compose.prod.yml down && docker compose -f docker-compose.prod.yml build --no-cache && docker compose -f docker-compose.prod.yml up -d`
 4. **Verify**: 
-   - Main platform: https://p57.birfoiz.uz
+   - Main platform: https://app.p57.uz
    - Landing page: https://p57.uz
    - Backup URL: https://srv852801.hstgr.cloud
 
@@ -270,7 +270,7 @@ docker compose build --no-cache
 docker compose up -d
 
 # 4. Verify fix - check for new JavaScript bundle name
-curl -s https://p57.birfoiz.uz | grep -o 'index-[^"]*\.js'
+curl -s https://app.p57.uz | grep -o 'index-[^"]*\.js'
 ```
 
 #### ❌ Stale assets being served
@@ -407,7 +407,7 @@ docker cp /tmp/filename container:/path
 curl -s "https://p57.uz/style.css" | grep -A 5 -B 5 "hero-content h1"
 ```
 
-#### ❌ "Main platform (p57.birfoiz.uz) down after landing page work"
+#### ❌ "Main platform (app.p57.uz) down after landing page work"
 **Root Cause**: Accidentally stopped wrong Docker container
 
 **Solution**:
@@ -420,7 +420,7 @@ ssh -i ~/.ssh/protokol57_ed25519 root@69.62.126.73 "cd /opt/protokol57 && docker
 
 **CRITICAL DISTINCTION:**
 - **Landing Page**: `p57.uz` → nginx (host) → `/opt/protokol57/landing_page/` files
-- **Main Platform**: `p57.birfoiz.uz` → protokol57 container → React app (port 5001)
+- **Main Platform**: `app.p57.uz` → protokol57 container → React app (port 5001)
 
 **Never confuse these two!** They are completely separate systems.
 
@@ -472,7 +472,7 @@ The application uses OpenAI's GPT-4 model for AI-powered prompt evaluation. Here
    curl http://localhost:5001/api/test-openai
    
    # Test production
-   curl https://p57.birfoiz.uz/api/test-openai
+   curl https://app.p57.uz/api/test-openai
    ```
 
 ### ⚠️ CRITICAL: Deployment Script (USE THIS!)
