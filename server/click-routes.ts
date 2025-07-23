@@ -418,7 +418,70 @@ export function setupClickRoutes(): Router {
     }
   });
 
-  // Handle return from Click payment page
+  // Handle Click.uz Prepare/Complete requests sent to return URL
+  // IMPORTANT: Click.uz sends payment notifications to the RETURN URL, not a separate callback URL
+  router.post('/click/return', async (req, res) => {
+    try {
+      const { action } = req.body;
+      
+      console.log(`⚡ [CLICK-RETURN] ========== PAYMENT NOTIFICATION ==========`);
+      console.log(`⚡ [CLICK-RETURN] Time: ${new Date().toISOString()}`);
+      console.log(`⚡ [CLICK-RETURN] Action: ${action}`);
+      console.log(`⚡ [CLICK-RETURN] Body:`, JSON.stringify(req.body, null, 2));
+      
+      // Ensure action is a number
+      const actionNum = typeof action === 'string' ? parseInt(action, 10) : action;
+      
+      let result;
+      
+      if (actionNum === 0) {
+        // Prepare request
+        result = await clickService.handlePrepare(req.body);
+      } else if (actionNum === 1) {
+        // Complete request
+        result = await clickService.handleComplete(req.body);
+        
+        // If payment completed successfully, upgrade user tier
+        if (result.error === CLICK_ERRORS.SUCCESS) {
+          try {
+            // Extract user info from transaction
+            // TODO: Implement user upgrade logic
+            console.log(`✅ [CLICK-RETURN] Payment completed successfully`);
+          } catch (error) {
+            console.error(`❌ [CLICK-RETURN] Error upgrading user:`, error);
+          }
+        }
+      } else {
+        // Invalid action
+        result = {
+          error: CLICK_ERRORS.INVALID_REQUEST,
+          error_note: 'Invalid action'
+        };
+      }
+      
+      console.log(`📤 [CLICK-RETURN] Response:`, JSON.stringify(result, null, 2));
+      console.log(`⚡ [CLICK-RETURN] ========== END NOTIFICATION ==========\n`);
+      
+      // Set proper headers for Click.uz
+      res.set({
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+      
+      res.status(200).json(result);
+      
+    } catch (error: any) {
+      console.error(`❌ [CLICK-RETURN] Route error:`, error);
+      res.json({
+        error: CLICK_ERRORS.INVALID_REQUEST,
+        error_note: 'Server error'
+      });
+    }
+  });
+  
+  // Original GET handler for browser redirects
   router.get('/click/return', async (req, res) => {
     try {
       const params = new URLSearchParams(req.query as any);
@@ -465,20 +528,7 @@ export function setupClickRoutes(): Router {
     }
   });
 
-  // Catch-all for any Click.uz requests we might be missing
-  router.all('/click/*', (req, res) => {
-    console.log(`🎆 [CLICK-CATCHALL] Unhandled Click.uz request`);
-    console.log(`🎆 [CLICK-CATCHALL] Path: ${req.path}`);
-    console.log(`🎆 [CLICK-CATCHALL] Method: ${req.method}`);
-    console.log(`🎆 [CLICK-CATCHALL] Headers:`, req.headers);
-    console.log(`🎆 [CLICK-CATCHALL] Body:`, req.body);
-    
-    // Return a generic error response
-    res.json({
-      error: -9,
-      error_note: 'Unknown endpoint'
-    });
-  });
+  // Remove the catch-all - it's intercepting valid requests
 
   return router;
 }
