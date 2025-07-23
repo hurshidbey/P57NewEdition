@@ -299,13 +299,19 @@ export class ClickService {
     transactionId?: string;
     error?: string;
   } {
-    // Click.uz return parameters
+    // Click.uz ACTUAL return parameters based on logs
+    const paymentStatus = params.get('payment_status');
+    const paymentId = params.get('payment_id');
+    
+    // Old parameter names (fallback)
     const clickTransId = params.get('click_trans_id');
     const merchantTransId = params.get('merchant_trans_id');
     const error = params.get('error');
     const errorNote = params.get('error_note');
     
     console.log(`🔍 [CLICK] Return params:`, {
+      paymentStatus,
+      paymentId,
       clickTransId,
       merchantTransId,
       error,
@@ -313,14 +319,16 @@ export class ClickService {
       allParams: Array.from(params.entries())
     });
 
-    // If there's an error parameter, payment failed
-    // If there's a click_trans_id without error, payment succeeded
-    const success = !error && !!clickTransId;
+    // Payment status codes:
+    // 0 = Processing
+    // 1 = Error/Failed
+    // 2 = Success
+    const success = paymentStatus === '2' || (!error && !!clickTransId);
 
     return {
       success,
-      transactionId: clickTransId || merchantTransId || undefined,
-      error: errorNote || error || undefined
+      transactionId: paymentId || clickTransId || merchantTransId || undefined,
+      error: paymentStatus === '1' ? 'Payment failed' : (errorNote || error || undefined)
     };
   }
 }
