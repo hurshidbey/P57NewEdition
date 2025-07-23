@@ -299,14 +299,28 @@ export class ClickService {
     transactionId?: string;
     error?: string;
   } {
-    const status = params.get('status');
-    const transactionId = params.get('transaction_id');
+    // Click.uz return parameters
+    const clickTransId = params.get('click_trans_id');
+    const merchantTransId = params.get('merchant_trans_id');
     const error = params.get('error');
+    const errorNote = params.get('error_note');
+    
+    console.log(`🔍 [CLICK] Return params:`, {
+      clickTransId,
+      merchantTransId,
+      error,
+      errorNote,
+      allParams: Array.from(params.entries())
+    });
+
+    // If there's an error parameter, payment failed
+    // If there's a click_trans_id without error, payment succeeded
+    const success = !error && !!clickTransId;
 
     return {
-      success: status === 'success',
-      transactionId: transactionId || undefined,
-      error: error || undefined
+      success,
+      transactionId: clickTransId || merchantTransId || undefined,
+      error: errorNote || error || undefined
     };
   }
 }
