@@ -87,6 +87,43 @@ export function setupClickRoutes(): Router {
           message: 'Invalid amount'
         });
       }
+      
+      // Validate userId is a proper UUID (not guest or email-based)
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!userId || userId === 'guest' || !uuidRegex.test(userId)) {
+        console.error(`❌ [CLICK] Invalid user ID format: ${userId}`);
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required'
+        });
+      }
+      
+      // Verify user exists in Supabase
+      const { createClient } = await import('@supabase/supabase-js');
+      const adminSupabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      
+      const { data: { user }, error: userError } = await adminSupabase.auth.admin.getUserById(userId);
+      if (!user || userError) {
+        console.error(`❌ [CLICK] User not found: ${userId}`);
+        return res.status(401).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+      
+      console.log(`✅ [CLICK] Valid user: ${user.email} (${user.id})`);
+      
+      // Check if user already has paid tier
+      if (user.user_metadata?.tier === 'paid') {
+        console.log(`⚠️ [CLICK] User ${user.email} already has paid tier`);
+        return res.status(400).json({
+          success: false,
+          message: 'User already has premium access'
+        });
+      }
 
       // Generate order ID with user info embedded (keep it short for Click.uz)
       // Format: "P57-{userId_first8}-{timestamp_last6}"
@@ -353,6 +390,16 @@ export function setupClickRoutes(): Router {
         return res.status(400).json({
           success: false,
           message: 'Invalid amount'
+        });
+      }
+      
+      // Validate userId is a proper UUID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!userId || userId === 'guest' || !uuidRegex.test(userId)) {
+        console.error(`❌ [CLICK] Invalid user ID format in create-payment: ${userId}`);
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required'
         });
       }
 

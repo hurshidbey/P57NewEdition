@@ -94,6 +94,22 @@ export default function Payment() {
   };
 
   const handleClickPayment = async () => {
+    // Validate user is properly authenticated
+    if (!user || !user.id || user.id === 'guest' || user.id.includes('_')) {
+      alert('Iltimos avval tizimga kiring yoki ro\'yxatdan o\'ting');
+      setLocation('/auth/login');
+      return;
+    }
+    
+    // Validate user ID is a proper UUID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(user.id)) {
+      console.error('Invalid user ID format:', user.id);
+      alert('Autentifikatsiya xatosi. Iltimos qayta kiring');
+      setLocation('/auth/login');
+      return;
+    }
+    
     try {
       // Create transaction and get payment URL
       const response = await fetch('/api/click/create-transaction', {
@@ -101,7 +117,7 @@ export default function Payment() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: basePrice, // Send original price
-          userId: user?.id || 'guest',
+          userId: user.id, // Always use authenticated user ID
           couponCode: appliedCoupon?.code // Backend will apply discount
         })
       });
