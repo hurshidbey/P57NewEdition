@@ -12,7 +12,8 @@ import {
   Tag,
   ChevronRight,
   Zap,
-  Smartphone
+  Smartphone,
+  Loader2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import AppHeader from '@/components/app-header';
