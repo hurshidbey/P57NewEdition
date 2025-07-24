@@ -72,11 +72,12 @@ export function setupClickRoutes(): Router {
   // Create transaction endpoint - generates payment URL
   router.post('/click/create-transaction', async (req, res) => {
     try {
-      const { amount, userId, couponCode } = req.body;
+      const { amount, userId, userEmail, couponCode } = req.body;
       
       console.log(`📝 [CLICK] Creating transaction:`, {
         amount,
         userId,
+        userEmail,
         couponCode
       });
 
@@ -88,14 +89,20 @@ export function setupClickRoutes(): Router {
         });
       }
       
-      // Validate userId is a proper UUID (not guest or email-based)
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      if (!userId || userId === 'guest' || !uuidRegex.test(userId)) {
-        console.error(`❌ [CLICK] Invalid user ID format: ${userId}`);
+      // Validate user authentication
+      if (!userId || userId === 'guest') {
+        console.error(`❌ [CLICK] No user ID provided`);
         return res.status(401).json({
           success: false,
           message: 'Authentication required'
         });
+      }
+      
+      // Check if userId is email (for OAuth users who might have email as ID)
+      let actualUserId = userId;
+      if (userId.includes('@')) {
+        console.log(`📧 [CLICK] User ID appears to be email: ${userId}, will lookup actual ID`);
+        // We'll find the actual user ID below when we verify the user exists
       }
       
       // Verify user exists in Supabase
@@ -105,9 +112,36 @@ export function setupClickRoutes(): Router {
         process.env.SUPABASE_SERVICE_ROLE_KEY!
       );
       
-      const { data: { user }, error: userError } = await adminSupabase.auth.admin.getUserById(userId);
+      let user;
+      let userError;
+      
+      // If userId looks like email, find user by email
+      if (userId.includes('@')) {
+        const { data: users, error } = await adminSupabase.auth.admin.listUsers({
+          page: 1,
+          perPage: 1000
+        });
+        
+        if (!error && users) {
+          user = users.users.find(u => u.email === userId);
+          if (user) {
+            actualUserId = user.id;
+            console.log(`✅ [CLICK] Found user by email: ${userId} -> ${actualUserId}`);
+          } else {
+            userError = new Error('User not found by email');
+          }
+        } else {
+          userError = error;
+        }
+      } else {
+        // Try to get user by ID
+        const result = await adminSupabase.auth.admin.getUserById(userId);
+        user = result.data.user;
+        userError = result.error;
+      }
+      
       if (!user || userError) {
-        console.error(`❌ [CLICK] User not found: ${userId}`);
+        console.error(`❌ [CLICK] User not found: ${userId}`, userError?.message);
         return res.status(401).json({
           success: false,
           message: 'User not found'
@@ -127,7 +161,7 @@ export function setupClickRoutes(): Router {
 
       // Generate order ID with user info embedded (keep it short for Click.uz)
       // Format: "P57-{userId_first8}-{timestamp_last6}"
-      const userIdShort = (userId || 'guest').substring(0, 8);
+      const userIdShort = (actualUserId || 'guest').substring(0, 8);
       const timestampShort = Date.now().toString().slice(-6);
       const orderId = `P57-${userIdShort}-${timestampShort}`;
       
@@ -166,7 +200,7 @@ export function setupClickRoutes(): Router {
       }
 
       // Generate payment URL
-      const paymentUrl = clickService.generatePaymentUrl(finalAmount, orderId, userId || 'guest');
+      const paymentUrl = clickService.generatePaymentUrl(finalAmount, orderId, actualUserId || 'guest');
       
       console.log(`✅ [CLICK] Transaction created:`, {
         orderId,
@@ -718,9 +752,9 @@ export function setupClickRoutes(): Router {
       const frontendUrl = process.env.APP_DOMAIN || 'https://app.p57.uz';
       
       if (result.success) {
-        res.redirect(`${frontendUrl}/payment/success?method=click&transaction=${result.transactionId}`);
+        res.redirect(`${frontendUrl}/?payment=success&method=click&transaction=${result.transactionId}`);
       } else {
-        res.redirect(`${frontendUrl}/payment/failed?method=click&error=${encodeURIComponent(result.error || 'Payment failed')}`);
+        res.redirect(`${frontendUrl}/payment?error=${encodeURIComponent(result.error || 'Payment failed')}&method=click`);
       }
 
     } catch (error: any) {

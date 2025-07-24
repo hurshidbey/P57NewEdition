@@ -119,6 +119,13 @@ export default function Payment() {
     }
     
     try {
+      console.log('🚀 [Click Payment] Creating transaction with:', {
+        userId: user.id,
+        userEmail: user.email,
+        amount: basePrice,
+        couponCode: appliedCoupon?.code
+      });
+      
       // Create transaction and get payment URL
       const response = await fetch('/api/click/create-transaction', {
         method: 'POST',
@@ -126,6 +133,7 @@ export default function Payment() {
         body: JSON.stringify({
           amount: basePrice, // Send original price
           userId: user.id, // Always use authenticated user ID
+          userEmail: user.email, // Send email as backup
           couponCode: appliedCoupon?.code // Backend will apply discount
         })
       });
