@@ -718,9 +718,9 @@ export function setupClickRoutes(): Router {
       const frontendUrl = process.env.APP_DOMAIN || 'https://app.p57.uz';
       
       if (result.success) {
-        res.redirect(`${frontendUrl}/?payment=success&method=click&transaction=${result.transactionId}`);
+        res.redirect(`${frontendUrl}/payment/success?method=click&transaction=${result.transactionId}`);
       } else {
-        res.redirect(`${frontendUrl}/payment?error=${encodeURIComponent(result.error || 'Payment failed')}&method=click`);
+        res.redirect(`${frontendUrl}/payment/failed?method=click&error=${encodeURIComponent(result.error || 'Payment failed')}`);
       }
 
     } catch (error: any) {
