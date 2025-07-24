@@ -13,6 +13,7 @@ import { useAuth } from '@/contexts/auth-context';
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 import confetti from 'canvas-confetti';
+import { supabase } from '@/lib/supabase';
 
 export default function PaymentSuccess() {
   const [, setLocation] = useLocation();
@@ -64,6 +65,38 @@ export default function PaymentSuccess() {
     };
     
     refreshSession();
+    
+    // Check for pending payments if user is still free tier
+    const paymentCheckInterval = setInterval(async () => {
+      if (user?.tier === 'free') {
+        console.log('Checking for pending payment completion...');
+        
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.access_token) {
+            const response = await fetch('/api/payment/check-pending', {
+              headers: {
+                'Authorization': `Bearer ${session.access_token}`
+              }
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              if (result.upgraded) {
+                console.log('Payment confirmed! User upgraded to premium.');
+                await refreshUser();
+                clearInterval(paymentCheckInterval);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error checking payment status:', error);
+        }
+      } else if (user?.tier === 'paid') {
+        // User is already premium, stop checking
+        clearInterval(paymentCheckInterval);
+      }
+    }, 2000); // Check every 2 seconds
 
     // Countdown timer for auto-redirect
     const countdownInterval = setInterval(() => {
@@ -80,8 +113,9 @@ export default function PaymentSuccess() {
     return () => {
       clearInterval(interval);
       clearInterval(countdownInterval);
+      clearInterval(paymentCheckInterval);
     };
-  }, [refreshUser, setLocation]);
+  }, [refreshUser, setLocation, user?.tier]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { authService, type AuthUser } from '@/lib/auth'
+import { forceSessionRefresh } from '@/lib/force-session-refresh'
 
 interface AuthContextType {
   user: AuthUser | null
@@ -21,10 +22,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Function to refresh user data from Supabase
   const refreshUser = async () => {
     try {
+      // Force refresh the session to get latest metadata
+      await forceSessionRefresh();
+      
+      // Now get the updated user
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
+      
+      console.log('🔄 [AuthContext] User refreshed:', currentUser?.email, 'Tier:', currentUser?.tier);
     } catch (error) {
-
+      console.error('[AuthContext] Failed to refresh user:', error);
     }
   }
 

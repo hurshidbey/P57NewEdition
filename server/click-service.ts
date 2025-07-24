@@ -253,12 +253,15 @@ export class ClickService {
     });
     
     // Build Click payment URL with parameters
+    // Include order ID in return URL for processing page
+    const returnUrlWithOrder = `${this.returnUrl}?orderId=${encodeURIComponent(orderId)}`;
+    
     const params = new URLSearchParams({
       service_id: this.serviceId,
       merchant_id: this.merchantId,
       amount: formattedAmount,
       transaction_param: orderId,
-      return_url: this.returnUrl
+      return_url: returnUrlWithOrder
     });
 
     // Use the correct Click.uz payment URL format

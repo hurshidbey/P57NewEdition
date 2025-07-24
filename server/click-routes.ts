@@ -1,6 +1,7 @@
 // Click.uz Payment Routes
 import { Router } from 'express';
 import { ClickService, CLICK_ERRORS } from './click-service';
+import { checkPendingPayment } from './payment-recovery';
 
 // Middleware to parse Click.uz requests which might come as form-encoded
 function parseClickRequest(req: any, res: any, next: any) {
@@ -270,6 +271,10 @@ export function setupClickRoutes(): Router {
       console.log(`⚡ [CLICK-PAY] User-Agent: ${req.headers['user-agent']}`);
       console.log(`⚡ [CLICK-PAY] Body:`, JSON.stringify(req.body, null, 2));
       
+      // CRITICAL: Log merchant_trans_id to track user
+      console.log(`🔑 [CLICK-PAY] merchant_trans_id: ${req.body.merchant_trans_id}`);
+      console.log(`🔑 [CLICK-PAY] click_trans_id: ${req.body.click_trans_id}`);
+      
       const { action } = req.body;
       
       // Ensure action is a number
@@ -352,6 +357,7 @@ export function setupClickRoutes(): Router {
                   
                   if (!updateError) {
                     console.log(`✅ [CLICK] Successfully upgraded user tier for ${user.email}`);
+                    console.log(`🎯 [CLICK] User ${user.email} (${user.id}) upgraded to PAID tier at ${new Date().toISOString()}`);
                     
                     // Store payment record
                     await storage.storePayment({
@@ -373,6 +379,8 @@ export function setupClickRoutes(): Router {
                     });
                     
                     console.log(`💾 [CLICK] Payment record stored`);
+                  } else {
+                    console.error(`❌ [CLICK] Failed to upgrade user ${user.email}: ${updateError.message}`);
                   }
                 }
               }
@@ -747,12 +755,19 @@ export function setupClickRoutes(): Router {
       const result = clickService.parseReturnParams(params);
       
       console.log(`🔙 [CLICK] Return from payment:`, result);
+      console.log(`🔑 [CLICK] Return params:`, req.query);
       
       // Redirect to frontend with status
       const frontendUrl = process.env.APP_DOMAIN || 'https://app.p57.uz';
       
       if (result.success) {
-        res.redirect(`${frontendUrl}/?payment=success&method=click&transaction=${result.transactionId}`);
+        // Try to extract order ID from query params
+        const orderId = req.query.orderId || req.query.order_id || req.query.merchant_trans_id || '';
+        
+        console.log(`📦 [CLICK] Extracted orderId: ${orderId}`);
+        
+        // Redirect to processing page that will wait for payment completion
+        res.redirect(`${frontendUrl}/payment/processing?method=click&orderId=${orderId}`);
       } else {
         res.redirect(`${frontendUrl}/payment?error=${encodeURIComponent(result.error || 'Payment failed')}&method=click`);
       }
@@ -784,6 +799,124 @@ export function setupClickRoutes(): Router {
         success: false,
         message: 'Failed to check payment status'
       });
+    }
+  });
+
+  // Wait for payment completion endpoint
+  router.get('/click/wait-payment/:orderId', async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      const maxAttempts = 15; // 15 seconds max wait
+      let attempts = 0;
+      
+      console.log(`⏳ [CLICK-WAIT] Waiting for payment completion: ${orderId}`);
+      
+      const checkPayment = async (): Promise<boolean> => {
+        // Extract user ID from order ID (P57-{userId_first8}-{timestamp})
+        const parts = orderId.split('-');
+        if (parts.length < 3) return false;
+        
+        const userIdPrefix = parts[1];
+        
+        // Get admin Supabase client
+        const { createClient } = await import('@supabase/supabase-js');
+        const adminSupabase = createClient(
+          process.env.SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+        
+        // Find user by prefix
+        const { data: allUsers } = await adminSupabase.auth.admin.listUsers({
+          page: 1,
+          perPage: 1000
+        });
+        
+        if (!allUsers) return false;
+        
+        const matchingUser = allUsers.users.find(u => u.id.startsWith(userIdPrefix));
+        if (!matchingUser) return false;
+        
+        // Check if user has been upgraded
+        return matchingUser.user_metadata?.tier === 'paid';
+      };
+      
+      // Poll for payment completion
+      while (attempts < maxAttempts) {
+        const isComplete = await checkPayment();
+        
+        if (isComplete) {
+          console.log(`✅ [CLICK-WAIT] Payment completed for order ${orderId}`);
+          return res.json({ success: true, message: 'Payment completed' });
+        }
+        
+        attempts++;
+        // Wait 1 second before next check
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      console.log(`⚠️ [CLICK-WAIT] Timeout waiting for payment ${orderId}`);
+      res.json({ success: false, message: 'Payment still processing' });
+      
+    } catch (error) {
+      console.error(`❌ [CLICK-WAIT] Error:`, error);
+      res.status(500).json({ success: false, error: 'Internal error' });
+    }
+  });
+  
+  // Payment recovery endpoint - check for pending payments
+  router.get('/payment/check-pending', async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader?.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      
+      const token = authHeader.substring(7);
+      
+      // Verify token and get user
+      const { createClient } = await import('@supabase/supabase-js');
+      const adminSupabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      
+      const { data: { user }, error } = await adminSupabase.auth.getUser(token);
+      
+      if (error || !user) {
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+      
+      console.log(`🔍 [Payment Check] User ${user.email} checking for pending payments`);
+      
+      // Check if user already has paid tier
+      if (user.user_metadata?.tier === 'paid') {
+        console.log(`✅ [Payment Check] User ${user.email} already has premium access`);
+        return res.json({ 
+          upgraded: true, 
+          message: 'User already has premium access' 
+        });
+      }
+      
+      // Check for pending payments
+      const wasUpgraded = await checkPendingPayment(user.id);
+      
+      if (wasUpgraded) {
+        console.log(`🎉 [Payment Check] Payment found and user ${user.email} upgraded`);
+        return res.json({ 
+          upgraded: true, 
+          message: 'Payment found and user upgraded successfully' 
+        });
+      }
+      
+      console.log(`⏳ [Payment Check] No completed payment found yet for ${user.email}`);
+      return res.json({ 
+        upgraded: false, 
+        message: 'No completed payment found yet' 
+      });
+      
+    } catch (error) {
+      console.error('❌ [Payment Check] Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   });
 

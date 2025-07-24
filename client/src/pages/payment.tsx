@@ -171,6 +171,11 @@ export default function Payment() {
       if (data.success && data.paymentUrl) {
         console.log('✅ [Click Payment] Redirecting to:', data.paymentUrl);
         
+        // Store order ID for processing page
+        if (data.orderId) {
+          localStorage.setItem('pending_payment_order', data.orderId);
+        }
+        
         // Try multiple redirect methods for better compatibility
         try {
           // Method 1: Direct assignment
