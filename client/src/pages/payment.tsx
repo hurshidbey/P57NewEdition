@@ -137,14 +137,58 @@ export default function Payment() {
           userEmail: user.email, // Send email as backup
           couponCode: appliedCoupon?.code // Backend will apply discount
         })
+      }).catch(err => {
+        console.error('❌ [Click Payment] Network error:', err);
+        throw new Error('Network request failed');
       });
 
-      const data = await response.json();
+      if (!response) {
+        throw new Error('No response from server');
+      }
+
+      const data = await response.json().catch(err => {
+        console.error('❌ [Click Payment] JSON parse error:', err);
+        throw new Error('Invalid response format');
+      });
+      console.log('🎯 [Click Payment] Response:', data);
+      
+      if (!response.ok) {
+        console.error('❌ [Click Payment] API error:', response.status, data);
+        alert(`Xatolik: ${data.message || 'To\'lov tizimiga ulanishda xatolik'}`);
+        setIsProcessing(false);
+        setSelectedMethod(null);
+        return;
+      }
       
       if (data.success && data.paymentUrl) {
-        // Redirect to Click.uz payment page
-        window.location.href = data.paymentUrl;
+        console.log('✅ [Click Payment] Redirecting to:', data.paymentUrl);
+        
+        // Try multiple redirect methods for better compatibility
+        try {
+          // Method 1: Direct assignment
+          window.location.href = data.paymentUrl;
+          
+          // Method 2: If above doesn't work, try replace
+          setTimeout(() => {
+            window.location.replace(data.paymentUrl);
+          }, 500);
+          
+          // Method 3: If still here after 2 seconds, open in new tab
+          setTimeout(() => {
+            console.warn('⚠️ [Click Payment] Redirect failed, opening in new tab');
+            window.open(data.paymentUrl, '_blank');
+            setIsProcessing(false);
+            setSelectedMethod(null);
+            alert('To\'lov sahifasi yangi oynada ochildi. Agar ochilmasa, qayta urinib ko\'ring.');
+          }, 2000);
+        } catch (err) {
+          console.error('❌ [Click Payment] Redirect error:', err);
+          setIsProcessing(false);
+          setSelectedMethod(null);
+          alert('To\'lov sahifasiga o\'tishda xatolik. Iltimos qayta urinib ko\'ring.');
+        }
       } else {
+        console.error('❌ [Click Payment] No payment URL in response:', data);
         alert('To\'lov tizimiga ulanishda xatolik. Iltimos qayta urinib ko\'ring.');
         setIsProcessing(false);
         setSelectedMethod(null);
