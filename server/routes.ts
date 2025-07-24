@@ -6,7 +6,7 @@ import { insertProtocolSchema, insertPromptSchema, users } from "@shared/schema"
 import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
-import { setupClickRoutesV2 } from "./click-routes-v2";
+import { setupClickRoutes } from "./click-routes";
 import { setupAuthRoutes } from "./auth-routes";
 import { setupDiagnosticRoutes } from "./diagnostic-routes";
 import { eq } from "drizzle-orm";
@@ -664,8 +664,8 @@ export function setupRoutes(app: Express): Server {
   const authRouter = setupAuthRoutes();
   app.use(authRouter);
   
-  // Setup Click.uz payment routes V2 with proper transaction management
-  const clickRouter = setupClickRoutesV2();
+  // Setup Click.uz payment routes
+  const clickRouter = setupClickRoutes();
   
   // Add specific middleware for Click.uz endpoints
   app.use('/api', (req, res, next) => {
