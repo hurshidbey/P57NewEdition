@@ -63,7 +63,7 @@ export function setupClickRoutesV2(): Router {
       }
       
       // Validate user authentication
-      if (!userId || !userEmail) {
+      if (!userId) {
         return res.status(401).json({
           success: false,
           message: 'Authentication required'
