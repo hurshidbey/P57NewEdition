@@ -159,9 +159,11 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 2. **Navigate**: `cd /opt/protokol57`  
 3. **Deploy**: `docker compose -f docker-compose.prod.yml down && docker compose -f docker-compose.prod.yml build --no-cache && docker compose -f docker-compose.prod.yml up -d`
 4. **Verify**: 
-   - Main platform: https://app.p57.uz
+   - **Main platform: https://app.p57.uz** (NOT p57.birfoiz.uz!)
    - Landing page: https://p57.uz
    - Backup URL: https://srv852801.hstgr.cloud
+   
+**CRITICAL**: The main platform is app.p57.uz - Click.uz integration and all payment callbacks use this domain!
 
 ### Local Development:
 1. **Start**: `docker-compose up`
