@@ -101,8 +101,8 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false, // Disable in both dev and prod to prevent excessive requests
-      staleTime: isDevelopment ? 0 : 5 * 60 * 1000, // 0ms in dev, 5min in prod
-      gcTime: isDevelopment ? 0 : 5 * 60 * 1000, // 0ms in dev, 5min in prod
+      staleTime: isDevelopment ? 30 * 1000 : 5 * 60 * 1000, // 30s in dev, 5min in prod
+      gcTime: isDevelopment ? 60 * 1000 : 5 * 60 * 1000, // 60s in dev, 5min in prod
       retry: false,
     },
     mutations: {
