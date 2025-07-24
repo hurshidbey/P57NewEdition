@@ -54,7 +54,7 @@ export class PaymentTransactionService {
   async createTransaction(params: CreateTransactionParams): Promise<PaymentTransaction> {
     const merchantTransId = this.generateMerchantTransId(params.paymentMethod);
     
-    const transactionData = {
+    const transactionData: any = {
       user_id: params.userId,
       user_email: params.userEmail,
       merchant_trans_id: merchantTransId,
@@ -64,10 +64,14 @@ export class PaymentTransactionService {
       final_amount: params.finalAmount,
       currency: 'UZS',
       coupon_id: params.couponId,
-      coupon_code: params.couponCode,
       status: 'pending',
       metadata: params.metadata || {}
     };
+
+    // Only add coupon_code if the column exists
+    if (params.couponCode) {
+      transactionData.metadata.couponCode = params.couponCode;
+    }
 
     const { data, error } = await this.supabase
       .from('payment_transactions')
