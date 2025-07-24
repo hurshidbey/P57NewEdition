@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,14 @@ export default function Payment() {
     discountPercent: number;
   } | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
+
+  // Check if user already has premium tier
+  useEffect(() => {
+    if (user && user.tier === 'paid') {
+      console.log('User already has premium tier, redirecting to home...');
+      setLocation('/');
+    }
+  }, [user, setLocation]);
 
   const basePrice = 1425000; // 1,425,000 UZS
   const finalPrice = appliedCoupon ? appliedCoupon.finalAmount : basePrice;
