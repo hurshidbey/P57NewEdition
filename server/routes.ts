@@ -6,7 +6,9 @@ import { insertProtocolSchema, insertPromptSchema, users } from "@shared/schema"
 import { evaluatePrompt } from "./openai-service";
 import { z } from "zod";
 import { setupAtmosRoutes } from "./atmos-routes";
-import { setupClickRoutes } from "./click-routes";
+import { setupClickRoutesV2 } from "./click-routes-v2";
+import { setupAuthRoutes } from "./auth-routes";
+import { setupDiagnosticRoutes } from "./diagnostic-routes";
 import { eq } from "drizzle-orm";
 import { securityConfig } from "./utils/security-config";
 import os from "os";
@@ -658,8 +660,12 @@ export function setupRoutes(app: Express): Server {
   const atmosRouter = setupAtmosRoutes();
   app.use('/api', atmosRouter);
   
-  // Setup Click.uz payment routes with special handling
-  const clickRouter = setupClickRoutes();
+  // Setup Auth routes for metadata initialization
+  const authRouter = setupAuthRoutes();
+  app.use(authRouter);
+  
+  // Setup Click.uz payment routes V2 with proper transaction management
+  const clickRouter = setupClickRoutesV2();
   
   // Add specific middleware for Click.uz endpoints
   app.use('/api', (req, res, next) => {
@@ -682,6 +688,10 @@ export function setupRoutes(app: Express): Server {
   });
   
   app.use('/api', clickRouter);
+  
+  // Setup Diagnostic routes for system health monitoring
+  const diagnosticRouter = setupDiagnosticRoutes();
+  app.use(diagnosticRouter);
   
   // RBAC routes
   app.use('/api/admin', auditLogRoutes);

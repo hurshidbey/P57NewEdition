@@ -25,6 +25,28 @@ export default function AuthCallback() {
           setStatus('success');
           setMessage('Muvaffaqiyatli kirildi!');
           
+          // Initialize user metadata if needed (especially for OAuth users)
+          try {
+            const token = data.session.access_token;
+            const response = await fetch('/api/auth/initialize-metadata', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              console.log('[AuthCallback] Metadata initialized:', result);
+            } else {
+              console.error('[AuthCallback] Failed to initialize metadata:', response.status);
+            }
+          } catch (error) {
+            console.error('[AuthCallback] Error initializing metadata:', error);
+            // Don't fail the login process if metadata initialization fails
+          }
+          
           // Check if we need to redirect to the original domain
           const storedOrigin = localStorage.getItem('auth_origin_domain');
           const currentOrigin = window.location.origin;

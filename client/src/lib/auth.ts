@@ -147,6 +147,40 @@ export const authService = {
     
     console.log(`🔍 [DEBUG] User ID assignment: ${user.id} -> ${userId} (${user.email})`);
     
+    // Check if user metadata needs initialization (for OAuth users)
+    if (!user.user_metadata?.tier || !user.user_metadata?.name) {
+      console.log(`⚠️ [Auth] User ${user.email} has incomplete metadata, initializing...`);
+      
+      try {
+        // Get the current session to access the token
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.access_token) {
+          const response = await fetch('/api/auth/initialize-metadata', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            console.log(`✅ [Auth] Metadata initialized for ${user.email}:`, result);
+            
+            // Refresh the user data to get updated metadata
+            const { data: { user: refreshedUser } } = await supabase.auth.getUser();
+            if (refreshedUser) {
+              user.user_metadata = refreshedUser.user_metadata;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('[Auth] Failed to initialize metadata:', error);
+        // Continue with default values if initialization fails
+      }
+    }
+    
     // Check if user is admin based on their email
     // Note: This is temporary - ideally this should come from user metadata or a database role
     const adminEmails = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
@@ -170,6 +204,37 @@ export const authService = {
         const userId = session.user.id;
         
         console.log(`🔍 [DEBUG] Auth state change - User ID assignment: ${session.user.id} -> ${userId} (${session.user.email})`);
+        
+        // Check if user metadata needs initialization (especially after OAuth login)
+        if (event === 'SIGNED_IN' && (!session.user.user_metadata?.tier || !session.user.user_metadata?.name)) {
+          console.log(`⚠️ [Auth] New sign-in detected with incomplete metadata, initializing...`);
+          
+          try {
+            const response = await fetch('/api/auth/initialize-metadata', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${session.access_token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              console.log(`✅ [Auth] Metadata initialized on sign-in:`, result);
+              
+              // Update session user metadata with the initialized values
+              if (result.user) {
+                session.user.user_metadata = {
+                  ...session.user.user_metadata,
+                  tier: result.user.tier,
+                  name: result.user.name
+                };
+              }
+            }
+          } catch (error) {
+            console.error('[Auth] Failed to initialize metadata on sign-in:', error);
+          }
+        }
         
         // Check if user is admin based on their email
         const adminEmails = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
