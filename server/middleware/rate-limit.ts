@@ -35,7 +35,7 @@ const getClientId = (req: Request): string => {
 // General API rate limit
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit to 100 requests per 15 minutes for general API calls
+  max: 500, // Increased to 500 requests per 15 minutes to handle progress polling
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -93,6 +93,16 @@ export const otpResendLimiter = rateLimit({
   keyGenerator: getClientId,
 });
 
+// Progress endpoint - needs frequent updates for real-time tracking
+export const progressLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 60, // Allow 60 requests per minute (1 per second)
+  message: 'Too many progress requests, please slow down.',
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: getClientId,
+});
+
 // Special rate limiter for Click.uz - more permissive for payment provider
 export const clickLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
@@ -121,6 +131,9 @@ export const applyRateLimits = (req: Request, res: Response, next: Function) => 
     return otpResendLimiter(req, res, next);
   } else if (path.includes('/atmos/') || path.includes('/payment')) {
     return paymentLimiter(req, res, next);
+  } else if (path.includes('/progress')) {
+    // Progress endpoint needs frequent updates
+    return progressLimiter(req, res, next);
   } else if (path.includes('/evaluate')) {
     return evaluationLimiter(req, res, next);
   } else if (path.includes('/admin/')) {

@@ -22,11 +22,11 @@ describe('Rate Limiting Middleware', () => {
   });
 
   describe('Rate Limit Configurations', () => {
-    it('should have correct API rate limit (100 requests per 15 minutes)', () => {
+    it('should have correct API rate limit (500 requests per 15 minutes)', () => {
       // Access the rate limiter configuration
       const limiterOptions = (apiLimiter as any).options;
       
-      expect(limiterOptions.max).toBe(100);
+      expect(limiterOptions.max).toBe(500);
       expect(limiterOptions.windowMs).toBe(15 * 60 * 1000); // 15 minutes
     });
 
