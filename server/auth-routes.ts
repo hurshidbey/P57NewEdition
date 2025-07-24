@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { monitoring, EventType, Severity } from './services/monitoring-service';
+import { logger } from './utils/logger';
 
 export function setupAuthRoutes(): Router {
   const router = Router();
@@ -36,7 +37,7 @@ export function setupAuthRoutes(): Router {
         });
       }
 
-      console.log(`[AUTH] Initializing metadata for user: ${user.email} (${user.id})`);
+      logger.info('Initializing user metadata', { userId: user.id });
 
       // Log OAuth login
       const hasCompleteMetadata = !!user.user_metadata?.tier && !!user.user_metadata?.name;
@@ -90,7 +91,7 @@ export function setupAuthRoutes(): Router {
           });
         }
 
-        console.log(`[AUTH] Successfully initialized metadata for ${user.email}`);
+        logger.info('Successfully initialized user metadata', { userId: user.id });
         
         // Log success
         monitoring.logMetadataInitialization(
@@ -113,7 +114,7 @@ export function setupAuthRoutes(): Router {
           }
         });
       } else {
-        console.log(`[AUTH] User ${user.email} already has complete metadata`);
+        logger.info('User already has complete metadata', { userId: user.id });
         
         return res.json({
           success: true,

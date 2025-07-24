@@ -8,6 +8,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { securityHeaders, corsOptions, additionalSecurityHeaders, requestSizeLimits } from "./middleware/security";
 import { applyRateLimits } from "./middleware/rate-limit";
 import { sanitizeBody, preventSqlInjection } from "./middleware/validation";
+import { logger } from "./utils/logger";
 import { initializeSecurity } from "./utils/security-config";
 import { createTimeoutMiddleware, timeoutConfigs } from "./middleware/timeout";
 import { initializeEnvValidation, getValidatedEnv } from "./utils/env-validator";
@@ -48,24 +49,15 @@ app.use('/api/', applyRateLimits);
 app.use(express.json({ limit: requestSizeLimits.json }));
 app.use(express.urlencoded({ ...requestSizeLimits.urlencoded, extended: true }));
 
-// Special logging for Click.uz requests
+// Secure logging for payment requests
 app.use((req, res, next) => {
   if (req.path.includes('/click/') || req.path.includes('/api/click/')) {
-    console.log(`\n🔔 [CLICK-REQUEST] ${req.method} ${req.path}`);
-    console.log(`📋 [CLICK-HEADERS]:`, JSON.stringify(req.headers, null, 2));
-    console.log(`📦 [CLICK-BODY]:`, JSON.stringify(req.body, null, 2));
-    console.log(`🌐 [CLICK-IP]: ${req.ip || req.socket.remoteAddress}`);
-    console.log(`🔗 [CLICK-QUERY]:`, JSON.stringify(req.query, null, 2));
-    
-    // Log raw body for debugging
-    let rawBody = '';
-    req.on('data', chunk => {
-      rawBody += chunk.toString();
-    });
-    req.on('end', () => {
-      if (rawBody) {
-        console.log(`📄 [CLICK-RAW-BODY]:`, rawBody);
-      }
+    logger.payment('Payment provider request', {
+      method: req.method,
+      path: req.path,
+      // Only log non-sensitive info
+      hasBody: !!req.body,
+      contentType: req.headers['content-type']
     });
   }
   next();

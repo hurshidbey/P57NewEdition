@@ -4,6 +4,7 @@
 import crypto from 'crypto';
 import https from 'https';
 import { URL } from 'url';
+import { logger } from './utils/logger';
 
 interface ClickPrepareRequest {
   click_trans_id: string;
@@ -65,12 +66,9 @@ export class ClickService {
       ? 'https://my.click.uz/services/pay/test'
       : 'https://my.click.uz/services/pay';
 
-    console.log(`🔧 [CLICK] Service initialized:`, {
+    logger.info('Click.uz service initialized', {
       env,
-      baseUrl: this.baseUrl,
-      serviceId: this.serviceId,
-      merchantId: this.merchantId,
-      returnUrl: this.returnUrl
+      baseUrl: this.baseUrl
     });
 
     // Only require credentials in production
@@ -106,11 +104,10 @@ export class ClickService {
     
     const expectedHash = this.generateHash(hashString);
     
-    console.log(`🔐 [CLICK] Signature verification:`, {
+    const isValid = expectedHash === sign_string;
+    logger.debug('Click.uz signature verification', {
       action,
-      expectedHash,
-      receivedHash: sign_string,
-      valid: expectedHash === sign_string
+      valid: isValid
     });
     
     return expectedHash === sign_string;

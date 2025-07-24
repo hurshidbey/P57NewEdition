@@ -1,6 +1,7 @@
 // ATMOS Payment Routes
 import { Router } from 'express';
 import { AtmosService } from './atmos-service';
+import { logger } from './utils/logger';
 
 export function setupAtmosRoutes(): Router {
   const router = Router();
@@ -56,11 +57,11 @@ export function setupAtmosRoutes(): Router {
           const now = new Date();
           
           if (coupon.validUntil && new Date(coupon.validUntil) < now) {
-            console.log(`⚠️ [PAYMENT] Coupon ${couponCode} is expired`);
+            logger.warn('Coupon is expired');
           } else if (coupon.validFrom && new Date(coupon.validFrom) > now) {
-            console.log(`⚠️ [PAYMENT] Coupon ${couponCode} is not yet valid`);
+            logger.warn('Coupon is not yet valid');
           } else if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
-            console.log(`⚠️ [PAYMENT] Coupon ${couponCode} usage limit reached`);
+            logger.warn('Coupon usage limit reached');
           } else {
             // Calculate discount
             originalAmount = amount;
@@ -74,10 +75,10 @@ export function setupAtmosRoutes(): Router {
             }
             
             appliedCoupon = coupon;
-            console.log(`✅ [PAYMENT] Coupon ${couponCode} applied: ${originalAmount} - ${discountAmount} = ${finalAmount}`);
+            logger.info('Coupon applied', { originalAmount, discountAmount, finalAmount });
           }
         } else {
-          console.log(`⚠️ [PAYMENT] Coupon ${couponCode} not found or inactive`);
+          logger.warn('Coupon not found or inactive');
         }
       }
 
@@ -217,7 +218,7 @@ export function setupAtmosRoutes(): Router {
 
       const result = await atmosService.applyTransaction(transactionId, otpCode);
 
-      console.log(`📥 [ATMOS] Confirm result code: ${result.result?.code}, description: ${result.result?.description}`);
+      logger.payment('ATMOS payment confirmation', { code: result.result?.code });
 
       if (result.result.code !== 'OK') {
         console.error(`❌ [ATMOS] Confirmation failed:`, result);
@@ -229,12 +230,12 @@ export function setupAtmosRoutes(): Router {
 
         // CRITICAL FIX: Upgrade user tier to 'paid' after successful payment
         const authHeader = req.headers.authorization;
-        console.log(`🔍 [PAYMENT] Auth header present: ${!!authHeader}`);
+        logger.debug('Processing payment callback', { hasAuth: !!authHeader });
         
         if (authHeader && authHeader.startsWith('Bearer ')) {
           try {
             const token = authHeader.split(' ')[1];
-            console.log(`🔍 [PAYMENT] Token length: ${token?.length}, Token preview: ${token?.substring(0, 20)}...`);
+            logger.debug('Token validation', { tokenLength: token?.length });
             
             const { createClient } = await import('@supabase/supabase-js');
             
@@ -250,12 +251,12 @@ export function setupAtmosRoutes(): Router {
             const payload = JSON.parse(Buffer.from(base64, 'base64').toString());
             const userId = payload.sub;
             
-            console.log(`🔍 [PAYMENT] Decoded user ID from token: ${userId}`);
+            logger.debug('User ID decoded from token');
             
             // Get user directly with admin client
             const { data: { user }, error: userError } = await adminSupabase.auth.admin.getUserById(userId);
             if (user && !userError) {
-              console.log(`🎯 [PAYMENT] Upgrading user tier: ${user.email} (${user.id})`);
+              logger.payment('Upgrading user tier', { userId: user.id });
               
               // Update user metadata with the same admin client
               const { error: updateError } = await adminSupabase.auth.admin.updateUserById(user.id, {

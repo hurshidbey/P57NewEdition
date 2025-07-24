@@ -18,15 +18,14 @@ const getClientId = (req: Request): string => {
   // Extract first IP if x-forwarded-for contains multiple IPs
   const clientIp = realIp.split(',')[0].trim();
   
-  // Log for debugging - temporarily enabled in production to debug 429 errors
-  console.log(`[RateLimit] Client IP: ${clientIp}, Path: ${req.path}, Headers: X-Real-IP=${req.headers['x-real-ip']}, X-Forwarded-For=${req.headers['x-forwarded-for']}`);
+  // Removed sensitive logging - IP addresses should not be logged in production
   
   // Log when rate limit is being approached (80% threshold)
   const limiter = req.rateLimit;
   if (limiter && limiter.remaining !== undefined && limiter.limit !== undefined) {
     const percentUsed = ((limiter.limit - limiter.remaining) / limiter.limit) * 100;
     if (percentUsed >= 80) {
-      console.warn(`[RateLimit WARNING] Client ${clientIp} at ${percentUsed.toFixed(0)}% of rate limit for ${req.path} (${limiter.remaining}/${limiter.limit} remaining)`);
+      console.warn(`[RateLimit WARNING] Client approaching rate limit: ${percentUsed.toFixed(0)}% for ${req.path} (${limiter.remaining}/${limiter.limit} remaining)`);
     }
   }
   
@@ -36,7 +35,7 @@ const getClientId = (req: Request): string => {
 // General API rate limit
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // Temporarily increased to 1000 to resolve 429 errors
+  max: 100, // Limit to 100 requests per 15 minutes for general API calls
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -67,7 +66,7 @@ export const paymentLimiter = rateLimit({
 // Rate limit for AI evaluation endpoints
 export const evaluationLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 50, // Temporarily increased to 50 to resolve 429 errors
+  max: 10, // Limit to 10 evaluation requests per 5 minutes (costly API calls)
   message: 'Too many evaluation requests, please slow down.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -94,10 +93,10 @@ export const otpResendLimiter = rateLimit({
   keyGenerator: getClientId,
 });
 
-// Special rate limiter for Click.uz - very permissive
+// Special rate limiter for Click.uz - more permissive for payment provider
 export const clickLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 10000, // Very high limit for Click.uz servers
+  max: 100, // Allow 100 requests per minute from payment provider
   message: 'Click.uz rate limit exceeded',
   standardHeaders: true,
   legacyHeaders: false,
@@ -110,7 +109,7 @@ export const applyRateLimits = (req: Request, res: Response, next: Function) => 
   
   // Skip rate limiting for Click.uz callback endpoints
   if (path.includes('/click/pay') || path.includes('/click/test')) {
-    console.log(`✅ [RATE-LIMIT] Skipping rate limit for Click.uz endpoint: ${path}`);
+    // Skip rate limiting for payment provider callbacks
     return next();
   }
   

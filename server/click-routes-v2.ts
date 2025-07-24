@@ -4,11 +4,14 @@ import { ClickService, CLICK_ERRORS } from './click-service';
 import { PaymentTransactionService } from './services/payment-transaction-service';
 import { createClient } from '@supabase/supabase-js';
 import { monitoring } from './services/monitoring-service';
+import { logger } from './utils/logger';
 
 // Middleware to parse Click.uz requests
 function parseClickRequest(req: any, res: any, next: any) {
-  console.log(`🌐 [CLICK-PARSER] Original body type:`, typeof req.body);
-  console.log(`🌐 [CLICK-PARSER] Content-Type:`, req.headers['content-type']);
+  logger.debug('Click.uz request parser', {
+    bodyType: typeof req.body,
+    contentType: req.headers['content-type']
+  });
   
   // Convert string numbers to actual numbers for Click.uz fields
   if (req.body) {
@@ -47,11 +50,10 @@ export function setupClickRoutesV2(): Router {
     try {
       const { amount, userId, userEmail, couponCode } = req.body;
       
-      console.log(`📝 [CLICK-V2] Creating transaction:`, {
+      logger.payment('Creating transaction', {
         amount,
         userId,
-        userEmail,
-        couponCode
+        hasCoupon: !!couponCode
       });
 
       // Validate input
@@ -79,18 +81,18 @@ export function setupClickRoutesV2(): Router {
       // Verify user exists and get their metadata
       const { data: { user }, error: userError } = await adminSupabase.auth.admin.getUserById(userId);
       if (!user || userError) {
-        console.error(`❌ [CLICK-V2] User not found: ${userId}`);
+        logger.error('User not found', { userId });
         return res.status(401).json({
           success: false,
           message: 'User not found'
         });
       }
       
-      console.log(`✅ [CLICK-V2] Valid user: ${user.email} (${user.id})`);
+      logger.info('Valid user found', { userId: user.id });
       
       // Check if user already has paid tier
       if (user.user_metadata?.tier === 'paid') {
-        console.log(`⚠️ [CLICK-V2] User ${user.email} already has paid tier`);
+        logger.info('User already has paid tier', { userId: user.id });
         return res.status(400).json({
           success: false,
           message: 'User already has premium access'
@@ -111,11 +113,11 @@ export function setupClickRoutesV2(): Router {
           
           // Validate coupon
           if (coupon.validUntil && new Date(coupon.validUntil) < now) {
-            console.log(`⚠️ [CLICK-V2] Coupon ${couponCode} is expired`);
+            logger.warn('Coupon is expired', { couponId: coupon.id });
           } else if (coupon.validFrom && new Date(coupon.validFrom) > now) {
-            console.log(`⚠️ [CLICK-V2] Coupon ${couponCode} is not yet valid`);
+            logger.warn('Coupon is not yet valid', { couponId: coupon.id });
           } else if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
-            console.log(`⚠️ [CLICK-V2] Coupon ${couponCode} usage limit reached`);
+            logger.warn('Coupon usage limit reached', { couponId: coupon.id });
           } else {
             // Apply discount
             if (coupon.discountType === 'percentage') {
@@ -126,7 +128,7 @@ export function setupClickRoutesV2(): Router {
             
             finalAmount = amount - discountAmount;
             appliedCoupon = coupon;
-            console.log(`✅ [CLICK-V2] Coupon ${couponCode} applied: ${amount} -> ${finalAmount}`);
+            logger.info('Coupon applied', { couponId: coupon.id, originalAmount: amount, finalAmount });
           }
         }
       }
@@ -147,8 +149,8 @@ export function setupClickRoutesV2(): Router {
         }
       });
 
-      console.log(`💾 [CLICK-V2] Transaction created:`, {
-        id: transaction.id,
+      logger.payment('Transaction created', {
+        transactionId: transaction.id,
         merchantTransId: transaction.merchantTransId
       });
 
@@ -174,7 +176,7 @@ export function setupClickRoutesV2(): Router {
         transaction.id
       );
       
-      console.log(`✅ [CLICK-V2] Payment URL generated:`, paymentUrl);
+      logger.info('Payment URL generated successfully');
 
       res.json({
         success: true,
@@ -192,7 +194,7 @@ export function setupClickRoutesV2(): Router {
       });
 
     } catch (error: any) {
-      console.error(`❌ [CLICK-V2] Create transaction error:`, error);
+      logger.error('Failed to create transaction', error);
       res.status(500).json({
         success: false,
         message: error.message || 'Failed to create transaction'
@@ -203,9 +205,11 @@ export function setupClickRoutesV2(): Router {
   // Unified endpoint for both prepare and complete requests
   router.post('/click/pay', async (req: Request, res: Response) => {
     try {
-      console.log(`\n⚡ [CLICK-V2] ========== NEW REQUEST ==========`);
-      console.log(`⚡ [CLICK-V2] Time: ${new Date().toISOString()}`);
-      console.log(`⚡ [CLICK-V2] Body:`, JSON.stringify(req.body, null, 2));
+      logger.payment('Click.uz callback received', {
+        action: req.body.action,
+        transactionId: req.body.click_trans_id,
+        merchantTransId: req.body.merchant_trans_id
+      });
       
       const { action } = req.body;
       const actionNum = typeof action === 'string' ? parseInt(action, 10) : action;
@@ -226,10 +230,10 @@ export function setupClickRoutesV2(): Router {
                 'processing',
                 req.body.click_trans_id
               );
-              console.log(`✅ [CLICK-V2] Transaction ${transaction.id} marked as processing`);
+              logger.payment('Transaction marked as processing', { transactionId: transaction.id });
             }
           } catch (error) {
-            console.error(`❌ [CLICK-V2] Failed to update transaction status:`, error);
+            logger.error('Failed to update transaction status', error);
           }
         }
         
@@ -244,7 +248,7 @@ export function setupClickRoutesV2(): Router {
             const transaction = await transactionService.getTransactionByMerchantId(req.body.merchant_trans_id);
             
             if (transaction) {
-              console.log(`🎯 [CLICK-V2] Completing transaction ${transaction.id} for user ${transaction.userEmail}`);
+              logger.payment('Completing transaction', { transactionId: transaction.id });
               
               // Complete the transaction (this also updates user tier)
               const completionResult = await transactionService.completeTransaction(
@@ -253,7 +257,7 @@ export function setupClickRoutesV2(): Router {
               );
               
               if (completionResult.success) {
-                console.log(`✅ [CLICK-V2] Successfully completed payment for ${transaction.userEmail}`);
+                logger.payment('Payment completed successfully', { transactionId: transaction.id });
                 
                 // Log successful payment and tier upgrade
                 monitoring.logPaymentTransaction(
@@ -298,9 +302,9 @@ export function setupClickRoutesV2(): Router {
                   discountAmount: transaction.discountAmount
                 });
                 
-                console.log(`💾 [CLICK-V2] Legacy payment record stored`);
+                logger.debug('Legacy payment record stored');
               } else {
-                console.error(`❌ [CLICK-V2] Failed to complete transaction: ${completionResult.error}`);
+                logger.error('Failed to complete transaction', { error: completionResult.error });
                 
                 // Log payment failure
                 monitoring.logPaymentTransaction(
@@ -317,10 +321,10 @@ export function setupClickRoutesV2(): Router {
                 );
               }
             } else {
-              console.error(`❌ [CLICK-V2] Transaction not found for merchant ID: ${req.body.merchant_trans_id}`);
+              logger.error('Transaction not found for merchant ID');
             }
           } catch (error) {
-            console.error(`❌ [CLICK-V2] Error completing payment:`, error);
+            logger.error('Error completing payment', error);
             // Don't fail the Click.uz response - payment was successful on their side
           }
         }
@@ -332,14 +336,16 @@ export function setupClickRoutesV2(): Router {
         };
       }
 
-      console.log(`📤 [CLICK-V2] Response:`, JSON.stringify(result, null, 2));
-      console.log(`⚡ [CLICK-V2] ========== END REQUEST ==========\n`);
+      logger.payment('Click.uz callback response sent', {
+        error: result.error,
+        errorNote: result.error_note
+      });
       
       // Send response
       res.status(200).json(result);
 
     } catch (error: any) {
-      console.error(`❌ [CLICK-V2] Route error:`, error);
+      logger.error('Click.uz route error', error);
       res.json({
         error: CLICK_ERRORS.INVALID_REQUEST,
         error_note: 'Server error'
@@ -350,9 +356,9 @@ export function setupClickRoutesV2(): Router {
   // Return payment callback endpoint
   router.all('/click/return', async (req: Request, res: Response) => {
     try {
-      console.log(`🔙 [CLICK-V2-RETURN] User returned from payment:`, {
-        query: req.query,
-        body: req.body
+      logger.info('User returned from payment', {
+        status: req.query.status,
+        hasTransactionId: !!req.query.merchant_trans_id
       });
 
       // Extract transaction info from query params
@@ -365,7 +371,7 @@ export function setupClickRoutesV2(): Router {
         if (transaction && transaction.status !== 'completed') {
           // Mark as completed if not already
           await transactionService.completeTransaction(transaction.id);
-          console.log(`✅ [CLICK-V2-RETURN] Transaction completed via return URL`);
+          logger.info('Transaction completed via return URL');
         }
       }
 
@@ -373,7 +379,7 @@ export function setupClickRoutesV2(): Router {
       res.redirect('/payment/success?method=click');
       
     } catch (error) {
-      console.error(`❌ [CLICK-V2-RETURN] Error:`, error);
+      logger.error('Click.uz return route error', error);
       res.redirect('/payment/failed?method=click');
     }
   });
