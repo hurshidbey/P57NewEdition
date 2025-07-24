@@ -271,7 +271,7 @@ export class PaymentTransactionService {
       finalAmount: parseFloat(data.final_amount),
       currency: data.currency,
       couponId: data.coupon_id,
-      couponCode: data.coupon_code,
+      couponCode: data.metadata?.couponCode || data.coupon_code,
       status: data.status,
       metadata: data.metadata || {},
       errorMessage: data.error_message,
