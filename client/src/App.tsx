@@ -27,6 +27,8 @@ const Admin = lazy(() => import("@/pages/admin"));
 const KnowledgeBase = lazy(() => import("@/pages/knowledge-base"));
 const AtmosPayment = lazy(() => import("@/pages/atmos-payment"));
 const Payment = lazy(() => import("@/pages/payment"));
+const PaymentSuccess = lazy(() => import("@/pages/payment-success"));
+const PaymentFailed = lazy(() => import("@/pages/payment-failed"));
 const PremiumPrompts = lazy(() => import("@/pages/premium-prompts"));
 
 // Loading component for Suspense
@@ -175,6 +177,18 @@ function AppContent() {
       <Route path="/payment">
         <Suspense fallback={<PageLoader />}>
           <Payment />
+        </Suspense>
+      </Route>
+      
+      <Route path="/payment/success">
+        <Suspense fallback={<PageLoader />}>
+          <PaymentSuccess />
+        </Suspense>
+      </Route>
+      
+      <Route path="/payment/failed">
+        <Suspense fallback={<PageLoader />}>
+          <PaymentFailed />
         </Suspense>
       </Route>
       

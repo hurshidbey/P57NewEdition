@@ -22,6 +22,7 @@ export default function Payment() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const [selectedMethod, setSelectedMethod] = useState<'atmos' | 'click' | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [showCoupon, setShowCoupon] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponValidating, setCouponValidating] = useState(false);
@@ -74,6 +75,7 @@ export default function Payment() {
 
   const handlePaymentSelect = (method: 'atmos' | 'click') => {
     setSelectedMethod(method);
+    setIsProcessing(true);
     
     // Small delay for visual feedback
     setTimeout(() => {
@@ -96,8 +98,14 @@ export default function Payment() {
   const handleClickPayment = async () => {
     // Validate user is properly authenticated
     if (!user || !user.id || user.id === 'guest' || user.id.includes('_')) {
-      alert('Iltimos avval tizimga kiring yoki ro\'yxatdan o\'ting');
-      setLocation('/auth/login');
+      // Store payment intent and redirect to auth with return URL
+      localStorage.setItem('payment_intent', JSON.stringify({
+        method: 'click',
+        amount: finalPrice,
+        couponCode: appliedCoupon?.code,
+        timestamp: Date.now()
+      }));
+      setLocation('/auth?redirect=/payment&reason=payment');
       return;
     }
     
@@ -129,11 +137,13 @@ export default function Payment() {
         window.location.href = data.paymentUrl;
       } else {
         alert('To\'lov tizimiga ulanishda xatolik. Iltimos qayta urinib ko\'ring.');
+        setIsProcessing(false);
         setSelectedMethod(null);
       }
     } catch (error) {
       console.error('Click payment error:', error);
       alert('To\'lov tizimiga ulanishda xatolik. Iltimos qayta urinib ko\'ring.');
+      setIsProcessing(false);
       setSelectedMethod(null);
     }
   };
@@ -141,6 +151,37 @@ export default function Payment() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <AppHeader />
+      
+      {/* Payment Processing Overlay */}
+      {isProcessing && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <Card className="max-w-md w-full mx-4 border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <CardContent className="p-8 text-center">
+              <div className="mb-6">
+                <Loader2 className="h-16 w-16 animate-spin text-accent mx-auto" />
+              </div>
+              <h2 className="text-2xl font-black mb-2">TO'LOV TIZIMIGA ULANMOQDA</h2>
+              <p className="text-muted-foreground font-bold mb-6">
+                {selectedMethod === 'click' ? 'Click.uz' : 'ATMOS'} tizimiga yo'naltirilmoqda...
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-center justify-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span className="font-bold">To'lov tanlandi</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-5 w-5 animate-spin text-accent" />
+                    <span className="font-bold">Ulanmoqda...</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
       
       <main className="flex-1 container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
         {/* Price Display - HUGE and CLEAR */}

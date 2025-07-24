@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LoginForm } from "@/components/auth/login-form"
 import { RegisterForm } from "@/components/auth/register-form"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/contexts/auth-context"
 import { useLocation } from "wouter"
+import { AlertCircle } from "lucide-react"
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -12,13 +14,35 @@ export default function AuthPage() {
   const { isAuthenticated } = useAuth()
   const [, setLocation] = useLocation()
   
-  // If user is already authenticated, redirect to home
+  // Get redirect params
+  const params = new URLSearchParams(window.location.search)
+  const redirectTo = params.get('redirect') || '/'
+  const reason = params.get('reason')
+  
+  // If user is already authenticated, redirect to intended destination
   useEffect(() => {
     if (isAuthenticated) {
-      console.log('[AuthPage] User is authenticated, redirecting to home')
-      setLocation('/')
+      console.log('[AuthPage] User is authenticated, redirecting to:', redirectTo)
+      
+      // If there was a payment intent, restore it
+      if (reason === 'payment') {
+        const paymentIntent = localStorage.getItem('payment_intent')
+        if (paymentIntent) {
+          try {
+            const intent = JSON.parse(paymentIntent)
+            // Check if intent is not too old (1 hour)
+            if (Date.now() - intent.timestamp < 3600000) {
+              console.log('[AuthPage] Restoring payment intent:', intent)
+            }
+          } catch (e) {
+            console.error('[AuthPage] Failed to parse payment intent:', e)
+          }
+        }
+      }
+      
+      setLocation(redirectTo)
     }
-  }, [isAuthenticated, setLocation])
+  }, [isAuthenticated, setLocation, redirectTo, reason])
 
   if (showEmailConfirm) {
     return (
@@ -93,6 +117,23 @@ export default function AuthPage() {
             AI bilan professional ishlashni o'rganish platformasi
           </p>
         </motion.div>
+
+        {/* Payment Intent Message */}
+        {reason === 'payment' && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-6"
+          >
+            <Alert className="border-2 border-accent bg-accent/10">
+              <AlertCircle className="h-5 w-5 text-accent" />
+              <AlertDescription className="font-bold text-foreground">
+                Premium to'lov qilish uchun avval tizimga kiring yoki ro'yxatdan o'ting
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
 
         {/* Auth Card */}
         <motion.div
