@@ -8,53 +8,101 @@ import AppFooter from '@/components/app-footer';
 
 export default function PaymentProcessing() {
   const [, setLocation] = useLocation();
-  const { refreshUser } = useAuth();
+  const { refreshUser, user } = useAuth();
   const [status, setStatus] = useState('Toʻlov tekshirilmoqda...');
   
   useEffect(() => {
     const processPayment = async () => {
-      // Get order ID from URL params
+      // Get parameters from URL
       const params = new URLSearchParams(window.location.search);
       const orderId = params.get('orderId');
       const method = params.get('method');
+      const isMobile = params.get('mobile') === 'true';
       
-      if (!orderId) {
-        console.error('No order ID provided');
-        setLocation('/payment?error=invalid_order');
-        return;
-      }
-      
-      console.log(`Processing payment for order: ${orderId}`);
+      console.log(`Processing payment - Order: ${orderId}, Mobile: ${isMobile}`);
       setStatus('Toʻlov tasdiqlanmoqda...');
       
       try {
-        // Wait for payment to be processed
-        const response = await fetch(`/api/click/wait-payment/${orderId}`);
-        const result = await response.json();
-        
-        if (result.success) {
-          setStatus('Toʻlov tasdiqlandi! Premium faollashtirilmoqda...');
+        // For mobile or when order ID is "check", use a different approach
+        if (isMobile || orderId === 'check' || !orderId) {
+          console.log('Mobile payment flow - checking user upgrade status directly');
           
-          // Force refresh user session
+          // Get current auth token
+          const { supabase } = await import('@/lib/supabase');
+          const { data: { session } } = await supabase.auth.getSession();
+          
+          if (!session?.access_token) {
+            console.error('No auth session');
+            setLocation('/payment?error=no_session');
+            return;
+          }
+          
+          // Poll for upgrade status (max 20 seconds for mobile)
+          let attempts = 0;
+          const maxAttempts = 20;
+          
+          while (attempts < maxAttempts) {
+            const response = await fetch('/api/click/check-upgrade', {
+              headers: {
+                'Authorization': `Bearer ${session.access_token}`
+              }
+            });
+            
+            const result = await response.json();
+            
+            if (result.success && result.upgraded) {
+              console.log('✅ User upgraded successfully!');
+              setStatus('Toʻlov tasdiqlandi! Premium faollashtirilmoqda...');
+              
+              // Force refresh user session
+              await refreshUser();
+              
+              // Small delay for UX
+              setTimeout(() => {
+                setLocation('/payment/success?method=' + method);
+              }, 500);
+              return;
+            }
+            
+            attempts++;
+            setStatus(`Toʻlov tekshirilmoqda... (${attempts}/${maxAttempts})`);
+            
+            // Wait 1 second before next check
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+          
+          // After timeout, refresh and redirect to success anyway
+          // User might have paid but callback is delayed
+          console.log('Timeout reached, refreshing user and redirecting...');
           await refreshUser();
-          
-          // Small delay for UX
           setTimeout(() => {
-            setLocation('/payment/success?method=' + method);
-          }, 500);
+            setLocation('/payment/success?method=' + method + '&checkAgain=true');
+          }, 1000);
+          
         } else {
-          setStatus('Toʻlov hali qayta ishlanmoqda...');
+          // Desktop flow with order ID
+          const response = await fetch(`/api/click/wait-payment/${orderId}`);
+          const result = await response.json();
           
-          // Try refreshing anyway in case payment went through
-          await refreshUser();
-          
-          setTimeout(() => {
-            setLocation('/payment/success?method=' + method);
-          }, 2000);
+          if (result.success) {
+            setStatus('Toʻlov tasdiqlandi! Premium faollashtirilmoqda...');
+            await refreshUser();
+            setTimeout(() => {
+              setLocation('/payment/success?method=' + method);
+            }, 500);
+          } else {
+            setStatus('Toʻlov hali qayta ishlanmoqda...');
+            await refreshUser();
+            setTimeout(() => {
+              setLocation('/payment/success?method=' + method);
+            }, 2000);
+          }
         }
       } catch (error) {
         console.error('Error processing payment:', error);
-        setLocation('/payment?error=processing_failed');
+        // On error, still try to refresh and check
+        await refreshUser();
+        setLocation('/payment/success?method=' + method + '&checkAgain=true');
       }
     };
     

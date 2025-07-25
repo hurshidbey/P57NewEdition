@@ -760,17 +760,15 @@ export function setupClickRoutes(): Router {
       // Redirect to frontend with status
       const frontendUrl = process.env.APP_DOMAIN || 'https://app.p57.uz';
       
-      if (result.success) {
-        // Try to extract order ID from query params
-        const orderId = req.query.orderId || req.query.order_id || req.query.merchant_trans_id || '';
-        
-        console.log(`📦 [CLICK] Extracted orderId: ${orderId}`);
-        
-        // Redirect to processing page that will wait for payment completion
-        res.redirect(`${frontendUrl}/payment/processing?method=click&orderId=${orderId}`);
-      } else {
-        res.redirect(`${frontendUrl}/payment?error=${encodeURIComponent(result.error || 'Payment failed')}&method=click`);
-      }
+      // For mobile, Click app might not return proper success params
+      // So we always redirect to processing page to check payment status
+      const orderId = req.query.orderId || req.query.order_id || req.query.merchant_trans_id || 'check';
+      
+      console.log(`📦 [CLICK] Extracted orderId: ${orderId}`);
+      
+      // Always redirect to processing page, let it determine success/failure
+      // This handles mobile cases where Click app doesn't return proper params
+      res.redirect(`${frontendUrl}/payment/processing?method=click&orderId=${orderId}&mobile=true`);
 
     } catch (error: any) {
       console.error(`❌ [CLICK] Return handler error:`, error);
@@ -917,6 +915,58 @@ export function setupClickRoutes(): Router {
     } catch (error) {
       console.error('❌ [Payment Check] Error:', error);
       res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // Simple endpoint to check if current user has been upgraded
+  router.get('/click/check-upgrade', async (req, res) => {
+    try {
+      // Get auth token from header
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'No authorization token' 
+        });
+      }
+      
+      const token = authHeader.split(' ')[1];
+      
+      // Get admin Supabase client
+      const { createClient } = await import('@supabase/supabase-js');
+      const adminSupabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      
+      // Get current user
+      const { data: { user }, error } = await adminSupabase.auth.getUser(token);
+      
+      if (error || !user) {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Invalid token' 
+        });
+      }
+      
+      console.log(`🔍 [CLICK] Checking upgrade status for user: ${user.email}`);
+      
+      // Check if user has been upgraded
+      const isPremium = user.user_metadata?.tier === 'paid';
+      
+      return res.json({ 
+        success: true, 
+        upgraded: isPremium,
+        email: user.email,
+        tier: user.user_metadata?.tier || 'free'
+      });
+      
+    } catch (error: any) {
+      console.error(`❌ [CLICK] Check upgrade error:`, error);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Failed to check upgrade status' 
+      });
     }
   });
 

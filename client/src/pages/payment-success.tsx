@@ -27,6 +27,7 @@ export default function PaymentSuccess() {
     const isFromPayment = urlParams.get('method') === 'click' || 
                          urlParams.get('method') === 'atmos' ||
                          urlParams.get('forceRefresh') === 'true';
+    const shouldCheckAgain = urlParams.get('checkAgain') === 'true';
     
     if (!isFromPayment) {
       console.log('Not a payment redirect, skipping confetti');
@@ -80,6 +81,7 @@ export default function PaymentSuccess() {
     refreshSession();
     
     // Check for pending payments if user is still free tier
+    // This is especially important for mobile where callbacks might be delayed
     const paymentCheckInterval = setInterval(async () => {
       if (user?.tier === 'free') {
         console.log('Checking for pending payment completion...');
@@ -87,6 +89,27 @@ export default function PaymentSuccess() {
         try {
           const { data: { session } } = await supabase.auth.getSession();
           if (session?.access_token) {
+            // For mobile/checkAgain cases, use the new endpoint
+            if (shouldCheckAgain) {
+              const response = await fetch('/api/click/check-upgrade', {
+                headers: {
+                  'Authorization': `Bearer ${session.access_token}`
+                }
+              });
+              
+              if (response.ok) {
+                const result = await response.json();
+                if (result.success && result.upgraded) {
+                  console.log('Payment confirmed via check-upgrade! User upgraded to premium.');
+                  await refreshUser();
+                  clearInterval(paymentCheckInterval);
+                  // Trigger storage event for cross-tab communication
+                  localStorage.setItem('tier_upgrade_trigger', Date.now().toString());
+                }
+              }
+            }
+            
+            // Also check the regular endpoint
             const response = await fetch('/api/payment/check-pending', {
               headers: {
                 'Authorization': `Bearer ${session.access_token}`
@@ -226,8 +249,15 @@ export default function PaymentSuccess() {
                   Akkaunt: <span className="font-bold">{user.email}</span>
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Status: <span className="font-bold text-green-600">PREMIUM</span>
+                  Status: <span className={`font-bold ${user.tier === 'paid' ? 'text-green-600' : 'text-orange-600'}`}>
+                    {user.tier === 'paid' ? 'PREMIUM' : 'TEKSHIRILMOQDA...'}
+                  </span>
                 </p>
+                {user.tier === 'free' && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    To'lovingiz hali tasdiqlanmoqda. Iltimos kuting...
+                  </p>
+                )}
               </div>
             )}
           </CardContent>
