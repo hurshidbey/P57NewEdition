@@ -12,7 +12,6 @@ import {
 import { useAuth } from '@/contexts/auth-context';
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
-import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 
 export default function PaymentSuccess() {
@@ -20,9 +19,10 @@ export default function PaymentSuccess() {
   const { refreshUser, user } = useAuth();
   const [isRefreshing, setIsRefreshing] = useState(true);
   const [countdown, setCountdown] = useState(5);
+  const [showCelebration, setShowCelebration] = useState(false);
   
   useEffect(() => {
-    // Only trigger confetti if this is a legitimate redirect from payment
+    // Only trigger celebration if this is a legitimate redirect from payment
     const urlParams = new URLSearchParams(window.location.search);
     const isFromPayment = urlParams.get('method') === 'click' || 
                          urlParams.get('method') === 'atmos' ||
@@ -30,40 +30,24 @@ export default function PaymentSuccess() {
     const shouldCheckAgain = urlParams.get('checkAgain') === 'true';
     
     if (!isFromPayment) {
-      console.log('Not a payment redirect, skipping confetti');
-      // Still refresh session but no confetti
+      console.log('Not a payment redirect, skipping celebration');
+      // Still refresh session but no celebration
       refreshSession();
       return;
     }
     
-    // Trigger confetti animation
-    const duration = 3 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-    function randomInRange(min: number, max: number) {
-      return Math.random() * (max - min) + min;
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (!prefersReducedMotion) {
+      // Show CSS-based celebration animation
+      setShowCelebration(true);
+      
+      // Hide celebration after 2 seconds (performance optimization)
+      setTimeout(() => {
+        setShowCelebration(false);
+      }, 2000);
     }
-
-    const interval = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-      });
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-      });
-    }, 250);
 
     // Refresh user session to get updated tier
     const refreshSession = async () => {
@@ -153,9 +137,6 @@ export default function PaymentSuccess() {
     }, 1000);
 
     return () => {
-      if (isFromPayment) {
-        clearInterval(interval);
-      }
       clearInterval(countdownInterval);
       clearInterval(paymentCheckInterval);
     };
@@ -163,6 +144,26 @@ export default function PaymentSuccess() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* CSS-based celebration animation for mobile performance */}
+      {showCelebration && (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
+          {/* Confetti particles using CSS animations */}
+          <div className="confetti-container">
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className={`confetti confetti-${i % 4}`}
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 1}s`,
+                  animationDuration: `${1.5 + Math.random() * 1}s`
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+      
       <AppHeader />
       
       <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
@@ -179,9 +180,9 @@ export default function PaymentSuccess() {
 
             {/* Success Message */}
             <div className="space-y-4 mb-8">
-              <h1 className="text-4xl sm:text-5xl font-black text-foreground flex items-center justify-center gap-3">
+              <h1 className="font-black text-foreground flex items-center justify-center gap-3" style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)' }}>
                 TO'LOV MUVAFFAQIYATLI!
-                <PartyPopper className="h-10 w-10 text-accent" />
+                <PartyPopper className="h-8 w-8 sm:h-10 sm:w-10 text-accent" />
               </h1>
               
               <p className="text-xl text-muted-foreground font-bold">
@@ -227,7 +228,7 @@ export default function PaymentSuccess() {
               <Button
                 onClick={() => setLocation('/')}
                 size="lg"
-                className="w-full sm:w-auto font-black text-lg border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                className="w-full sm:w-auto font-black text-lg border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all min-h-[48px]"
               >
                 PROTOKOLLARNI KO'RISH
                 <ArrowRight className="ml-2 h-5 w-5" />

@@ -496,12 +496,14 @@ export default function AtmosPayment() {
           id="cardNumber"
           type="tel"
           inputMode="numeric"
+          pattern="[0-9 ]*"
           placeholder="0000 0000 0000 0000"
           value={cardNumber}
           onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
           maxLength={19}
-          className="text-lg sm:text-xl tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background min-h-[56px]"
+          className="text-base sm:text-lg tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background min-h-[56px]"
           required
+          autoComplete="cc-number"
         />
         <div className="text-sm font-bold text-muted-foreground">
           UzCard (8600...) yoki Humo (9860...) kartalari qabul qilinadi
@@ -514,12 +516,14 @@ export default function AtmosPayment() {
           id="expiry"
           type="tel"
           inputMode="numeric"
+          pattern="[0-9/]*"
           placeholder="MM/YY"
           value={expiry}
           onChange={(e) => setExpiry(formatExpiry(e.target.value))}
           maxLength={5}
-          className="text-lg sm:text-xl font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background min-h-[56px]"
+          className="text-base sm:text-lg font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background min-h-[56px]"
           required
+          autoComplete="cc-exp"
         />
       </div>
 
@@ -549,13 +553,25 @@ export default function AtmosPayment() {
           id="otp"
           type="tel"
           inputMode="numeric"
+          pattern="[0-9]*"
           placeholder="000000"
           value={otpCode}
-          onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+            setOtpCode(value);
+            // Auto-submit when 6 digits are entered
+            if (value.length === 6) {
+              const form = e.target.closest('form');
+              if (form) {
+                form.requestSubmit();
+              }
+            }
+          }}
           maxLength={6}
-          className="text-2xl sm:text-3xl text-center tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background min-h-[64px]"
+          className="text-xl sm:text-2xl text-center tracking-wider font-mono border-2 border-foreground focus:border-foreground focus:ring-0 p-4 bg-background min-h-[64px]"
           required
           autoFocus
+          autoComplete="one-time-code"
         />
         <p className="text-sm font-bold text-muted-foreground text-center">
           6 raqamli kodni kiriting
@@ -650,19 +666,19 @@ export default function AtmosPayment() {
             </h1>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+          <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6 lg:gap-8">
             {/* Left Column - Payment Form - Full width on mobile */}
-            <div className="order-2 lg:order-1 lg:col-span-2">
-              <div className="bg-card border-2 border-foreground shadow-lg">
+            <div className="lg:col-span-2">
+              <div className="bg-card border-2 border-foreground shadow-lg lg:sticky lg:top-20">
                 {/* Payment Form */}
                 <div className="p-6 border-b-2 border-foreground">
                   <h2 className="text-xl font-black text-foreground mb-6">TO'LOV MA'LUMOTLARI</h2>
                   
                   {error && (
-                    <Alert className="mb-6 bg-red-50 border-2 border-red-600">
+                    <Alert className="mb-6 bg-red-50 border-2 border-red-600 animate-pulse">
                       <AlertCircle className="h-4 w-4 text-red-600" />
                       <AlertDescription className="text-red-700">
-                        <p className="font-bold mb-2">XATOLIK: {error}</p>
+                        <p className="font-bold mb-2 text-sm sm:text-base">XATOLIK: {error}</p>
                         {error.includes('domen cheklovlari') && (
                           <p className="text-sm">
                             Agar siz {window.location.hostname} orqali kirsangiz, {DOMAINS.app.replace('https://', '')} orqali qayta urinib ko'ring.
@@ -761,8 +777,8 @@ export default function AtmosPayment() {
               </div>
             </div>
 
-            {/* Right Column - Product Details - Shows first on mobile */}
-            <div className="order-1 lg:order-2 lg:col-span-3">
+            {/* Right Column - Product Details */}
+            <div className="lg:col-span-3">
               <div className="bg-card border-2 border-foreground shadow-lg">
                 {/* Features */}
                 <div className="border-b-2 border-foreground p-6">

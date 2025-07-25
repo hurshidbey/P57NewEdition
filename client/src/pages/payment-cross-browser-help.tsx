@@ -18,12 +18,12 @@ export default function PaymentCrossBrowserHelp() {
             <div className="mx-auto mb-4">
               <CheckCircle className="h-16 w-16 text-green-600" />
             </div>
-            <CardTitle className="text-3xl font-black">
+            <CardTitle className="font-black" style={{ fontSize: 'clamp(1.25rem, 3.5vw, 2rem)' }}>
               TO'LOV MUVAFFAQIYATLI AMALGA OSHIRILDI!
             </CardTitle>
           </CardHeader>
           
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 pb-24 sm:pb-6">
             <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4">
               <p className="font-bold text-lg mb-2 flex items-center gap-2">
                 <Smartphone className="h-5 w-5" />
@@ -83,7 +83,8 @@ export default function PaymentCrossBrowserHelp() {
               </p>
             </div>
             
-            <div className="pt-4 space-y-3">
+            {/* Mobile-optimized sticky CTA */}
+            <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t-2 border-foreground shadow-[0_-4px_0px_0px_rgba(0,0,0,1)] sm:relative sm:bottom-auto sm:p-0 sm:bg-transparent sm:border-0 sm:shadow-none">
               <Button
                 onClick={() => window.open('https://app.p57.uz', '_blank')}
                 className="w-full font-black text-lg border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
@@ -93,7 +94,7 @@ export default function PaymentCrossBrowserHelp() {
                 YANGI OYNADA OCHISH
               </Button>
               
-              <p className="text-center text-sm text-muted-foreground">
+              <p className="text-center text-sm text-muted-foreground mt-3">
                 yoki qo'lda kiriting: <strong>app.p57.uz</strong>
               </p>
             </div>

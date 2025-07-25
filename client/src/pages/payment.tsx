@@ -16,12 +16,14 @@ import {
   Loader2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import { useToast } from '@/hooks/use-toast';
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 
 export default function Payment() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [selectedMethod, setSelectedMethod] = useState<'atmos' | 'click' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showCoupon, setShowCoupon] = useState(false);
@@ -122,7 +124,11 @@ export default function Payment() {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(user.id)) {
       console.error('Invalid user ID format:', user.id);
-      alert('Autentifikatsiya xatosi. Iltimos qayta kiring');
+      toast({
+        title: "Autentifikatsiya xatosi",
+        description: "Iltimos qayta kiring",
+        variant: "destructive",
+      });
       setLocation('/auth/login');
       return;
     }
@@ -162,7 +168,11 @@ export default function Payment() {
       
       if (!response.ok) {
         console.error('❌ [Click Payment] API error:', response.status, data);
-        alert(`Xatolik: ${data.message || 'To\'lov tizimiga ulanishda xatolik'}`);
+        toast({
+          title: "To'lov xatosi",
+          description: data.message || 'To\'lov tizimiga ulanishda xatolik',
+          variant: "destructive",
+        });
         setIsProcessing(false);
         setSelectedMethod(null);
         return;
@@ -192,23 +202,38 @@ export default function Payment() {
             window.open(data.paymentUrl, '_blank');
             setIsProcessing(false);
             setSelectedMethod(null);
-            alert('To\'lov sahifasi yangi oynada ochildi. Agar ochilmasa, qayta urinib ko\'ring.');
+            toast({
+              title: "To'lov sahifasi ochildi",
+              description: "To'lov sahifasi yangi oynada ochildi. Agar ochilmasa, qayta urinib ko'ring.",
+            });
           }, 2000);
         } catch (err) {
           console.error('❌ [Click Payment] Redirect error:', err);
           setIsProcessing(false);
           setSelectedMethod(null);
-          alert('To\'lov sahifasiga o\'tishda xatolik. Iltimos qayta urinib ko\'ring.');
+          toast({
+            title: "Yo'naltirish xatosi",
+            description: "To'lov sahifasiga o'tishda xatolik. Iltimos qayta urinib ko'ring.",
+            variant: "destructive",
+          });
         }
       } else {
         console.error('❌ [Click Payment] No payment URL in response:', data);
-        alert('To\'lov tizimiga ulanishda xatolik. Iltimos qayta urinib ko\'ring.');
+        toast({
+          title: "To'lov xatosi",
+          description: "To'lov tizimiga ulanishda xatolik. Iltimos qayta urinib ko'ring.",
+          variant: "destructive",
+        });
         setIsProcessing(false);
         setSelectedMethod(null);
       }
     } catch (error) {
       console.error('Click payment error:', error);
-      alert('To\'lov tizimiga ulanishda xatolik. Iltimos qayta urinib ko\'ring.');
+      toast({
+        title: "To'lov xatosi",
+        description: "To'lov tizimiga ulanishda xatolik. Iltimos qayta urinib ko'ring.",
+        variant: "destructive",
+      });
       setIsProcessing(false);
       setSelectedMethod(null);
     }
@@ -218,31 +243,20 @@ export default function Payment() {
     <div className="min-h-screen bg-background flex flex-col">
       <AppHeader />
       
-      {/* Payment Processing Overlay */}
+      {/* Payment Processing Overlay - Optimized for mobile */}
       {isProcessing && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <Card className="max-w-md w-full mx-4 border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <CardContent className="p-8 text-center">
+        <div className="fixed inset-0 bg-background/95 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <Card className="max-w-md w-full border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] my-auto">
+            <CardContent className="p-6 sm:p-8 text-center">
               <div className="mb-6">
-                <Loader2 className="h-16 w-16 animate-spin text-accent mx-auto" />
+                <div className="h-16 w-16 mx-auto border-4 border-accent border-t-transparent rounded-full animate-spin-mobile" />
               </div>
               <h2 className="text-2xl font-black mb-2">TO'LOV TIZIMIGA ULANMOQDA</h2>
               <p className="text-muted-foreground font-bold mb-6">
                 {selectedMethod === 'click' ? 'Click.uz' : 'ATMOS'} tizimiga yo'naltirilmoqda...
               </p>
-              <div className="space-y-4">
-                <div className="flex items-center justify-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    <span className="font-bold">To'lov tanlandi</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="h-5 w-5 animate-spin text-accent" />
-                    <span className="font-bold">Ulanmoqda...</span>
-                  </div>
-                </div>
+              <div className="text-sm text-muted-foreground font-bold">
+                <p>Iltimos kuting...</p>
               </div>
             </CardContent>
           </Card>
@@ -252,14 +266,14 @@ export default function Payment() {
       <main className="flex-1 container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
         {/* Price Display - HUGE and CLEAR */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-black mb-2">PREMIUM TO'LOV</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2">PREMIUM TO'LOV</h1>
           <div className="inline-block">
             {appliedCoupon ? (
               <div className="space-y-2">
                 <div className="text-muted-foreground">
                   <span className="line-through text-2xl">{basePrice.toLocaleString('uz-UZ')} UZS</span>
                 </div>
-                <div className="text-4xl sm:text-5xl font-black text-foreground">
+                <div className="font-black text-foreground" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}>
                   {finalPrice.toLocaleString('uz-UZ')} UZS
                 </div>
                 <Badge className="bg-green-600 text-white text-sm">
@@ -267,7 +281,7 @@ export default function Payment() {
                 </Badge>
               </div>
             ) : (
-              <div className="text-4xl sm:text-5xl font-black text-foreground">
+              <div className="font-black text-foreground" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}>
                 {basePrice.toLocaleString('uz-UZ')} UZS
               </div>
             )}
@@ -299,13 +313,15 @@ export default function Payment() {
                       setCouponError(null);
                     }}
                     disabled={couponValidating || !!appliedCoupon}
-                    className="font-mono text-lg border-2 border-foreground uppercase"
+                    className="font-mono text-base border-2 border-foreground uppercase min-h-[44px]"
+                    type="text"
+                    autoComplete="off"
                   />
                   {!appliedCoupon ? (
                     <Button
                       onClick={validateCoupon}
                       disabled={couponValidating || !couponCode.trim()}
-                      className="font-black border-2 border-foreground"
+                      className="font-black border-2 border-foreground min-h-[44px] min-w-[100px]"
                     >
                       QO'LLASH
                     </Button>
@@ -317,14 +333,16 @@ export default function Payment() {
                         setShowCoupon(false);
                       }}
                       variant="destructive"
-                      className="font-black"
+                      className="font-black min-h-[44px] min-w-[100px]"
                     >
                       BEKOR
                     </Button>
                   )}
                 </div>
                 {couponError && (
-                  <p className="text-red-600 text-sm mt-2 font-bold">{couponError}</p>
+                  <div className="mt-2 p-2 bg-red-50 border border-red-300 rounded">
+                    <p className="text-red-600 text-sm font-bold">{couponError}</p>
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -332,16 +350,16 @@ export default function Payment() {
         </div>
 
         {/* Payment Method Selection - BIG CARDS */}
-        <div className="space-y-4 mb-8">
+        <div className="space-y-4 sm:space-y-6 mb-8">
           <h2 className="text-xl font-black text-center mb-6">TO'LOV USULINI TANLANG</h2>
           
           {/* ATMOS Card */}
           <button
             onClick={() => handlePaymentSelect('atmos')}
             disabled={selectedMethod !== null}
-            className="w-full transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full transition-all transform sm:hover:scale-[1.02] active:scale-[0.98] touch-manipulation"
           >
-            <Card className={`border-4 ${selectedMethod === 'atmos' ? 'border-green-600 bg-green-50' : 'border-foreground hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]`}>
+            <Card className={`border-4 ${selectedMethod === 'atmos' ? 'border-green-600 bg-green-50' : 'border-foreground sm:hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
               <CardContent className="p-6 sm:p-8">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -373,9 +391,9 @@ export default function Payment() {
           <button
             onClick={() => handlePaymentSelect('click')}
             disabled={selectedMethod !== null}
-            className="w-full transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full transition-all transform sm:hover:scale-[1.02] active:scale-[0.98] touch-manipulation"
           >
-            <Card className={`border-4 ${selectedMethod === 'click' ? 'border-green-600 bg-green-50' : 'border-foreground hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]`}>
+            <Card className={`border-4 ${selectedMethod === 'click' ? 'border-green-600 bg-green-50' : 'border-foreground sm:hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
               <CardContent className="p-6 sm:p-8">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">

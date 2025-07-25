@@ -53,7 +53,7 @@ export default function PaymentFailed() {
                 <XCircle className="h-16 w-16 text-red-600" />
               </div>
               
-              <h1 className="text-3xl sm:text-4xl font-black text-foreground mb-2">
+              <h1 className="font-black text-foreground mb-2" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
                 TO'LOV AMALGA OSHMADI
               </h1>
               
@@ -105,7 +105,7 @@ export default function PaymentFailed() {
               <Button
                 onClick={() => setLocation('/payment')}
                 size="lg"
-                className="w-full font-black text-lg border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                className="w-full font-black text-lg border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all min-h-[48px]"
               >
                 <RefreshCw className="mr-2 h-5 w-5" />
                 QAYTA URINIB KO'RISH
@@ -115,7 +115,7 @@ export default function PaymentFailed() {
                 onClick={() => setLocation('/')}
                 variant="outline"
                 size="lg"
-                className="w-full font-black text-lg border-2 border-foreground"
+                className="w-full font-black text-lg border-2 border-foreground min-h-[48px]"
               >
                 <ArrowLeft className="mr-2 h-5 w-5" />
                 BOSH SAHIFAGA QAYTISH
