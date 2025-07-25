@@ -335,12 +335,14 @@ export const isSupabaseAdmin = async (req: Request, res: Response, next: NextFun
     req.user = user;
 
     // First check ADMIN_EMAILS for backward compatibility
+    // WARNING: This is a legacy feature. Use proper RBAC roles instead.
+    // Consider removing this once all admins have been migrated to database roles.
     const adminEmails = process.env.ADMIN_EMAILS 
       ? process.env.ADMIN_EMAILS.split(',').map(email => email.trim())
       : [];
 
     if (adminEmails.includes(user.email)) {
-      console.log(`✅ User ${user.email} granted admin access via ADMIN_EMAILS`);
+      console.log(`✅ User ${user.email} granted admin access via ADMIN_EMAILS (legacy)`);
       return next();
     }
 

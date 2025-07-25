@@ -647,7 +647,6 @@ export class SupabaseStorage implements IStorage {
       createdAt: data.created_at
     };
     
-    console.log(`🔍 [SUPABASE] getCouponByCode ${code} result:`, coupon);
     return coupon;
   }
 
@@ -800,6 +799,46 @@ export class SupabaseStorage implements IStorage {
     }
     
     return data || [];
+  }
+
+  // Atomic coupon usage - prevents race conditions
+  async useCouponAtomic(
+    couponCode: string,
+    userId: string,
+    userEmail: string,
+    paymentId: string,
+    originalAmount: number,
+    discountAmount: number,
+    finalAmount: number
+  ): Promise<{ success: boolean; message: string; couponId?: number }> {
+    const { data, error } = await this.supabase
+      .rpc('use_coupon_atomic', {
+        p_coupon_code: couponCode,
+        p_user_id: userId,
+        p_user_email: userEmail,
+        p_payment_id: paymentId,
+        p_original_amount: originalAmount,
+        p_discount_amount: discountAmount,
+        p_final_amount: finalAmount
+      });
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to use coupon atomically:`, error);
+      throw error;
+    }
+    
+    const result = data?.[0];
+    if (!result) {
+      throw new Error('No result from atomic coupon usage');
+    }
+    
+    console.log(`${result.success ? '✅' : '❌'} [SUPABASE] Atomic coupon usage: ${result.message}`);
+    
+    return {
+      success: result.success,
+      message: result.message,
+      couponId: result.coupon_id
+    };
   }
 
   // Payment session methods

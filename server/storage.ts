@@ -76,6 +76,15 @@ export interface IStorage {
   // Coupon usage tracking
   recordCouponUsage(usage: InsertCouponUsage): Promise<CouponUsage>;
   getCouponUsageHistory(couponId: number): Promise<CouponUsage[]>;
+  useCouponAtomic?(
+    couponCode: string,
+    userId: string,
+    userEmail: string,
+    paymentId: string,
+    originalAmount: number,
+    discountAmount: number,
+    finalAmount: number
+  ): Promise<{ success: boolean; message: string; couponId?: number }>;
   
   // Connection management
   close(): Promise<void>;
@@ -1303,6 +1312,35 @@ export class HybridStorage implements IStorage {
       }
     }
     return [];
+  }
+
+  // Atomic coupon usage - only available with Supabase
+  async useCouponAtomic(
+    couponCode: string,
+    userId: string,
+    userEmail: string,
+    paymentId: string,
+    originalAmount: number,
+    discountAmount: number,
+    finalAmount: number
+  ): Promise<{ success: boolean; message: string; couponId?: number }> {
+    // This method only works with Supabase storage
+    // Fall back to Supabase storage if available
+    const supabaseStorage = storageProviders.get('supabase');
+    if (supabaseStorage && 'useCouponAtomic' in supabaseStorage) {
+      return supabaseStorage.useCouponAtomic(
+        couponCode,
+        userId,
+        userEmail,
+        paymentId,
+        originalAmount,
+        discountAmount,
+        finalAmount
+      );
+    }
+    
+    // If no Supabase, throw error
+    throw new Error('Atomic coupon operations require Supabase database connection');
   }
 
   // Payment session methods
