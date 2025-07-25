@@ -456,10 +456,11 @@ export class SupabaseStorage implements IStorage {
 
   async getPayments(): Promise<Payment[]> {
     // Query payment_sessions table instead of payments view
+    // Include both 'completed' and 'completed_no_auth' statuses to show all successful payments
     const { data, error } = await this.supabase
       .from('payment_sessions')
       .select('*')
-      .eq('status', 'completed')  // Only show completed payments
+      .in('status', ['completed', 'completed_no_auth'])  // Show all successful payments
       .order('created_at', { ascending: false });
     
     if (error) {
@@ -498,7 +499,7 @@ export class SupabaseStorage implements IStorage {
       .from('payment_sessions')
       .select('*')
       .eq('user_id', userId)
-      .eq('status', 'completed')  // Only show completed payments
+      .in('status', ['completed', 'completed_no_auth'])  // Show all successful payments
       .order('created_at', { ascending: false });
     
     if (error) {

@@ -18,18 +18,19 @@ export const nimaUchunMuhim: SectionContent = {
 <div>
      <div>
       <p className="text-base ">
-       Hozirgi kunda sun'iy intellekt (AI) hayotimizning ajralmas qismiga aylanmoqda. 
-       ChatGPT, Claude, Gemini kabi AI assistentlar kundalik ishlarimizni yengillashtirmoqda.
+       Tasavvur qiling, sizda juda aqlli do'st bor. U har qanday savolingizga javob bera oladi, 
+       vazifalaringizda yordam beradi, hatto she'r ham yozib beradi. Ana shunday do'stlar endi 
+       haqiqatga aylandi - ular ChatGPT, Claude va Gemini kabi sun'iy aql yordamchilari.
       </p>
       <p className="text-base ">
-       Lekin ko'pchilik foydalanuvchilar AI'ning to'liq potensialidan foydalana olmayapti. 
-       Sabab oddiy - ular AI bilan qanday muloqot qilishni bilishmaydi.
+       Lekin bir muammo bor: ko'pchiligimiz bu ajoyib do'st bilan qanday gaplashishni bilmaymiz. 
+       Xuddi chet ellik do'stingiz bilan til topa olmagandek, biz ham AI bilan "til" topa olmayapmiz.
       </p>
      </div>
      
      <ExpandableCard
       term="PROMPTING"
-      definition="AI bilan samarali muloqot qilish san'ati. To'g'ri savol berish orqali to'g'ri javob olish."
+      definition="Kompyuter do'stingiz bilan to'g'ri gaplashish usuli. Xuddi yaxshi oshpazga retsept aytgandek - aniq aytib bersangiz, ajoyib ovqat pishiradi!"
       icon={<AiIcon name="brain" size={24} />}
       examples={["Yomon: 'Menga maqola yoz'","Yaxshi: 'O'zbek tili tarixiga oid 500 so'zlik ilmiy maqola yoz. Uslub: akademik, auditoriya: universitet talabalari'"
       ]}
@@ -41,15 +42,15 @@ export const nimaUchunMuhim: SectionContent = {
        <ul>
         <li className="flex items-start gap-2">
          <AiIcon name="checked" size={24} className="flex-shrink-0" />
-         <span>Vaqtingizni tejaysiz - 10 soatlik ishni 1 soatda bajaring</span>
+         <span>Vaqtingiz qoladi - 10 soat o'tirib qiladigan ishingizni 1 soatda tugatib, oila bilan dam olasiz</span>
         </li>
         <li className="flex items-start gap-2">
          <AiIcon name="checked" size={24} className="flex-shrink-0" />
-         <span>Sifatni oshirasiz - Professional natijalar oling</span>
+         <span>Ishingiz chiroyli bo'ladi - Xuddi ustoz yonida ishlagandek professional natija olasiz</span>
         </li>
         <li className="flex items-start gap-2">
          <AiIcon name="checked" size={24} className="flex-shrink-0" />
-         <span>Kreativlikni rivojlantirasiz - Yangi g'oyalar toping</span>
+         <span>Fikrlash kengayadi - Hech xayolingizga kelmagan g'oyalar topasiz</span>
         </li>
        </ul>
       </CardContent>
@@ -57,18 +58,20 @@ export const nimaUchunMuhim: SectionContent = {
      
      <CodeExample
       title="YAXSHI PROMPT MISOLI"
-      badExample="Menga biznes-plan yoz"
-      goodExample="Men yangi online ta'lim platformasi ochmoqchiman. 
-Target auditoriya: 18-25 yoshli talabalar
-Asosiy xizmat: Professional ko'nikmalar o'rgatish
-Biznes modeli: Oylik obuna
-Iltimos, quyidagi bo'limlarni o'z ichiga olgan biznes-plan tayyorla:
-1. Bozor tahlili
-2. Raqobatchilar tahlili
-3. Marketing strategiyasi
-4. Moliyaviy prognoz (1 yillik)
-5. Xatarlar va ularni kamaytirish yo'llari"
-      explanation="Yaxshi prompt aniq kontekst, maqsad va kutilgan natijani o'z ichiga oladi. Bu AI'ga sizning ehtiyojingizni to'liq tushunishga yordam beradi."
+      badExample="Biznes-plan kerak"
+      goodExample="Do'stim, men online dars berish sayti ochmoqchiman. 
+
+Kimlar uchun: 18-25 yoshli o'quvchilar
+Nima o'rgataman: Kasbiy ko'nikmalar (dizayn, dasturlash)
+Pul olish usuli: Har oy obuna to'lovi
+
+Menga shular haqida yozib ber:
+1. Bozorda kimlar bor va qanday ishlayapti?
+2. Raqobatchilarim kimlar?
+3. Qanday reklama qilsam bo'ladi?
+4. 1 yilda qancha pul aylanadi?
+5. Qanday xavflar bor va ulardan qanday saqlanaman?"
+      explanation="Yaxshi so'rov xuddi do'stingizga tushuntirganday bo'lishi kerak. Hamma ma'lumotni aytib bersangiz, AI ham sizni yaxshi tushunadi."
      />
     </div>
      </>
@@ -89,14 +92,14 @@ export const promptingNima: SectionContent = {
 <div>
      <div>
       <p className="text-base ">
-       Prompting — bu AI bilan samarali muloqot qilish san'ati. To'g'ri prompt yozish orqali 
-       siz AI'dan maksimal foyda olishingiz mumkin.
+       Prompting — bu kompyuter bilan to'g'ri gaplashish usuli. Xuddi bolangizga biror narsani 
+       tushuntirgandek, aniq va tushunarli gapirsangiz, ajoyib natijalar olasiz.
       </p>
      </div>
 
      <ExpandableCard
       term="PROMPT"
-      definition="AI'ga beriladigan ko'rsatma yoki savol. Qanchalik aniq va to'liq bo'lsa, shunchalik yaxshi natija olasiz."
+      definition="Kompyuterga aytadigan gapingiz. Qanchalik aniq aytsangiz, shunchalik yaxshi tushunadi - xuddi do'stingizga yo'l ko'rsatgandek."
       icon={<AiIcon name="target" size={24} />}
       examples={["Oddiy prompt: 'Menga Python haqida aytib ber'","Yaxshi prompt: 'Python dasturlash tilining 5 ta asosiy afzalligini sanab ber. Har biri uchun qisqa misol keltir.'"
       ]}
@@ -158,8 +161,8 @@ Format: Bullet point ro'yxat shaklida"
      <Alert className="border-2 border-black bg-white">
       <AiIcon name="lightbulb" size={24} />
       <AlertDescription className="text-black font-bold">
-       <strong>Maslahat:</strong> Prompt yozishda o'zingizni AI o'rniga qo'ying. 
-       Sizga shunday topshiriq berilsa, nimalar kerak bo'lardi?
+       <strong>Maslahat:</strong> Savol yozishda o'zingizga so'rang: "Agar men bu ishni 
+       do'stimdan so'rasam, unga nima aytgan bo'lardim?" Ana shuni yozing!
       </AlertDescription>
      </Alert>
     </div>

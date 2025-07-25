@@ -18,8 +18,8 @@ export const aiQandayIshlaydi: SectionContent = {
 <div>
      <div>
       <p className="text-lg ">
-       Sun'iy intellekt — bu kompyuterlarni inson kabi"o'ylash"ga o'rgatish san'ati. 
-       Lekin bu"o'ylash" aslida nima?
+       Sun'iy aql - bu kompyuterni bolaga o'xshatib o'rgatish. Bolacha savol bersangiz, 
+       u ham bolacha javob beradi. Ustozcha savol bersangiz, ustozcha javob beradi. Qanday "o'rgatish" degani?
       </p>
      </div>
 
@@ -30,19 +30,19 @@ export const aiQandayIshlaydi: SectionContent = {
         <li className="flex gap-3">
          <span className="font-bold">1.</span>
          <div>
-          <strong>Pattern tanish:</strong> Millionlab misollardan qonuniyatlarni topadi
+          <strong>Naqsh topish:</strong> Minglab rasmlarni ko'rib, mushuk qanday ko'rinishini o'rganadi
          </div>
         </li>
         <li className="flex gap-3">
          <span className="font-bold">2.</span>
          <div>
-          <strong>Bashorat qilish:</strong> O'rgangan pattern'lar asosida keyingi so'zni taxmin qiladi
+          <strong>Taxmin qilish:</strong> "Bugun havo..." desangiz, "issiq" yoki "sovuq" deb davom ettiradi
          </div>
         </li>
         <li className="flex gap-3">
          <span className="font-bold">3.</span>
          <div>
-          <strong>Kontekstni tushunish:</strong> Sizning savolingiz qaysi mavzuga tegishli ekanini aniqlaydi
+          <strong>Gapni tushunish:</strong> "Bank" deganda - daryo qirg'og'imi yoki pulxonami ekanini tushunadi
          </div>
         </li>
        </ol>
@@ -51,7 +51,7 @@ export const aiQandayIshlaydi: SectionContent = {
      
      <ExpandableCard
       term="NEYRON TARMOQLAR"
-      definition="Inson miyasining ishlash prinsipiga asoslangan kompyuter tizimlari. Millionlab 'neyron'lar ma'lumotni qayta ishlaydi."
+      definition="Kompyuter ichidagi sun'iy miya. Xuddi bizning miyamiz kabi o'rganadi - lekin elektr signallar bilan."
       icon={<AiIcon name="network" size={24} />}
       examples={["Input (kirish) → Processing (qayta ishlash) → Output (natija)","Misol: Rasm → Neyron tarmoq → 'Bu mushuk rasmi'"
       ]}
@@ -59,17 +59,17 @@ export const aiQandayIshlaydi: SectionContent = {
      
      <ExpandableCard
       term="MACHINE LEARNING"
-      definition="Kompyuterlarning ma'lumotlardan o'rganish qobiliyati. Qancha ko'p ma'lumot, shuncha yaxshi natija."
+      definition="Kompyuter ham xuddi bola kabi o'rganadi - ko'p ko'rsa, ko'p biladi. Birinchi kun chizgan bolaning rasmi bilan 100-kun chizgan rasmi kabi."
       icon={<AiIcon name="brain" size={24} />}
-      examples={["Supervised Learning - Nazorat ostida o'rganish","Unsupervised Learning - Mustaqil o'rganish","Reinforcement Learning - Mukofotlash orqali o'rganish"
+      examples={["Ustoz bilan o'rganish - O'qituvchi to'g'rilab turadi","O'zi o'rganish - Kitoblardan o'qib o'zi tushunadi","Tajriba orqali - Yiqilib-turib velosiped haydashni o'rganish"
       ]}
      />
 
      <Alert className="border-2 border-black">
       <AiIcon name="info" size={20} />
       <AlertDescription>
-       <strong>Muhim:</strong> AI aslida"tushunmaydi" — u statistik model. 
-       Lekin bu model shunchalik murakkabki, u go'yo tushungandek natija beradi.
+       <strong>Haqiqat:</strong> AI xuddi papka (to'ti) kabi - ko'p eshitgan gaplarni 
+       takrorlaydi. Lekin shunchalik ko'p eshitganki, yangi gaplar ham aytadi!
       </AlertDescription>
      </Alert>
     </div>
@@ -98,7 +98,7 @@ export const neyronTarmoqlar: SectionContent = {
        term="NEYRON NIMA?"
        definition="Matematik funksiya bo'lib, kirish signallarini qabul qilib, ularni qayta ishlab, chiqish signalini beradi."
        icon={<AiIcon name="brain" size={24} />}
-       examples={["Kirish: [0.5, 0.3, 0.8] → Neyron → Chiqish: 0.7","Har bir neyron o'z vazn (weight) va bias qiymatlariga ega","Aktivatsiya funksiyasi orqali chiziqli bo'lmagan transformatsiya"
+       examples={["Quloq (kirish) → Miya (neyron) → Gap (chiqish)","Har bir 'miya hujayrasi' qanchalik muhimligini o'zi hal qiladi","Oddiy ma'lumotni murakkab fikrga aylantiradi"
        ]}
       />
 
@@ -108,15 +108,15 @@ export const neyronTarmoqlar: SectionContent = {
         <div>
          <div className="border-2 border-black p-4">
           <h4 className="font-bold ">1. Kirish Qatlami (Input Layer)</h4>
-          <p className="">Ma'lumotlarni qabul qiladi (matn, rasm, ovoz)</p>
+          <p className="">Ko'z va quloq vazifasi - dunyo haqida ma'lumot oladi</p>
          </div>
          <div className="border-2 border-black p-4">
           <h4 className="font-bold ">2. Yashirin Qatlamlar (Hidden Layers)</h4>
-          <p className="">Ma'lumotlarni qayta ishlaydi va pattern'larni o'rganadi</p>
+          <p className="">Miya vazifasi - ma'lumotni tushunib, eslab qoladi</p>
          </div>
          <div className="border-2 border-black p-4">
           <h4 className="font-bold ">3. Chiqish Qatlami (Output Layer)</h4>
-          <p className="">Natijani beradi (javob, klassifikatsiya, bashorat)</p>
+          <p className="">Og'iz vazifasi - o'ylangan fikrni aytib beradi</p>
          </div>
         </div>
        </CardContent>
@@ -124,23 +124,23 @@ export const neyronTarmoqlar: SectionContent = {
 
       <CodeExample
        title="ODDIY NEYRON MISOLI"
-       badExample={`# Murakkab tushuntirish"Neyron tarmoq - bu ko'p o'lchovli fazoda gradient descent 
-algoritmidan foydalanib loss funksiyani minimallashtiradigan 
-parametrik model..."`}
-       goodExample={`# Sodda tushuntirish"Neyron tarmoq - xuddi miya kabi ishlaydi:
-1. Ko'z (input) → rasmni ko'radi
-2. Miya (hidden layers) → rasmni tahlil qiladi 
-3. Xulosa (output) → 'Bu mushuk' deb aytadi
+       badExample={`# Professor uslubida:"Neyron tarmoq - bu n-o'lchovli Evklid fazosida gradient optimizatsiya 
+algoritmlaridan foydalanib xatolik funksiyasini minimallashtiradigan 
+parametrik statistik model..."`}
+       goodExample={`# Oddiy tilda:"Neyron tarmoq - xuddi kichkina bola kabi:
+1. Ko'radi - rasm yoki yozuvni
+2. O'ylaydi - bu nima ekanini tushunishga harakat qiladi
+3. Aytadi - 'Bu mushuk!' yoki 'Bu it!'
 
-Har safar xato qilganda, o'rganib boradi!"`}
+Agar xato qilsa, kattalar to'g'rilaydi va keyingi safar to'g'ri aytadi!"`}
        explanation="Neyron tarmoqlar murakkab tushuncha, lekin asosiy g'oya oddiy: ma'lumotdan o'rganish va bashorat qilish."
       />
 
       <Alert className="border-2 border-black">
        <AiIcon name="lightbulb" size={20} />
        <AlertDescription>
-        <strong>Qiziq fakt:</strong> GPT-4 kabi modellar 1 trillion parametrga ega! 
-        Bu inson miyasidagi neyronlar sonidan ham ko'p.
+        <strong>Taqqoslash:</strong> GPT-4 da 1 trillion parametr bor! Bu xuddi 
+        butun O'zbekiston aholisi har biri mingta so'z yod olganday gap!
        </AlertDescription>
       </Alert>
      </div>
@@ -160,8 +160,8 @@ export const llmArxitekturasi: SectionContent = {
      <div>
       <div>
        <p className="text-lg ">
-        Large Language Model (LLM) - katta til modellari qanday tuzilgan va 
-        ular qanday ishlaydi?
+        Katta til modellari (LLM) - bu millionlab kitoblarni o'qigan daho. 
+        Keling, uning ichiga kirib, qanday ishlashini ko'ramiz:
        </p>
       </div>
 
@@ -173,7 +173,7 @@ export const llmArxitekturasi: SectionContent = {
           <Badge className="mt-1">1</Badge>
           <div>
            <strong>Tokenizer:</strong> Matnni raqamlarga aylantiradi
-           <p className="text-sm text-gray-600 ">Misol:"Salom" → [1234, 5678]</p>
+           <p className="text-sm text-gray-600 ">Misol:"Assalomu alaykum" → [1234, 5678, 9012]</p>
           </div>
          </div>
          <div className="flex items-start gap-3">
@@ -205,7 +205,7 @@ export const llmArxitekturasi: SectionContent = {
        term="ATTENTION MEXANIZMI"
        definition="Modelga matnning qaysi qismlariga e'tibor berish kerakligini o'rgatadigan texnologiya"
        icon={<AiIcon name="focus" size={24} />}
-       examples={["'U mushukni ko'rdi' - 'U' so'zi 'mushuk'ka emas, balki biror shaxsga ishora qiladi","Model har bir so'zning boshqa so'zlar bilan bog'lanishini o'rganadi","Self-attention: matn o'z-o'ziga e'tibor beradi"
+       examples={["'Anvar choyxonaga kirdi. U choy so'radi' - 'U' Anvarga qaytadi, choyxonaga emas","Har bir so'z qolgan so'zlar bilan qanday bog'langanini tushunadi","Gap ichidagi ma'noni to'liq anglash uchun hamma so'zlarga e'tibor beradi"
        ]}
       />
 
@@ -221,7 +221,7 @@ AI jarayoni:
 3. Bilimlardan qidirish: Uzbekiston → Markaziy Osiyo → Poytaxt
 4. Javob generatsiya:"Uzbekiston poytaxti - Toshkent"
 
-AI:"Uzbekiston poytaxti Toshkent shahridir."`}
+AI:"O'zbekiston Respublikasining poytaxti - Toshkent shahri. Bu Markaziy Osiyoning eng yirik shaharlaridan biri."`}
        explanation="LLM har bir so'zni kontekstda tushunib, mantiqiy javob yaratadi."
       />
      </div>
@@ -304,9 +304,9 @@ export const transformerModellari: SectionContent = {
       <Alert className="border-2 border-black">
        <AiIcon name="info" size={20} />
        <AlertDescription>
-        <strong>Fun fact:</strong> GPT-3 175 milliard parametrga ega va uni train qilish 
-        $4.6 million dollar turgan! Transformer arxitekturasi bu katta modellarni 
-        samarali train qilish imkonini beradi.
+        <strong>Qiziq ma'lumot:</strong> GPT-3 ni o'rgatish 4.6 million dollar turgan! 
+        Bu pul bilan O'zbekistonda 150 ta maktab qursa bo'lardi. Lekin bu "aqlli" 
+        kompyuter endi millionlab odamlarga yordam bermoqda.
        </AlertDescription>
       </Alert>
      </div>
@@ -326,16 +326,16 @@ export const tokenizatsiya: SectionContent = {
      <div>
       <div>
        <p className="text-lg ">
-        Tokenizatsiya - matnni AI tushunadigan raqamlarga aylantirish jarayoni. 
-        Bu AI'ning birinchi va eng muhim qadami.
+        Tokenizatsiya - bu gapni bo'laklarga ajratish. Xuddi oshpaz sabzavotni 
+        to'g'ragandek, AI ham gaplarni mayda bo'laklarga to'g'raydi.
        </p>
       </div>
 
       <ExpandableCard
        term="TOKEN NIMA?"
-       definition="Matnning eng kichik ma'noli bo'lagi. Bu to'liq so'z, so'z qismi yoki hatto bitta belgi bo'lishi mumkin."
+       definition="Gap bo'lagi. Ba'zan butun so'z, ba'zan yarim so'z, ba'zan bitta harf. Xuddi legodek - katta narsalarni kichik qismlardan yasash."
        icon={<AiIcon name="text" size={24} />}
-       examples={["Salom → ['Salom'] (1 token)","Assalomu alaykum → ['Ass', 'alomu', ' alay', 'kum'] (4 token)","👋 → ['👋'] (1 token - emoji ham token!)"
+       examples={["Non → ['Non'] (1 bo'lak)","Qo'qon → ['Qo'', 'qon'] (2 bo'lak - apostrof qiyin!)","🍳 → ['🍳'] (1 bo'lak - palov emojisi ham sanaladi!)"
        ]}
       />
 
@@ -346,19 +346,19 @@ export const tokenizatsiya: SectionContent = {
          <div>
           <h4 className="font-bold ">1. Word-level Tokenization</h4>
           <p className="text-sm ">Har bir so'z = 1 token</p>
-          <code className="block mt-1 p-2 bg-gray-100 text-sm">"Men dasturlashni yaxshi ko'raman" → ["Men","dasturlashni","yaxshi","ko'raman"]
+          <code className="block mt-1 p-2 bg-gray-100 text-sm">"Bugun bozorga bordim" → ["Bugun","bozorga","bordim"]
           </code>
          </div>
          <div>
           <h4 className="font-bold ">2. Subword Tokenization (BPE)</h4>
           <p className="text-sm ">So'zlarni qismlarga bo'lish</p>
-          <code className="block mt-1 p-2 bg-gray-100 text-sm">"dasturlash" → ["dastur","lash"]
+          <code className="block mt-1 p-2 bg-gray-100 text-sm">"choyxona" → ["choy","xona"]
           </code>
          </div>
          <div>
           <h4 className="font-bold ">3. Character-level</h4>
           <p className="text-sm ">Har bir harf = 1 token</p>
-          <code className="block mt-1 p-2 bg-gray-100 text-sm">"AI" → ["A","I"]
+          <code className="block mt-1 p-2 bg-gray-100 text-sm">"OK" → ["O","K"]
           </code>
          </div>
         </div>
@@ -386,9 +386,9 @@ Qisqa esse yoz (500 so'z):
       <Alert className="border-2 border-black">
        <AiIcon name="lightbulb" size={20} />
        <AlertDescription>
-        <strong>Pro tip:</strong> O'zbek tilida 1 so'z ≈ 2-3 token. 
-        Ingliz tilida 1 so'z ≈ 1-1.5 token. Tokenlarni tejash uchun 
-        qisqa va aniq yozing!
+        <strong>Foydali maslahat:</strong> O'zbekcha gaplar inglizchadan qimmatroq! 
+        "Men keldim" = 3-4 token, "I came" = 2 token. Shuning uchun 
+        qisqa va lo'nda gapiring - pulingiz tejaladi!
        </AlertDescription>
       </Alert>
 
@@ -396,10 +396,10 @@ Qisqa esse yoz (500 so'z):
        <CardContent className="p-6">
         <h3 className="text-lg font-bold ">TOKEN KALKULYATOR:</h3>
         <div>
-         <p className=""><strong>100 token ≈</strong> 75 so'z (inglizcha)</p>
-         <p className=""><strong>100 token ≈</strong> 35-50 so'z (o'zbekcha)</p>
-         <p className=""><strong>1 sahifa matn ≈</strong> 500-700 token</p>
-         <p className=""><strong>Narxi:</strong> GPT-4 uchun 1000 token ≈ $0.03</p>
+         <p className=""><strong>100 token ≈</strong> Bir stakan choy suhbati (inglizcha)</p>
+         <p className=""><strong>100 token ≈</strong> Yarim stakan choy suhbati (o'zbekcha)</p>
+         <p className=""><strong>1 sahifa matn ≈</strong> 1 ta o'rtacha maqola</p>
+         <p className=""><strong>Narxi:</strong> 1000 token = 1 ta pechenye puli (~300 so'm)</p>
         </div>
        </CardContent>
       </Card>

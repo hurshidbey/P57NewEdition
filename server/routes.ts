@@ -1008,6 +1008,82 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
+  // Admin: Get coupon analytics
+  app.get("/api/admin/analytics/coupons", 
+    isSupabaseAdmin,
+    async (req, res) => {
+    try {
+      // Get all coupons
+      const coupons = await storage.getCoupons();
+      
+      // Get all coupon usage records
+      let allUsageRecords: any[] = [];
+      let totalDiscountGiven = 0;
+      
+      // Collect all usage records from each coupon
+      for (const coupon of coupons) {
+        try {
+          const usageHistory = await storage.getCouponUsageHistory(coupon.id);
+          allUsageRecords = allUsageRecords.concat(
+            usageHistory.map(u => ({
+              ...u,
+              couponCode: coupon.code
+            }))
+          );
+          
+          // Calculate total discount from actual usage records
+          for (const usage of usageHistory) {
+            totalDiscountGiven += usage.discountAmount || 0;
+          }
+        } catch (error) {
+          console.error(`Failed to get usage history for coupon ${coupon.id}:`, error);
+        }
+      }
+      
+      // Calculate stats
+      const activeCoupons = coupons.filter(c => c.isActive).length;
+      const totalUsage = allUsageRecords.length; // Actual usage count from records
+      
+      // Find most used coupon based on actual usage records
+      const usageByCode: Record<string, number> = {};
+      allUsageRecords.forEach(u => {
+        usageByCode[u.couponCode] = (usageByCode[u.couponCode] || 0) + 1;
+      });
+      
+      let mostUsedCoupon = null;
+      let maxUsage = 0;
+      for (const [code, count] of Object.entries(usageByCode)) {
+        if (count > maxUsage) {
+          maxUsage = count;
+          mostUsedCoupon = { code, usedCount: count };
+        }
+      }
+      
+      // Get recent usage (last 10)
+      const recentUsage = allUsageRecords
+        .sort((a, b) => new Date(b.usedAt).getTime() - new Date(a.usedAt).getTime())
+        .slice(0, 10)
+        .map(u => ({
+          code: u.couponCode,
+          userEmail: u.userEmail,
+          discountAmount: u.discountAmount,
+          usedAt: u.usedAt
+        }));
+      
+      res.json({
+        totalCoupons: coupons.length,
+        activeCoupons,
+        totalUsage,
+        totalDiscountGiven,
+        mostUsedCoupon,
+        recentUsage
+      });
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to get coupon analytics:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Simple auth endpoint (basic implementation)
   app.post("/api/auth/login", async (req: any, res) => {
     try {

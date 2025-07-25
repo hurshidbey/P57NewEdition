@@ -18,8 +18,8 @@ export const haroratParametri: SectionContent = {
 <div>
      <div>
       <p className="text-lg ">
-       Temperature (harorat) — AI javoblarining kreativlik darajasini boshqaruvchi 
-       eng muhim parametr. 0 dan 2 gacha qiymat oladi.
+       Temperature (harorat) — bu AI'ning "kayfiyat" tugmasi. Xuddi choy qaynatgandek: 
+       past haroratda oddiy choy, yuqori haroratda esa ko'pikli, maxsus choy chiqadi.
       </p>
      </div>
 
@@ -30,12 +30,12 @@ export const haroratParametri: SectionContent = {
         <div className="flex items-center gap-4">
          <div className="w-24 text-center">
           <div className="text-2xl font-bold">0.0</div>
-          <div className="text-xs text-muted-foreground">Deterministik</div>
+          <div className="text-xs text-muted-foreground">Qat'iy, o'zgarmas</div>
          </div>
          <div className="flex-1 bg-gradient-to-r from-blue-100 via-yellow-100 to-red-100 h-8 border-2 border-black"></div>
          <div className="w-24 text-center">
           <div className="text-2xl font-bold">2.0</div>
-          <div className="text-xs text-muted-foreground">Xaotik</div>
+          <div className="text-xs text-muted-foreground">Juda ijodkor</div>
          </div>
         </div>
        </div>
@@ -46,11 +46,11 @@ export const haroratParametri: SectionContent = {
       <Card className="border-2 border-black">
        <CardContent className="p-4">
         <h4 className="font-bold ">PAST (0.0-0.5)</h4>
-        <p className="text-sm text-muted-foreground ">Aniq, bashorat qilsa bo'ladigan</p>
+        <p className="text-sm text-muted-foreground ">Jiddiy ishlar uchun</p>
         <ul className="text-xs">
-         <li>• Faktlar va ma'lumotlar</li>
-         <li>• Kod yozish</li>
-         <li>• Hisob-kitoblar</li>
+         <li>• "2+2 necha?" - har doim 4</li>
+         <li>• Dastur kodi yozish</li>
+         <li>• Rasmiy xatlar</li>
         </ul>
        </CardContent>
       </Card>
@@ -58,11 +58,11 @@ export const haroratParametri: SectionContent = {
       <Card className="border-2 border-black">
        <CardContent className="p-4">
         <h4 className="font-bold ">O'RTA (0.5-1.0)</h4>
-        <p className="text-sm text-muted-foreground ">Muvozanatli javoblar</p>
+        <p className="text-sm text-muted-foreground ">Kundalik ishlar uchun</p>
         <ul className="text-xs">
-         <li>• Umumiy foydalanish</li>
-         <li>• Maqola yozish</li>
-         <li>• Suhbat</li>
+         <li>• Do'stona suhbat</li>
+         <li>• Blog yozish</li>
+         <li>• Email javoblari</li>
         </ul>
        </CardContent>
       </Card>
@@ -70,11 +70,11 @@ export const haroratParametri: SectionContent = {
       <Card className="border-2 border-black">
        <CardContent className="p-4">
         <h4 className="font-bold ">YUQORI (1.0-2.0)</h4>
-        <p className="text-sm text-muted-foreground ">Ijodkor, kutilmagan</p>
+        <p className="text-sm text-muted-foreground ">San'at va ijod uchun</p>
         <ul className="text-xs">
-         <li>• Brainstorming</li>
-         <li>• She'riyat</li>
-         <li>• Kreativ yozish</li>
+         <li>• Yangi g'oyalar topish</li>
+         <li>• She'r va qo'shiq yozish</li>
+         <li>• Fantastik hikoyalar</li>
         </ul>
        </CardContent>
       </Card>
@@ -82,9 +82,9 @@ export const haroratParametri: SectionContent = {
 
      <CodeExample
       title="TEMPERATURE MISOLLARI"
-      badExample="Temperature = 2.0
-Prompt: O'zbekiston poytaxti qaysi?
-Javob: O'zbekiston poytaxti... balki Samarqand? Yoki Buxoro? Qadimda turli shaharlar..."
+      badExample="Harorat = 2.0
+Savol: Palov qanday pishiriladi?
+Javob: Palov... bu kosmik kemada uchuvchi guruch zarralari... yoki balki sehrli qozon raqsi..."
       goodExample="Temperature = 0.2
 Prompt: O'zbekiston poytaxti qaysi?
 Javob: O'zbekiston poytaxti - Toshkent shahri."

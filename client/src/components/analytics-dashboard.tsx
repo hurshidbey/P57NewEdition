@@ -46,30 +46,11 @@ export default function AnalyticsDashboard() {
         'Content-Type': 'application/json'
       };
 
-      // Load coupons data
-      const couponsRes = await fetch('/api/admin/coupons', { headers });
-      if (couponsRes.ok) {
-        const coupons = await couponsRes.json();
-        
-        // Calculate stats
-        const activeCoupons = coupons.filter((c: any) => c.isActive).length;
-        const totalUsage = coupons.reduce((sum: number, c: any) => sum + c.usedCount, 0);
-        
-        // Find most used coupon
-        const mostUsed = coupons.reduce((max: any, c: any) => 
-          (!max || c.usedCount > max.usedCount) ? c : max, null);
-        
-        setCouponStats({
-          totalCoupons: coupons.length,
-          activeCoupons,
-          totalUsage,
-          totalDiscountGiven: 0, // Would need to calculate from usage history
-          mostUsedCoupon: mostUsed ? {
-            code: mostUsed.code,
-            usedCount: mostUsed.usedCount
-          } : null,
-          recentUsage: [] // Would need to load from usage history
-        });
+      // Load analytics data from the new endpoint
+      const analyticsRes = await fetch('/api/admin/analytics/coupons', { headers });
+      if (analyticsRes.ok) {
+        const analyticsData = await analyticsRes.json();
+        setCouponStats(analyticsData);
       }
     } catch (error) {
       console.error('Failed to load analytics:', error);
@@ -143,17 +124,46 @@ export default function AnalyticsDashboard() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Faol Kuponlar</CardTitle>
-              <Percent className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Umumiy Chegirma</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{couponStats?.activeCoupons || 0}</div>
+              <div className="text-2xl font-bold">
+                {(couponStats?.totalDiscountGiven || 0).toLocaleString()} <span className="text-sm">UZS</span>
+              </div>
               <p className="text-xs text-muted-foreground">
-                hozir ishlatish mumkin
+                jami chegirma berilgan
               </p>
             </CardContent>
           </Card>
         </div>
+
+        {/* Recent Usage */}
+        {couponStats?.recentUsage && couponStats.recentUsage.length > 0 && (
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle className="text-sm font-medium">Oxirgi Foydalanishlar</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {couponStats.recentUsage.slice(0, 5).map((usage, index) => (
+                  <div key={index} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <code className="font-mono font-bold">{usage.code}</code>
+                      <span className="text-muted-foreground">{usage.userEmail}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-red-600">-{usage.discountAmount.toLocaleString()} UZS</span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(usage.usedAt).toLocaleDateString('uz-UZ')}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* General Analytics */}
