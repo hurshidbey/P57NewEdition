@@ -1250,105 +1250,142 @@ export default function Admin() {
                   <CardTitle>Kuponlarni boshqarish</CardTitle>
                   <CardDescription>Chegirma kuponlarini yaratish va boshqarish</CardDescription>
                 </div>
-                <Button onClick={() => openCouponDialog()}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Yangi kupon
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadData}
+                    disabled={loadingStates.coupons}
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${loadingStates.coupons ? 'animate-spin' : ''}`} />
+                    Yangilash
+                  </Button>
+                  <Button onClick={() => openCouponDialog()}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Yangi kupon
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Kod</TableHead>
-                      <TableHead>Tavsif</TableHead>
-                      <TableHead>Chegirma</TableHead>
-                      <TableHead>Foydalanilgan</TableHead>
-                      <TableHead>Muddat</TableHead>
-                      <TableHead>Holat</TableHead>
-                      <TableHead>Harakatlar</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {coupons.map((coupon) => (
-                      <TableRow key={coupon.id}>
-                        <TableCell>
-                          <code className="font-mono font-bold text-lg">{coupon.code}</code>
-                        </TableCell>
-                        <TableCell>{coupon.description || '-'}</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">
-                            {coupon.discountType === 'percentage' ? (
-                              <><Percent className="h-3 w-3 mr-1" />{coupon.discountValue}%</>
-                            ) : (
-                              <>{coupon.discountValue.toLocaleString()} UZS</>
-                            )}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span>{coupon.usedCount}</span>
-                            {coupon.maxUses && (
-                              <span className="text-muted-foreground">/ {coupon.maxUses}</span>
-                            )}
-                            {coupon.usedCount > 0 && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => viewCouponUsage(coupon.id)}
-                              >
-                                Ko'rish
-                              </Button>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {(() => {
-                            const now = new Date();
-                            const validFrom = coupon.validFrom ? new Date(coupon.validFrom) : null;
-                            const validUntil = coupon.validUntil ? new Date(coupon.validUntil) : null;
-                            
-                            if (validUntil && validUntil < now) {
-                              return <Badge variant="destructive">Muddati tugagan</Badge>;
-                            } else if (validFrom && validFrom > now) {
-                              return <Badge variant="outline">Kutilmoqda</Badge>;
-                            } else if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
-                              return <Badge variant="secondary">Tugagan</Badge>;
-                            } else {
-                              return <Badge variant="default">Faol</Badge>;
-                            }
-                          })()}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={coupon.isActive ? 'default' : 'secondary'}>
-                            {coupon.isActive ? 'Yoqilgan' : 'O\'chirilgan'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Switch
-                              checked={coupon.isActive}
-                              onCheckedChange={() => toggleCouponActive(coupon.id, coupon.isActive)}
-                            />
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => openCouponDialog(coupon)}
-                            >
-                              <Edit className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => deleteCoupon(coupon.id)}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                {errors.coupons && (
+                  <div className="mb-4 p-4 bg-destructive/10 text-destructive rounded-md flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5" />
+                    <p>{errors.coupons}</p>
+                  </div>
+                )}
+                
+                {loadingStates.coupons ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : coupons.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Tag className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Hali hech qanday kupon yaratilmagan</p>
+                    <Button 
+                      onClick={() => openCouponDialog()} 
+                      className="mt-4"
+                      variant="outline"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Birinchi kuponni yaratish
+                    </Button>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Kod</TableHead>
+                        <TableHead>Tavsif</TableHead>
+                        <TableHead>Chegirma</TableHead>
+                        <TableHead>Foydalanilgan</TableHead>
+                        <TableHead>Muddat</TableHead>
+                        <TableHead>Holat</TableHead>
+                        <TableHead>Harakatlar</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {coupons.map((coupon) => (
+                        <TableRow key={coupon.id}>
+                          <TableCell>
+                            <code className="font-mono font-bold text-lg">{coupon.code}</code>
+                          </TableCell>
+                          <TableCell>{coupon.description || '-'}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {coupon.discountType === 'percentage' ? (
+                                <><Percent className="h-3 w-3 mr-1" />{coupon.discountValue}%</>
+                              ) : (
+                                <>{coupon.discountValue.toLocaleString()} UZS</>
+                              )}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <span>{coupon.usedCount}</span>
+                              {coupon.maxUses && (
+                                <span className="text-muted-foreground">/ {coupon.maxUses}</span>
+                              )}
+                              {coupon.usedCount > 0 && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => viewCouponUsage(coupon.id)}
+                                >
+                                  Ko'rish
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {(() => {
+                              const now = new Date();
+                              const validFrom = coupon.validFrom ? new Date(coupon.validFrom) : null;
+                              const validUntil = coupon.validUntil ? new Date(coupon.validUntil) : null;
+                              
+                              if (validUntil && validUntil < now) {
+                                return <Badge variant="destructive">Muddati tugagan</Badge>;
+                              } else if (validFrom && validFrom > now) {
+                                return <Badge variant="outline">Kutilmoqda</Badge>;
+                              } else if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
+                                return <Badge variant="secondary">Tugagan</Badge>;
+                              } else {
+                                return <Badge variant="default">Faol</Badge>;
+                              }
+                            })()}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={coupon.isActive ? 'default' : 'secondary'}>
+                              {coupon.isActive ? 'Yoqilgan' : 'O\'chirilgan'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Switch
+                                checked={coupon.isActive}
+                                onCheckedChange={() => toggleCouponActive(coupon.id, coupon.isActive)}
+                              />
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openCouponDialog(coupon)}
+                              >
+                                <Edit className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => deleteCoupon(coupon.id)}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

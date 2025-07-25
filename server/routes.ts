@@ -855,9 +855,7 @@ export function setupRoutes(app: Express): Server {
 
   // Admin: Get all coupons
   app.get("/api/admin/coupons", 
-    requireAuth,
-    requirePermission(RESOURCES.COUPONS, ACTIONS.READ),
-    auditLog(RESOURCES.COUPONS, ACTIONS.READ),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const coupons = await storage.getCoupons();
@@ -870,9 +868,7 @@ export function setupRoutes(app: Express): Server {
 
   // Admin: Create new coupon
   app.post("/api/admin/coupons", 
-    requireAuth,
-    requirePermission(RESOURCES.COUPONS, ACTIONS.CREATE),
-    auditLog(RESOURCES.COUPONS, ACTIONS.CREATE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const { 
@@ -936,9 +932,7 @@ export function setupRoutes(app: Express): Server {
 
   // Admin: Update coupon
   app.put("/api/admin/coupons/:id", 
-    requireAuth,
-    requirePermission(RESOURCES.COUPONS, ACTIONS.UPDATE),
-    auditLog(RESOURCES.COUPONS, ACTIONS.UPDATE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -963,9 +957,7 @@ export function setupRoutes(app: Express): Server {
 
   // Admin: Delete coupon
   app.delete("/api/admin/coupons/:id", 
-    requireAuth,
-    requirePermission(RESOURCES.COUPONS, ACTIONS.DELETE),
-    auditLog(RESOURCES.COUPONS, ACTIONS.DELETE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -1004,9 +996,7 @@ export function setupRoutes(app: Express): Server {
 
   // Admin: Get coupon usage history
   app.get("/api/admin/coupons/:id/usage", 
-    requireAuth,
-    requirePermission(RESOURCES.COUPONS, ACTIONS.READ),
-    auditLog(RESOURCES.COUPONS, ACTIONS.READ),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const id = parseInt(req.params.id);
