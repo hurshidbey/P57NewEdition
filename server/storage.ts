@@ -1044,6 +1044,20 @@ export class HybridStorage implements IStorage {
 
   // Payment methods
   async storePayment(payment: InsertPayment): Promise<Payment> {
+    // Check if we're using Supabase storage
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      try {
+        const result = await supabaseStorage.storePayment(payment);
+        console.log(`💾 [STORAGE] Payment record stored via Supabase:`, result);
+        return result;
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to store payment via Supabase:`, error);
+        throw error;
+      }
+    }
+    
+    // Fallback to direct database connection
     if (isDatabaseConnected && db) {
       try {
         const result = await db.insert(payments).values(payment).returning();
@@ -1059,6 +1073,17 @@ export class HybridStorage implements IStorage {
   }
 
   async getPayments(): Promise<Payment[]> {
+    // Check if we're using Supabase storage
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      try {
+        return await supabaseStorage.getPayments();
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to get payments from Supabase:`, error);
+      }
+    }
+    
+    // Fallback to direct database connection
     if (isDatabaseConnected && db) {
       try {
         return await db.select().from(payments).orderBy(desc(payments.createdAt));
@@ -1071,6 +1096,17 @@ export class HybridStorage implements IStorage {
   }
 
   async getUserPayments(userId: string): Promise<Payment[]> {
+    // Check if we're using Supabase storage
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      try {
+        return await supabaseStorage.getUserPayments(userId);
+      } catch (error) {
+        console.error(`❌ [STORAGE] Failed to get user payments from Supabase for ${userId}:`, error);
+      }
+    }
+    
+    // Fallback to direct database connection
     if (isDatabaseConnected && db) {
       try {
         return await db.select().from(payments)
