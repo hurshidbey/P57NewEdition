@@ -389,9 +389,7 @@ export function setupRoutes(app: Express): Server {
   // Admin routes for protocol management
   // Get all protocols for admin
   app.get("/api/admin/protocols", 
-    requireAuth,
-    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.READ),
-    auditLog(RESOURCES.PROTOCOLS, ACTIONS.READ),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const protocols = await storage.getProtocols(1000); // Get all protocols for admin
@@ -402,9 +400,7 @@ export function setupRoutes(app: Express): Server {
   });
 
   app.post("/api/admin/protocols", 
-    requireAuth,
-    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.CREATE),
-    auditLog(RESOURCES.PROTOCOLS, ACTIONS.CREATE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const protocolData = insertProtocolSchema.parse(req.body);
@@ -419,9 +415,7 @@ export function setupRoutes(app: Express): Server {
   });
 
   app.put("/api/admin/protocols/:id", 
-    requireAuth,
-    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.UPDATE),
-    auditLog(RESOURCES.PROTOCOLS, ACTIONS.UPDATE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -443,9 +437,7 @@ export function setupRoutes(app: Express): Server {
   });
 
   app.delete("/api/admin/protocols/:id", 
-    requireAuth,
-    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.DELETE),
-    auditLog(RESOURCES.PROTOCOLS, ACTIONS.DELETE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -463,9 +455,7 @@ export function setupRoutes(app: Express): Server {
 
   // Toggle protocol free access
   app.patch("/api/admin/protocols/:id/toggle-free", 
-    requireAuth,
-    requirePermission(RESOURCES.PROTOCOLS, ACTIONS.TOGGLE_FREE),
-    auditLog(RESOURCES.PROTOCOLS, ACTIONS.TOGGLE_FREE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -557,9 +547,7 @@ export function setupRoutes(app: Express): Server {
 
   // Admin prompts endpoints
   app.get("/api/admin/prompts", 
-    requireAuth,
-    requirePermission(RESOURCES.PROMPTS, ACTIONS.READ),
-    auditLog(RESOURCES.PROMPTS, ACTIONS.READ),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const prompts = await hybridPromptsStorage.getAllPrompts();
@@ -570,9 +558,7 @@ export function setupRoutes(app: Express): Server {
   });
 
   app.post("/api/admin/prompts", 
-    requireAuth,
-    requirePermission(RESOURCES.PROMPTS, ACTIONS.CREATE),
-    auditLog(RESOURCES.PROMPTS, ACTIONS.CREATE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const promptData = insertPromptSchema.parse(req.body);
@@ -587,9 +573,7 @@ export function setupRoutes(app: Express): Server {
   });
 
   app.put("/api/admin/prompts/:id", 
-    requireAuth,
-    requirePermission(RESOURCES.PROMPTS, ACTIONS.UPDATE),
-    auditLog(RESOURCES.PROMPTS, ACTIONS.UPDATE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -611,9 +595,7 @@ export function setupRoutes(app: Express): Server {
   });
 
   app.delete("/api/admin/prompts/:id", 
-    requireAuth,
-    requirePermission(RESOURCES.PROMPTS, ACTIONS.DELETE),
-    auditLog(RESOURCES.PROMPTS, ACTIONS.DELETE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -837,9 +819,7 @@ export function setupRoutes(app: Express): Server {
 
   // Admin: Get all users
   app.get("/api/admin/users", 
-    requireAuth,
-    requirePermission(RESOURCES.USERS, ACTIONS.READ),
-    auditLog(RESOURCES.USERS, ACTIONS.READ),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const { createClient } = await import('@supabase/supabase-js');
@@ -868,9 +848,7 @@ export function setupRoutes(app: Express): Server {
 
   // Admin: Get all payments
   app.get("/api/admin/payments", 
-    requireAuth,
-    requirePermission(RESOURCES.PAYMENTS, ACTIONS.READ),
-    auditLog(RESOURCES.PAYMENTS, ACTIONS.READ),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const payments = await storage.getPayments();
@@ -1109,9 +1087,7 @@ export function setupRoutes(app: Express): Server {
 
   // Admin: Toggle coupon active status
   app.patch("/api/admin/coupons/:id/toggle", 
-    requireAuth,
-    requirePermission(RESOURCES.COUPONS, ACTIONS.TOGGLE),
-    auditLog(RESOURCES.COUPONS, ACTIONS.TOGGLE),
+    isSupabaseAdmin,
     async (req, res) => {
     try {
       const id = parseInt(req.params.id);
