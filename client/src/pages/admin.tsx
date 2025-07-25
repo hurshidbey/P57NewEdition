@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-context';
+import { supabase } from '@/lib/supabase';
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -187,13 +188,6 @@ export default function Admin() {
     });
     
     try {
-      // Import supabase client
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
-      
       // Get auth token
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
@@ -371,11 +365,6 @@ export default function Admin() {
 
   const toggleProtocolAccess = async (protocolId: number, currentAccess: boolean) => {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       
@@ -454,11 +443,6 @@ export default function Admin() {
     }
 
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
@@ -507,11 +491,6 @@ export default function Admin() {
     if (!confirm('Ushbu protokolni o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.')) return;
 
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
@@ -590,11 +569,6 @@ export default function Admin() {
     }
 
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
@@ -643,11 +617,6 @@ export default function Admin() {
     if (!confirm('Ushbu promptni o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.')) return;
 
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
@@ -727,11 +696,6 @@ export default function Admin() {
     }
 
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
@@ -780,11 +744,6 @@ export default function Admin() {
     if (!confirm('Ushbu kuponni o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.')) return;
 
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
@@ -816,11 +775,6 @@ export default function Admin() {
 
   const toggleCouponActive = async (couponId: number, currentActive: boolean) => {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       
@@ -853,11 +807,6 @@ export default function Admin() {
 
   const viewCouponUsage = async (couponId: number) => {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL!,
-        import.meta.env.VITE_SUPABASE_ANON_KEY!
-      );
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       

@@ -12,7 +12,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "generate-password-hash": "tsx scripts/generate-password-hash.ts"
+    "generate-password-hash": "tsx scripts/generate-password-hash.ts",
+    "assign-admin": "tsx scripts/assign-admin-role.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
