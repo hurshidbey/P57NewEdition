@@ -22,6 +22,19 @@ export default function PaymentSuccess() {
   const [showCelebration, setShowCelebration] = useState(false);
   
   useEffect(() => {
+    // Refresh user session to get updated tier
+    const refreshSession = async () => {
+      try {
+        await refreshUser();
+        // Trigger storage event for cross-tab communication
+        localStorage.setItem('tier_upgrade_trigger', Date.now().toString());
+      } catch (error) {
+        console.error('Failed to refresh user session:', error);
+      } finally {
+        setIsRefreshing(false);
+      }
+    };
+
     // Only trigger celebration if this is a legitimate redirect from payment
     const urlParams = new URLSearchParams(window.location.search);
     const isFromPayment = urlParams.get('method') === 'click' || 
@@ -48,19 +61,6 @@ export default function PaymentSuccess() {
         setShowCelebration(false);
       }, 2000);
     }
-
-    // Refresh user session to get updated tier
-    const refreshSession = async () => {
-      try {
-        await refreshUser();
-        // Trigger storage event for cross-tab communication
-        localStorage.setItem('tier_upgrade_trigger', Date.now().toString());
-      } catch (error) {
-        console.error('Failed to refresh user session:', error);
-      } finally {
-        setIsRefreshing(false);
-      }
-    };
     
     refreshSession();
     
