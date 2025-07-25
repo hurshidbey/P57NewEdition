@@ -40,6 +40,30 @@ export interface IStorage {
   getPayments(): Promise<Payment[]>;
   getUserPayments(userId: string): Promise<Payment[]>;
   
+  // Payment session methods
+  createPaymentSession(session: {
+    id: string;
+    userId: string;
+    userEmail: string;
+    amount: number;
+    originalAmount?: number;
+    discountAmount?: number;
+    couponId?: number | null;
+    merchantTransId: string;
+    paymentMethod: string;
+    idempotencyKey: string;
+    metadata?: any;
+    expiresAt: Date;
+  }): Promise<any>;
+  getPaymentSessionByMerchantId(merchantTransId: string): Promise<any | null>;
+  getPaymentSessionByClickTransId(clickTransId: string): Promise<any | null>;
+  updatePaymentSession(id: string, updates: {
+    status?: string;
+    clickTransId?: string;
+    metadata?: any;
+  }): Promise<any>;
+  cleanupExpiredSessions(): Promise<number>;
+  
   // Coupon methods
   createCoupon(coupon: InsertCoupon): Promise<Coupon>;
   getCoupons(): Promise<Coupon[]>;
@@ -1243,6 +1267,69 @@ export class HybridStorage implements IStorage {
       }
     }
     return [];
+  }
+
+  // Payment session methods
+  async createPaymentSession(session: {
+    id: string;
+    userId: string;
+    userEmail: string;
+    amount: number;
+    originalAmount?: number;
+    discountAmount?: number;
+    couponId?: number | null;
+    merchantTransId: string;
+    paymentMethod: string;
+    idempotencyKey: string;
+    metadata?: any;
+    expiresAt: Date;
+  }): Promise<any> {
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      return await supabaseStorage.createPaymentSession(session);
+    }
+    
+    throw new Error("Database not available for payment session creation");
+  }
+
+  async getPaymentSessionByMerchantId(merchantTransId: string): Promise<any | null> {
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      return await supabaseStorage.getPaymentSessionByMerchantId(merchantTransId);
+    }
+    
+    return null;
+  }
+
+  async getPaymentSessionByClickTransId(clickTransId: string): Promise<any | null> {
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      return await supabaseStorage.getPaymentSessionByClickTransId(clickTransId);
+    }
+    
+    return null;
+  }
+
+  async updatePaymentSession(id: string, updates: {
+    status?: string;
+    clickTransId?: string;
+    metadata?: any;
+  }): Promise<any> {
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      return await supabaseStorage.updatePaymentSession(id, updates);
+    }
+    
+    throw new Error("Database not available for payment session update");
+  }
+
+  async cleanupExpiredSessions(): Promise<number> {
+    const supabaseStorage = (global as any).supabaseStorage;
+    if (supabaseStorage) {
+      return await supabaseStorage.cleanupExpiredSessions();
+    }
+    
+    return 0;
   }
 
   async close(): Promise<void> {

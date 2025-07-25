@@ -772,4 +772,146 @@ export class SupabaseStorage implements IStorage {
     
     return data || [];
   }
+
+  // Payment session methods
+  async createPaymentSession(session: {
+    id: string;
+    userId: string;
+    userEmail: string;
+    amount: number;
+    originalAmount?: number;
+    discountAmount?: number;
+    couponId?: number | null;
+    merchantTransId: string;
+    paymentMethod: string;
+    idempotencyKey: string;
+    metadata?: any;
+    expiresAt: Date;
+  }): Promise<any> {
+    // First check if idempotency key already exists
+    const { data: existing, error: checkError } = await this.supabase
+      .from('payment_sessions')
+      .select('*')
+      .eq('idempotency_key', session.idempotencyKey)
+      .single();
+    
+    if (existing && !checkError) {
+      console.log(`🔄 [SUPABASE] Payment session already exists for idempotency key: ${session.idempotencyKey}`);
+      return existing;
+    }
+    
+    const { data, error } = await this.supabase
+      .from('payment_sessions')
+      .insert({
+        id: session.id,
+        user_id: session.userId,
+        user_email: session.userEmail,
+        amount: session.amount,
+        original_amount: session.originalAmount || session.amount,
+        discount_amount: session.discountAmount || 0,
+        coupon_id: session.couponId,
+        merchant_trans_id: session.merchantTransId,
+        payment_method: session.paymentMethod,
+        idempotency_key: session.idempotencyKey,
+        metadata: session.metadata || {},
+        expires_at: session.expiresAt.toISOString(),
+        status: 'pending'
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to create payment session:`, error);
+      throw error;
+    }
+    
+    console.log(`✅ [SUPABASE] Payment session created:`, data.id);
+    return data;
+  }
+
+  async getPaymentSessionByMerchantId(merchantTransId: string): Promise<any | null> {
+    const { data, error } = await this.supabase
+      .from('payment_sessions')
+      .select('*')
+      .eq('merchant_trans_id', merchantTransId)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error(`❌ [SUPABASE] Failed to get payment session:`, error);
+      throw error;
+    }
+    
+    return data;
+  }
+
+  async getPaymentSessionByClickTransId(clickTransId: string): Promise<any | null> {
+    const { data, error } = await this.supabase
+      .from('payment_sessions')
+      .select('*')
+      .eq('click_trans_id', clickTransId)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error(`❌ [SUPABASE] Failed to get payment session by click trans id:`, error);
+      throw error;
+    }
+    
+    return data;
+  }
+
+  async updatePaymentSession(id: string, updates: {
+    status?: string;
+    clickTransId?: string;
+    metadata?: any;
+  }): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('payment_sessions')
+      .update({
+        status: updates.status,
+        click_trans_id: updates.clickTransId,
+        metadata: updates.metadata,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to update payment session:`, error);
+      throw error;
+    }
+    
+    console.log(`✅ [SUPABASE] Payment session updated:`, data.id);
+    return data;
+  }
+
+  async cleanupExpiredSessions(): Promise<number> {
+    const { data, error } = await this.supabase
+      .from('payment_sessions')
+      .delete()
+      .eq('status', 'pending')
+      .lt('expires_at', new Date().toISOString())
+      .select();
+    
+    if (error) {
+      console.error(`❌ [SUPABASE] Failed to cleanup expired sessions:`, error);
+      throw error;
+    }
+    
+    const count = data?.length || 0;
+    if (count > 0) {
+      console.log(`🧹 [SUPABASE] Cleaned up ${count} expired payment sessions`);
+    }
+    return count;
+  }
+
+  async close(): Promise<void> {
+    console.log('[SUPABASE] Closing connections...');
+    // Supabase client doesn't need explicit close
+  }
+
+  isConnected(): boolean {
+    // Supabase is always "connected" via HTTP
+    return true;
+  }
 }

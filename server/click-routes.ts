@@ -160,11 +160,13 @@ export function setupClickRoutes(): Router {
         });
       }
 
-      // Generate order ID with user info embedded (keep it short for Click.uz)
-      // Format: "P57-{userId_first8}-{timestamp_last6}"
-      const userIdShort = (actualUserId || 'guest').substring(0, 8);
-      const timestampShort = Date.now().toString().slice(-6);
-      const orderId = `P57-${userIdShort}-${timestampShort}`;
+      // Import payment utils
+      const { generatePaymentSessionId, generateMerchantTransId, generateIdempotencyKey, calculateSessionExpiry } = await import('./utils/payment-utils');
+      
+      // Generate secure IDs for payment session
+      const sessionId = generatePaymentSessionId();
+      const merchantTransId = generateMerchantTransId();
+      const idempotencyKey = generateIdempotencyKey(actualUserId, amount);
       
       // If coupon is provided, validate and apply discount
       let finalAmount = amount;
@@ -200,11 +202,35 @@ export function setupClickRoutes(): Router {
         }
       }
 
-      // Generate payment URL
-      const paymentUrl = clickService.generatePaymentUrl(finalAmount, orderId, actualUserId || 'guest');
+      // Get storage instance
+      const { storage } = await import('./storage');
+      
+      // Create payment session in database
+      const paymentSession = await storage.createPaymentSession({
+        id: sessionId,
+        userId: actualUserId,
+        userEmail: user.email || userEmail,
+        amount: finalAmount,
+        originalAmount: amount,
+        discountAmount: amount - finalAmount,
+        couponId: appliedCoupon?.id || null,
+        merchantTransId: merchantTransId,
+        paymentMethod: 'click',
+        idempotencyKey: idempotencyKey,
+        metadata: {
+          couponCode: couponCode,
+          userAgent: req.headers['user-agent'],
+          ip: req.ip
+        },
+        expiresAt: calculateSessionExpiry()
+      });
+
+      // Generate payment URL with new merchant trans ID
+      const paymentUrl = clickService.generatePaymentUrl(finalAmount, merchantTransId, actualUserId || 'guest');
       
       console.log(`✅ [CLICK] Transaction created:`, {
-        orderId,
+        sessionId,
+        merchantTransId,
         originalAmount: amount,
         finalAmount,
         paymentUrl
@@ -213,7 +239,7 @@ export function setupClickRoutes(): Router {
       res.json({
         success: true,
         paymentUrl,
-        orderId,
+        orderId: merchantTransId, // Keep orderId for backward compatibility
         amount: finalAmount,
         appliedCoupon: appliedCoupon ? {
           code: appliedCoupon.code,
@@ -305,36 +331,40 @@ export function setupClickRoutes(): Router {
           try {
             const { storage } = await import('./storage');
             const { createClient } = await import('@supabase/supabase-js');
+            
+            // Look up payment session by merchant transaction ID
+            const merchantTransId = req.body.merchant_trans_id;
+            const paymentSession = await storage.getPaymentSessionByMerchantId(merchantTransId);
+            
+            if (!paymentSession) {
+              console.error(`❌ [CLICK] No payment session found for merchant_trans_id: ${merchantTransId}`);
+              // Don't fail the payment response, Click.uz already processed it
+              return;
+            }
+            
+            console.log(`✅ [CLICK] Found payment session:`, {
+              sessionId: paymentSession.id,
+              userId: paymentSession.user_id,
+              userEmail: paymentSession.user_email
+            });
+            
+            // Update payment session with Click transaction ID
+            await storage.updatePaymentSession(paymentSession.id, {
+              status: 'completed',
+              clickTransId: req.body.click_trans_id,
+              metadata: {
+                ...paymentSession.metadata,
+                completedAt: new Date().toISOString(),
+                clickPaydocId: req.body.click_paydoc_id
+              }
+            });
+            
             const adminSupabase = createClient(
               process.env.SUPABASE_URL!,
               process.env.SUPABASE_SERVICE_ROLE_KEY!
             );
             
-            // Parse merchant_trans_id to extract userId
-            // Format: "P57-{userId_first8}-{timestamp_last6}"
-            const merchantTransId = req.body.merchant_trans_id;
-            const parts = merchantTransId.split('-');
-            let userId: string | null = null;
-            
-            if (parts.length >= 3 && parts[1] !== 'guest') {
-              // Try to find user by partial ID
-              const userIdPrefix = parts[1];
-              console.log(`🔍 [CLICK] Looking for user with ID prefix: ${userIdPrefix}`);
-              
-              // Get all users and find matching one
-              const { data: allUsers, error: usersError } = await adminSupabase.auth.admin.listUsers({
-                page: 1,
-                perPage: 1000
-              });
-              
-              if (allUsers && !usersError) {
-                const matchingUser = allUsers.users.find(u => u.id.startsWith(userIdPrefix));
-                if (matchingUser) {
-                  userId = matchingUser.id;
-                  console.log(`✅ [CLICK] Found user: ${matchingUser.email} (${userId})`);
-                }
-              }
-            }
+            const userId = paymentSession.user_id;
             
             if (userId) {
               // Check if user already paid (prevent duplicate upgrades)
@@ -363,29 +393,47 @@ export function setupClickRoutes(): Router {
                     await storage.storePayment({
                       id: `payment_click_${req.body.click_trans_id}_${Date.now()}`,
                       userId: user.id,
-                      userEmail: user.email || 'unknown@email.com',
-                      amount: req.body.amount,
+                      userEmail: user.email || paymentSession.user_email,
+                      amount: paymentSession.amount,
                       transactionId: req.body.click_trans_id,
                       status: 'completed',
                       atmosData: JSON.stringify({
                         paymentMethod: 'click',
                         clickTransId: req.body.click_trans_id,
                         merchantTransId: req.body.merchant_trans_id,
+                        sessionId: paymentSession.id,
                         completedAt: new Date().toISOString()
                       }),
-                      couponId: null,
-                      originalAmount: req.body.amount,
-                      discountAmount: 0
+                      couponId: paymentSession.coupon_id || null,
+                      originalAmount: paymentSession.original_amount || paymentSession.amount,
+                      discountAmount: paymentSession.discount_amount || 0
                     });
                     
                     console.log(`💾 [CLICK] Payment record stored`);
+                    
+                    // If a coupon was used, increment its usage count
+                    if (paymentSession.coupon_id) {
+                      await storage.incrementCouponUsage(paymentSession.coupon_id);
+                      await storage.recordCouponUsage({
+                        couponId: paymentSession.coupon_id,
+                        userId: user.id,
+                        userEmail: user.email || paymentSession.user_email,
+                        paymentId: req.body.click_trans_id,
+                        originalAmount: paymentSession.original_amount,
+                        discountAmount: paymentSession.discount_amount,
+                        finalAmount: paymentSession.amount
+                      });
+                      console.log(`🎟️ [CLICK] Coupon usage recorded for coupon ${paymentSession.coupon_id}`);
+                    }
                   } else {
                     console.error(`❌ [CLICK] Failed to upgrade user ${user.email}: ${updateError.message}`);
                   }
                 }
+              } else {
+                console.error(`❌ [CLICK] Failed to get user ${userId} from Supabase`);
               }
             } else {
-              console.log(`⚠️ [CLICK] Could not find user to upgrade for transaction: ${merchantTransId}`);
+              console.error(`❌ [CLICK] No user ID in payment session`);
             }
           } catch (error) {
             console.error(`❌ [CLICK] Error upgrading user tier:`, error);
@@ -477,50 +525,48 @@ export function setupClickRoutes(): Router {
         }
       }
 
-      // Generate order ID with user info embedded (keep it short for Click.uz)
-      // Format: "P57-{userId_first8}-{timestamp_last6}"
-      const userIdShort = (userId || 'guest').substring(0, 8);
-      const timestampShort = Date.now().toString().slice(-6);
-      const orderId = `P57-${userIdShort}-${timestampShort}`;
+      // Import payment utils
+      const { generatePaymentSessionId, generateMerchantTransId, generateIdempotencyKey, calculateSessionExpiry } = await import('./utils/payment-utils');
       
-      // Generate payment URL
+      // Generate secure IDs for payment session
+      const sessionId = generatePaymentSessionId();
+      const merchantTransId = generateMerchantTransId();
+      const idempotencyKey = generateIdempotencyKey(userId, amount);
+      
+      // Get storage instance
+      const { storage } = await import('./storage');
+      
+      // Create payment session in database
+      const paymentSession = await storage.createPaymentSession({
+        id: sessionId,
+        userId: userId,
+        userEmail: userEmail || 'unknown@email.com',
+        amount: finalAmount,
+        originalAmount: amount,
+        discountAmount: amount - finalAmount,
+        couponId: appliedCoupon?.id || null,
+        merchantTransId: merchantTransId,
+        paymentMethod: 'click',
+        idempotencyKey: idempotencyKey,
+        metadata: {
+          couponCode: couponCode,
+          userAgent: req.headers['user-agent'],
+          ip: req.ip
+        },
+        expiresAt: calculateSessionExpiry()
+      });
+      
+      // Generate payment URL with new merchant trans ID
       const paymentUrl = clickService.generatePaymentUrl(
         finalAmount,
-        orderId,
+        merchantTransId,
         userId || userEmail || 'guest'
       );
-
-      // Store initial payment record
-      if (userId) {
-        try {
-          const { storage } = await import('./storage');
-          await storage.storePayment({
-            id: `payment_click_pending_${orderId}`,
-            userId: userId,
-            userEmail: userEmail || 'unknown@email.com',
-            amount: finalAmount,
-            transactionId: orderId,
-            status: 'pending',
-            atmosData: JSON.stringify({
-              paymentMethod: 'click',
-              originalAmount: amount,
-              finalAmount: finalAmount,
-              couponApplied: !!appliedCoupon,
-              createdAt: new Date().toISOString()
-            }),
-            couponId: appliedCoupon?.id || null,
-            originalAmount: amount,
-            discountAmount: amount - finalAmount
-          });
-        } catch (error) {
-          console.error(`⚠️ [CLICK] Failed to store initial payment record:`, error);
-        }
-      }
 
       res.json({
         success: true,
         paymentUrl,
-        orderId,
+        orderId: merchantTransId,  // Keep orderId for backward compatibility
         amount: finalAmount,
         originalAmount: amount,
         coupon: appliedCoupon ? {
@@ -559,38 +605,26 @@ export function setupClickRoutes(): Router {
         result = await clickService.handlePrepare(req.body);
         
         if (result.error === CLICK_ERRORS.SUCCESS) {
-          // Store click_trans_id mapped to merchant_trans_id for user lookup
           const { storage } = await import('./storage');
-          const paymentId = `payment_click_${req.body.click_trans_id}`;
           
-          // Check if payment already exists to prevent duplicates
-          const existingPayments = await storage.getUserPayments('pending');
-          const existingPayment = existingPayments.find(p => 
-            p.transactionId === req.body.click_trans_id || 
-            p.id === paymentId
-          );
+          // Look up payment session by merchant transaction ID
+          const merchantTransId = req.body.merchant_trans_id;
+          const paymentSession = await storage.getPaymentSessionByMerchantId(merchantTransId);
           
-          if (!existingPayment) {
-            // Store pending payment with click_trans_id
-            await storage.storePayment({
-              id: paymentId,
-              userId: 'pending', // Will be updated when we find the actual user
-              userEmail: 'pending@payment.click',
-              amount: req.body.amount,
-              transactionId: req.body.click_trans_id,
-              status: 'pending',
-              atmosData: JSON.stringify({
-                paymentMethod: 'click',
-                clickTransId: req.body.click_trans_id,
-                merchantTransId: req.body.merchant_trans_id,
+          if (paymentSession) {
+            // Update payment session with Click transaction ID and prepare status
+            await storage.updatePaymentSession(paymentSession.id, {
+              status: 'processing',
+              clickTransId: req.body.click_trans_id,
+              metadata: {
+                ...paymentSession.metadata,
                 clickPaydocId: req.body.click_paydoc_id,
                 preparedAt: new Date().toISOString()
-              }),
-              couponId: null,
-              originalAmount: req.body.amount,
-              discountAmount: 0
+              }
             });
-            console.log(`💾 [CLICK-RETURN] Stored pending payment: ${paymentId}`);
+            console.log(`✅ [CLICK-RETURN] Updated payment session ${paymentSession.id} with click_trans_id`);
+          } else {
+            console.warn(`⚠️ [CLICK-RETURN] No payment session found for merchant_trans_id: ${merchantTransId}`);
           }
         }
       } else if (actionNum === 1) {
@@ -616,53 +650,34 @@ export function setupClickRoutes(): Router {
               process.env.SUPABASE_SERVICE_ROLE_KEY!
             );
             
-            // Parse merchant_trans_id to extract userId
-            // Format: "P57-{userId_first8}-{timestamp_last6}"
+            // Look up payment session by merchant transaction ID
             const merchantTransId = req.body.merchant_trans_id;
-            const parts = merchantTransId.split('-');
-            let userId: string | null = null;
+            const paymentSession = await storage.getPaymentSessionByMerchantId(merchantTransId);
             
-            if (parts.length >= 3 && parts[1] !== 'guest') {
-              // Try to find user by partial ID
-              const userIdPrefix = parts[1];
-              console.log(`🔍 [CLICK-RETURN] Looking for user with ID prefix: ${userIdPrefix}`);
-              
-              // Get all users and find matching one
-              const { data: allUsers, error: usersError } = await adminSupabase.auth.admin.listUsers({
-                page: 1,
-                perPage: 1000
-              });
-              
-              if (allUsers && !usersError) {
-                const matchingUser = allUsers.users.find(u => u.id.startsWith(userIdPrefix));
-                if (matchingUser) {
-                  userId = matchingUser.id;
-                  console.log(`✅ [CLICK-RETURN] Found user: ${matchingUser.email} (${userId})`);
-                }
-              }
+            if (!paymentSession) {
+              console.error(`❌ [CLICK-RETURN] No payment session found for merchant_trans_id: ${merchantTransId}`);
+              // Don't fail the payment response, Click.uz already processed it
+              return;
             }
             
-            if (!userId) {
-              console.log(`⚠️ [CLICK-RETURN] Could not extract userId from merchant_trans_id: ${merchantTransId}`);
-              // Try to find by recent free users as fallback
-              const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-              const { data: recentUsers } = await adminSupabase.auth.admin.listUsers({
-                page: 1,
-                perPage: 100
-              });
-              
-              if (recentUsers) {
-                const freeUsers = recentUsers.users.filter(u => 
-                  (!u.user_metadata?.tier || u.user_metadata.tier === 'free') &&
-                  new Date(u.created_at) > new Date(oneHourAgo)
-                );
-                
-                if (freeUsers.length === 1) {
-                  userId = freeUsers[0].id;
-                  console.log(`🎯 [CLICK-RETURN] Found likely user by recent signup: ${freeUsers[0].email}`);
-                }
+            console.log(`✅ [CLICK-RETURN] Found payment session:`, {
+              sessionId: paymentSession.id,
+              userId: paymentSession.user_id,
+              userEmail: paymentSession.user_email
+            });
+            
+            // Update payment session as completed
+            await storage.updatePaymentSession(paymentSession.id, {
+              status: 'completed',
+              clickTransId: req.body.click_trans_id,
+              metadata: {
+                ...paymentSession.metadata,
+                completedAt: new Date().toISOString(),
+                clickPaydocId: req.body.click_paydoc_id
               }
-            }
+            });
+            
+            const userId = paymentSession.user_id;
             
             if (userId) {
               // Check if user already paid (prevent duplicate upgrades)
@@ -690,27 +705,45 @@ export function setupClickRoutes(): Router {
                     await storage.storePayment({
                       id: `payment_click_completed_${req.body.click_trans_id}`,
                       userId: userId,
-                      userEmail: user.email || 'unknown@email.com',
-                      amount: req.body.amount,
+                      userEmail: user.email || paymentSession.user_email,
+                      amount: paymentSession.amount,
                       transactionId: req.body.click_trans_id,
                       status: 'completed',
                       atmosData: JSON.stringify({
                         paymentMethod: 'click',
                         clickTransId: req.body.click_trans_id,
                         merchantTransId: req.body.merchant_trans_id,
+                        sessionId: paymentSession.id,
                         completedAt: new Date().toISOString()
                       }),
-                      couponId: null,
-                      originalAmount: req.body.amount,
-                      discountAmount: 0
+                      couponId: paymentSession.coupon_id || null,
+                      originalAmount: paymentSession.original_amount || paymentSession.amount,
+                      discountAmount: paymentSession.discount_amount || 0
                     });
+                    
+                    // If a coupon was used, record its usage
+                    if (paymentSession.coupon_id) {
+                      await storage.incrementCouponUsage(paymentSession.coupon_id);
+                      await storage.recordCouponUsage({
+                        couponId: paymentSession.coupon_id,
+                        userId: userId,
+                        userEmail: user.email || paymentSession.user_email,
+                        paymentId: req.body.click_trans_id,
+                        originalAmount: paymentSession.original_amount,
+                        discountAmount: paymentSession.discount_amount,
+                        finalAmount: paymentSession.amount
+                      });
+                      console.log(`🎟️ [CLICK-RETURN] Coupon usage recorded for coupon ${paymentSession.coupon_id}`);
+                    }
                   } else {
                     console.error(`❌ [CLICK-RETURN] Failed to update user tier:`, updateError);
                   }
                 }
+              } else {
+                console.error(`❌ [CLICK-RETURN] Failed to get user ${userId} from Supabase`);
               }
             } else {
-              console.error(`❌ [CLICK-RETURN] Could not find user to upgrade for transaction: ${merchantTransId}`);
+              console.error(`❌ [CLICK-RETURN] No user ID in payment session`);
             }
             
             console.log(`✅ [CLICK-RETURN] Payment completed successfully`);
@@ -812,32 +845,38 @@ export function setupClickRoutes(): Router {
       console.log(`⏳ [CLICK-WAIT] Waiting for payment completion: ${orderId}`);
       
       const checkPayment = async (): Promise<boolean> => {
-        // Extract user ID from order ID (P57-{userId_first8}-{timestamp})
-        const parts = orderId.split('-');
-        if (parts.length < 3) return false;
-        
-        const userIdPrefix = parts[1];
-        
-        // Get admin Supabase client
-        const { createClient } = await import('@supabase/supabase-js');
-        const adminSupabase = createClient(
-          process.env.SUPABASE_URL!,
-          process.env.SUPABASE_SERVICE_ROLE_KEY!
-        );
-        
-        // Find user by prefix
-        const { data: allUsers } = await adminSupabase.auth.admin.listUsers({
-          page: 1,
-          perPage: 1000
-        });
-        
-        if (!allUsers) return false;
-        
-        const matchingUser = allUsers.users.find(u => u.id.startsWith(userIdPrefix));
-        if (!matchingUser) return false;
-        
-        // Check if user has been upgraded
-        return matchingUser.user_metadata?.tier === 'paid';
+        try {
+          // Look up payment session by merchant transaction ID (orderId)
+          const { storage } = await import('./storage');
+          const paymentSession = await storage.getPaymentSessionByMerchantId(orderId);
+          
+          if (!paymentSession) {
+            console.log(`⚠️ [CLICK-WAIT] No payment session found for orderId: ${orderId}`);
+            return false;
+          }
+          
+          // Check if payment session is completed
+          if (paymentSession.status === 'completed') {
+            return true;
+          }
+          
+          // Also check if user has been upgraded (as a fallback)
+          const { createClient } = await import('@supabase/supabase-js');
+          const adminSupabase = createClient(
+            process.env.SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+          );
+          
+          const { data: { user } } = await adminSupabase.auth.admin.getUserById(paymentSession.user_id);
+          if (user && user.user_metadata?.tier === 'paid') {
+            return true;
+          }
+          
+          return false;
+        } catch (error) {
+          console.error(`❌ [CLICK-WAIT] Error checking payment:`, error);
+          return false;
+        }
       };
       
       // Poll for payment completion
