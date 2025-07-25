@@ -2,15 +2,6 @@
 import { Router } from 'express';
 import { AtmosService } from './atmos-service';
 import { logger } from './utils/logger';
-import { 
-  isValidCardNumber, 
-  sanitizeMerchantTransId, 
-  isValidPaymentAmount,
-  generateSecureTransactionId,
-  sanitizeCouponCode,
-  CardDetailsSchema,
-  OTPSchema 
-} from './utils/validation';
 
 export function setupAtmosRoutes(): Router {
   const router = Router();
@@ -59,8 +50,7 @@ export function setupAtmosRoutes(): Router {
       // Check if coupon code is provided
       if (couponCode) {
         const { storage } = await import('./storage');
-        const sanitizedCouponCode = sanitizeCouponCode(couponCode);
-        const coupon = await storage.getCouponByCode(sanitizedCouponCode);
+        const coupon = await storage.getCouponByCode(couponCode.trim().toUpperCase());
         
         if (coupon && coupon.isActive) {
           // Validate coupon (same checks as validation endpoint)
@@ -93,7 +83,7 @@ export function setupAtmosRoutes(): Router {
       }
 
       // Generate unique account ID for this payment
-      const account = generateSecureTransactionId();
+      const account = `P57-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
       // Create transaction with final amount (after discount)
       const result = await atmosService.createTransaction(
@@ -141,13 +131,19 @@ export function setupAtmosRoutes(): Router {
         });
       }
 
-      // Validate card details
-      try {
-        const validatedCard = CardDetailsSchema.parse({ cardNumber, expiry });
-      } catch (validationError: any) {
+      // Validate card number (16 digits)
+      if (!/^\d{16}$/.test(cardNumber)) {
         return res.status(400).json({
           success: false,
-          message: validationError.errors?.[0]?.message || 'Invalid card details'
+          message: 'Invalid card number format (16 digits required)'
+        });
+      }
+
+      // Validate expiry (MMYY format) and convert to YYMM
+      if (!/^\d{4}$/.test(expiry)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid expiry format (MMYY required)'
         });
       }
 
@@ -212,13 +208,11 @@ export function setupAtmosRoutes(): Router {
         });
       }
 
-      // Validate OTP
-      try {
-        const validatedOTP = OTPSchema.parse({ otpCode, transactionId });
-      } catch (validationError: any) {
+      // Validate OTP format (6 digits)
+      if (!/^\d{6}$/.test(otpCode)) {
         return res.status(400).json({
           success: false,
-          message: validationError.errors?.[0]?.message || 'SMS kod 6 raqamdan iborat bo\'lishi kerak'
+          message: 'SMS kod 6 raqamdan iborat bo\'lishi kerak'
         });
       }
 

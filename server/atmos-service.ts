@@ -114,6 +114,7 @@ export class AtmosService {
 
     console.log('🔐 [ATMOS] Requesting new access token...');
     console.log(`🔐 [ATMOS] Using Store ID: ${this.storeId}`);
+    console.log(`🔐 [ATMOS] Consumer Key: ${this.consumerKey.substring(0, 10)}...`);
     console.log(`🔐 [ATMOS] Base URL: ${this.baseUrl}`);
 
     try {
@@ -175,6 +176,7 @@ export class AtmosService {
       this.tokenExpiry = Date.now() + (55 * 60 * 1000);
 
       console.log(`✅ [ATMOS] Access token obtained successfully`);
+      console.log(`✅ [ATMOS] Token expires at: ${new Date(this.tokenExpiry).toISOString()}`);
 
       return this.accessToken;
     } catch (error) {
