@@ -1164,35 +1164,80 @@ export default function Admin() {
           {/* Payments Tab */}
           <TabsContent value="payments">
             <Card>
-              <CardHeader>
-                <CardTitle>To'lovlar</CardTitle>
-                <CardDescription>Barcha to'lov tranzaksiyalari</CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>To'lovlar</CardTitle>
+                  <CardDescription>Barcha to'lov tranzaksiyalari</CardDescription>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={loadData}
+                  disabled={loadingStates.payments}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${loadingStates.payments ? 'animate-spin' : ''}`} />
+                  Yangilash
+                </Button>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Foydalanuvchi</TableHead>
-                      <TableHead>Summa</TableHead>
-                      <TableHead>Holat</TableHead>
-                      <TableHead>Sana</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {payments.map((payment) => (
-                      <TableRow key={payment.id}>
-                        <TableCell>{payment.userEmail}</TableCell>
-                        <TableCell>{payment.amount.toLocaleString()} UZS</TableCell>
-                        <TableCell>
-                          <Badge variant={payment.status === 'completed' ? 'default' : 'secondary'}>
-                            {payment.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{new Date(payment.createdAt).toLocaleDateString('uz-UZ')}</TableCell>
+                {errors.payments && (
+                  <div className="mb-4 p-4 bg-destructive/10 text-destructive rounded-md flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5" />
+                    <p>{errors.payments}</p>
+                  </div>
+                )}
+                
+                {loadingStates.payments ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : payments.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Hali hech qanday to'lov amalga oshirilmagan</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Foydalanuvchi</TableHead>
+                        <TableHead>Asl summa</TableHead>
+                        <TableHead>Chegirma</TableHead>
+                        <TableHead>To'langan</TableHead>
+                        <TableHead>Holat</TableHead>
+                        <TableHead>Sana</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {payments.map((payment) => (
+                        <TableRow key={payment.id}>
+                          <TableCell>{payment.userEmail}</TableCell>
+                          <TableCell>
+                            {payment.originalAmount 
+                              ? `${payment.originalAmount.toLocaleString()} UZS`
+                              : `${payment.amount.toLocaleString()} UZS`
+                            }
+                          </TableCell>
+                          <TableCell>
+                            {payment.discountAmount 
+                              ? <span className="text-red-600">-{payment.discountAmount.toLocaleString()} UZS</span>
+                              : '-'
+                            }
+                          </TableCell>
+                          <TableCell className="font-semibold">
+                            {payment.amount.toLocaleString()} UZS
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={payment.status === 'completed' ? 'default' : 'secondary'}>
+                              {payment.status === 'completed' ? 'Muvaffaqiyatli' : payment.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{new Date(payment.createdAt).toLocaleDateString('uz-UZ')}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
