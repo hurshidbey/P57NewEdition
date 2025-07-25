@@ -21,7 +21,7 @@ import MaintenancePage from "@/pages/maintenance";
 
 // Dynamic imports for authenticated pages - ensures they're included in build
 const Home = lazy(() => import("@/pages/home"));
-const ProtocolDetail = lazy(() => import("@/pages/protocol-detail"));
+const ProtocolDetail = lazy(() => import("@/pages/protocol-detail-wrapper"));
 const Admin = lazy(() => import("@/pages/admin"));
 // Onboarding now redirects to knowledge-base
 const KnowledgeBase = lazy(() => import("@/pages/knowledge-base"));
