@@ -319,37 +319,61 @@ function sanitizeBody(body: any): any {
  * This maintains compatibility during migration
  */
 export const isSupabaseAdmin = async (req: Request, res: Response, next: NextFunction) => {
-  // First try RBAC system
-  await requireAuth(req, res, async () => {
-    await loadUserPermissions(req, res, async () => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No authorization token provided' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    req.user = user;
+
+    // First check ADMIN_EMAILS for backward compatibility
+    const adminEmails = process.env.ADMIN_EMAILS 
+      ? process.env.ADMIN_EMAILS.split(',').map(email => email.trim())
+      : [];
+
+    if (adminEmails.includes(user.email)) {
+      console.log(`✅ User ${user.email} granted admin access via ADMIN_EMAILS`);
+      return next();
+    }
+
+    // Then try to load user permissions from database
+    try {
+      // Get user's roles
+      const userRoleRecords = await db
+        .select({
+          roleId: userRoles.roleId,
+          roleName: roles.name
+        })
+        .from(userRoles)
+        .innerJoin(roles, eq(userRoles.roleId, roles.id))
+        .where(eq(userRoles.userId, user.id));
+
+      const roleNames = userRoleRecords.map(r => r.roleName);
+
       // Check if user has admin role or super_admin role
-      if (req.userRoles?.includes('admin') || req.userRoles?.includes('super_admin')) {
+      if (roleNames.includes('admin') || roleNames.includes('super_admin')) {
+        console.log(`✅ User ${user.email} granted admin access via role`);
         return next();
       }
+    } catch (dbError) {
+      console.error('Error loading user roles:', dbError);
+      // Continue to deny access if DB check fails
+    }
 
-      // Fall back to email-based check for backward compatibility
-      const adminEmails = process.env.ADMIN_EMAILS 
-        ? process.env.ADMIN_EMAILS.split(',').map(email => email.trim())
-        : [];
+    // Access denied
+    console.log(`❌ User ${user.email} denied admin access`);
+    return res.status(403).json({ error: 'Access denied - admin only' });
 
-      if (adminEmails.includes(req.user?.email)) {
-        console.log(`✅ User ${req.user.email} granted admin access via ADMIN_EMAILS`);
-        return next();
-      }
-
-      // Log denied access
-      await logAuditEvent({
-        userId: req.user?.id || 'unknown',
-        userEmail: req.user?.email || 'unknown',
-        action: 'access',
-        resource: 'admin',
-        status: AUDIT_STATUS.DENIED,
-        errorMessage: 'Not an admin',
-        ipAddress: req.ip || req.socket.remoteAddress,
-        userAgent: req.headers['user-agent']
-      });
-
-      res.status(403).json({ error: 'Access denied - admin only' });
-    });
-  });
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+    res.status(500).json({ error: 'Authentication failed' });
+  }
 };
