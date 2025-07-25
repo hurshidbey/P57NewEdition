@@ -17,6 +17,7 @@ import { RESOURCES, ACTIONS } from "@shared/rbac-schema";
 import auditLogRoutes from "./routes/audit-logs";
 import roleRoutes from "./routes/roles";
 import dnsHealthRoutes from "./routes/dns-health";
+import { flexibleAuth, requireFlexibleAuth, optionalAuth, isFlexibleAdmin } from "./middleware/flexible-auth";
 
 // Simple request counter for metrics
 class RequestCounter {
@@ -221,6 +222,19 @@ export function setupRoutes(app: Express): Server {
     });
   });
 
+  // Test authentication middleware
+  app.get("/api/test-auth", flexibleAuth, (req, res) => {
+    res.json({
+      authenticated: !!req.user,
+      authMethod: req.user ? (req.user.supabaseUser ? 'jwt' : 'session') : 'none',
+      user: req.user ? {
+        id: req.user.id,
+        email: req.user.email,
+        tier: req.user.tier
+      } : null
+    });
+  });
+
   // Test OpenAI endpoint
   app.get("/api/test-openai", async (req, res) => {
     try {
@@ -286,50 +300,7 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
-  // Get user progress
-  app.get("/api/progress/:userId", async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const progress = await storage.getUserProgress(userId);
-      res.json(progress);
-    } catch (error: any) {
-      res.status(500).json({ message: "Failed to fetch progress", error: error.message });
-    }
-  });
-
-  // Update protocol progress
-  app.post("/api/progress/:userId/:protocolId", async (req, res) => {
-    try {
-      const { userId, protocolId } = req.params;
-      const { score } = req.body;
-      
-      const progress = await storage.updateProtocolProgress(
-        userId, 
-        parseInt(protocolId), 
-        score || 70
-      );
-      
-      res.json(progress);
-    } catch (error: any) {
-      res.status(500).json({ message: "Failed to update progress", error: error.message });
-    }
-  });
-
-  // Delete protocol progress
-  app.delete("/api/progress/:userId/:protocolId", async (req, res) => {
-    try {
-      const { userId, protocolId } = req.params;
-      
-      const result = await storage.deleteProtocolProgress(
-        userId, 
-        parseInt(protocolId)
-      );
-      
-      res.json(result);
-    } catch (error: any) {
-      res.status(500).json({ message: "Failed to delete progress", error: error.message });
-    }
-  });
+  // Progress endpoints are defined later with proper authentication
 
   // Basic authentication endpoint
   app.post("/api/auth/login", async (req, res) => {
@@ -379,11 +350,11 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Get current user from session
-  app.get("/api/auth/me", (req, res) => {
-    if (!req.session?.user) {
+  app.get("/api/auth/me", flexibleAuth, (req, res) => {
+    if (!req.user) {
       return res.status(401).json({ message: "Not authenticated" });
     }
-    res.json({ user: req.session.user });
+    res.json({ user: req.user });
   });
 
   // Admin routes for protocol management
@@ -682,127 +653,53 @@ export function setupRoutes(app: Express): Server {
   // DNS health monitoring routes (public)
   app.use('/api', dnsHealthRoutes);
 
-  // Get user progress (with Supabase auth verification)
-  app.get("/api/progress/:userId", async (req, res) => {
+  // Get user progress (with flexible authentication)
+  app.get("/api/progress/:userId", requireFlexibleAuth, async (req, res) => {
     try {
       const { userId } = req.params;
       
-      // Verify Supabase JWT token
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'No authorization token provided' });
-      }
-      
-      const token = authHeader.split(' ')[1];
-      const { createClient } = await import('@supabase/supabase-js');
-      
-      if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-        return res.status(500).json({ error: 'Server configuration error' });
-      }
-      
-      const supabase = createClient(
-        process.env.SUPABASE_URL,
-        process.env.SUPABASE_ANON_KEY
-      );
-      
-      const { data: { user }, error } = await supabase.auth.getUser(token);
-      
-      if (error || !user) {
-        return res.status(401).json({ error: 'Invalid token' });
-      }
-      
       // Only allow users to access their own progress
-      if (user.id !== userId) {
+      if (req.user.id !== userId && req.user.supabaseUser?.id !== userId) {
         return res.status(403).json({ error: 'Access denied - can only access own progress' });
       }
       
       const result = await storage.getUserProgress(userId);
       res.json(result);
     } catch (error: any) {
-
       res.status(500).json({ error: error.message });
     }
   });
 
-  // Update protocol progress (with Supabase auth verification)
-  app.post("/api/progress/:userId/:protocolId", async (req, res) => {
+  // Update protocol progress (with flexible authentication)
+  app.post("/api/progress/:userId/:protocolId", requireFlexibleAuth, async (req, res) => {
     try {
       const { userId, protocolId } = req.params;
       const { score } = req.body;
       
-      // Verify Supabase JWT token
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'No authorization token provided' });
-      }
-      
-      const token = authHeader.split(' ')[1];
-      const { createClient } = await import('@supabase/supabase-js');
-      
-      if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-        return res.status(500).json({ error: 'Server configuration error' });
-      }
-      
-      const supabase = createClient(
-        process.env.SUPABASE_URL,
-        process.env.SUPABASE_ANON_KEY
-      );
-      
-      const { data: { user }, error } = await supabase.auth.getUser(token);
-      
-      if (error || !user) {
-        return res.status(401).json({ error: 'Invalid token' });
-      }
-      
       // Only allow users to update their own progress
-      if (user.id !== userId) {
+      if (req.user.id !== userId && req.user.supabaseUser?.id !== userId) {
         return res.status(403).json({ error: 'Access denied - can only update own progress' });
       }
       
       const result = await storage.updateProtocolProgress(
         userId, 
         parseInt(protocolId), 
-        score
+        score || 70
       );
       
       res.json(result);
     } catch (error: any) {
-
       res.status(500).json({ error: error.message });
     }
   });
 
-  // Delete protocol progress (with Supabase auth verification)
-  app.delete("/api/progress/:userId/:protocolId", async (req, res) => {
+  // Delete protocol progress (with flexible authentication)
+  app.delete("/api/progress/:userId/:protocolId", requireFlexibleAuth, async (req, res) => {
     try {
       const { userId, protocolId } = req.params;
       
-      // Verify Supabase JWT token
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'No authorization token provided' });
-      }
-      
-      const token = authHeader.split(' ')[1];
-      const { createClient } = await import('@supabase/supabase-js');
-      
-      if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-        return res.status(500).json({ error: 'Server configuration error' });
-      }
-      
-      const supabase = createClient(
-        process.env.SUPABASE_URL,
-        process.env.SUPABASE_ANON_KEY
-      );
-      
-      const { data: { user }, error } = await supabase.auth.getUser(token);
-      
-      if (error || !user) {
-        return res.status(401).json({ error: 'Invalid token' });
-      }
-      
       // Only allow users to delete their own progress
-      if (user.id !== userId) {
+      if (req.user.id !== userId && req.user.supabaseUser?.id !== userId) {
         return res.status(403).json({ error: 'Access denied - can only delete own progress' });
       }
       

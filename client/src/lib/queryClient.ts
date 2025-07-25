@@ -18,10 +18,15 @@ export async function apiRequest(
 ): Promise<Response> {
   const headers: HeadersInit = data ? { "Content-Type": "application/json" } : {};
   
-  // Add Supabase auth token if available
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session?.access_token) {
-    headers['Authorization'] = `Bearer ${session.access_token}`;
+  // Only add auth token for protected routes
+  const protectedPaths = ['/api/admin', '/api/user', '/api/progress'];
+  const isProtectedRoute = protectedPaths.some(path => url.includes(path));
+  
+  if (isProtectedRoute) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
   }
   
   // Add cache busting headers in development
@@ -69,10 +74,15 @@ export const getQueryFn: <T>(options: {
     // Add cache busting headers in development
     const headers: HeadersInit = {};
     
-    // Add Supabase auth token if available
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.access_token) {
-      headers['Authorization'] = `Bearer ${session.access_token}`;
+    // Only add auth token for protected routes
+    const protectedPaths = ['/api/admin', '/api/user', '/api/progress'];
+    const isProtectedRoute = protectedPaths.some(path => url.includes(path));
+    
+    if (isProtectedRoute) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
     }
     
     if (isDevelopment) {
