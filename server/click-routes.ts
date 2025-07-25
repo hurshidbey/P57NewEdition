@@ -768,7 +768,9 @@ export function setupClickRoutes(): Router {
       
       // Always redirect to processing page, let it determine success/failure
       // This handles mobile cases where Click app doesn't return proper params
-      res.redirect(`${frontendUrl}/payment/processing?method=click&orderId=${orderId}&mobile=true`);
+      // Also include a hint that this might be a cross-browser scenario
+      const isMobile = req.headers['user-agent']?.toLowerCase().includes('mobile') || false;
+      res.redirect(`${frontendUrl}/payment/processing?method=click&orderId=${orderId}&mobile=true&crossBrowser=possible`);
 
     } catch (error: any) {
       console.error(`❌ [CLICK] Return handler error:`, error);

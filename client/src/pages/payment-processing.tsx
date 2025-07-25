@@ -32,8 +32,14 @@ export default function PaymentProcessing() {
           const { data: { session } } = await supabase.auth.getSession();
           
           if (!session?.access_token) {
-            console.error('No auth session');
-            setLocation('/payment?error=no_session');
+            console.error('No auth session - likely cross-browser redirect');
+            // For cross-browser scenarios, show a message
+            setStatus('To\'lov tasdiqlandi! Iltimos, asl brauzeringizga qayting.');
+            
+            // Wait a bit then redirect to a help page
+            setTimeout(() => {
+              setLocation('/payment/cross-browser-help?method=' + method);
+            }, 3000);
             return;
           }
           
