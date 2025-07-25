@@ -70,18 +70,8 @@ function AppContent() {
   const userTier = user?.tier || 'free';
   const isPremiumUser = userTier === 'paid' || isAdmin;
   
-  // Debug logging
-  console.log('[AppContent] Auth state:', { 
-    isAuthenticated, 
-    loading, 
-    userEmail: user?.email,
-    isAdmin,
-    user
-  });
-  
   // Show loading while checking auth OR if authenticated but user data not loaded yet
   if (loading || (isAuthenticated && !user)) {
-    console.log('[AppContent] Waiting for user data to load...');
     return <PageLoader />;
   }
 
@@ -110,26 +100,13 @@ function AppContent() {
       </Route>
       
       <Route path="/admin">
-        {(() => {
-          console.log('[Admin Route Check]', {
-            path: '/admin',
-            isAuthenticated,
-            isAdmin,
-            userEmail: user?.email,
-            shouldShowAdmin: isAuthenticated && isAdmin
-          });
-          
-          if (isAuthenticated && isAdmin) {
-            return (
-              <Suspense fallback={<PageLoader />}>
-                <Admin />
-              </Suspense>
-            );
-          } else {
-            console.log('[Admin Route] Access denied, showing AuthPage');
-            return <AuthPage />;
-          }
-        })()}
+        {isAuthenticated && isAdmin ? (
+          <Suspense fallback={<PageLoader />}>
+            <Admin />
+          </Suspense>
+        ) : (
+          <AuthPage />
+        )}
       </Route>
       
       <Route path="/onboarding">
@@ -232,7 +209,6 @@ function App() {
     
     // If version doesn't match, clear everything and reload
     if (storedVersion !== CURRENT_VERSION) {
-      console.log('New version detected, clearing cache...');
       
       // Clear all caches
       if ('caches' in window) {

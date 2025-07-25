@@ -99,10 +99,6 @@ class AnalyticsTracker {
       this.events = this.events.slice(-100)
     }
 
-    // Send to console in development
-    if (process.env.NODE_ENV === 'development') {
-
-    }
   }
 
   /**
