@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
 import { ThemeProvider } from "@/contexts/theme-context";
+import { ProgressProvider } from "@/contexts/progress-context";
+import { ProtocolsProvider } from "@/contexts/protocols-context";
 import { lazy, Suspense, useEffect } from "react";
 
 // Static imports for non-authenticated pages
@@ -21,7 +23,7 @@ import MaintenancePage from "@/pages/maintenance";
 
 // Dynamic imports for authenticated pages - ensures they're included in build
 const Home = lazy(() => import("@/pages/home"));
-const ProtocolDetail = lazy(() => import("@/pages/protocol-detail-wrapper"));
+const ProtocolDetail = lazy(() => import("@/pages/protocol-detail"));
 const Admin = lazy(() => import("@/pages/admin"));
 // Onboarding now redirects to knowledge-base
 const KnowledgeBase = lazy(() => import("@/pages/knowledge-base"));
@@ -233,12 +235,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ThemeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <AppContent />
-          </TooltipProvider>
-        </ThemeProvider>
+        <ProgressProvider>
+          <ProtocolsProvider>
+            <ThemeProvider>
+              <TooltipProvider>
+                <Toaster />
+                <AppContent />
+              </TooltipProvider>
+            </ThemeProvider>
+          </ProtocolsProvider>
+        </ProgressProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
