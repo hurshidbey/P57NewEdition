@@ -455,9 +455,11 @@ export class SupabaseStorage implements IStorage {
   }
 
   async getPayments(): Promise<Payment[]> {
+    // Query payment_sessions table instead of payments view
     const { data, error } = await this.supabase
-      .from('payments')
+      .from('payment_sessions')
       .select('*')
+      .eq('status', 'completed')  // Only show completed payments
       .order('created_at', { ascending: false });
     
     if (error) {
@@ -465,24 +467,38 @@ export class SupabaseStorage implements IStorage {
       throw error;
     }
     
-    // Map database fields to TypeScript interface
+    // Map payment_sessions fields to Payment interface
     return (data || []).map((item: any) => ({
       id: item.id,
       userId: item.user_id,
       userEmail: item.user_email,
-      amount: item.amount,
+      amount: item.amount,  // This is the final amount after discount
       status: item.status,
-      transactionId: item.transaction_id,
-      atmosData: item.atmos_data,
-      createdAt: item.created_at
+      transactionId: item.click_trans_id || item.merchant_trans_id,
+      atmosData: JSON.stringify({
+        paymentMethod: item.payment_method,
+        merchantTransId: item.merchant_trans_id,
+        clickTransId: item.click_trans_id,
+        originalAmount: item.original_amount,
+        discountAmount: item.discount_amount,
+        couponId: item.coupon_id,
+        metadata: item.metadata
+      }),
+      createdAt: item.created_at,
+      // Include coupon info if present
+      couponId: item.coupon_id,
+      originalAmount: item.original_amount,
+      discountAmount: item.discount_amount
     }));
   }
 
   async getUserPayments(userId: string): Promise<Payment[]> {
+    // Query payment_sessions table instead of payments view
     const { data, error } = await this.supabase
-      .from('payments')
+      .from('payment_sessions')
       .select('*')
       .eq('user_id', userId)
+      .eq('status', 'completed')  // Only show completed payments
       .order('created_at', { ascending: false });
     
     if (error) {
@@ -490,16 +506,28 @@ export class SupabaseStorage implements IStorage {
       throw error;
     }
     
-    // Map database fields to TypeScript interface
+    // Map payment_sessions fields to Payment interface
     return (data || []).map((item: any) => ({
       id: item.id,
       userId: item.user_id,
       userEmail: item.user_email,
-      amount: item.amount,
+      amount: item.amount,  // This is the final amount after discount
       status: item.status,
-      transactionId: item.transaction_id,
-      atmosData: item.atmos_data,
-      createdAt: item.created_at
+      transactionId: item.click_trans_id || item.merchant_trans_id,
+      atmosData: JSON.stringify({
+        paymentMethod: item.payment_method,
+        merchantTransId: item.merchant_trans_id,
+        clickTransId: item.click_trans_id,
+        originalAmount: item.original_amount,
+        discountAmount: item.discount_amount,
+        couponId: item.coupon_id,
+        metadata: item.metadata
+      }),
+      createdAt: item.created_at,
+      // Include coupon info if present
+      couponId: item.coupon_id,
+      originalAmount: item.original_amount,
+      discountAmount: item.discount_amount
     }));
   }
   
