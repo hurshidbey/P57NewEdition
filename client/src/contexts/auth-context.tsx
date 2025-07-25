@@ -60,7 +60,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkPaymentSuccess = () => {
       const urlParams = new URLSearchParams(window.location.search)
-      if (urlParams.get('payment') === 'success' || window.location.pathname === '/payment/success') {
+      // Only check for explicit payment success parameter, not pathname
+      if (urlParams.get('payment') === 'success') {
+        // Check if we've already processed this payment success
+        const processedKey = 'payment_success_processed';
+        if (sessionStorage.getItem(processedKey) === 'true') {
+          return; // Already processed this payment success
+        }
+        
+        // Mark as processed
+        sessionStorage.setItem(processedKey, 'true');
         console.log('🎯 Payment success detected, refreshing user data...')
         
         // Show loading state while refreshing
@@ -119,13 +128,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     
-    // Check on mount
+    // Only check on initial mount, not on every navigation
     checkPaymentSuccess()
     
-    // Listen for navigation changes
-    window.addEventListener('popstate', checkPaymentSuccess)
-    return () => window.removeEventListener('popstate', checkPaymentSuccess)
-  }, [])
+    // Clear the processed flag when component unmounts or user changes
+    return () => {
+      // Don't clear on unmount to prevent re-processing
+    }
+  }, []) // Only run once on mount
+  
+  // Clear payment success flag when user logs out
+  useEffect(() => {
+    if (!user) {
+      sessionStorage.removeItem('payment_success_processed');
+    }
+  }, [user])
   
   // Listen for storage events to refresh user when tier might have changed
   useEffect(() => {

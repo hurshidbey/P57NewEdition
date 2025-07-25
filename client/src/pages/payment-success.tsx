@@ -22,6 +22,19 @@ export default function PaymentSuccess() {
   const [countdown, setCountdown] = useState(5);
   
   useEffect(() => {
+    // Only trigger confetti if this is a legitimate redirect from payment
+    const urlParams = new URLSearchParams(window.location.search);
+    const isFromPayment = urlParams.get('method') === 'click' || 
+                         urlParams.get('method') === 'atmos' ||
+                         urlParams.get('forceRefresh') === 'true';
+    
+    if (!isFromPayment) {
+      console.log('Not a payment redirect, skipping confetti');
+      // Still refresh session but no confetti
+      refreshSession();
+      return;
+    }
+    
     // Trigger confetti animation
     const duration = 3 * 1000;
     const animationEnd = Date.now() + duration;
@@ -98,6 +111,12 @@ export default function PaymentSuccess() {
       }
     }, 2000); // Check every 2 seconds
 
+    // Clean URL parameters to prevent re-triggering on refresh
+    if (isFromPayment) {
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+    
     // Countdown timer for auto-redirect
     const countdownInterval = setInterval(() => {
       setCountdown(prev => {
@@ -111,7 +130,9 @@ export default function PaymentSuccess() {
     }, 1000);
 
     return () => {
-      clearInterval(interval);
+      if (isFromPayment) {
+        clearInterval(interval);
+      }
       clearInterval(countdownInterval);
       clearInterval(paymentCheckInterval);
     };
