@@ -113,8 +113,19 @@ export function ProgressProvider({ children }: ProgressProviderProps) {
         setProtocolProgress(progressMap);
         setLastStudiedDate(data.lastStudiedDate || null);
         setCurrentStreak(data.currentStreak || 0);
+      } else {
+        // No saved data - initialize empty state
+        console.log('🆕 [Progress] No saved progress found, initializing empty state');
+        setProtocolProgress(new Map());
+        setLastStudiedDate(null);
+        setCurrentStreak(0);
       }
     } catch (err) {
+      console.error('[Progress] Error loading from localStorage:', err);
+      // Initialize with empty state on error
+      setProtocolProgress(new Map());
+      setLastStudiedDate(null);
+      setCurrentStreak(0);
       setError(new Error('Failed to load progress from storage'));
     }
   }, [user?.id]);
@@ -150,6 +161,17 @@ export function ProgressProvider({ children }: ProgressProviderProps) {
       }
 
       try {
+        // Clear any stale localStorage data from other users first
+        const currentStorageKey = getStorageKey(user.id);
+        const allKeys = Object.keys(localStorage);
+        const progressKeys = allKeys.filter(key => 
+          key.startsWith('protokol57_progress_') && key !== currentStorageKey
+        );
+        progressKeys.forEach(key => {
+          console.log(`🧹 [Progress] Clearing stale progress data: ${key}`);
+          localStorage.removeItem(key);
+        });
+        
         const response = await apiRequest('GET', `/api/progress/${user.id}`);
         const serverProgress: ServerProgress[] = await response.json();
 
