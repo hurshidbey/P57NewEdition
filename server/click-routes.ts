@@ -211,19 +211,24 @@ export function setupClickRoutes(): Router {
         
         // Create payment record with 100% discount
         const paymentData = {
-          transaction_id: merchantTransId,
-          order_id: merchantTransId,
-          user_id: actualUserId,
+          id: `payment_coupon_${merchantTransId}_${Date.now()}`,
+          userId: actualUserId,
+          userEmail: user.email!,
           amount: 0,
-          original_amount: amount,
-          discount_amount: amount,
-          coupon_id: appliedCoupon.id,
-          payment_method: 'coupon' as const,
-          status: 'paid' as const,
-          paid_at: new Date().toISOString()
+          transactionId: merchantTransId,
+          status: 'completed',
+          atmosData: JSON.stringify({
+            paymentMethod: 'coupon',
+            couponCode: appliedCoupon.code,
+            isFullDiscount: true,
+            completedAt: new Date().toISOString()
+          }),
+          couponId: appliedCoupon.id,
+          originalAmount: amount,
+          discountAmount: amount
         };
         
-        const payment = await storage.createPayment(paymentData);
+        const payment = await storage.storePayment(paymentData);
         
         // Upgrade user to premium tier
         const { error: updateError } = await adminSupabase.auth.admin.updateUserById(
