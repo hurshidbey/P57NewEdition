@@ -202,6 +202,77 @@ export function setupClickRoutes(): Router {
         }
       }
 
+      // Check if this is a 100% discount scenario
+      if (finalAmount === 0 && appliedCoupon) {
+        console.log(`🎉 [CLICK] Processing 100% discount transaction for user ${user.email}`);
+        
+        // Get storage instance
+        const { storage } = await import('./storage');
+        
+        // Create payment record with 100% discount
+        const paymentData = {
+          transaction_id: merchantTransId,
+          order_id: merchantTransId,
+          user_id: actualUserId,
+          amount: 0,
+          original_amount: amount,
+          discount_amount: amount,
+          coupon_id: appliedCoupon.id,
+          payment_method: 'coupon' as const,
+          status: 'paid' as const,
+          paid_at: new Date().toISOString()
+        };
+        
+        const payment = await storage.createPayment(paymentData);
+        
+        // Upgrade user to premium tier
+        const { error: updateError } = await adminSupabase.auth.admin.updateUserById(
+          actualUserId,
+          {
+            user_metadata: {
+              ...user.user_metadata,
+              tier: 'paid',
+              payment_date: new Date().toISOString(),
+              payment_method: 'coupon_100_discount',
+              transaction_id: merchantTransId
+            }
+          }
+        );
+        
+        if (updateError) {
+          console.error('❌ [CLICK] Failed to upgrade user tier:', updateError);
+          throw new Error('Failed to apply premium access');
+        }
+        
+        // Record coupon usage
+        await storage.recordCouponUsage({
+          couponId: appliedCoupon.id,
+          userId: actualUserId,
+          userEmail: user.email!,
+          paymentId: merchantTransId,
+          originalAmount: amount,
+          discountAmount: amount,
+          finalAmount: 0
+        });
+        
+        console.log(`✅ [CLICK] User ${user.email} upgraded with 100% discount coupon`);
+        
+        // Return success without payment URL
+        return res.json({
+          success: true,
+          isFullDiscount: true,
+          transactionId: merchantTransId,
+          merchantTransId: merchantTransId,
+          amount: 0,
+          message: "Premium kirish muvaffaqiyatli faollashtirildi!",
+          appliedCoupon: {
+            code: appliedCoupon.code,
+            discountAmount: amount,
+            discountPercent: 100
+          }
+        });
+      }
+
       // Get storage instance
       const { storage } = await import('./storage');
       
