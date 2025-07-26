@@ -385,7 +385,7 @@ export default function AtmosPayment() {
         setTimeout(() => {
           console.log('🚀 Redirecting to home page...');
           // Use window.location for a full page refresh to ensure new session is loaded
-          window.location.href = '/payment/success?method=atmos';
+          window.location.href = '/';
         }, 2000);
       } else {
         throw new Error(result.message || 'To\'lovni tasdiqlashda xatolik');

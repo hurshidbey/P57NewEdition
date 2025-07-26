@@ -25,11 +25,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Force refresh the session to get latest metadata
       await forceSessionRefresh();
       
+      // Store previous tier to detect upgrades
+      const previousTier = user?.tier;
+      
       // Now get the updated user
       const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
       
       console.log('🔄 [AuthContext] User refreshed:', currentUser?.email, 'Tier:', currentUser?.tier);
+      
+      // Show a simple success message if user just upgraded
+      if (previousTier === 'free' && currentUser?.tier === 'paid') {
+        // Import toast dynamically to avoid circular dependency
+        const { toast } = await import('@/hooks/use-toast');
+        toast({
+          title: "Premium faollashtirildi! 🎉",
+          description: "Endi barcha protokollarga kirishingiz mumkin",
+          duration: 5000,
+        });
+      }
     } catch (error) {
       console.error('[AuthContext] Failed to refresh user:', error);
     }

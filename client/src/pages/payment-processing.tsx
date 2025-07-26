@@ -36,9 +36,9 @@ export default function PaymentProcessing() {
             // For cross-browser scenarios, show a message
             setStatus('To\'lov tasdiqlandi! Iltimos, asl brauzeringizga qayting.');
             
-            // Wait a bit then redirect to a help page
+            // Just go to home page with a message
             setTimeout(() => {
-              setLocation('/payment/cross-browser-help?method=' + method);
+              setLocation('/');
             }, 3000);
             return;
           }
@@ -63,10 +63,8 @@ export default function PaymentProcessing() {
               // Force refresh user session
               await refreshUser();
               
-              // Small delay for UX
-              setTimeout(() => {
-                setLocation('/payment/success?method=' + method);
-              }, 500);
+              // Go directly to home - no success page needed
+              setLocation('/');
               return;
             }
             
@@ -77,13 +75,11 @@ export default function PaymentProcessing() {
             await new Promise(resolve => setTimeout(resolve, 1000));
           }
           
-          // After timeout, refresh and redirect to success anyway
+          // After timeout, refresh and go to home
           // User might have paid but callback is delayed
           console.log('Timeout reached, refreshing user and redirecting...');
           await refreshUser();
-          setTimeout(() => {
-            setLocation('/payment/success?method=' + method + '&checkAgain=true');
-          }, 1000);
+          setLocation('/');
           
         } else {
           // Desktop flow with order ID
@@ -93,22 +89,20 @@ export default function PaymentProcessing() {
           if (result.success) {
             setStatus('Toʻlov tasdiqlandi! Premium faollashtirilmoqda...');
             await refreshUser();
-            setTimeout(() => {
-              setLocation('/payment/success?method=' + method);
-            }, 500);
+            // Go directly to home
+            setLocation('/');
           } else {
             setStatus('Toʻlov hali qayta ishlanmoqda...');
             await refreshUser();
-            setTimeout(() => {
-              setLocation('/payment/success?method=' + method);
-            }, 2000);
+            // Go to home after refresh
+            setLocation('/');
           }
         }
       } catch (error) {
         console.error('Error processing payment:', error);
-        // On error, still try to refresh and check
+        // On error, still try to refresh and go home
         await refreshUser();
-        setLocation('/payment/success?method=' + method + '&checkAgain=true');
+        setLocation('/');
       }
     };
     
