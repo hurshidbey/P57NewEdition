@@ -32,12 +32,14 @@ This feature allows users with 100% discount coupons to bypass payment gateways 
    - Added `refreshAuth` to auth context usage
    - Added handling for `isFullDiscount` response
    - Shows success message and redirects on 100% discount
-   - File: `client/src/pages/payment.tsx:181-201`
+   - **NEW: Hides payment methods and shows "WOW! BEPUL PREMIUM!" button for 100% discounts**
+   - File: `client/src/pages/payment.tsx:181-201, 374-404`
 
 2. **Atmos Payment Page** (`client/src/pages/atmos-payment.tsx`):
    - Similar updates as Payment page
    - Sends userId and userEmail in request body
-   - File: `client/src/pages/atmos-payment.tsx:199-213`
+   - **NEW: Shows special UI for 100% discount with free premium button**
+   - File: `client/src/pages/atmos-payment.tsx:199-213, 720-731`
 
 ## Deployment Steps
 
@@ -89,8 +91,10 @@ COMMENT ON COLUMN public.payment_transactions.payment_method IS
 1. **User applies 100% discount coupon**:
    - Frontend validates coupon
    - Shows 0 UZS as final price
+   - **Payment method cards (Click/Atmos) are hidden**
+   - **Shows special "WOW! BEPUL PREMIUM!" button instead**
 
-2. **User clicks payment method**:
+2. **User clicks the free premium button**:
    - Frontend sends request to create transaction
    - Backend detects `finalAmount === 0`
    - Instead of creating payment URL:

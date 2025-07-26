@@ -105,8 +105,16 @@ export function setupClickRoutesV2(): Router {
       let appliedCoupon = null;
       
       if (couponCode) {
+        logger.info('Processing coupon code', { couponCode, amount });
         const { storage } = await import('./storage');
         const coupon = await storage.getCouponByCode(couponCode.trim().toUpperCase());
+        
+        logger.info('Coupon lookup result', { 
+          found: !!coupon, 
+          isActive: coupon?.isActive,
+          discountType: coupon?.discountType,
+          discountValue: coupon?.discountValue 
+        });
         
         if (coupon && coupon.isActive) {
           const now = new Date();
@@ -128,10 +136,23 @@ export function setupClickRoutesV2(): Router {
             
             finalAmount = amount - discountAmount;
             appliedCoupon = coupon;
-            logger.info('Coupon applied', { couponId: coupon.id, originalAmount: amount, finalAmount });
+            logger.info('Coupon applied', { 
+              couponId: coupon.id, 
+              originalAmount: amount, 
+              discountAmount,
+              finalAmount,
+              isZeroAmount: finalAmount === 0
+            });
           }
         }
       }
+
+      logger.info('Pre-transaction check', { 
+        finalAmount, 
+        hasAppliedCoupon: !!appliedCoupon,
+        isZeroAmount: finalAmount === 0,
+        willBypassPayment: finalAmount === 0 && !!appliedCoupon
+      });
 
       // Check if this is a 100% discount scenario
       if (finalAmount === 0 && appliedCoupon) {
