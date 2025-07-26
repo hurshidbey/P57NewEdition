@@ -138,7 +138,9 @@ export default function Payment() {
         userId: user.id,
         userEmail: user.email,
         amount: basePrice,
-        couponCode: appliedCoupon?.code
+        finalPrice: finalPrice,
+        couponCode: appliedCoupon?.code,
+        is100PercentDiscount: finalPrice === 0
       });
       
       // Create transaction and get payment URL

@@ -429,7 +429,10 @@ export class SupabaseStorage implements IStorage {
         amount: payment.amount,
         status: payment.status || 'pending',
         transaction_id: payment.transactionId,
-        atmos_data: payment.atmosData
+        atmos_data: payment.atmosData,
+        coupon_id: payment.couponId || null,
+        original_amount: payment.originalAmount || null,
+        discount_amount: payment.discountAmount || null
       })
       .select()
       .single();
@@ -450,7 +453,10 @@ export class SupabaseStorage implements IStorage {
       status: data.status,
       transactionId: data.transaction_id,
       atmosData: data.atmos_data,
-      createdAt: data.created_at
+      createdAt: data.created_at,
+      couponId: data.coupon_id,
+      originalAmount: data.original_amount,
+      discountAmount: data.discount_amount
     };
   }
 
