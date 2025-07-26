@@ -218,7 +218,7 @@ export function setupClickRoutes(): Router {
             originalAmount: amount,
             finalAmount: 0,
             discountAmount: amount,
-            paymentMethod: 'click',
+            paymentMethod: 'coupon', // Use 'coupon' payment method for 100% discounts
             couponId: appliedCoupon.id,
             couponCode: appliedCoupon.code,
             metadata: {

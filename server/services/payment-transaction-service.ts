@@ -7,7 +7,7 @@ export interface CreateTransactionParams {
   originalAmount: number;
   finalAmount: number;
   discountAmount?: number;
-  paymentMethod: 'click' | 'atmos';
+  paymentMethod: 'click' | 'atmos' | 'coupon';
   couponId?: number;
   couponCode?: string;
   metadata?: Record<string, any>;
@@ -19,7 +19,7 @@ export interface PaymentTransaction {
   userEmail: string;
   merchantTransId: string;
   externalTransId?: string;
-  paymentMethod: 'click' | 'atmos';
+  paymentMethod: 'click' | 'atmos' | 'coupon';
   originalAmount: number;
   discountAmount: number;
   finalAmount: number;
@@ -64,14 +64,10 @@ export class PaymentTransactionService {
       final_amount: params.finalAmount,
       currency: 'UZS',
       coupon_id: params.couponId,
+      coupon_code: params.couponCode,
       status: 'pending',
       metadata: params.metadata || {}
     };
-
-    // Only add coupon_code if the column exists
-    if (params.couponCode) {
-      transactionData.metadata.couponCode = params.couponCode;
-    }
 
     const { data, error } = await this.supabase
       .from('payment_transactions')
