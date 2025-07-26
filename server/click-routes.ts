@@ -161,11 +161,11 @@ export function setupClickRoutes(): Router {
       }
 
       // Import payment utils
-      const { generatePaymentSessionId, generateMerchantTransId, generateIdempotencyKey, calculateSessionExpiry } = await import('./utils/payment-utils');
+      const { generatePaymentSessionId, generateShortTransId, generateIdempotencyKey, calculateSessionExpiry } = await import('./utils/payment-utils');
       
       // Generate secure IDs for payment session
       const sessionId = generatePaymentSessionId();
-      const merchantTransId = generateMerchantTransId();
+      const merchantTransId = generateShortTransId('click', !!couponCode);
       const idempotencyKey = generateIdempotencyKey(actualUserId, amount);
       
       // If coupon is provided, validate and apply discount
@@ -594,11 +594,11 @@ export function setupClickRoutes(): Router {
       }
 
       // Import payment utils
-      const { generatePaymentSessionId, generateMerchantTransId, generateIdempotencyKey, calculateSessionExpiry } = await import('./utils/payment-utils');
+      const { generatePaymentSessionId, generateShortTransId, generateIdempotencyKey, calculateSessionExpiry } = await import('./utils/payment-utils');
       
       // Generate secure IDs for payment session
       const sessionId = generatePaymentSessionId();
-      const merchantTransId = generateMerchantTransId();
+      const merchantTransId = generateShortTransId('click', false);
       const idempotencyKey = generateIdempotencyKey(userId, amount);
       
       // Get storage instance

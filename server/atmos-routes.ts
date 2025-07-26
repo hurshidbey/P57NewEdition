@@ -201,7 +201,8 @@ export function setupAtmosRoutes(): Router {
       }
 
       // Generate unique account ID for this payment
-      const account = `P57-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      const { generateShortTransId } = await import('./utils/payment-utils');
+      const account = generateShortTransId('atmos', !!appliedCoupon);
 
       // Create transaction with final amount (after discount)
       const result = await atmosService.createTransaction(

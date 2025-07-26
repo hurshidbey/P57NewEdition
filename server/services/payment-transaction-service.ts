@@ -246,9 +246,9 @@ export class PaymentTransactionService {
    * Generate a unique merchant transaction ID
    */
   private generateMerchantTransId(paymentMethod: string): string {
-    const timestamp = Date.now();
-    const randomPart = Math.random().toString(36).substring(2, 8);
-    return `P57_${paymentMethod.toUpperCase()}_${timestamp}_${randomPart}`;
+    // Import the new short ID generator
+    const { generateShortTransId } = require('../utils/payment-utils');
+    return generateShortTransId(paymentMethod);
   }
 
   /**
