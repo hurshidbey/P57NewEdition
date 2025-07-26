@@ -370,78 +370,112 @@ export default function Payment() {
           )}
         </div>
 
-        {/* Payment Method Selection - BIG CARDS */}
-        <div className="space-y-4 sm:space-y-6 mb-8">
-          <h2 className="text-xl font-black text-center mb-6">TO'LOV USULINI TANLANG</h2>
-          
-          {/* ATMOS Card */}
-          <button
-            onClick={() => handlePaymentSelect('atmos')}
-            disabled={selectedMethod !== null}
-            className="w-full transition-all transform sm:hover:scale-[1.02] active:scale-[0.98] touch-manipulation"
-          >
-            <Card className={`border-4 ${selectedMethod === 'atmos' ? 'border-green-600 bg-green-50' : 'border-foreground sm:hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-foreground text-background p-4 rounded">
-                      <CreditCard className="h-8 w-8" />
-                    </div>
-                    <div className="text-left">
-                      <h3 className="text-2xl font-black">ATMOS</h3>
-                      <p className="text-muted-foreground font-bold">Bank kartalari orqali</p>
-                      <div className="flex gap-2 mt-2">
-                        <Badge variant="outline" className="font-bold">UzCard</Badge>
-                        <Badge variant="outline" className="font-bold">Humo</Badge>
+        {/* Payment Method Selection or Free Premium Button */}
+        {finalPrice === 0 && appliedCoupon ? (
+          // Show FREE PREMIUM button for 100% discount
+          <div className="mb-8">
+            <button
+              onClick={() => handlePaymentSelect('click')} // Use existing handler
+              disabled={isProcessing}
+              className="w-full transition-all transform sm:hover:scale-[1.02] active:scale-[0.98] touch-manipulation"
+            >
+              <Card className="border-4 border-accent bg-accent/10 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <CardContent className="p-8 text-center">
+                  <div className="space-y-4">
+                    <div className="text-6xl">🎉</div>
+                    <h2 className="text-3xl font-black text-accent">WOW! BEPUL PREMIUM!</h2>
+                    <p className="text-lg font-bold">100% chegirma qo'llanildi</p>
+                    <div className="pt-4">
+                      <div className="inline-flex items-center gap-3 text-accent">
+                        <CheckCircle className="h-8 w-8" />
+                        <span className="text-xl font-black">PREMIUM OLISH</span>
+                        <ChevronRight className="h-8 w-8" />
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className={`h-8 w-8 ${selectedMethod === 'atmos' ? 'text-green-600' : 'text-muted-foreground'}`} />
-                </div>
-                {selectedMethod === 'atmos' && (
-                  <div className="mt-4 flex items-center gap-2 text-green-600">
-                    <CheckCircle className="h-5 w-5" />
-                    <span className="font-bold">Tanlandi</span>
+                  {isProcessing && (
+                    <div className="mt-4">
+                      <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </button>
+          </div>
+        ) : (
+          // Show normal payment methods
+          <div className="space-y-4 sm:space-y-6 mb-8">
+            <h2 className="text-xl font-black text-center mb-6">TO'LOV USULINI TANLANG</h2>
+            
+            {/* ATMOS Card */}
+            <button
+              onClick={() => handlePaymentSelect('atmos')}
+              disabled={selectedMethod !== null}
+              className="w-full transition-all transform sm:hover:scale-[1.02] active:scale-[0.98] touch-manipulation"
+            >
+              <Card className={`border-4 ${selectedMethod === 'atmos' ? 'border-green-600 bg-green-50' : 'border-foreground sm:hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
+                <CardContent className="p-6 sm:p-8">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-foreground text-background p-4 rounded">
+                        <CreditCard className="h-8 w-8" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-2xl font-black">ATMOS</h3>
+                        <p className="text-muted-foreground font-bold">Bank kartalari orqali</p>
+                        <div className="flex gap-2 mt-2">
+                          <Badge variant="outline" className="font-bold">UzCard</Badge>
+                          <Badge variant="outline" className="font-bold">Humo</Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <ChevronRight className={`h-8 w-8 ${selectedMethod === 'atmos' ? 'text-green-600' : 'text-muted-foreground'}`} />
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </button>
+                  {selectedMethod === 'atmos' && (
+                    <div className="mt-4 flex items-center gap-2 text-green-600">
+                      <CheckCircle className="h-5 w-5" />
+                      <span className="font-bold">Tanlandi</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </button>
 
-          {/* Click Card */}
-          <button
-            onClick={() => handlePaymentSelect('click')}
-            disabled={selectedMethod !== null}
-            className="w-full transition-all transform sm:hover:scale-[1.02] active:scale-[0.98] touch-manipulation"
-          >
-            <Card className={`border-4 ${selectedMethod === 'click' ? 'border-green-600 bg-green-50' : 'border-foreground sm:hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-[#00CEC9] text-white p-4 rounded">
-                      <Smartphone className="h-8 w-8" />
-                    </div>
-                    <div className="text-left">
-                      <h3 className="text-2xl font-black">Click.uz</h3>
-                      <p className="text-muted-foreground font-bold">Tezkor to'lov tizimi</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Zap className="h-4 w-4 text-yellow-600" />
-                        <span className="text-sm font-bold text-muted-foreground">Onlayn to'lov</span>
+            {/* Click Card */}
+            <button
+              onClick={() => handlePaymentSelect('click')}
+              disabled={selectedMethod !== null}
+              className="w-full transition-all transform sm:hover:scale-[1.02] active:scale-[0.98] touch-manipulation"
+            >
+              <Card className={`border-4 ${selectedMethod === 'click' ? 'border-green-600 bg-green-50' : 'border-foreground sm:hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
+                <CardContent className="p-6 sm:p-8">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-[#00CEC9] text-white p-4 rounded">
+                        <Smartphone className="h-8 w-8" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-2xl font-black">Click.uz</h3>
+                        <p className="text-muted-foreground font-bold">Tezkor to'lov tizimi</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Zap className="h-4 w-4 text-yellow-600" />
+                          <span className="text-sm font-bold text-muted-foreground">Onlayn to'lov</span>
+                        </div>
                       </div>
                     </div>
+                    <ChevronRight className={`h-8 w-8 ${selectedMethod === 'click' ? 'text-green-600' : 'text-muted-foreground'}`} />
                   </div>
-                  <ChevronRight className={`h-8 w-8 ${selectedMethod === 'click' ? 'text-green-600' : 'text-muted-foreground'}`} />
-                </div>
-                {selectedMethod === 'click' && (
-                  <div className="mt-4 flex items-center gap-2 text-green-600">
-                    <CheckCircle className="h-5 w-5" />
-                    <span className="font-bold">Tanlandi</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </button>
-        </div>
+                  {selectedMethod === 'click' && (
+                    <div className="mt-4 flex items-center gap-2 text-green-600">
+                      <CheckCircle className="h-5 w-5" />
+                      <span className="font-bold">Tanlandi</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </button>
+          </div>
+        )}
 
         {/* What's Included */}
         <Card className="border-2 border-muted mb-8">

@@ -717,12 +717,32 @@ export default function AtmosPayment() {
                     </Alert>
                   )}
 
-                  {paymentState.step === 'card-details' && renderCardDetailsForm()}
+                  {paymentState.step === 'card-details' && (
+                    appliedCoupon && appliedCoupon.finalAmount === 0 ? (
+                      // Show FREE PREMIUM content for 100% discount
+                      <div className="text-center space-y-6 py-8">
+                        <div className="text-6xl">🎉</div>
+                        <h2 className="text-3xl font-black text-accent">WOW! BEPUL PREMIUM!</h2>
+                        <p className="text-lg font-bold">100% chegirma qo'llanildi</p>
+                        <p className="text-muted-foreground font-bold">
+                          Premium dostup olish uchun quyidagi tugmani bosing
+                        </p>
+                      </div>
+                    ) : (
+                      renderCardDetailsForm()
+                    )
+                  )}
                   {paymentState.step === 'otp' && renderOtpForm()}
                   {paymentState.step === 'success' && (
                     <div className="text-center">
-                      <h3 className="text-xl font-black text-foreground mb-4">TO'LOV MUVAFFAQIYATLI</h3>
-                      <p className="font-bold text-foreground">Rahmat! Premium dostup faollashtirildi.</p>
+                      <h3 className="text-xl font-black text-foreground mb-4">
+                        {appliedCoupon && appliedCoupon.finalAmount === 0 ? 
+                          "PREMIUM DOSTUP FAOLLASHTIRILDI!" : 
+                          "TO'LOV MUVAFFAQIYATLI"}
+                      </h3>
+                      <p className="font-bold text-foreground">
+                        {paymentState.message || "Rahmat! Premium dostup faollashtirildi."}
+                      </p>
                     </div>
                   )}
                   {paymentState.step === 'error' && (
@@ -746,12 +766,18 @@ export default function AtmosPayment() {
                       <Button 
                         type="submit" 
                         disabled={loading}
-                        className="w-full bg-foreground text-background font-black text-lg py-4 border-2 border-foreground hover:bg-foreground/90 mb-6"
+                        className={`w-full font-black text-lg py-4 border-2 mb-6 ${
+                          appliedCoupon && appliedCoupon.finalAmount === 0 
+                            ? "bg-accent text-white border-accent hover:bg-accent/90" 
+                            : "bg-foreground text-background border-foreground hover:bg-foreground/90"
+                        }`}
                       >
                         {loading ? (
                           "TEKSHIRILMOQDA..."
                         ) : (
-                          "TO'LOVNI DAVOM ETTIRISH"
+                          appliedCoupon && appliedCoupon.finalAmount === 0 
+                            ? "BEPUL PREMIUM OLISH 🎉" 
+                            : "TO'LOVNI DAVOM ETTIRISH"
                         )}
                       </Button>
                     </form>
