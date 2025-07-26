@@ -33,9 +33,9 @@ export function setupAtmosRoutes(): Router {
   // Create transaction for one-time payment
   router.post('/atmos/create-transaction', async (req, res) => {
     try {
-      const { amount, description, couponCode } = req.body;
+      const { amount, description, couponCode, userId, userEmail } = req.body;
 
-      if (!amount || amount <= 0) {
+      if (!amount || amount < 0) {
         return res.status(400).json({
           success: false,
           message: 'Invalid amount'
@@ -80,6 +80,124 @@ export function setupAtmosRoutes(): Router {
         } else {
           logger.warn('Coupon not found or inactive');
         }
+      }
+
+      // Check if this is a 100% discount scenario
+      if (finalAmount === 0 && appliedCoupon) {
+        logger.info('Processing 100% discount transaction');
+        
+        // Get authenticated user from request body
+        // Note: userId and userEmail are already destructured from req.body above
+        
+        if (!userId) {
+          return res.status(401).json({
+            success: false,
+            message: 'Authentication required'
+          });
+        }
+        
+        // Create admin Supabase client
+        const { createClient } = await import('@supabase/supabase-js');
+        const adminSupabase = createClient(
+          process.env.SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+        
+        // Verify user exists
+        const { data: { user }, error: userError } = await adminSupabase.auth.admin.getUserById(userId);
+        if (!user || userError) {
+          return res.status(401).json({
+            success: false,
+            message: 'User not found'
+          });
+        }
+        
+        // Check if user already has paid tier
+        if (user.user_metadata?.tier === 'paid') {
+          return res.status(400).json({
+            success: false,
+            message: 'User already has premium access'
+          });
+        }
+        
+        // Create a payment record
+        const { PaymentTransactionService } = await import('./services/payment-transaction-service');
+        const transactionService = new PaymentTransactionService();
+        
+        const transaction = await transactionService.createTransaction({
+          userId: user.id,
+          userEmail: user.email!,
+          originalAmount: originalAmount / 100, // Convert from tiins to UZS
+          finalAmount: 0,
+          discountAmount: discountAmount / 100,
+          paymentMethod: 'coupon',
+          couponId: appliedCoupon.id,
+          couponCode: appliedCoupon.code,
+          metadata: {
+            createdBy: 'atmos-100-discount',
+            userTier: user.user_metadata?.tier || 'free',
+            isFullDiscount: true
+          }
+        });
+        
+        // Mark transaction as completed
+        await transactionService.updateTransactionStatus(
+          transaction.id,
+          'completed',
+          'COUPON_100_DISCOUNT'
+        );
+        
+        // Upgrade user to premium tier
+        const { error: updateError } = await adminSupabase.auth.admin.updateUserById(
+          user.id,
+          {
+            user_metadata: {
+              ...user.user_metadata,
+              tier: 'paid',
+              payment_date: new Date().toISOString(),
+              payment_method: 'coupon_100_discount',
+              transaction_id: transaction.id
+            }
+          }
+        );
+        
+        if (updateError) {
+          logger.error('Failed to upgrade user tier', updateError);
+          throw new Error('Failed to apply premium access');
+        }
+        
+        // Record coupon usage
+        const { storage } = await import('./storage');
+        await storage.recordCouponUsage({
+          couponId: appliedCoupon.id,
+          userId: user.id,
+          userEmail: user.email!,
+          paymentId: transaction.id,
+          originalAmount: originalAmount / 100,
+          discountAmount: discountAmount / 100,
+          finalAmount: 0
+        });
+        
+        logger.info('User upgraded with 100% discount coupon', {
+          userId: user.id,
+          transactionId: transaction.id
+        });
+        
+        // Return success without payment URL
+        return res.json({
+          success: true,
+          isFullDiscount: true,
+          transaction_id: transaction.id,
+          message: "Premium kirish muvaffaqiyatli faollashtirildi!",
+          coupon: {
+            id: appliedCoupon.id,
+            code: appliedCoupon.code,
+            originalAmount,
+            discountAmount,
+            finalAmount: 0,
+            discountPercent: 100
+          }
+        });
       }
 
       // Generate unique account ID for this payment

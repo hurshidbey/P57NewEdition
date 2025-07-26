@@ -839,7 +839,8 @@ export function setupRoutes(app: Express): Server {
           finalAmount,
           discountPercent: coupon.discountType === 'percentage' 
             ? coupon.discountValue 
-            : Math.round((discountAmount / originalAmount) * 100)
+            : Math.round((discountAmount / originalAmount) * 100),
+          isFullDiscount: finalAmount === 0
         },
         message: "Kupon kodi muvaffaqiyatli qo'llandi!"
       });

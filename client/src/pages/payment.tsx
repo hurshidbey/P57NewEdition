@@ -22,7 +22,7 @@ import AppFooter from '@/components/app-footer';
 
 export default function Payment() {
   const [, setLocation] = useLocation();
-  const { user } = useAuth();
+  const { user, refreshAuth } = useAuth();
   const { toast } = useToast();
   const [selectedMethod, setSelectedMethod] = useState<'atmos' | 'click' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -178,7 +178,28 @@ export default function Payment() {
         return;
       }
       
-      if (data.success && data.paymentUrl) {
+      if (data.success && data.isFullDiscount) {
+        // Handle 100% discount scenario
+        console.log('✅ [Click Payment] 100% discount applied, user upgraded!');
+        
+        // Show success message
+        toast({
+          title: "Tabriklaymiz! 🎉",
+          description: data.message || "Premium kirish muvaffaqiyatli faollashtirildi!",
+        });
+        
+        // Force refresh auth context to update user tier
+        if (refreshAuth) {
+          await refreshAuth();
+        }
+        
+        // Redirect to premium content after a short delay
+        setTimeout(() => {
+          setIsProcessing(false);
+          setLocation('/'); // Redirect to home or protocols page
+        }, 1500);
+        
+      } else if (data.success && data.paymentUrl) {
         console.log('✅ [Click Payment] Redirecting to:', data.paymentUrl);
         
         // Store order ID for processing page

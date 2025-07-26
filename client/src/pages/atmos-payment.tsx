@@ -20,7 +20,7 @@ interface AtmosPaymentStep {
 
 export default function AtmosPayment() {
   const [, setLocation] = useLocation();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, refreshAuth } = useAuth();
   const [paymentState, setPaymentState] = useState<AtmosPaymentStep>({ step: 'card-details' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -185,7 +185,9 @@ export default function AtmosPayment() {
         body: JSON.stringify({
           amount: appliedCoupon ? appliedCoupon.originalAmount * 100 : 142500000, // Convert to tiins
           description: 'Protokol 57 - Premium Access',
-          couponCode: appliedCoupon ? appliedCoupon.code : null
+          couponCode: appliedCoupon ? appliedCoupon.code : null,
+          userId: user?.id,
+          userEmail: user?.email
         })
       });
 
@@ -195,6 +197,23 @@ export default function AtmosPayment() {
       }
 
       const createResult = await createResponse.json();
+      
+      // Check if this is a 100% discount scenario
+      if (createResult.success && createResult.isFullDiscount) {
+        console.log('✅ [Atmos Payment] 100% discount applied, user upgraded!');
+        
+        // Force refresh auth context to update user tier
+        if (refreshAuth) {
+          await refreshAuth();
+        }
+        
+        setPaymentState({ 
+          step: 'success',
+          message: createResult.message || "Premium kirish muvaffaqiyatli faollashtirildi!"
+        });
+        return;
+      }
+      
       const transactionId = createResult.transaction_id;
 
       if (!transactionId) {

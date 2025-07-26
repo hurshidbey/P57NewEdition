@@ -57,7 +57,7 @@ export function setupClickRoutesV2(): Router {
       });
 
       // Validate input
-      if (!amount || amount <= 0) {
+      if (!amount || amount < 0) {
         return res.status(400).json({
           success: false,
           message: 'Invalid amount'
@@ -131,6 +131,105 @@ export function setupClickRoutesV2(): Router {
             logger.info('Coupon applied', { couponId: coupon.id, originalAmount: amount, finalAmount });
           }
         }
+      }
+
+      // Check if this is a 100% discount scenario
+      if (finalAmount === 0 && appliedCoupon) {
+        logger.payment('Processing 100% discount transaction', {
+          userId: user.id,
+          couponCode: appliedCoupon.code
+        });
+
+        // Create payment transaction with special status
+        const transaction = await transactionService.createTransaction({
+          userId: user.id,
+          userEmail: user.email!,
+          originalAmount: amount,
+          finalAmount: 0,
+          discountAmount: discountAmount,
+          paymentMethod: 'coupon',
+          couponId: appliedCoupon.id,
+          couponCode: appliedCoupon.code,
+          metadata: {
+            createdBy: 'click-v2',
+            userTier: user.user_metadata?.tier || 'free',
+            isFullDiscount: true
+          }
+        });
+
+        // Immediately mark transaction as completed
+        await transactionService.updateTransactionStatus(
+          transaction.id,
+          'completed',
+          'COUPON_100_DISCOUNT'
+        );
+
+        // Upgrade user to premium tier
+        const { error: updateError } = await adminSupabase.auth.admin.updateUserById(
+          user.id,
+          {
+            user_metadata: {
+              ...user.user_metadata,
+              tier: 'paid',
+              payment_date: new Date().toISOString(),
+              payment_method: 'coupon_100_discount',
+              transaction_id: transaction.id
+            }
+          }
+        );
+
+        if (updateError) {
+          logger.error('Failed to upgrade user tier', updateError);
+          throw new Error('Failed to apply premium access');
+        }
+
+        // Record coupon usage
+        const { storage } = await import('./storage');
+        await storage.recordCouponUsage({
+          couponId: appliedCoupon.id,
+          userId: user.id,
+          userEmail: user.email!,
+          paymentId: transaction.id,
+          originalAmount: amount,
+          discountAmount: discountAmount,
+          finalAmount: 0
+        });
+
+        // Log successful upgrade
+        monitoring.logPaymentTransaction(
+          transaction.id,
+          user.id,
+          user.email!,
+          'completed',
+          0,
+          'coupon',
+          {
+            originalAmount: amount,
+            discountAmount: discountAmount,
+            couponCode: appliedCoupon.code,
+            isFullDiscount: true
+          }
+        );
+
+        logger.payment('User upgraded with 100% discount coupon', {
+          userId: user.id,
+          transactionId: transaction.id
+        });
+
+        // Return success without payment URL
+        return res.json({
+          success: true,
+          isFullDiscount: true,
+          transactionId: transaction.id,
+          merchantTransId: transaction.merchantTransId,
+          amount: 0,
+          message: "Premium kirish muvaffaqiyatli faollashtirildi!",
+          appliedCoupon: {
+            code: appliedCoupon.code,
+            discountAmount: discountAmount,
+            discountPercent: 100
+          }
+        });
       }
 
       // Create payment transaction in database
