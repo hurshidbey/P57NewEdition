@@ -21,6 +21,71 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   const { signIn } = useAuth()
   const { toast } = useToast()
   const [, setLocation] = useLocation()
+  const [testLoading, setTestLoading] = useState<string | null>(null)
+
+  // Test users for development
+  const testUsers = import.meta.env.DEV ? [
+    { email: 'test@p57.uz', password: 'test123456', name: 'Test User', tier: 'free' },
+    { email: 'premium@p57.uz', password: 'premium123456', name: 'Premium User', tier: 'paid' },
+    { email: 'admin@p57.uz', password: 'admin123456', name: 'Admin User', tier: 'admin' }
+  ] : []
+
+  const handleTestLogin = async (testUser: typeof testUsers[0]) => {
+    setTestLoading(testUser.email)
+    
+    try {
+      const response = await fetch('/api/auth/test-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testUser)
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.session) {
+        // Set the session in Supabase client
+        const { supabase } = await import('@/lib/supabase')
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token
+        })
+
+        if (sessionError) {
+          console.error('Failed to set session:', sessionError)
+          toast({
+            title: "Xatolik",
+            description: "Sessiyani o'rnatishda xatolik",
+            variant: "destructive"
+          })
+          return
+        }
+        
+        toast({
+          title: `Xush kelibsiz, ${testUser.name}!`,
+          description: `${testUser.tier === 'paid' ? 'Premium' : testUser.tier === 'admin' ? 'Admin' : 'Oddiy'} foydalanuvchi sifatida kirdingiz`
+        })
+
+        // Reload to refresh auth state
+        setTimeout(() => {
+          window.location.href = '/'
+        }, 500)
+      } else {
+        toast({
+          title: "Xatolik",
+          description: data.message || "Test foydalanuvchi bilan kirish amalga oshmadi",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Xatolik",
+        description: "Serverga ulanishda xatolik",
+        variant: "destructive"
+      })
+    } finally {
+      setTestLoading(null)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -206,10 +271,56 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         </GoogleOAuthButton>
       </motion.div>
 
+      {/* Test users for development */}
+      {import.meta.env.DEV && testUsers.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="space-y-3"
+        >
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-dashed border-muted-foreground/30"></div>
+            </div>
+            <div className="relative flex justify-center text-caption">
+              <span className="bg-background px-4 text-xs text-muted-foreground">Test foydalanuvchilar</span>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            {testUsers.map((user) => (
+              <Button
+                key={user.email}
+                type="button"
+                variant="outline"
+                className="w-full h-10 text-sm border-dashed border-muted-foreground/30 hover:border-accent/50 transition-all duration-200"
+                onClick={() => handleTestLogin(user)}
+                disabled={testLoading !== null}
+              >
+                {testLoading === user.email ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+                    Kirilmoqda...
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between w-full">
+                    <span className="font-medium">{user.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {user.tier === 'paid' ? '(Premium)' : user.tier === 'admin' ? '(Admin)' : '(Free)'}
+                    </span>
+                  </div>
+                )}
+              </Button>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       <motion.p 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
+        transition={{ delay: 0.8 }}
         className="text-center text-sm text-muted-foreground"
       >
         Hisobingiz yo'qmi?{" "}

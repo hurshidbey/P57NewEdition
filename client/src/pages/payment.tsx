@@ -26,7 +26,7 @@ export default function Payment() {
   const { toast } = useToast();
   const [selectedMethod, setSelectedMethod] = useState<'atmos' | 'click' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showCoupon, setShowCoupon] = useState(false);
+  const [showCoupon, setShowCoupon] = useState(true); // Show coupon by default
   const [couponCode, setCouponCode] = useState('');
   const [couponValidating, setCouponValidating] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<{
@@ -286,90 +286,160 @@ export default function Payment() {
         </div>
       )}
       
-      <main className="flex-1 container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
-        {/* Price Display - HUGE and CLEAR */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2">PREMIUM TO'LOV</h1>
-          <div className="inline-block">
-            {appliedCoupon ? (
-              <div className="space-y-2">
-                <div className="text-muted-foreground">
-                  <span className="line-through text-2xl">{basePrice.toLocaleString('uz-UZ')} UZS</span>
-                </div>
-                <div className="font-black text-foreground" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}>
-                  {finalPrice.toLocaleString('uz-UZ')} UZS
-                </div>
-                <Badge className="bg-green-600 text-white text-sm">
-                  {appliedCoupon.discountPercent}% CHEGIRMA
-                </Badge>
-              </div>
-            ) : (
-              <div className="font-black text-foreground" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}>
-                {basePrice.toLocaleString('uz-UZ')} UZS
-              </div>
-            )}
-            <p className="text-muted-foreground mt-2 font-bold">Bir martalik to'lov</p>
+      <main className="flex-1 container mx-auto px-4 py-6 sm:py-8 max-w-2xl">
+        {/* Header with P57 logo */}
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="inline-flex items-center justify-center mb-4 sm:mb-6">
+            <img src="/p57-black-logo.svg" alt="P57" className="h-12 sm:h-16 w-auto" />
           </div>
+          <h1 className="text-3xl sm:text-4xl font-black mb-3 sm:mb-4 leading-tight">
+            Sun'iy intellekt davri keldi.<br className="hidden sm:block" />
+            Endi u har qadamingizda uchraydi.
+          </h1>
+          <p className="text-xl sm:text-2xl text-muted-foreground mb-3">
+            O'rganishning ayni vaqti.<br />
+            Keyin kech bo'ladi.
+          </p>
+          <p className="text-lg sm:text-xl italic text-muted-foreground">
+            Hoziroq Sotib Oling!<br />
+            Bir umrlik ilm bo'ladi.
+          </p>
         </div>
 
-        {/* Coupon Section - Hidden by default */}
-        <div className="mb-8">
-          {!showCoupon && !appliedCoupon && (
-            <button
-              onClick={() => setShowCoupon(true)}
-              className="mx-auto flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-bold"
-            >
-              <Tag className="h-4 w-4" />
-              Kupon kodingiz bormi?
-            </button>
-          )}
-          
-          {(showCoupon || appliedCoupon) && (
-            <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <CardContent className="p-4">
-                <div className="flex gap-2">
+        {/* Price and What's Included */}
+        <div className="mb-6 sm:mb-8">
+          <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+            <div className="bg-black text-white p-4 sm:p-5">
+              <h3 className="font-bold text-base sm:text-lg mb-3 uppercase tracking-wider">Nimalar kiradi:</h3>
+              <ul className="space-y-4 text-base">
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                  <div>
+                    <span className="font-bold">57 ta prompt texnikasi</span>
+                    <p className="text-gray-300 text-sm mt-1 leading-relaxed">Tanqidiy fikrlash va prompt yozishni o'rgatadigan 57 ta mini dars. Har bir protokolni sun'iy intellekt bilan sinashingiz mumkin bo'ladi. Bu 57 ta protokol hayotda va sun'iy intellekt uchun o'zgarmas! Ular OpenAI (ChatGPT), Claude va boshqa yirik gigantlarning ilmiy maqolalari va darslari yordamida tayyorlangan.</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                  <div>
+                    <span className="font-bold">50+ Premium Promptlar</span>
+                    <p className="text-gray-300 text-sm mt-1 leading-relaxed">Biznes, Marketing, Dasturlash va boshqa ko'plab sohalarda qo'llash uchun yuqori mukammallik asosida ishlab chiqilgan tayyor promptlar. (Har biri $20 lik qiymatga ega PromptBase da) Umumiy qiymati $1000.</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                  <div>
+                    <span className="font-bold">O'quv bazasi</span>
+                    <p className="text-gray-300 text-sm mt-1 leading-relaxed">Boshlang'ich va murakkab AI (Sun'iy Intellektni) o'rganish uchun bilim bazasi. Qolgan joyingizdan davom ettirib ketsangiz bo'ladi.</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                  <div>
+                    <span className="font-bold">Sun'iy intellekt bilan mashq qilish <Badge className="ml-1 bg-green-500 text-black hover:bg-green-500 text-xs px-1.5 py-0">BONUS</Badge></span>
+                    <p className="text-gray-300 text-sm mt-1 leading-relaxed">O'z natijangizni OpenAI ning yuqori aniqlikdagi modellari orqali sinab ko'rish imkoniyati.</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            
+            {/* Price Display */}
+            <div className="bg-white p-6 sm:p-8">
+              <div className="text-center">
+                {appliedCoupon ? (
+                  <div className="space-y-2">
+                    <div className="text-gray-500 line-through text-2xl sm:text-3xl">
+                      {basePrice.toLocaleString('uz-UZ')} so'm
+                    </div>
+                    <div className="text-green-600 font-black text-4xl sm:text-5xl">
+                      {finalPrice.toLocaleString('uz-UZ')} so'm
+                    </div>
+                    <div className="text-base sm:text-lg text-green-600 font-medium mt-2">
+                      {appliedCoupon.discountPercent}% chegirma qo'llanildi!
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="font-black text-4xl sm:text-5xl">
+                      {basePrice.toLocaleString('uz-UZ')} so'm
+                    </div>
+                    <div className="text-base sm:text-lg text-muted-foreground mt-2">
+                      Bir martalik to'lov
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Promo Code Section */}
+        <div className="mb-6 sm:mb-8">
+          <Card className="border border-gray-200 overflow-hidden">
+            <CardContent className="p-4 sm:p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Tag className="h-5 w-5 text-muted-foreground" />
+                <label className="text-base font-medium text-foreground">Promokod bormi?</label>
+              </div>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
                   <Input
-                    placeholder="KUPON KODI"
                     value={couponCode}
                     onChange={(e) => {
                       setCouponCode(e.target.value.toUpperCase());
                       setCouponError(null);
                     }}
+                    placeholder="PROMOKODNI KIRITING"
                     disabled={couponValidating || !!appliedCoupon}
-                    className="font-mono text-base border-2 border-foreground uppercase min-h-[44px]"
+                    className={`font-mono text-base sm:text-lg border-2 ${
+                      appliedCoupon 
+                        ? 'border-green-500 bg-green-50 text-green-700' 
+                        : couponError 
+                          ? 'border-red-500 focus:border-red-500' 
+                          : 'border-gray-300'
+                    } uppercase h-10 sm:h-12 pr-10 transition-colors`}
                     type="text"
                     autoComplete="off"
                   />
-                  {!appliedCoupon ? (
-                    <Button
-                      onClick={validateCoupon}
-                      disabled={couponValidating || !couponCode.trim()}
-                      className="font-black border-2 border-foreground min-h-[44px] min-w-[100px]"
-                    >
-                      QO'LLASH
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => {
-                        setAppliedCoupon(null);
-                        setCouponCode('');
-                        setShowCoupon(false);
-                      }}
-                      variant="destructive"
-                      className="font-black min-h-[44px] min-w-[100px]"
-                    >
-                      BEKOR
-                    </Button>
+                  {appliedCoupon && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                    </div>
                   )}
                 </div>
-                {couponError && (
-                  <div className="mt-2 p-2 bg-red-50 border border-red-300 rounded">
-                    <p className="text-red-600 text-sm font-bold">{couponError}</p>
-                  </div>
+                {!appliedCoupon ? (
+                  <Button
+                    onClick={validateCoupon}
+                    disabled={couponValidating || !couponCode.trim()}
+                    className="bg-foreground hover:bg-foreground/90 text-background font-bold h-10 sm:h-12 px-4 sm:px-6 min-w-[100px] sm:min-w-[120px] transition-all"
+                  >
+                    {couponValidating ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "QO'LLASH"
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      setAppliedCoupon(null);
+                      setCouponCode('');
+                    }}
+                    variant="outline"
+                    className="font-bold h-10 sm:h-12 px-4 sm:px-6 min-w-[100px] sm:min-w-[120px] border-2 hover:bg-gray-50"
+                  >
+                    BEKOR
+                  </Button>
                 )}
-              </CardContent>
-            </Card>
-          )}
+              </div>
+              {couponError && (
+                <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                  <span className="text-xs">⚠</span>
+                  {couponError}
+                </p>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Payment Method Selection or Free Premium Button */}
@@ -406,109 +476,95 @@ export default function Payment() {
           </div>
         ) : (
           // Show normal payment methods
-          <div className="space-y-4 sm:space-y-6 mb-8">
-            <h2 className="text-xl font-black text-center mb-6">TO'LOV USULINI TANLANG</h2>
+          <div className="mb-8">
+            {/* Security Badge */}
+            <div className="flex items-center justify-center gap-2 mb-4 text-base">
+              <Shield className="h-4 w-4 text-green-500" />
+              <span className="font-medium text-muted-foreground">Havfsiz to'lov tizimi</span>
+            </div>
             
-            {/* ATMOS Card */}
-            <button
-              onClick={() => handlePaymentSelect('atmos')}
-              disabled={selectedMethod !== null}
-              className="w-full transition-all transform sm:hover:scale-[1.02] active:scale-[0.98] touch-manipulation"
-            >
-              <Card className={`border-4 ${selectedMethod === 'atmos' ? 'border-green-600 bg-green-50' : 'border-foreground sm:hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
-                <CardContent className="p-6 sm:p-8">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-foreground text-background p-4 rounded">
-                        <CreditCard className="h-8 w-8" />
+            {/* Payment Method Section */}
+            <div className="space-y-4">
+              <h3 className="text-center text-base sm:text-lg font-medium text-muted-foreground mb-3">
+                To'lov usulini tanlang:
+              </h3>
+              
+              {/* Payment Method Buttons - Properly sized */}
+              <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                {/* Click Button */}
+                <button
+                  onClick={() => handlePaymentSelect('click')}
+                  disabled={selectedMethod !== null}
+                  className="relative flex-1 group transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-xl"
+                >
+                  <div className="relative bg-white border-2 border-gray-200 rounded-xl p-4 sm:p-6 hover:border-green-500 hover:shadow-lg transition-all">
+                    <div className="flex flex-col items-center space-y-3">
+                      <div className="h-16 sm:h-20 flex items-center justify-center">
+                        <img 
+                          src="/pay-with-click.png" 
+                          alt="Click" 
+                          className="h-full w-auto object-contain max-w-[160px] sm:max-w-[200px]"
+                        />
                       </div>
-                      <div className="text-left">
-                        <h3 className="text-2xl font-black">ATMOS</h3>
-                        <p className="text-muted-foreground font-bold">Bank kartalari orqali</p>
-                        <div className="flex gap-2 mt-2">
-                          <Badge variant="outline" className="font-bold">UzCard</Badge>
-                          <Badge variant="outline" className="font-bold">Humo</Badge>
+                      <span className="text-sm sm:text-base font-medium text-gray-600">Tez va oson to'lov</span>
+                    </div>
+                    {selectedMethod === 'click' && (
+                      <div className="absolute inset-0 bg-green-500/10 rounded-xl flex items-center justify-center">
+                        <div className="bg-white rounded-full p-2 shadow-lg">
+                          <CheckCircle className="h-8 w-8 text-green-500" />
                         </div>
                       </div>
-                    </div>
-                    <ChevronRight className={`h-8 w-8 ${selectedMethod === 'atmos' ? 'text-green-600' : 'text-muted-foreground'}`} />
+                    )}
                   </div>
-                  {selectedMethod === 'atmos' && (
-                    <div className="mt-4 flex items-center gap-2 text-green-600">
-                      <CheckCircle className="h-5 w-5" />
-                      <span className="font-bold">Tanlandi</span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </button>
+                </button>
 
-            {/* Click Card */}
-            <button
-              onClick={() => handlePaymentSelect('click')}
-              disabled={selectedMethod !== null}
-              className="w-full transition-all transform sm:hover:scale-[1.02] active:scale-[0.98] touch-manipulation"
-            >
-              <Card className={`border-4 ${selectedMethod === 'click' ? 'border-green-600 bg-green-50' : 'border-foreground sm:hover:border-foreground/80'} shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
-                <CardContent className="p-6 sm:p-8">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#00CEC9] text-white p-4 rounded">
-                        <Smartphone className="h-8 w-8" />
+                {/* ATMOS Button */}
+                <button
+                  onClick={() => handlePaymentSelect('atmos')}
+                  disabled={selectedMethod !== null}
+                  className="relative flex-1 group transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-xl"
+                >
+                  <div className="relative bg-white border-2 border-gray-200 rounded-xl p-4 sm:p-6 hover:border-green-500 hover:shadow-lg transition-all">
+                    <div className="flex flex-col items-center space-y-3">
+                      <div className="h-16 sm:h-20 flex items-center justify-center">
+                        <img 
+                          src="/pay-with-atmos.png" 
+                          alt="ATMOS" 
+                          className="h-full w-auto object-contain max-w-[160px] sm:max-w-[200px]"
+                        />
                       </div>
-                      <div className="text-left">
-                        <h3 className="text-2xl font-black">Click.uz</h3>
-                        <p className="text-muted-foreground font-bold">Tezkor to'lov tizimi</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <Zap className="h-4 w-4 text-yellow-600" />
-                          <span className="text-sm font-bold text-muted-foreground">Onlayn to'lov</span>
+                      <span className="text-sm sm:text-base font-medium text-gray-600">Bank kartasi orqali</span>
+                    </div>
+                    {selectedMethod === 'atmos' && (
+                      <div className="absolute inset-0 bg-green-500/10 rounded-xl flex items-center justify-center">
+                        <div className="bg-white rounded-full p-2 shadow-lg">
+                          <CheckCircle className="h-8 w-8 text-green-500" />
                         </div>
                       </div>
-                    </div>
-                    <ChevronRight className={`h-8 w-8 ${selectedMethod === 'click' ? 'text-green-600' : 'text-muted-foreground'}`} />
+                    )}
                   </div>
-                  {selectedMethod === 'click' && (
-                    <div className="mt-4 flex items-center gap-2 text-green-600">
-                      <CheckCircle className="h-5 w-5" />
-                      <span className="font-bold">Tanlandi</span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </button>
+                </button>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="flex items-center justify-center gap-4 mt-6 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Smartphone className="h-3 w-3" />
+                  <span>Mobile optimized</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Zap className="h-3 w-3" />
+                  <span>Tezkor to'lov</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <CreditCard className="h-3 w-3" />
+                  <span>256-bit shifrlash</span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* What's Included */}
-        <Card className="border-2 border-muted mb-8">
-          <CardContent className="p-6">
-            <h3 className="font-black text-lg mb-4">NIMALAR KIRADI:</h3>
-            <ul className="space-y-2">
-              <li className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="font-bold">57 ta AI protokol - to'liq dostup</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="font-bold">50+ Premium promptlar</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="font-bold">AI bilan amaliy mashqlar</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="font-bold">Umrbod dostup</span>
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        {/* Security Badge */}
-        <div className="flex items-center justify-center gap-2 text-muted-foreground">
-          <Shield className="h-5 w-5" />
-          <span className="font-bold">100% xavfsiz to'lov</span>
-        </div>
       </main>
 
       <AppFooter />

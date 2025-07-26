@@ -9,15 +9,16 @@ import { useLocation } from "wouter"
 import { AlertCircle } from "lucide-react"
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true)
+  // Get URL params first to determine initial mode
+  const params = new URLSearchParams(window.location.search)
+  const mode = params.get('mode')
+  const redirectTo = params.get('redirect') || '/'
+  const reason = params.get('reason')
+  
+  const [isLogin, setIsLogin] = useState(mode !== 'register')
   const [showEmailConfirm, setShowEmailConfirm] = useState(false)
   const { isAuthenticated } = useAuth()
   const [, setLocation] = useLocation()
-  
-  // Get redirect params
-  const params = new URLSearchParams(window.location.search)
-  const redirectTo = params.get('redirect') || '/'
-  const reason = params.get('reason')
   
   // If user is already authenticated, redirect to intended destination
   useEffect(() => {

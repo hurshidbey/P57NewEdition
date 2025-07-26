@@ -184,5 +184,187 @@ export function setupAuthRoutes(): Router {
     }
   });
 
+  // Development-only test user endpoints
+  if (process.env.NODE_ENV === 'development') {
+    // Test users data
+    const TEST_USERS = [
+      {
+        email: 'test@p57.uz',
+        password: 'test123456',
+        name: 'Test User',
+        tier: 'free'
+      },
+      {
+        email: 'premium@p57.uz',
+        password: 'premium123456',
+        name: 'Premium User',
+        tier: 'paid'
+      },
+      {
+        email: 'admin@p57.uz',
+        password: 'admin123456',
+        name: 'Admin User',
+        tier: 'paid',
+        isAdmin: true
+      }
+    ];
+
+    // Create or get test user endpoint
+    router.post('/api/auth/test-login', async (req: Request, res: Response) => {
+      try {
+        const { email, password } = req.body;
+        
+        // Find test user
+        const testUser = TEST_USERS.find(u => u.email === email && u.password === password);
+        
+        if (!testUser) {
+          return res.status(401).json({
+            success: false,
+            message: 'Invalid test user credentials'
+          });
+        }
+
+        // Create admin Supabase client
+        const adminSupabase = createClient(
+          process.env.SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
+        // First try to get the user from Supabase Auth
+        const { data: { users: authUsers }, error: listError } = await adminSupabase.auth.admin.listUsers({
+          filter: `email.eq.${email}`,
+          page: 1,
+          perPage: 1
+        });
+
+        let userId: string;
+        let userExists = false;
+
+        if (authUsers && authUsers.length > 0) {
+          // User exists in Auth
+          userId = authUsers[0].id;
+          userExists = true;
+          logger.info('Test user already exists in Auth', { email, userId });
+          
+          // Update user metadata if needed
+          const existingUser = authUsers[0];
+          if (existingUser.user_metadata?.tier !== testUser.tier || 
+              existingUser.user_metadata?.name !== testUser.name) {
+            await adminSupabase.auth.admin.updateUserById(userId, {
+              user_metadata: {
+                name: testUser.name,
+                tier: testUser.tier
+              }
+            });
+            logger.info('Updated test user metadata', { email, userId });
+          }
+        } else {
+          // Create user in Supabase Auth
+          const { data: authData, error: authError } = await adminSupabase.auth.admin.createUser({
+            email,
+            password,
+            email_confirm: true,
+            user_metadata: {
+              name: testUser.name,
+              tier: testUser.tier
+            }
+          });
+
+          if (authError) {
+            console.error('[TEST AUTH] Failed to create user:', authError);
+            return res.status(500).json({
+              success: false,
+              message: 'Failed to create test user'
+            });
+          }
+
+          userId = authData.user.id;
+
+        }
+
+        // Check if user exists in database
+        if (!userExists) {
+          const { data: existingDbUser } = await adminSupabase
+            .from('users')
+            .select('id')
+            .eq('id', userId)
+            .single();
+
+          if (!existingDbUser) {
+            // Insert into users table only if not exists
+            const { error: dbError } = await adminSupabase
+              .from('users')
+              .insert({
+                id: userId,
+                email,
+                name: testUser.name,
+                tier: testUser.tier,
+                is_admin: testUser.isAdmin || false,
+                email_verified: true,
+                created_at: new Date().toISOString()
+              });
+
+            if (dbError) {
+              console.error('[TEST AUTH] Failed to insert user:', dbError);
+            } else {
+              logger.info('Test user created in database', { email, userId });
+            }
+          }
+        }
+
+        // Sign in the user
+        const { data: signInData, error: signInError } = await adminSupabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (signInError) {
+          console.error('[TEST AUTH] Sign in failed:', signInError);
+          return res.status(401).json({
+            success: false,
+            message: 'Failed to sign in test user'
+          });
+        }
+
+        // Add admin email to session if admin
+        if (testUser.isAdmin) {
+          (req.session as any).adminEmail = email;
+        }
+
+        return res.json({
+          success: true,
+          user: {
+            id: userId,
+            email,
+            name: testUser.name,
+            tier: testUser.tier,
+            isAdmin: testUser.isAdmin || false
+          },
+          session: signInData.session
+        });
+
+      } catch (error) {
+        console.error('[TEST AUTH] Error:', error);
+        return res.status(500).json({
+          success: false,
+          message: 'Internal server error'
+        });
+      }
+    });
+
+    // Get test users list endpoint
+    router.get('/api/auth/test-users', (req: Request, res: Response) => {
+      return res.json({
+        success: true,
+        users: TEST_USERS.map(u => ({
+          email: u.email,
+          name: u.name,
+          tier: u.tier,
+          isAdmin: u.isAdmin || false
+        }))
+      });
+    });
+  }
+
   return router;
 }
