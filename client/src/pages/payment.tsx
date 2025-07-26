@@ -22,7 +22,7 @@ import AppFooter from '@/components/app-footer';
 
 export default function Payment() {
   const [, setLocation] = useLocation();
-  const { user, refreshAuth } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   const [selectedMethod, setSelectedMethod] = useState<'atmos' | 'click' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -191,8 +191,8 @@ export default function Payment() {
         });
         
         // Force refresh auth context to update user tier
-        if (refreshAuth) {
-          await refreshAuth();
+        if (refreshUser) {
+          await refreshUser();
         }
         
         // Redirect to premium content after a short delay

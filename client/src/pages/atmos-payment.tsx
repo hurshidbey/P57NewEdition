@@ -20,7 +20,7 @@ interface AtmosPaymentStep {
 
 export default function AtmosPayment() {
   const [, setLocation] = useLocation();
-  const { user, loading: authLoading, refreshAuth } = useAuth();
+  const { user, loading: authLoading, refreshUser } = useAuth();
   const [paymentState, setPaymentState] = useState<AtmosPaymentStep>({ step: 'card-details' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -203,8 +203,8 @@ export default function AtmosPayment() {
         console.log('✅ [Atmos Payment] 100% discount applied, user upgraded!');
         
         // Force refresh auth context to update user tier
-        if (refreshAuth) {
-          await refreshAuth();
+        if (refreshUser) {
+          await refreshUser();
         }
         
         setPaymentState({ 
