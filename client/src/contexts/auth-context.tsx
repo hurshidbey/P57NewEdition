@@ -56,93 +56,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.subscription.unsubscribe()
   }, [])
   
-  // Listen for URL changes (like payment success) to refresh user
-  useEffect(() => {
-    const checkPaymentSuccess = () => {
-      const urlParams = new URLSearchParams(window.location.search)
-      // Only check for explicit payment success parameter, not pathname
-      if (urlParams.get('payment') === 'success') {
-        // Check if we've already processed this payment success
-        const processedKey = 'payment_success_processed';
-        if (sessionStorage.getItem(processedKey) === 'true') {
-          return; // Already processed this payment success
-        }
-        
-        // Mark as processed
-        sessionStorage.setItem(processedKey, 'true');
-        console.log('🎯 Payment success detected, refreshing user data...')
-        
-        // Show loading state while refreshing
-        const showRefreshingToast = () => {
-          const toastElement = document.createElement('div')
-          toastElement.className = 'fixed top-4 right-4 bg-foreground text-background px-6 py-3 rounded-md shadow-lg z-50 flex items-center gap-2'
-          toastElement.innerHTML = `
-            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>Premium dostup faollashtirilmoqda...</span>
-          `
-          document.body.appendChild(toastElement)
-          
-          return () => document.body.removeChild(toastElement)
-        }
-        
-        const removeToast = showRefreshingToast()
-        
-        // Multiple refresh attempts with increasing delays
-        const refreshAttempts = [500, 1500, 3000]
-        let attemptIndex = 0
-        
-        const attemptRefresh = () => {
-          refreshUser().then(() => {
-            console.log('✅ User data refreshed successfully')
-            removeToast()
-            
-            // Show success toast
-            const successToast = document.createElement('div')
-            successToast.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-md shadow-lg z-50 flex items-center gap-2'
-            successToast.innerHTML = `
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span>Premium dostup faollashtirildi!</span>
-            `
-            document.body.appendChild(successToast)
-            setTimeout(() => document.body.removeChild(successToast), 3000)
-          }).catch(error => {
-            console.error('❌ Failed to refresh user:', error)
-            if (attemptIndex < refreshAttempts.length) {
-              setTimeout(() => {
-                attemptIndex++
-                attemptRefresh()
-              }, refreshAttempts[attemptIndex])
-            } else {
-              removeToast()
-              console.error('Failed to refresh user after multiple attempts')
-            }
-          })
-        }
-        
-        setTimeout(attemptRefresh, refreshAttempts[0])
-      }
-    }
-    
-    // Only check on initial mount, not on every navigation
-    checkPaymentSuccess()
-    
-    // Clear the processed flag when component unmounts or user changes
-    return () => {
-      // Don't clear on unmount to prevent re-processing
-    }
-  }, []) // Only run once on mount
+  // REMOVED: This effect was causing duplicate popups and logout issues
+  // Payment success is now handled only on the /payment/success page
   
-  // Clear payment success flag when user logs out
-  useEffect(() => {
-    if (!user) {
-      sessionStorage.removeItem('payment_success_processed');
-    }
-  }, [user])
+  // REMOVED: No longer needed since we removed the payment success effect
   
   // Listen for storage events to refresh user when tier might have changed
   useEffect(() => {
