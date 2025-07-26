@@ -206,76 +206,68 @@ export function setupClickRoutes(): Router {
       if (finalAmount === 0 && appliedCoupon) {
         console.log(`🎉 [CLICK] Processing 100% discount transaction for user ${user.email}`);
         
-        // Get storage instance
-        const { storage } = await import('./storage');
-        
-        // Create payment record with 100% discount
-        const paymentData = {
-          id: `payment_coupon_${merchantTransId}_${Date.now()}`,
-          userId: actualUserId,
-          userEmail: user.email!,
-          amount: 0,
-          transactionId: merchantTransId,
-          status: 'completed',
-          atmosData: JSON.stringify({
-            paymentMethod: 'coupon',
-            couponCode: appliedCoupon.code,
-            isFullDiscount: true,
-            completedAt: new Date().toISOString()
-          }),
-          couponId: appliedCoupon.id,
-          originalAmount: amount,
-          discountAmount: amount
-        };
-        
-        const payment = await storage.storePayment(paymentData);
-        
-        // Upgrade user to premium tier
-        const { error: updateError } = await adminSupabase.auth.admin.updateUserById(
-          actualUserId,
-          {
-            user_metadata: {
-              ...user.user_metadata,
-              tier: 'paid',
-              payment_date: new Date().toISOString(),
-              payment_method: 'coupon_100_discount',
-              transaction_id: merchantTransId
-            }
-          }
-        );
-        
-        if (updateError) {
-          console.error('❌ [CLICK] Failed to upgrade user tier:', updateError);
-          throw new Error('Failed to apply premium access');
-        }
-        
-        // Record coupon usage
-        await storage.recordCouponUsage({
-          couponId: appliedCoupon.id,
-          userId: actualUserId,
-          userEmail: user.email!,
-          paymentId: merchantTransId,
-          originalAmount: amount,
-          discountAmount: amount,
-          finalAmount: 0
-        });
-        
-        console.log(`✅ [CLICK] User ${user.email} upgraded with 100% discount coupon`);
-        
-        // Return success without payment URL
-        return res.json({
-          success: true,
-          isFullDiscount: true,
-          transactionId: merchantTransId,
-          merchantTransId: merchantTransId,
-          amount: 0,
-          message: "Premium kirish muvaffaqiyatli faollashtirildi!",
-          appliedCoupon: {
-            code: appliedCoupon.code,
+        try {
+          // Use PaymentTransactionService for consistency with atmos routes
+          const { PaymentTransactionService } = await import('./services/payment-transaction-service');
+          const transactionService = new PaymentTransactionService();
+          
+          // Create payment transaction with 100% discount
+          const transaction = await transactionService.createTransaction({
+            userId: actualUserId,
+            userEmail: user.email!,
+            originalAmount: amount,
+            finalAmount: 0,
             discountAmount: amount,
-            discountPercent: 100
+            paymentMethod: 'click',
+            couponId: appliedCoupon.id,
+            couponCode: appliedCoupon.code,
+            metadata: {
+              isFullDiscount: true,
+              completedAt: new Date().toISOString(),
+              merchantTransId: merchantTransId
+            }
+          });
+          
+          console.log(`✅ [CLICK] 100% discount transaction created:`, transaction);
+        
+          // Complete the transaction immediately for 100% discount
+          const completionResult = await transactionService.completeTransaction(
+            transaction.id,
+            merchantTransId
+          );
+          
+          if (!completionResult.success) {
+            throw new Error(completionResult.error || 'Failed to complete transaction');
           }
-        });
+          
+          console.log(`✅ [CLICK] Transaction completed and user upgraded:`, completionResult);
+          console.log(`✅ [CLICK] User ${user.email} upgraded with 100% discount coupon`);
+          
+          // Return success without payment URL
+          return res.json({
+            success: true,
+            isFullDiscount: true,
+            transactionId: transaction.id,
+            merchantTransId: merchantTransId,
+            amount: 0,
+            message: "Premium kirish muvaffaqiyatli faollashtirildi!",
+            appliedCoupon: {
+              code: appliedCoupon.code,
+              discountAmount: amount,
+              discountPercent: 100
+            }
+          });
+          
+        } catch (discountError: any) {
+          console.error(`❌ [CLICK] Error processing 100% discount:`, discountError);
+          console.error(`❌ [CLICK] Error details:`, discountError.message, discountError.stack);
+          
+          // Return a more specific error message
+          return res.status(500).json({
+            success: false,
+            message: `Failed to process 100% discount: ${discountError.message || 'Unknown error'}`
+          });
+        }
       }
 
       // Get storage instance
