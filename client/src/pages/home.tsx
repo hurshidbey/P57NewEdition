@@ -4,7 +4,6 @@ import { Protocol } from "@shared/types";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import ProtocolCardContainer from "@/components/protocol-card-container";
-import ProgressDashboard from "@/components/progress-dashboard";
 import DifficultyFilters from "@/components/difficulty-filters";
 import { Button } from "@/components/ui/button";
 
@@ -62,13 +61,8 @@ export default function Home() {
       
       {/* Main Container - 8pt Grid System */}
       <main className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Progress Section - 32px top padding, 40px bottom margin */}
-        <section className="pt-8 pb-10">
-          <ProgressDashboard totalProtocols={57} />
-        </section>
-
-        {/* Difficulty Filters Section */}
-        <section className="pb-8">
+        {/* Difficulty Filters Section - moved to top */}
+        <section className="pt-8 pb-8">
           <DifficultyFilters
             selectedDifficulty={selectedDifficulty}
             onDifficultyChange={handleDifficultyFilter}

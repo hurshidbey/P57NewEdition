@@ -34,6 +34,7 @@ const PaymentSuccess = lazy(() => import("@/pages/payment-success"));
 const PaymentFailed = lazy(() => import("@/pages/payment-failed"));
 const PaymentCrossBrowserHelp = lazy(() => import("@/pages/payment-cross-browser-help"));
 const PremiumPrompts = lazy(() => import("@/pages/premium-prompts"));
+const Profile = lazy(() => import("@/pages/profile"));
 
 // Loading component for Suspense
 function PageLoader() {
@@ -183,6 +184,16 @@ function AppContent() {
         <Suspense fallback={<PageLoader />}>
           <PaymentFailed />
         </Suspense>
+      </Route>
+      
+      <Route path="/profile">
+        {isAuthenticated ? (
+          <Suspense fallback={<PageLoader />}>
+            <Profile />
+          </Suspense>
+        ) : (
+          <AuthPage />
+        )}
       </Route>
       
       <Route path="/">
