@@ -151,15 +151,27 @@ function AppContent() {
       </Route>
       
       <Route path="/atmos-payment">
-        <Suspense fallback={<PageLoader />}>
-          <AtmosPayment />
-        </Suspense>
+        {isAuthenticated && userTier !== 'paid' ? (
+          <Suspense fallback={<PageLoader />}>
+            <AtmosPayment />
+          </Suspense>
+        ) : isAuthenticated && userTier === 'paid' ? (
+          <Redirect to="/" />
+        ) : (
+          <AuthPage />
+        )}
       </Route>
       
       <Route path="/payment">
-        <Suspense fallback={<PageLoader />}>
-          <Payment />
-        </Suspense>
+        {isAuthenticated && userTier !== 'paid' ? (
+          <Suspense fallback={<PageLoader />}>
+            <Payment />
+          </Suspense>
+        ) : isAuthenticated && userTier === 'paid' ? (
+          <Redirect to="/" />
+        ) : (
+          <AuthPage />
+        )}
       </Route>
       
       <Route path="/payment/processing">

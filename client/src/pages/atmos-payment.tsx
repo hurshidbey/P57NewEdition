@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { CreditCard, Loader2, CheckCircle, XCircle, RefreshCw, Shield, Info, AlertCircle, Crown, FileText, BookOpen, Brain, Zap, Tag } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import { useUserTier } from '@/hooks/use-user-tier';
 import { DOMAINS } from '@/../../shared/config/domains';
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
@@ -21,6 +22,7 @@ interface AtmosPaymentStep {
 export default function AtmosPayment() {
   const [, setLocation] = useLocation();
   const { user, loading: authLoading, refreshUser } = useAuth();
+  const { tier } = useUserTier();
   const [paymentState, setPaymentState] = useState<AtmosPaymentStep>({ step: 'card-details' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,13 +37,16 @@ export default function AtmosPayment() {
   const preAppliedCouponCode = urlParams.get('coupon');
   const preAppliedAmount = urlParams.get('amount');
   
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated or already premium
   useEffect(() => {
     if (!authLoading && !user) {
       console.warn('🚫 Payment page accessed without authentication');
       setLocation('/auth/login?redirect=/payment');
+    } else if (!authLoading && tier === 'paid') {
+      console.warn('🚫 Payment page accessed by premium user');
+      setLocation('/');
     }
-  }, [user, authLoading, setLocation]);
+  }, [user, tier, authLoading, setLocation]);
   
   // Form data
   const [cardNumber, setCardNumber] = useState('');
@@ -652,6 +657,26 @@ export default function AtmosPayment() {
             </p>
             <Button onClick={() => setLocation('/auth/login?redirect=/payment')}>
               Tizimga kirish
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
+  // Redirect if user already has premium
+  if (tier === 'paid') {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex flex-col items-center justify-center py-8">
+            <Crown className="h-12 w-12 text-accent mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Siz allaqachon Premium foydalanuvchisiz!</h3>
+            <p className="text-muted-foreground text-center mb-4">
+              Barcha Premium funktsiyalar sizga ochiq
+            </p>
+            <Button onClick={() => setLocation('/')}>
+              Bosh sahifaga qaytish
             </Button>
           </CardContent>
         </Card>
