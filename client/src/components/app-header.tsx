@@ -1,10 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
 import { useUserTier } from "@/hooks/use-user-tier";
 import { Crown, Star, FileText, BookOpen, LogOut, Home, User } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function AppHeader() {
   const { user, signOut, isAuthenticated, refreshUser } = useAuth();
@@ -72,18 +79,6 @@ export default function AppHeader() {
               </Button>
             </Link>
             
-            {/* Profile - User profile link */}
-            <Link href="/profile">
-              <Button 
-                variant="ghost" 
-                className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] min-w-[44px] px-2 sm:px-3 touch-manipulation"
-                title="Profil"
-              >
-                <User className="h-4 w-4 sm:mr-1" />
-                <span className="hidden sm:inline">Profil</span>
-              </Button>
-            </Link>
-            
             {/* O'rganish - Show for all users */}
             <Link href="/knowledge-base">
               <Button 
@@ -130,15 +125,45 @@ export default function AppHeader() {
                 </Button>
               </Link>
             )}
-            <Button 
-              variant="ghost" 
-              className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] min-w-[44px] px-2 sm:px-3 touch-manipulation"
-              onClick={handleSignOut}
-              title="Chiqish"
-            >
-              <LogOut className="h-4 w-4 sm:mr-1" />
-              <span className="hidden sm:inline">Chiqish</span>
-            </Button>
+            
+            {/* Profile Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="p-0 h-10 w-10 rounded-full overflow-hidden hover:ring-2 hover:ring-offset-2 hover:ring-accent transition-all"
+                >
+                  <img 
+                    src={tier === 'paid' ? '/attached_assets/profile_paid.png' : '/attached_assets/profile_free.png'}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium">{user?.name || user?.email?.split('@')[0]}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  {tier === 'paid' && (
+                    <Badge className="mt-1 text-xs" variant="secondary">
+                      <Crown className="w-3 h-3 mr-1" /> Premium
+                    </Badge>
+                  )}
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profilim</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Chiqish</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
