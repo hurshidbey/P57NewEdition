@@ -32,7 +32,7 @@ export default function EmailConfirmPage() {
             setMessage('Email muvaffaqiyatli tasdiqlandi!')
             setTimeout(() => {
 
-              window.location.href = '/'
+              window.location.href = '/payment'
             }, 1500)
             return true // Success
           }
@@ -67,7 +67,7 @@ export default function EmailConfirmPage() {
 
               setStatus('success')
               setMessage('Email muvaffaqiyatli tasdiqlandi!')
-              setTimeout(() => window.location.href = '/', 1500)
+              setTimeout(() => window.location.href = '/payment', 1500)
             } else {
 
               setStatus('error')
