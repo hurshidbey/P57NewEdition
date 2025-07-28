@@ -133,7 +133,15 @@ export default function AtmosPayment() {
       } catch (parseError) {
         console.error('JSON parsing error:', parseError);
         console.error('Response text:', responseText);
-        setCouponError('Server javobi noto\'g\'ri. Iltimos qayta urinib ko\'ring.');
+        
+        // Check if this is a rate limit error
+        if (responseText.toLowerCase().includes('too many') || 
+            responseText.toLowerCase().includes('juda ko\'p') ||
+            responseText.toLowerCase().includes('rate limit')) {
+          setCouponError('Juda ko\'p urinish. Iltimos biroz kuting va qayta urinib ko\'ring.');
+        } else {
+          setCouponError('Server javobi noto\'g\'ri. Iltimos qayta urinib ko\'ring.');
+        }
         setAppliedCoupon(null);
         setCouponValidating(false);
         return;
@@ -247,7 +255,9 @@ export default function AtmosPayment() {
         console.error('Response text:', responseText);
         
         // Check for common error patterns
-        if (responseText.includes('Too many') || responseText.includes('rate limit')) {
+        if (responseText.toLowerCase().includes('too many') || 
+            responseText.toLowerCase().includes('juda ko\'p') ||
+            responseText.toLowerCase().includes('rate limit')) {
           throw new Error('Juda ko\'p urinish. Iltimos biroz kuting va qayta urinib ko\'ring.');
         } else if (responseText.includes('401') || responseText.includes('Unauthorized')) {
           throw new Error('Avtorizatsiya xatosi. Iltimos keyinroq urinib ko\'ring.');

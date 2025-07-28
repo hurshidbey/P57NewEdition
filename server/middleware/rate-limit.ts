@@ -36,7 +36,10 @@ const getClientId = (req: Request): string => {
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 500, // Increased to 500 requests per 15 minutes to handle progress polling
-  message: 'Too many requests from this IP, please try again later.',
+  message: { 
+    success: false, 
+    message: 'Juda ko\'p so\'rovlar yuborildi. Iltimos keyinroq urinib ko\'ring.' 
+  },
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: getClientId,
@@ -46,7 +49,10 @@ export const apiLimiter = rateLimit({
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // Limit each IP to 5 auth requests per windowMs
-  message: 'Too many authentication attempts, please try again later.',
+  message: { 
+    success: false, 
+    message: 'Juda ko\'p kirish urinishlari. Iltimos keyinroq urinib ko\'ring.' 
+  },
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Don't count successful auth
@@ -57,7 +63,10 @@ export const authLimiter = rateLimit({
 export const paymentLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 10, // Limit each IP to 10 payment attempts per hour
-  message: 'Too many payment attempts, please try again later.',
+  message: { 
+    success: false, 
+    message: 'Juda ko\'p to\'lov urinishlari. Iltimos keyinroq urinib ko\'ring.' 
+  },
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: getClientId,
