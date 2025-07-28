@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Lightbulb, RefreshCw, Send, AlertTriangle, Crown, Lock } from "lucide-react";
+import { Lightbulb, RefreshCw, Send, AlertTriangle, Crown, Lock, ExternalLink } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useProtocolEvaluation } from "@/hooks/use-protocol-evaluation";
@@ -229,6 +229,22 @@ export default function PromptPractice({ protocol }: PromptPracticeProps) {
                 </>
               )}
             </Button>
+            {userPrompt.trim() && (
+              <a
+                href={`https://chat.openai.com/?q=${encodeURIComponent(userPrompt)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button 
+                  variant="outline" 
+                  className="font-bold uppercase border-2 border-theme h-[44px] hover:bg-accent hover:text-black transition-all hover:shadow-brutal-sm"
+                  type="button"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  ChatGPT'da sinab ko'rish
+                </Button>
+              </a>
+            )}
             {evaluation && (
               <Button variant="outline" onClick={handleReset} className="border-2 border-theme hover:bg-secondary font-bold uppercase h-[44px] hover:shadow-brutal-sm">
                 <RefreshCw className="h-4 w-4 mr-2" />
