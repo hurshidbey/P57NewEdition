@@ -8,6 +8,13 @@ import { motion } from "framer-motion"
 import { Mail, Lock, ArrowRight } from "lucide-react"
 import { useLocation } from "wouter"
 import { GoogleOAuthButton } from "./google-oauth-button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface LoginFormProps {
   onToggleMode: () => void
@@ -18,10 +25,13 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [lastSubmit, setLastSubmit] = useState<number>(0)
-  const { signIn } = useAuth()
+  const { signIn, resetPasswordForEmail } = useAuth()
   const { toast } = useToast()
   const [, setLocation] = useLocation()
   const [testLoading, setTestLoading] = useState<string | null>(null)
+  const [showResetDialog, setShowResetDialog] = useState(false)
+  const [resetEmail, setResetEmail] = useState("")
+  const [resetLoading, setResetLoading] = useState(false)
 
   // Test users for development
   const testUsers = import.meta.env.DEV ? [
@@ -84,6 +94,38 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
       })
     } finally {
       setTestLoading(null)
+    }
+  }
+
+  const handlePasswordReset = async () => {
+    if (!resetEmail) {
+      toast({
+        title: "Xatolik",
+        description: "Email manzilingizni kiriting",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setResetLoading(true)
+    
+    try {
+      await resetPasswordForEmail(resetEmail)
+      toast({
+        title: "Muvaffaqiyat!",
+        description: "Parolni tiklash havolasi emailingizga yuborildi. Iltimos, spam papkasini ham tekshiring.",
+        duration: 8000
+      })
+      setShowResetDialog(false)
+      setResetEmail("")
+    } catch (error: any) {
+      toast({
+        title: "Xatolik",
+        description: error.message || "Parolni tiklashda xatolik yuz berdi",
+        variant: "destructive"
+      })
+    } finally {
+      setResetLoading(false)
     }
   }
 
@@ -153,6 +195,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   }
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
@@ -216,6 +259,10 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
       >
         <button
           type="button"
+          onClick={() => {
+            setResetEmail(email) // Pre-fill with current email if available
+            setShowResetDialog(true)
+          }}
           className="text-sm text-muted-foreground hover:text-accent transition-colors duration-200"
         >
           Parolni unutdingizmi?
@@ -333,5 +380,54 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         </button>
       </motion.p>
     </form>
+
+    {/* Password Reset Dialog */}
+    <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Parolni Tiklash</DialogTitle>
+          <DialogDescription>
+            Email manzilingizni kiriting. Sizga parolni tiklash havolasi yuboriladi.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <Label htmlFor="reset-email">Email</Label>
+            <Input
+              id="reset-email"
+              type="email"
+              value={resetEmail}
+              onChange={(e) => setResetEmail(e.target.value)}
+              placeholder="email@example.com"
+              className="h-12"
+            />
+          </div>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowResetDialog(false)}
+              className="flex-1"
+            >
+              Bekor qilish
+            </Button>
+            <Button
+              onClick={handlePasswordReset}
+              disabled={resetLoading}
+              className="flex-1 bg-accent hover:bg-accent/90"
+            >
+              {resetLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin" />
+                  Yuborilmoqda...
+                </div>
+              ) : (
+                "Yuborish"
+              )}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   )
 }

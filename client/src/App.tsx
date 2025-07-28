@@ -13,6 +13,7 @@ import { lazy, Suspense, useEffect } from "react";
 import AuthPage from "@/pages/auth";
 import EmailConfirmPage from "@/pages/email-confirm";
 import AuthCallback from "@/pages/auth-callback";
+import ResetPasswordPage from "@/pages/reset-password";
 import NotFound from "@/pages/not-found";
 import LandingPage from "@/pages/landing";
 import LandingSimple from "@/pages/landing-simple";
@@ -88,6 +89,7 @@ function AppContent() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/auth/confirm" component={EmailConfirmPage} />
       <Route path="/auth/callback" component={AuthCallback} />
+      <Route path="/auth/reset-password" component={ResetPasswordPage} />
       <Route path="/terms" component={TermsOfService} />
       <Route path="/oferta" component={TermsOfService} />
       

@@ -137,6 +137,19 @@ export const authService = {
     if (error) throw error
   },
 
+  async resetPasswordForEmail(email: string) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+    
+    if (error) {
+      if (error.message.includes('rate') || error.message.includes('limit')) {
+        throw new Error('Juda ko\'p urinish. Iltimos, bir necha daqiqa kutib qayta urinib ko\'ring.')
+      }
+      throw new Error('Parolni tiklashda xatolik: ' + error.message)
+    }
+  },
+
   async getCurrentUser(): Promise<AuthUser | null> {
     const { data: { user } } = await supabase.auth.getUser()
     
