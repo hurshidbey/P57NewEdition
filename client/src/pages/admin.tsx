@@ -88,14 +88,14 @@ interface Coupon {
 
 interface CouponUsage {
   id: number;
-  couponId: number;
-  userId: string;
-  userEmail: string;
-  paymentId: string;
-  originalAmount: number;
-  discountAmount: number;
-  finalAmount: number;
-  usedAt: string;
+  coupon_id: number;
+  user_id: string;
+  user_email: string;
+  payment_id: string;
+  original_amount: number;
+  discount_amount: number;
+  final_amount: number;
+  used_at: string;
 }
 
 export default function Admin() {
@@ -819,16 +819,20 @@ export default function Admin() {
 
       if (res.ok) {
         const data = await res.json();
+        console.log('📋 [Admin] Coupon usage data:', data);
         setCouponUsages(data);
         setSelectedCouponId(couponId);
         setCouponUsageDialogOpen(true);
       } else {
-        throw new Error('Failed to fetch usage');
+        const error = await res.json();
+        console.error('❌ [Admin] Failed to fetch usage:', error);
+        throw new Error(error.error || 'Failed to fetch usage');
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('❌ [Admin] Error fetching coupon usage:', error);
       toast({
         title: 'Xatolik',
-        description: 'Foydalanish tarixini yuklashda xatolik',
+        description: error.message || 'Foydalanish tarixini yuklashda xatolik',
         variant: 'destructive'
       });
     }
@@ -1737,11 +1741,11 @@ export default function Admin() {
                 <TableBody>
                   {couponUsages.map((usage) => (
                     <TableRow key={usage.id}>
-                      <TableCell>{usage.userEmail}</TableCell>
-                      <TableCell>{usage.originalAmount.toLocaleString()} UZS</TableCell>
-                      <TableCell className="text-red-600">-{usage.discountAmount.toLocaleString()} UZS</TableCell>
-                      <TableCell className="font-bold">{usage.finalAmount.toLocaleString()} UZS</TableCell>
-                      <TableCell>{new Date(usage.usedAt).toLocaleDateString('uz-UZ')}</TableCell>
+                      <TableCell>{usage.user_email}</TableCell>
+                      <TableCell>{usage.original_amount.toLocaleString()} UZS</TableCell>
+                      <TableCell className="text-red-600">-{usage.discount_amount.toLocaleString()} UZS</TableCell>
+                      <TableCell className="font-bold">{usage.final_amount.toLocaleString()} UZS</TableCell>
+                      <TableCell>{new Date(usage.used_at).toLocaleDateString('uz-UZ')}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
