@@ -10,6 +10,7 @@ import { setupClickRoutes } from "./click-routes";
 import { setupAuthRoutes } from "./auth-routes";
 import { setupDiagnosticRoutes } from "./diagnostic-routes";
 import { setupSupportRoutes } from "./support-routes";
+import { logger } from "./utils/logger";
 import { eq } from "drizzle-orm";
 import { securityConfig } from "./utils/security-config";
 import os from "os";
@@ -744,6 +745,86 @@ export function setupRoutes(app: Express): Server {
       
       res.json(formattedUsers);
     } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Upgrade user to premium
+  app.patch("/api/admin/users/:id/upgrade", 
+    isSupabaseAdmin,
+    async (req, res) => {
+    try {
+      const userId = req.params.id;
+      
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      
+      // Update user metadata to set tier as 'paid'
+      const { data: user, error } = await supabase.auth.admin.updateUserById(
+        userId,
+        {
+          user_metadata: { tier: 'paid' }
+        }
+      );
+      
+      if (error) throw error;
+      
+      logger.info(`[ADMIN] User ${user.email} upgraded to premium tier by ${req.user?.email}`);
+      
+      res.json({ 
+        success: true, 
+        message: 'User upgraded to premium',
+        user: {
+          id: user.id,
+          email: user.email,
+          tier: 'paid'
+        }
+      });
+    } catch (error: any) {
+      logger.error('[ADMIN] Failed to upgrade user:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Downgrade user to free
+  app.patch("/api/admin/users/:id/downgrade", 
+    isSupabaseAdmin,
+    async (req, res) => {
+    try {
+      const userId = req.params.id;
+      
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      
+      // Update user metadata to set tier as 'free'
+      const { data: user, error } = await supabase.auth.admin.updateUserById(
+        userId,
+        {
+          user_metadata: { tier: 'free' }
+        }
+      );
+      
+      if (error) throw error;
+      
+      logger.info(`[ADMIN] User ${user.email} downgraded to free tier by ${req.user?.email}`);
+      
+      res.json({ 
+        success: true, 
+        message: 'User downgraded to free',
+        user: {
+          id: user.id,
+          email: user.email,
+          tier: 'free'
+        }
+      });
+    } catch (error: any) {
+      logger.error('[ADMIN] Failed to downgrade user:', error);
       res.status(500).json({ error: error.message });
     }
   });

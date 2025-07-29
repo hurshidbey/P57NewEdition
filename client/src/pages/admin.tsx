@@ -15,7 +15,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText, Edit, Trash2, Plus, Tag, Calendar, Percent, Hash, RefreshCw, AlertCircle } from 'lucide-react';
+import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText, Edit, Trash2, Plus, Tag, Calendar, Percent, Hash, RefreshCw, AlertCircle, Search, Crown, UserMinus } from 'lucide-react';
 import AnalyticsDashboard from '@/components/analytics-dashboard';
 
 interface Protocol {
@@ -106,6 +106,8 @@ export default function Admin() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [couponUsages, setCouponUsages] = useState<CouponUsage[]>([]);
   const [activeTab, setActiveTab] = useState('protocols');
@@ -157,7 +159,8 @@ export default function Admin() {
   // Check if user is admin
   const isAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL || 
                   user?.email === 'hurshidbey@gmail.com' || 
-                  user?.email === 'mustafaabdurahmonov7777@gmail.com';
+                  user?.email === 'mustafaabdurahmonov7777@gmail.com' ||
+                  (import.meta.env.DEV && user?.email === 'admin@p57.uz'); // Allow test admin in dev mode
   
   console.log('[Admin Page] Rendering', {
     userEmail: user?.email,
@@ -173,6 +176,20 @@ export default function Admin() {
       setLoading(false);
     }
   }, [isAuthenticated, isAdmin]);
+
+  // Filter users based on search query
+  useEffect(() => {
+    if (userSearchQuery.trim() === '') {
+      setFilteredUsers(users);
+    } else {
+      const query = userSearchQuery.toLowerCase();
+      const filtered = users.filter(user => 
+        user.email.toLowerCase().includes(query) ||
+        user.id.toLowerCase().includes(query)
+      );
+      setFilteredUsers(filtered);
+    }
+  }, [userSearchQuery, users]);
 
   const loadData = async () => {
     setLoading(true);
@@ -273,6 +290,7 @@ export default function Admin() {
           }
           const data = await usersRes.json();
           setUsers(data);
+          setFilteredUsers(data); // Initially show all users
           
           const paidCount = data.filter((u: User) => u.tier === 'paid').length;
           setStats(prev => ({
@@ -838,6 +856,75 @@ export default function Admin() {
     }
   };
 
+  // User tier management functions
+  const upgradeUserToPremium = async (userId: string, userEmail: string) => {
+    if (!confirm(`${userEmail} foydalanuvchini Premium darajaga ko'tarishni xohlaysizmi?`)) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await fetch(`/api/admin/users/${userId}/upgrade`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Muvaffaqiyat',
+          description: `${userEmail} Premium darajaga ko'tarildi`
+        });
+        loadData(); // Reload users
+      } else {
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to upgrade user');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Xatolik',
+        description: error.message || 'Foydalanuvchini yangilashda xatolik',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const downgradeUserToFree = async (userId: string, userEmail: string) => {
+    if (!confirm(`${userEmail} foydalanuvchini Bepul darajaga tushirishni xohlaysizmi?`)) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await fetch(`/api/admin/users/${userId}/downgrade`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Muvaffaqiyat',
+          description: `${userEmail} Bepul darajaga tushirildi`
+        });
+        loadData(); // Reload users
+      } else {
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to downgrade user');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Xatolik',
+        description: error.message || 'Foydalanuvchini yangilashda xatolik',
+        variant: 'destructive'
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -1122,6 +1209,18 @@ export default function Admin() {
                 </Button>
               </CardHeader>
               <CardContent>
+                {/* Search bar */}
+                <div className="mb-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Email yoki ID bo'yicha qidirish..."
+                      value={userSearchQuery}
+                      onChange={(e) => setUserSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
                 {errors.users && (
                   <div className="mb-4 p-4 bg-destructive/10 text-destructive rounded-md flex items-center gap-2">
                     <AlertCircle className="h-5 w-5" />
@@ -1133,9 +1232,12 @@ export default function Admin() {
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                   </div>
-                ) : users.length === 0 ? (
+                ) : filteredUsers.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    Hech qanday foydalanuvchi topilmadi
+                    {userSearchQuery ? 
+                      `"${userSearchQuery}" bo'yicha hech qanday foydalanuvchi topilmadi` : 
+                      'Hech qanday foydalanuvchi topilmadi'
+                    }
                   </div>
                 ) : (
                   <Table>
@@ -1144,10 +1246,11 @@ export default function Admin() {
                         <TableHead>Email</TableHead>
                         <TableHead>Daraja</TableHead>
                         <TableHead>Ro'yxatdan o'tgan</TableHead>
+                        <TableHead>Harakatlar</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {users.map((user) => (
+                      {filteredUsers.map((user) => (
                         <TableRow key={user.id}>
                           <TableCell>{user.email}</TableCell>
                           <TableCell>
@@ -1156,6 +1259,31 @@ export default function Admin() {
                             </Badge>
                           </TableCell>
                           <TableCell>{new Date(user.createdAt).toLocaleDateString('uz-UZ')}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {user.tier === 'free' ? (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => upgradeUserToPremium(user.id, user.email)}
+                                  className="flex items-center gap-1"
+                                >
+                                  <Crown className="h-3 w-3" />
+                                  Premium
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => downgradeUserToFree(user.id, user.email)}
+                                  className="flex items-center gap-1"
+                                >
+                                  <UserMinus className="h-3 w-3" />
+                                  Bepul
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -1741,10 +1869,10 @@ export default function Admin() {
                 <TableBody>
                   {couponUsages.map((usage) => (
                     <TableRow key={usage.id}>
-                      <TableCell>{usage.user_email}</TableCell>
-                      <TableCell>{usage.original_amount.toLocaleString()} UZS</TableCell>
-                      <TableCell className="text-red-600">-{usage.discount_amount.toLocaleString()} UZS</TableCell>
-                      <TableCell className="font-bold">{usage.final_amount.toLocaleString()} UZS</TableCell>
+                      <TableCell>{usage.user_email || usage.user_id || 'Noma\'lum'}</TableCell>
+                      <TableCell>{(usage.original_amount || 0).toLocaleString()} UZS</TableCell>
+                      <TableCell className="text-red-600">-{(usage.discount_amount || 0).toLocaleString()} UZS</TableCell>
+                      <TableCell className="font-bold">{(usage.final_amount || 0).toLocaleString()} UZS</TableCell>
                       <TableCell>{new Date(usage.used_at).toLocaleDateString('uz-UZ')}</TableCell>
                     </TableRow>
                   ))}

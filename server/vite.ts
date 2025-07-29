@@ -31,11 +31,9 @@ export async function setupVite(app: Express, server: Server) {
     customLogger: {
       ...viteLogger,
       error: (msg, options) => {
-  viteLogger.error(msg, options);
-        // Don't exit in production, just log the error
-        if (process.env.NODE_ENV !== 'production') {
-          process.exit(1);
-        }
+        viteLogger.error(msg, options);
+        // Log the error but don't exit
+        console.error('⚠️ Vite error (non-fatal):', msg);
       },
     },
     server: serverOptions,

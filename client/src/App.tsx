@@ -69,7 +69,9 @@ function AppContent() {
   }
 
   // Check if current user is admin
-  const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
+  const isAdmin = user?.email === 'hurshidbey@gmail.com' || 
+                  user?.email === 'mustafaabdurahmonov7777@gmail.com' ||
+                  (import.meta.env.DEV && user?.email === 'admin@p57.uz');
   
   // Check user tier for premium content access
   const userTier = user?.tier || 'free';

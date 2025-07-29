@@ -339,8 +339,12 @@ export const isSupabaseAdmin = async (req: Request, res: Response, next: NextFun
       ? process.env.ADMIN_EMAILS.split(',').map(email => email.trim())
       : [];
 
+    // In development, also allow test admin user
+    if (process.env.NODE_ENV === 'development' && user.email === 'admin@p57.uz') {
+      return next();
+    }
+    
     if (adminEmails.includes(user.email)) {
-      console.log(`✅ User ${user.email} granted admin access via ADMIN_EMAILS`);
       return next();
     }
 

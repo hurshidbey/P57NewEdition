@@ -19,7 +19,7 @@ export default function AppHeader() {
   const [, setLocation] = useLocation();
   
   // Check if current user is admin
-  const isAdmin = user?.email === 'hurshidbey@gmail.com' || user?.email === 'mustafaabdurahmonov7777@gmail.com';
+  const isAdmin = user?.role === 'admin';
   
   const tierStatus = getTierStatus();
   

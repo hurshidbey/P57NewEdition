@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -103,6 +103,23 @@ export const couponUsages = pgTable("coupon_usages", {
   usedAt: timestamp("used_at").defaultNow(),
 });
 
+// Payment sessions for tracking payment flow
+export const paymentSessions = pgTable("payment_sessions", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  userEmail: text("user_email").notNull(),
+  amount: integer("amount").notNull(),
+  originalAmount: integer("original_amount"),
+  discountAmount: integer("discount_amount"),
+  couponId: integer("coupon_id"),
+  merchantTransId: text("merchant_trans_id").notNull().unique(),
+  paymentMethod: text("payment_method").notNull(),
+  idempotencyKey: text("idempotency_key").notNull().unique(),
+  metadata: json("metadata").$type<Record<string, any>>(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -143,6 +160,10 @@ export const insertCouponUsageSchema = createInsertSchema(couponUsages).omit({
   usedAt: true,
 });
 
+export const insertPaymentSessionSchema = createInsertSchema(paymentSessions).omit({
+  createdAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Protocol = typeof protocols.$inferSelect;
@@ -159,3 +180,5 @@ export type Coupon = typeof coupons.$inferSelect;
 export type InsertCoupon = z.infer<typeof insertCouponSchema>;
 export type CouponUsage = typeof couponUsages.$inferSelect;
 export type InsertCouponUsage = z.infer<typeof insertCouponUsageSchema>;
+export type PaymentSession = typeof paymentSessions.$inferSelect;
+export type InsertPaymentSession = z.infer<typeof insertPaymentSessionSchema>;

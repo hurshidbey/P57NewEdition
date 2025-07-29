@@ -805,7 +805,27 @@ export class SupabaseStorage implements IStorage {
       throw error;
     }
     
-    return data || [];
+    // Map snake_case response to camelCase for consistency
+    return (data || []).map(usage => ({
+      id: usage.id,
+      couponId: usage.coupon_id,
+      userId: usage.user_id,
+      userEmail: usage.user_email,
+      paymentId: usage.payment_id,
+      originalAmount: usage.original_amount,
+      discountAmount: usage.discount_amount,
+      finalAmount: usage.final_amount,
+      usedAt: usage.used_at,
+      // Also include snake_case versions for backward compatibility
+      coupon_id: usage.coupon_id,
+      user_id: usage.user_id,
+      user_email: usage.user_email,
+      payment_id: usage.payment_id,
+      original_amount: usage.original_amount,
+      discount_amount: usage.discount_amount,
+      final_amount: usage.final_amount,
+      used_at: usage.used_at
+    }));
   }
 
   // Payment session methods

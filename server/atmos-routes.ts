@@ -214,6 +214,38 @@ export function setupAtmosRoutes(): Router {
         throw new Error(result.result.description || 'Transaction creation failed');
       }
 
+      // Store payment session for later retrieval in webhook
+      if (result.transaction_id) {
+        const { storage } = await import('./storage');
+        const { generateShortTransId } = await import('./utils/payment-utils');
+        
+        // Create payment session
+        const sessionId = generateShortTransId('atmos_session', !!appliedCoupon);
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 24); // 24 hour expiry
+        
+        await storage.createPaymentSession({
+          id: sessionId,
+          userId: userId || 'guest',
+          userEmail: userEmail || 'guest@p57.uz',
+          amount: finalAmount,
+          originalAmount,
+          discountAmount,
+          couponId: appliedCoupon?.id || null,
+          merchantTransId: result.transaction_id.toString(),
+          paymentMethod: 'atmos',
+          idempotencyKey: `atmos_${result.transaction_id}`,
+          metadata: {
+            account,
+            couponCode: appliedCoupon?.code,
+            description
+          },
+          expiresAt
+        });
+        
+        console.log(`💾 [ATMOS] Created payment session ${sessionId} for transaction ${result.transaction_id}`);
+      }
+
       res.json({
         success: true,
         result: result.result,
@@ -394,8 +426,28 @@ export function setupAtmosRoutes(): Router {
                 
                 // Store payment record for admin tracking
                 try {
-                  // Get coupon info from transaction data if available
-                  const couponInfo = req.body.couponInfo;
+                  // Get payment session for this transaction
+                  const { storage } = await import('./storage');
+                  let paymentSession = null;
+                  try {
+                    paymentSession = await storage.getPaymentSessionByMerchantId(transactionId.toString());
+                  } catch (sessionError) {
+                    console.error(`⚠️ [ATMOS] Failed to retrieve payment session for transaction ${transactionId}:`, sessionError);
+                    // Continue without session data
+                  }
+                  
+                  let couponInfo = null;
+                  if (paymentSession) {
+                    console.log(`📋 [ATMOS] Retrieved payment session for transaction ${transactionId}`);
+                    couponInfo = {
+                      couponId: paymentSession.coupon_id,
+                      originalAmount: paymentSession.original_amount,
+                      discountAmount: paymentSession.discount_amount,
+                      finalAmount: paymentSession.amount
+                    };
+                  } else {
+                    console.log(`⚠️ [ATMOS] No payment session found for transaction ${transactionId}`);
+                  }
                   
                   const paymentRecord = {
                     id: `payment_${transactionId}_${Date.now()}`,
@@ -412,7 +464,6 @@ export function setupAtmosRoutes(): Router {
                   };
                   
                   // Store in database for admin panel
-                  const { storage } = await import('./storage');
                   await storage.storePayment(paymentRecord);
                   console.log(`💾 [PAYMENT] Payment record stored for admin tracking`);
                   
@@ -433,6 +484,23 @@ export function setupAtmosRoutes(): Router {
                     } catch (couponError) {
                       console.error(`⚠️ [PAYMENT] Failed to track coupon usage:`, couponError);
                     }
+                  } else if (paymentRecord.couponId) {
+                    // Fallback: If couponInfo not in body but payment record has couponId
+                    try {
+                      await storage.incrementCouponUsage(paymentRecord.couponId);
+                      await storage.recordCouponUsage({
+                        couponId: paymentRecord.couponId,
+                        userId: user.id,
+                        userEmail: user.email || 'unknown@email.com',
+                        paymentId: paymentRecord.id,
+                        originalAmount: paymentRecord.originalAmount || paymentRecord.amount,
+                        discountAmount: paymentRecord.discountAmount || 0,
+                        finalAmount: paymentRecord.amount
+                      });
+                      console.log(`✅ [PAYMENT] Coupon usage tracked (fallback) for coupon ${paymentRecord.couponId}`);
+                    } catch (couponError) {
+                      console.error(`⚠️ [PAYMENT] Failed to track coupon usage (fallback):`, couponError);
+                    }
                   }
                 } catch (dbError) {
                   console.error(`⚠️ [PAYMENT] Failed to store payment record (payment still successful):`, dbError);
@@ -450,7 +518,28 @@ export function setupAtmosRoutes(): Router {
           
           // CRITICAL: Store payment record even without auth for manual recovery
           try {
-            const couponInfo = req.body.couponInfo;
+            // Get payment session for this transaction
+            const { storage } = await import('./storage');
+            let paymentSession = null;
+            try {
+              paymentSession = await storage.getPaymentSessionByMerchantId(transactionId.toString());
+            } catch (sessionError) {
+              console.error(`⚠️ [ATMOS] Failed to retrieve payment session for transaction ${transactionId} (no auth):`, sessionError);
+              // Continue without session data
+            }
+            
+            let couponInfo = null;
+            if (paymentSession) {
+              console.log(`📋 [ATMOS] Retrieved payment session for transaction ${transactionId} (no auth)`);
+              couponInfo = {
+                couponId: paymentSession.coupon_id,
+                originalAmount: paymentSession.original_amount,
+                discountAmount: paymentSession.discount_amount,
+                finalAmount: paymentSession.amount
+              };
+            } else {
+              console.log(`⚠️ [ATMOS] No payment session found for transaction ${transactionId} (no auth)`);
+            }
             
             const paymentRecord = {
               id: `payment_${transactionId}_${Date.now()}`,
@@ -470,7 +559,6 @@ export function setupAtmosRoutes(): Router {
               discountAmount: couponInfo?.discountAmount || null
             };
             
-            const { storage } = await import('./storage');
             await storage.storePayment(paymentRecord);
             console.log(`⚠️ [PAYMENT] Payment recorded without auth - needs manual tier upgrade`);
           } catch (dbError) {

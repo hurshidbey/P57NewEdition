@@ -37,7 +37,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   const testUsers = import.meta.env.DEV ? [
     { email: 'test@p57.uz', password: 'test123456', name: 'Test User', tier: 'free' },
     { email: 'premium@p57.uz', password: 'premium123456', name: 'Premium User', tier: 'paid' },
-    { email: 'admin@p57.uz', password: 'admin123456', name: 'Admin User', tier: 'admin' }
+    { email: 'admin@p57.uz', password: 'admin123456', name: 'Admin User', tier: 'paid' }
   ] : []
 
   const handleTestLogin = async (testUser: typeof testUsers[0]) => {
@@ -70,15 +70,18 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
           return
         }
         
+        // Trigger auth state refresh
+        await supabase.auth.getUser()
+        
         toast({
           title: `Xush kelibsiz, ${testUser.name}!`,
-          description: `${testUser.tier === 'paid' ? 'Premium' : testUser.tier === 'admin' ? 'Admin' : 'Oddiy'} foydalanuvchi sifatida kirdingiz`
+          description: `${testUser.email === 'admin@p57.uz' ? 'Admin (Premium kirish)' : testUser.tier === 'paid' ? 'Premium' : 'Oddiy'} foydalanuvchi sifatida kirdingiz`
         })
 
         // Reload to refresh auth state
         setTimeout(() => {
           window.location.href = '/'
-        }, 500)
+        }, 1000)
       } else {
         toast({
           title: "Xatolik",
@@ -354,7 +357,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
                   <div className="flex items-center justify-between w-full">
                     <span className="font-medium">{user.name}</span>
                     <span className="text-xs text-muted-foreground">
-                      {user.tier === 'paid' ? '(Premium)' : user.tier === 'admin' ? '(Admin)' : '(Free)'}
+                      {user.email === 'admin@p57.uz' ? '(Admin + Premium)' : user.tier === 'paid' ? '(Premium)' : '(Free)'}
                     </span>
                   </div>
                 )}

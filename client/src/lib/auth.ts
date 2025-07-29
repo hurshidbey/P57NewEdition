@@ -194,16 +194,14 @@ export const authService = {
       }
     }
     
-    // Check if user is admin based on their email
-    // Note: This is temporary - ideally this should come from user metadata or a database role
-    const adminEmails = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
-    const isAdmin = adminEmails.includes(user.email || '');
+    // Admin role should come from user metadata or database, never from frontend
+    const isAdmin = user.user_metadata?.role === 'admin';
     
     return {
       id: userId,
       email: user.email!,
       name: user.user_metadata?.name || user.email?.split('@')[0],
-      tier: isAdmin ? 'paid' : (user.user_metadata?.tier || 'free'),
+      tier: user.user_metadata?.tier || 'free',
       paidAt: user.user_metadata?.paidAt,
       role: isAdmin ? 'admin' : undefined
     }
@@ -249,15 +247,14 @@ export const authService = {
           }
         }
         
-        // Check if user is admin based on their email
-        const adminEmails = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
-        const isAdmin = adminEmails.includes(session.user.email || '');
+        // Admin role should come from user metadata, never from frontend
+        const isAdmin = session.user.user_metadata?.role === 'admin';
         
         const authUser: AuthUser = {
           id: userId,
           email: session.user.email!,
           name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
-          tier: isAdmin ? 'paid' : (session.user.user_metadata?.tier || 'free'),
+          tier: session.user.user_metadata?.tier || 'free',
           paidAt: session.user.user_metadata?.paidAt,
           role: isAdmin ? 'admin' : undefined
         }
