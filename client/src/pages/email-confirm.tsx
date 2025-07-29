@@ -30,6 +30,24 @@ export default function EmailConfirmPage() {
 
             setStatus('success')
             setMessage('Email muvaffaqiyatli tasdiqlandi!')
+            
+            // Notify backend about email confirmation (new user)
+            try {
+              const { data: { session } } = await supabase.auth.getSession()
+              if (session?.access_token) {
+                await fetch('/api/auth/email-confirmed', {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'Content-Type': 'application/json'
+                  }
+                })
+              }
+            } catch (error) {
+              console.error('Failed to notify backend:', error)
+              // Don't block the user flow
+            }
+            
             setTimeout(() => {
 
               window.location.href = '/payment'

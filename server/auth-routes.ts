@@ -410,5 +410,77 @@ export function setupAuthRoutes(): Router {
     });
   }
 
+  // Email confirmation notification endpoint
+  router.post('/api/auth/email-confirmed', async (req: Request, res: Response) => {
+    try {
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'No authorization token provided' 
+        });
+      }
+
+      const token = authHeader.substring(7);
+      
+      // Create admin Supabase client
+      const adminSupabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+
+      // Verify the token and get user
+      const { data: { user }, error: userError } = await adminSupabase.auth.getUser(token);
+      
+      if (userError || !user) {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Invalid token' 
+        });
+      }
+
+      logger.info('Email confirmation notification received', { userId: user.id, email: user.email });
+
+      // Check if we already sent notification for this user
+      if (!user.user_metadata?.notificationSent) {
+        // Send Telegram notification for new user who just confirmed email
+        try {
+          await telegramNotifications.notifyNewUserRegistration({
+            id: user.id,
+            email: user.email!,
+            name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+            signupMethod: user.app_metadata?.provider === 'google' ? 'google' : 'email',
+            timestamp: new Date()
+          });
+          
+          // Mark notification as sent
+          await adminSupabase.auth.admin.updateUserById(user.id, {
+            user_metadata: {
+              ...user.user_metadata,
+              notificationSent: true
+            }
+          });
+          
+          logger.info('New user notification sent on email confirmation', { userId: user.id, email: user.email });
+        } catch (notifError) {
+          console.error('[AUTH] Failed to send email confirmation notification:', notifError);
+        }
+      }
+
+      return res.json({ 
+        success: true,
+        message: 'Email confirmation processed'
+      });
+      
+    } catch (error) {
+      console.error('[AUTH] Error processing email confirmation:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Internal server error' 
+      });
+    }
+  });
+
   return router;
 }
