@@ -106,17 +106,27 @@ export function setupAuthRoutes(): Router {
         const { data: { user: updatedUser } } = await adminSupabase.auth.admin.getUserById(user.id);
         
         // Send Telegram notification for new user (first-time metadata init means new user)
-        try {
-          await telegramNotifications.notifyNewUserRegistration({
-            id: user.id,
-            email: user.email!,
-            name: metadataToUpdate.name,
-            signupMethod: user.app_metadata?.provider === 'google' ? 'google' : 'email',
-            timestamp: new Date()
-          });
-        } catch (notifError) {
-          console.error('[AUTH] Failed to send Telegram notification:', notifError);
-          // Don't fail the request if notification fails
+        if (!user.user_metadata?.notificationSent) {
+          try {
+            await telegramNotifications.notifyNewUserRegistration({
+              id: user.id,
+              email: user.email!,
+              name: metadataToUpdate.name,
+              signupMethod: user.app_metadata?.provider === 'google' ? 'google' : 'email',
+              timestamp: new Date()
+            });
+            
+            // Mark notification as sent to avoid duplicates
+            await adminSupabase.auth.admin.updateUserById(user.id, {
+              user_metadata: {
+                ...user.user_metadata,
+                notificationSent: true
+              }
+            });
+          } catch (notifError) {
+            console.error('[AUTH] Failed to send Telegram notification:', notifError);
+            // Don't fail the request if notification fails
+          }
         }
         
         return res.json({
