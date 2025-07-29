@@ -425,23 +425,6 @@ export function setupAtmosRoutes(): Router {
               } else {
                 console.log(`✅ [PAYMENT] Successfully upgraded user tier for ${user.email} - OLD TIER: ${user.user_metadata?.tier || 'free'} -> NEW TIER: paid`);
                 
-                // Send Telegram notification for successful payment
-                try {
-                  await telegramNotifications.notifyPaymentSuccess({
-                    userId: user.id,
-                    userEmail: user.email!,
-                    userName: user.user_metadata?.name,
-                    amount: transaction.amount || 0,
-                    paymentMethod: 'atmos',
-                    transactionId: transactionId.toString(),
-                    couponCode: paymentSession?.metadata?.couponCode,
-                    couponDiscount: paymentSession?.discountAmount || 0,
-                    timestamp: new Date()
-                  });
-                } catch (notifError) {
-                  console.error('[ATMOS] Failed to send payment notification:', notifError);
-                }
-                
                 // Store payment record for admin tracking
                 try {
                   // Get payment session for this transaction
@@ -519,6 +502,24 @@ export function setupAtmosRoutes(): Router {
                     } catch (couponError) {
                       console.error(`⚠️ [PAYMENT] Failed to track coupon usage (fallback):`, couponError);
                     }
+                  }
+                  
+                  // Send Telegram notification for successful payment after we have all data
+                  try {
+                    await telegramNotifications.notifyPaymentSuccess({
+                      userId: user.id,
+                      userEmail: user.email!,
+                      userName: user.user_metadata?.name,
+                      amount: couponInfo?.finalAmount || result.store_transaction?.amount || 0,
+                      paymentMethod: 'atmos',
+                      transactionId: transactionId.toString(),
+                      couponCode: paymentSession?.metadata?.couponCode,
+                      couponDiscount: couponInfo?.discountAmount || 0,
+                      timestamp: new Date()
+                    });
+                    console.log(`✅ [ATMOS] Payment notification sent for ${user.email}`);
+                  } catch (notifError) {
+                    console.error('[ATMOS] Failed to send payment notification:', notifError);
                   }
                 } catch (dbError) {
                   console.error(`⚠️ [PAYMENT] Failed to store payment record (payment still successful):`, dbError);
