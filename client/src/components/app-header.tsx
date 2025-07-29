@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
 import { useUserTier } from "@/hooks/use-user-tier";
-import { Crown, Star, FileText, BookOpen, LogOut, Home, User } from "lucide-react";
+import { Crown, Star, FileText, BookOpen, LogOut, Home, User, HelpCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -155,6 +155,12 @@ export default function AppHeader() {
                   <Link href="/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profilim</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/support" className="cursor-pointer">
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <span>Yordam</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

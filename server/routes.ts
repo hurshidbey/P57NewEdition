@@ -9,6 +9,7 @@ import { setupAtmosRoutes } from "./atmos-routes";
 import { setupClickRoutes } from "./click-routes";
 import { setupAuthRoutes } from "./auth-routes";
 import { setupDiagnosticRoutes } from "./diagnostic-routes";
+import { setupSupportRoutes } from "./support-routes";
 import { eq } from "drizzle-orm";
 import { securityConfig } from "./utils/security-config";
 import os from "os";
@@ -619,6 +620,10 @@ export function setupRoutes(app: Express): Server {
   
   // Setup Click.uz payment routes
   const clickRouter = setupClickRoutes();
+  
+  // Setup Support routes
+  const supportRouter = setupSupportRoutes();
+  app.use('/api', supportRouter);
   
   // Add specific middleware for Click.uz endpoints
   app.use('/api', (req, res, next) => {

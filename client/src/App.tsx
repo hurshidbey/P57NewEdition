@@ -36,6 +36,7 @@ const PaymentFailed = lazy(() => import("@/pages/payment-failed"));
 const PaymentCrossBrowserHelp = lazy(() => import("@/pages/payment-cross-browser-help"));
 const PremiumPrompts = lazy(() => import("@/pages/premium-prompts"));
 const Profile = lazy(() => import("@/pages/profile"));
+const Support = lazy(() => import("@/pages/support"));
 
 // Loading component for Suspense
 function PageLoader() {
@@ -208,6 +209,12 @@ function AppContent() {
         ) : (
           <AuthPage />
         )}
+      </Route>
+      
+      <Route path="/support">
+        <Suspense fallback={<PageLoader />}>
+          <Support />
+        </Suspense>
       </Route>
       
       <Route path="/">
