@@ -5,6 +5,8 @@ import https from 'https';
 interface SupportSubmission {
   name?: string;
   email: string;
+  phone: string;
+  telegram: string;
   topic: 'technical' | 'payment' | 'feature' | 'other';
   message: string;
 }
@@ -37,7 +39,7 @@ export function setupSupportRoutes(): Router {
   // Submit support request
   router.post('/support/submit', async (req, res) => {
     try {
-      const { name, email, topic, message }: SupportSubmission = req.body;
+      const { name, email, phone, telegram, topic, message }: SupportSubmission = req.body;
       
       // Get identifier for rate limiting
       const userId = req.session?.user?.id;
@@ -53,10 +55,10 @@ export function setupSupportRoutes(): Router {
       }
       
       // Validate input
-      if (!email || !topic || !message) {
+      if (!email || !topic || !message || !phone || !telegram) {
         return res.status(400).json({
           success: false,
-          message: 'Email, mavzu va xabar kiritish shart'
+          message: 'Barcha majburiy maydonlarni to\'ldiring'
         });
       }
       
@@ -66,6 +68,16 @@ export function setupSupportRoutes(): Router {
         return res.status(400).json({
           success: false,
           message: 'Email manzil noto\'g\'ri'
+        });
+      }
+      
+      // Validate phone format
+      const phoneRegex = /^(\+998)?[0-9]{9}$/;
+      const cleanPhone = phone.replace(/[\s-]/g, '');
+      if (!phoneRegex.test(cleanPhone)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Telefon raqam noto\'g\'ri'
         });
       }
       
@@ -105,13 +117,16 @@ export function setupSupportRoutes(): Router {
       const telegramMessage = `🆘 <b>YANGI SUPPORT SO'ROV</b>\n\n` +
         `👤 <b>Ism:</b> ${name || 'Ko\'rsatilmagan'}\n` +
         `📧 <b>Email:</b> ${email}\n` +
+        `📱 <b>Telefon:</b> ${phone}\n` +
+        `💬 <b>Telegram:</b> ${telegram}\n` +
         `📌 <b>Mavzu:</b> ${topicLabels[topic] || topic}\n\n` +
         `💬 <b>Xabar:</b>\n${message}\n\n` +
         `⏰ <b>Vaqt:</b> ${timestamp}`;
       
       // Send to Telegram
       const botToken = process.env.TELEGRAM_BOT_TOKEN;
-      const chatId = '@birfoizsupport'; // Your Telegram channel
+      // Chat ID for @birfoizsupport user
+      const chatId = process.env.TELEGRAM_SUPPORT_CHAT_ID || '818576231';
       
       if (!botToken) {
         logger.error('Telegram bot token not configured');
@@ -176,7 +191,7 @@ export function setupSupportRoutes(): Router {
         });
       }
       
-      logger.info('Support message sent successfully', { email, topic });
+      logger.info('Support message sent successfully', { email, phone, telegram, topic });
       
       res.json({
         success: true,

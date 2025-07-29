@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
-import { Loader2, Send, CheckCircle, AlertCircle, MessageSquare, Mail, User } from 'lucide-react';
+import { Loader2, Send, CheckCircle, AlertCircle, MessageSquare, Mail, User, Phone, MessageCircle } from 'lucide-react';
 import { Link } from 'wouter';
 
 type SupportTopic = 'technical' | 'payment' | 'feature' | 'other';
@@ -18,6 +19,9 @@ type SupportTopic = 'technical' | 'payment' | 'feature' | 'other';
 interface SupportFormData {
   name: string;
   email: string;
+  phone: string;
+  telegram: string;
+  sameAsPhone: boolean;
   topic: SupportTopic;
   message: string;
 }
@@ -31,6 +35,9 @@ export default function Support() {
   const [formData, setFormData] = useState<SupportFormData>({
     name: user?.user_metadata?.full_name || user?.user_metadata?.name || '',
     email: user?.email || '',
+    phone: '',
+    telegram: '',
+    sameAsPhone: false,
     topic: 'technical',
     message: ''
   });
@@ -51,6 +58,16 @@ export default function Support() {
       newErrors.email = 'Email manzil kiritish shart';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Email manzil noto\'g\'ri';
+    }
+    
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Telefon raqam kiritish shart';
+    } else if (!/^(\+998)?[0-9]{9}$/.test(formData.phone.replace(/[\s-]/g, ''))) {
+      newErrors.phone = 'Telefon raqam noto\'g\'ri (masalan: +998901234567)';
+    }
+    
+    if (!formData.sameAsPhone && !formData.telegram.trim()) {
+      newErrors.telegram = 'Telegram username yoki raqam kiritish shart';
     }
     
     if (!formData.message.trim()) {
@@ -81,7 +98,10 @@ export default function Support() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          telegram: formData.sameAsPhone ? formData.phone : formData.telegram
+        })
       });
       
       const result = await response.json();
@@ -102,6 +122,9 @@ export default function Support() {
         setFormData({
           name: user?.user_metadata?.full_name || user?.user_metadata?.name || '',
           email: user?.email || '',
+          phone: '',
+          telegram: '',
+          sameAsPhone: false,
           topic: 'technical',
           message: ''
         });
@@ -138,7 +161,7 @@ export default function Support() {
                 Xabaringiz yuborildi!
               </h2>
               <p className="text-muted-foreground mb-8">
-                Sizning murojatingiz qabul qilindi. Tez orada @birfoizsupport telegram kanalida javob beramiz.
+                Sizning murojatingiz qabul qilindi. Tez orada ko'rsatilgan telegram manzilingizga javob yuboramiz.
               </p>
               <Link href="/">
                 <Button className="bg-accent hover:bg-accent/90 text-white font-bold uppercase">
@@ -209,6 +232,67 @@ export default function Support() {
                 )}
               </div>
 
+              {/* Phone Field */}
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-sm font-bold uppercase flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  Telefon raqamingiz *
+                </Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="+998901234567"
+                  className={`border-2 ${errors.phone ? 'border-red-500' : 'border-theme'} focus:border-accent`}
+                  disabled={loading}
+                  required
+                />
+                {errors.phone && (
+                  <p className="text-sm text-red-500 font-bold">{errors.phone}</p>
+                )}
+              </div>
+
+              {/* Telegram Field */}
+              <div className="space-y-2">
+                <Label htmlFor="telegram" className="text-sm font-bold uppercase flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  Telegram username yoki raqam *
+                </Label>
+                
+                {/* Same as phone checkbox */}
+                <div className="flex items-center space-x-2 mb-2">
+                  <Checkbox
+                    id="sameAsPhone"
+                    checked={formData.sameAsPhone}
+                    onCheckedChange={(checked) => 
+                      setFormData({ ...formData, sameAsPhone: checked as boolean })
+                    }
+                    disabled={loading}
+                  />
+                  <label
+                    htmlFor="sameAsPhone"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  >
+                    Shu raqamda telegram bor
+                  </label>
+                </div>
+                
+                <Input
+                  id="telegram"
+                  type="text"
+                  value={formData.telegram}
+                  onChange={(e) => setFormData({ ...formData, telegram: e.target.value })}
+                  placeholder={formData.sameAsPhone ? "Telefon raqamingiz ishlatiladi" : "@username yoki +998901234567"}
+                  className={`border-2 ${errors.telegram ? 'border-red-500' : 'border-theme'} focus:border-accent`}
+                  disabled={loading || formData.sameAsPhone}
+                  required={!formData.sameAsPhone}
+                />
+                {errors.telegram && (
+                  <p className="text-sm text-red-500 font-bold">{errors.telegram}</p>
+                )}
+              </div>
+
               {/* Topic Field */}
               <div className="space-y-2">
                 <Label htmlFor="topic" className="text-sm font-bold uppercase">
@@ -276,8 +360,8 @@ export default function Support() {
               <Alert className="border-2 border-theme">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription className="font-bold">
-                  Javoblar @birfoizsupport telegram kanalida beriladi. 
-                  Odatda 24 soat ichida javob beramiz.
+                  Javoblarni telegram orqali yuqoridagi manzilga yuboramiz. 
+                  Telegram akkountingizda xabarlarni qabul qilish ochiq bo'lishi kerak.
                 </AlertDescription>
               </Alert>
             </form>
