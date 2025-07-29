@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { monitoring, EventType, Severity } from './services/monitoring-service';
 import { logger } from './utils/logger';
+import { telegramNotifications } from './services/telegram-notifications';
 
 export function setupAuthRoutes(): Router {
   const router = Router();
@@ -103,6 +104,20 @@ export function setupAuthRoutes(): Router {
         
         // Return updated user data
         const { data: { user: updatedUser } } = await adminSupabase.auth.admin.getUserById(user.id);
+        
+        // Send Telegram notification for new user (first-time metadata init means new user)
+        try {
+          await telegramNotifications.notifyNewUserRegistration({
+            id: user.id,
+            email: user.email!,
+            name: metadataToUpdate.name,
+            signupMethod: user.app_metadata?.provider === 'google' ? 'google' : 'email',
+            timestamp: new Date()
+          });
+        } catch (notifError) {
+          console.error('[AUTH] Failed to send Telegram notification:', notifError);
+          // Don't fail the request if notification fails
+        }
         
         return res.json({
           success: true,

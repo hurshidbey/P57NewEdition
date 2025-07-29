@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import { AtmosService } from './atmos-service';
 import { logger } from './utils/logger';
+import { telegramNotifications } from './services/telegram-notifications';
 
 export function setupAtmosRoutes(): Router {
   const router = Router();
@@ -423,6 +424,23 @@ export function setupAtmosRoutes(): Router {
                 // Still continue - don't fail the payment
               } else {
                 console.log(`✅ [PAYMENT] Successfully upgraded user tier for ${user.email} - OLD TIER: ${user.user_metadata?.tier || 'free'} -> NEW TIER: paid`);
+                
+                // Send Telegram notification for successful payment
+                try {
+                  await telegramNotifications.notifyPaymentSuccess({
+                    userId: user.id,
+                    userEmail: user.email!,
+                    userName: user.user_metadata?.name,
+                    amount: transaction.amount || 0,
+                    paymentMethod: 'atmos',
+                    transactionId: transactionId.toString(),
+                    couponCode: paymentSession?.metadata?.couponCode,
+                    couponDiscount: paymentSession?.discountAmount || 0,
+                    timestamp: new Date()
+                  });
+                } catch (notifError) {
+                  console.error('[ATMOS] Failed to send payment notification:', notifError);
+                }
                 
                 // Store payment record for admin tracking
                 try {

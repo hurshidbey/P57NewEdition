@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import { ClickService, CLICK_ERRORS } from './click-service';
 import { checkPendingPayment } from './payment-recovery';
+import { telegramNotifications } from './services/telegram-notifications';
 
 // Middleware to parse Click.uz requests which might come as form-encoded
 function parseClickRequest(req: any, res: any, next: any) {
@@ -457,6 +458,23 @@ export function setupClickRoutes(): Router {
                     console.log(`✅ [CLICK] Successfully upgraded user tier for ${user.email}`);
                     console.log(`🎯 [CLICK] User ${user.email} (${user.id}) upgraded to PAID tier at ${new Date().toISOString()}`);
                     
+                    // Send Telegram notification for successful payment
+                    try {
+                      await telegramNotifications.notifyPaymentSuccess({
+                        userId: user.id,
+                        userEmail: user.email!,
+                        userName: user.user_metadata?.name,
+                        amount: paymentSession.amount,
+                        paymentMethod: 'click',
+                        transactionId: req.body.click_trans_id,
+                        couponCode: paymentSession.metadata?.couponCode,
+                        couponDiscount: paymentSession.discount_amount || 0,
+                        timestamp: new Date()
+                      });
+                    } catch (notifError) {
+                      console.error('[CLICK] Failed to send payment notification:', notifError);
+                    }
+                    
                     // Store payment record
                     await storage.storePayment({
                       id: `payment_click_${req.body.click_trans_id}_${Date.now()}`,
@@ -768,6 +786,23 @@ export function setupClickRoutes(): Router {
                   
                   if (!updateError) {
                     console.log(`✅ [CLICK-RETURN] Successfully upgraded user tier for ${user.email}`);
+                    
+                    // Send Telegram notification for successful payment
+                    try {
+                      await telegramNotifications.notifyPaymentSuccess({
+                        userId: userId,
+                        userEmail: user.email!,
+                        userName: user.user_metadata?.name,
+                        amount: paymentSession.amount,
+                        paymentMethod: 'click',
+                        transactionId: req.body.click_trans_id,
+                        couponCode: paymentSession.metadata?.couponCode,
+                        couponDiscount: paymentSession.discount_amount || 0,
+                        timestamp: new Date()
+                      });
+                    } catch (notifError) {
+                      console.error('[CLICK-RETURN] Failed to send payment notification:', notifError);
+                    }
                     
                     // Store completed payment record
                     await storage.storePayment({
