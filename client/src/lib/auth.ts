@@ -195,7 +195,10 @@ export const authService = {
     }
     
     // Admin role should come from user metadata or database, never from frontend
-    const isAdmin = user.user_metadata?.role === 'admin';
+    // BUT for backward compatibility, check ADMIN_EMAILS from environment
+    const adminEmails = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
+    const isAdminEmail = adminEmails.includes(user.email!);
+    const isAdmin = user.user_metadata?.role === 'admin' || isAdminEmail;
     
     return {
       id: userId,
@@ -248,7 +251,10 @@ export const authService = {
         }
         
         // Admin role should come from user metadata, never from frontend
-        const isAdmin = session.user.user_metadata?.role === 'admin';
+        // BUT for backward compatibility, check ADMIN_EMAILS from environment
+        const adminEmails = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
+        const isAdminEmail = adminEmails.includes(session.user.email!);
+        const isAdmin = session.user.user_metadata?.role === 'admin' || isAdminEmail;
         
         const authUser: AuthUser = {
           id: userId,
