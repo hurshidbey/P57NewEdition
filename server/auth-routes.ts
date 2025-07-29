@@ -131,6 +131,35 @@ export function setupAuthRoutes(): Router {
       } else {
         logger.info('User already has complete metadata', { userId: user.id });
         
+        // Check if this is a recently created user (within last 5 minutes) for new user notification
+        const userCreatedAt = new Date(user.created_at);
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+        
+        if (userCreatedAt > fiveMinutesAgo && !user.user_metadata?.notificationSent) {
+          // Send notification for new user
+          try {
+            await telegramNotifications.notifyNewUserRegistration({
+              id: user.id,
+              email: user.email!,
+              name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+              signupMethod: user.app_metadata?.provider === 'google' ? 'google' : 'email',
+              timestamp: userCreatedAt
+            });
+            
+            // Mark notification as sent to avoid duplicates
+            await adminSupabase.auth.admin.updateUserById(user.id, {
+              user_metadata: {
+                ...user.user_metadata,
+                notificationSent: true
+              }
+            });
+            
+            logger.info('New user notification sent for recent signup', { userId: user.id });
+          } catch (notifError) {
+            console.error('[AUTH] Failed to send new user notification:', notifError);
+          }
+        }
+        
         return res.json({
           success: true,
           user: {
