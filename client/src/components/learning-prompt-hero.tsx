@@ -278,7 +278,7 @@ export default function LearningPromptHero() {
           </div>
           
           <div className="absolute bottom-0 right-0 bg-[#FF4F30] text-white px-4 py-2 text-xs font-bold uppercase">
-            FULL PROMPT: 4000+ SO'Z
+            JAMI: 890+ SO'Z
           </div>
         </div>
 
