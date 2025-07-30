@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import type { AiTool, AiToolVote } from "@shared/schema";
@@ -33,10 +34,10 @@ export default function AiToolsPage() {
   const { data: userVotes = [] } = useQuery({
     queryKey: ['ai-tools-user-votes'],
     queryFn: async () => {
-      const token = localStorage.getItem('protokol57-token');
+      const { data: { session } } = await supabase.auth.getSession();
       const response = await fetch('/api/ai-tools/user-votes', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${session?.access_token}`
         }
       });
       if (!response.ok) throw new Error('Failed to fetch user votes');
@@ -48,12 +49,12 @@ export default function AiToolsPage() {
   // Vote mutation
   const voteMutation = useMutation({
     mutationFn: async ({ toolId, voteType }: { toolId: number; voteType: 'up' | 'down' }) => {
-      const token = localStorage.getItem('protokol57-token');
+      const { data: { session } } = await supabase.auth.getSession();
       const response = await fetch(`/api/ai-tools/${toolId}/vote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${session?.access_token}`
         },
         body: JSON.stringify({ voteType })
       });
@@ -76,11 +77,11 @@ export default function AiToolsPage() {
   // Remove vote mutation
   const removeVoteMutation = useMutation({
     mutationFn: async (toolId: number) => {
-      const token = localStorage.getItem('protokol57-token');
+      const { data: { session } } = await supabase.auth.getSession();
       const response = await fetch(`/api/ai-tools/${toolId}/vote`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${session?.access_token}`
         }
       });
       if (!response.ok) throw new Error('Failed to remove vote');
