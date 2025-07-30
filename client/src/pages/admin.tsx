@@ -985,7 +985,7 @@ export default function Admin() {
       if (res.ok) {
         toast({
           title: 'Muvaffaqiyat',
-          description: `AI asbob ${editingAiTool ? 'yangilandi' : 'yaratildi'}`
+          description: `AI tool ${editingAiTool ? 'yangilandi' : 'yaratildi'}`
         });
         setAiToolDialogOpen(false);
         setEditingAiTool(null);
@@ -993,19 +993,19 @@ export default function Admin() {
         loadData();
       } else {
         const error = await res.json();
-        throw new Error(error.error || 'AI asbobni saqlashda xatolik');
+        throw new Error(error.error || 'AI toolni saqlashda xatolik');
       }
     } catch (error: any) {
       toast({
         title: 'Xatolik',
-        description: error.message || 'AI asbobni saqlashda xatolik yuz berdi',
+        description: error.message || 'AI toolni saqlashda xatolik yuz berdi',
         variant: 'destructive'
       });
     }
   };
 
   const deleteAiTool = async (toolId: number) => {
-    if (!confirm('Ushbu AI asbobni o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.')) return;
+    if (!confirm('Ushbu AI toolni o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.')) return;
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -1022,16 +1022,16 @@ export default function Admin() {
       if (res.ok) {
         toast({
           title: 'Muvaffaqiyat',
-          description: 'AI asbob o\'chirildi'
+          description: 'AI tool o\'chirildi'
         });
         loadData();
       } else {
-        throw new Error('AI asbobni o\'chirishda xatolik');
+        throw new Error('AI toolni o\'chirishda xatolik');
       }
     } catch (error) {
       toast({
         title: 'Xatolik',
-        description: 'AI asbobni o\'chirishda xatolik yuz berdi',
+        description: 'AI toolni o\'chirishda xatolik yuz berdi',
         variant: 'destructive'
       });
     }
@@ -1127,7 +1127,7 @@ export default function Admin() {
             <TabsTrigger value="users">Foydalanuvchilar</TabsTrigger>
             <TabsTrigger value="payments">To'lovlar</TabsTrigger>
             <TabsTrigger value="coupons">Kuponlar</TabsTrigger>
-            <TabsTrigger value="ai-tools">AI Asboblari</TabsTrigger>
+            <TabsTrigger value="ai-tools">AI Toollar</TabsTrigger>
             <TabsTrigger value="analytics">Analitika</TabsTrigger>
           </TabsList>
 
@@ -1640,8 +1640,8 @@ export default function Admin() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>AI Asboblarini boshqarish</CardTitle>
-                  <CardDescription>AI asboblarini yaratish, tahrirlash va boshqarish</CardDescription>
+                  <CardTitle>AI Toollarni boshqarish</CardTitle>
+                  <CardDescription>AI toollarni yaratish, tahrirlash va boshqarish</CardDescription>
                 </div>
                 <Button
                   onClick={() => {
@@ -1651,7 +1651,7 @@ export default function Admin() {
                   }}
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  Yangi AI asbob
+                  Yangi AI tool
                 </Button>
               </CardHeader>
               <CardContent>
@@ -2097,10 +2097,10 @@ export default function Admin() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>
-                {editingAiTool ? 'AI asbobni tahrirlash' : 'Yangi AI asbob yaratish'}
+                {editingAiTool ? 'AI toolni tahrirlash' : 'Yangi AI tool yaratish'}
               </DialogTitle>
               <DialogDescription>
-                AI asbob ma'lumotlarini kiriting
+                AI tool ma'lumotlarini kiriting
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">

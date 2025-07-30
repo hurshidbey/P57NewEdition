@@ -147,7 +147,7 @@ export default function AiToolsPage() {
             </Button>
           </Link>
           
-          <h1 className="text-3xl font-bold mb-4">AI Asboblari</h1>
+          <h1 className="text-3xl font-bold mb-4">AI Toollar</h1>
           <p className="text-muted-foreground mb-6">
             Foydali AI vositalari ro'yxati - ovoz bering va o'z sevimli asboblaringizni toping
           </p>
@@ -157,7 +157,7 @@ export default function AiToolsPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Asboblarni qidirish..."
+              placeholder="Toollarni qidirish..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"

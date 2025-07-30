@@ -106,10 +106,10 @@ export default function AppHeader() {
               <Button 
                 variant="ghost" 
                 className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] min-w-[44px] px-2 sm:px-3 touch-manipulation"
-                title="AI Asboblari"
+                title="AI Toollar"
               >
                 <Cpu className="w-4 h-4 sm:mr-1" />
-                <span className="hidden sm:inline">AI Asboblari</span>
+                <span className="hidden sm:inline">AI Toollar</span>
               </Button>
             </Link>
             
