@@ -15,6 +15,7 @@ import { Crown, Lock } from "lucide-react";
 import "@/styles/knowledge-base-spacing.css";
 import "@/styles/knowledge-base-preview.css";
 import UpgradeCTA from "@/components/upgrade-cta";
+import LearningPromptHero from "@/components/learning-prompt-hero";
 
 // Import the shared components
 import { ExpandableCard } from "@/content/knowledge-base/components/ExpandableCard";
@@ -797,6 +798,11 @@ export default function KnowledgeBase() {
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-4xl mx-auto px-4 py-6 lg:p-8 pb-28 lg:pb-8">
+            {/* Learning Prompt Hero for Premium Users */}
+            {isPremiumUser && activeCategory === 'kirish' && activeSection === 'nima-uchun-muhim' && (
+              <LearningPromptHero />
+            )}
+            
             {/* Breadcrumb */}
             <nav className="mb-6 sm:mb-4" aria-label="Breadcrumb">
               <div className="text-sm sm:text-base text-black flex flex-wrap items-center gap-2 font-medium">
