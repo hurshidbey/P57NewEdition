@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
 import { useUserTier } from "@/hooks/use-user-tier";
-import { Crown, Star, FileText, BookOpen, LogOut, Home, User, HelpCircle } from "lucide-react";
+import { Crown, Star, FileText, BookOpen, LogOut, Home, User, HelpCircle, Cpu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -98,6 +98,18 @@ export default function AppHeader() {
               >
                 <FileText className="w-4 h-4 sm:mr-1" />
                 <span className="hidden sm:inline">Promptlar</span>
+              </Button>
+            </Link>
+            
+            {/* AI Tools link */}
+            <Link href="/ai-tools">
+              <Button 
+                variant="ghost" 
+                className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground min-h-[44px] min-w-[44px] px-2 sm:px-3 touch-manipulation"
+                title="AI Asboblari"
+              >
+                <Cpu className="w-4 h-4 sm:mr-1" />
+                <span className="hidden sm:inline">AI Asboblari</span>
               </Button>
             </Link>
             

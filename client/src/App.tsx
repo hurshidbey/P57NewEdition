@@ -37,6 +37,7 @@ const PaymentCrossBrowserHelp = lazy(() => import("@/pages/payment-cross-browser
 const PremiumPrompts = lazy(() => import("@/pages/premium-prompts"));
 const Profile = lazy(() => import("@/pages/profile"));
 const Support = lazy(() => import("@/pages/support"));
+const AiTools = lazy(() => import("@/pages/ai-tools"));
 
 // Loading component for Suspense
 function PageLoader() {
@@ -217,6 +218,16 @@ function AppContent() {
         <Suspense fallback={<PageLoader />}>
           <Support />
         </Suspense>
+      </Route>
+      
+      <Route path="/ai-tools">
+        {isAuthenticated ? (
+          <Suspense fallback={<PageLoader />}>
+            <AiTools />
+          </Suspense>
+        ) : (
+          <AuthPage />
+        )}
       </Route>
       
       <Route path="/">

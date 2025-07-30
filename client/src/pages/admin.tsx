@@ -98,6 +98,16 @@ interface CouponUsage {
   used_at: string;
 }
 
+interface AiTool {
+  id: number;
+  name: string;
+  description: string;
+  link: string;
+  upvotes: number;
+  downvotes: number;
+  createdAt?: string;
+}
+
 export default function Admin() {
   const { user, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -110,6 +120,7 @@ export default function Admin() {
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [couponUsages, setCouponUsages] = useState<CouponUsage[]>([]);
+  const [aiTools, setAiTools] = useState<AiTool[]>([]);
   const [activeTab, setActiveTab] = useState('protocols');
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -128,7 +139,8 @@ export default function Admin() {
     categories: false,
     users: false,
     payments: false,
-    coupons: false
+    coupons: false,
+    aiTools: false
   });
   
   // Error states
@@ -138,7 +150,8 @@ export default function Admin() {
     categories: null as string | null,
     users: null as string | null,
     payments: null as string | null,
-    coupons: null as string | null
+    coupons: null as string | null,
+    aiTools: null as string | null
   });
 
   // Dialog states
@@ -146,15 +159,18 @@ export default function Admin() {
   const [promptDialogOpen, setPromptDialogOpen] = useState(false);
   const [couponDialogOpen, setCouponDialogOpen] = useState(false);
   const [couponUsageDialogOpen, setCouponUsageDialogOpen] = useState(false);
+  const [aiToolDialogOpen, setAiToolDialogOpen] = useState(false);
   const [editingProtocol, setEditingProtocol] = useState<Protocol | null>(null);
   const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
+  const [editingAiTool, setEditingAiTool] = useState<AiTool | null>(null);
   const [selectedCouponId, setSelectedCouponId] = useState<number | null>(null);
 
   // Form states
   const [protocolForm, setProtocolForm] = useState<Partial<Protocol>>({});
   const [promptForm, setPromptForm] = useState<Partial<Prompt>>({});
   const [couponForm, setCouponForm] = useState<Partial<Coupon>>({});
+  const [aiToolForm, setAiToolForm] = useState<Partial<AiTool>>({});
 
   // Check if user is admin
   const isAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL || 
@@ -201,7 +217,8 @@ export default function Admin() {
       categories: null,
       users: null,
       payments: null,
-      coupons: null
+      coupons: null,
+      aiTools: null
     });
     
     try {
@@ -360,6 +377,24 @@ export default function Admin() {
         }
       };
 
+      const loadAiTools = async () => {
+        setLoadingStates(prev => ({ ...prev, aiTools: true }));
+        try {
+          const res = await fetch('/api/ai-tools');
+          if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.message || error.error || 'Failed to load AI tools');
+          }
+          const data = await res.json();
+          setAiTools(data);
+        } catch (error: any) {
+          setErrors(prev => ({ ...prev, aiTools: error.message }));
+          console.error('Failed to load AI tools:', error);
+        } finally {
+          setLoadingStates(prev => ({ ...prev, aiTools: false }));
+        }
+      };
+
       // Load all data in parallel
       await Promise.all([
         loadProtocols(),
@@ -367,7 +402,8 @@ export default function Admin() {
         loadPrompts(),
         loadUsers(),
         loadPayments(),
-        loadCoupons()
+        loadCoupons(),
+        loadAiTools()
       ]);
       
     } catch (error: any) {
@@ -925,6 +961,82 @@ export default function Admin() {
     }
   };
 
+  // AI Tools functions
+  const handleSaveAiTool = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const url = editingAiTool 
+        ? `/api/admin/ai-tools/${editingAiTool.id}`
+        : '/api/admin/ai-tools';
+      
+      const method = editingAiTool ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(aiToolForm)
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Muvaffaqiyat',
+          description: `AI asbob ${editingAiTool ? 'yangilandi' : 'yaratildi'}`
+        });
+        setAiToolDialogOpen(false);
+        setEditingAiTool(null);
+        setAiToolForm({});
+        loadData();
+      } else {
+        const error = await res.json();
+        throw new Error(error.error || 'AI asbobni saqlashda xatolik');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Xatolik',
+        description: error.message || 'AI asbobni saqlashda xatolik yuz berdi',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const deleteAiTool = async (toolId: number) => {
+    if (!confirm('Ushbu AI asbobni o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.')) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await fetch(`/api/admin/ai-tools/${toolId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        toast({
+          title: 'Muvaffaqiyat',
+          description: 'AI asbob o\'chirildi'
+        });
+        loadData();
+      } else {
+        throw new Error('AI asbobni o\'chirishda xatolik');
+      }
+    } catch (error) {
+      toast({
+        title: 'Xatolik',
+        description: 'AI asbobni o\'chirishda xatolik yuz berdi',
+        variant: 'destructive'
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -1009,12 +1121,13 @@ export default function Admin() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="protocols">Protokollar</TabsTrigger>
             <TabsTrigger value="prompts">Promptlar</TabsTrigger>
             <TabsTrigger value="users">Foydalanuvchilar</TabsTrigger>
             <TabsTrigger value="payments">To'lovlar</TabsTrigger>
             <TabsTrigger value="coupons">Kuponlar</TabsTrigger>
+            <TabsTrigger value="ai-tools">AI Asboblari</TabsTrigger>
             <TabsTrigger value="analytics">Analitika</TabsTrigger>
           </TabsList>
 
@@ -1522,6 +1635,98 @@ export default function Admin() {
             </Card>
           </TabsContent>
 
+          {/* AI Tools Tab */}
+          <TabsContent value="ai-tools">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>AI Asboblarini boshqarish</CardTitle>
+                  <CardDescription>AI asboblarini yaratish, tahrirlash va boshqarish</CardDescription>
+                </div>
+                <Button
+                  onClick={() => {
+                    setEditingAiTool(null);
+                    setAiToolForm({});
+                    setAiToolDialogOpen(true);
+                  }}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Yangi AI asbob
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {loadingStates.aiTools ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : errors.aiTools ? (
+                  <div className="text-center py-8 text-destructive">
+                    <AlertCircle className="h-8 w-8 mx-auto mb-2" />
+                    <p>{errors.aiTools}</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nomi</TableHead>
+                        <TableHead>Tavsifi</TableHead>
+                        <TableHead>Havola</TableHead>
+                        <TableHead>Ovozlar</TableHead>
+                        <TableHead className="text-right">Amallar</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {aiTools.map((tool) => (
+                        <TableRow key={tool.id}>
+                          <TableCell className="font-medium">{tool.name}</TableCell>
+                          <TableCell className="max-w-md truncate">{tool.description}</TableCell>
+                          <TableCell>
+                            <a 
+                              href={tool.link} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-accent hover:underline"
+                            >
+                              Ko'rish
+                            </a>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-4">
+                              <span className="text-green-600">👍 {tool.upvotes}</span>
+                              <span className="text-red-600">👎 {tool.downvotes}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setEditingAiTool(tool);
+                                  setAiToolForm(tool);
+                                  setAiToolDialogOpen(true);
+                                }}
+                              >
+                                <Edit className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => deleteAiTool(tool.id)}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Analytics Tab */}
           <TabsContent value="analytics">
             <AnalyticsDashboard />
@@ -1884,6 +2089,62 @@ export default function Admin() {
                 </div>
               )}
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* AI Tool Dialog */}
+        <Dialog open={aiToolDialogOpen} onOpenChange={setAiToolDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                {editingAiTool ? 'AI asbobni tahrirlash' : 'Yangi AI asbob yaratish'}
+              </DialogTitle>
+              <DialogDescription>
+                AI asbob ma'lumotlarini kiriting
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="ai-tool-name">Nomi</Label>
+                <Input
+                  id="ai-tool-name"
+                  value={aiToolForm.name || ''}
+                  onChange={(e) => setAiToolForm({...aiToolForm, name: e.target.value})}
+                  placeholder="ChatGPT"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="ai-tool-description">Tavsifi</Label>
+                <Textarea
+                  id="ai-tool-description"
+                  value={aiToolForm.description || ''}
+                  onChange={(e) => setAiToolForm({...aiToolForm, description: e.target.value})}
+                  placeholder="Matn yozadi va savollarga javob beradi"
+                  rows={3}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="ai-tool-link">Havola</Label>
+                <Input
+                  id="ai-tool-link"
+                  value={aiToolForm.link || ''}
+                  onChange={(e) => setAiToolForm({...aiToolForm, link: e.target.value})}
+                  placeholder="https://chat.openai.com"
+                  type="url"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setAiToolDialogOpen(false)}>
+                Bekor qilish
+              </Button>
+              <Button 
+                onClick={handleSaveAiTool}
+                disabled={!aiToolForm.name || !aiToolForm.description || !aiToolForm.link}
+              >
+                Saqlash
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </main>

@@ -1095,6 +1095,258 @@ export function setupRoutes(app: Express): Server {
     }
   });
 
+  // ======= AI TOOLS ENDPOINTS =======
+  
+  // Temporary migration endpoint for AI tools (remove after use)
+  app.post("/api/run-ai-tools-migration", async (req, res) => {
+    try {
+      const supabase = (global as any).supabaseStorage?.supabase;
+      if (!supabase) {
+        return res.status(500).json({ error: 'Supabase not initialized' });
+      }
+      
+      const migrationSQL = `
+        -- Add AI Tools tables
+        CREATE TABLE IF NOT EXISTS ai_tools (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          description TEXT NOT NULL,
+          link TEXT NOT NULL,
+          upvotes INTEGER NOT NULL DEFAULT 0,
+          downvotes INTEGER NOT NULL DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS ai_tool_votes (
+          id SERIAL PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          tool_id INTEGER NOT NULL REFERENCES ai_tools(id) ON DELETE CASCADE,
+          vote_type TEXT NOT NULL CHECK (vote_type IN ('up', 'down')),
+          voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, tool_id)
+        );
+
+        -- Create indexes for better performance
+        CREATE INDEX IF NOT EXISTS idx_ai_tool_votes_user_id ON ai_tool_votes(user_id);
+        CREATE INDEX IF NOT EXISTS idx_ai_tool_votes_tool_id ON ai_tool_votes(tool_id);
+        CREATE INDEX IF NOT EXISTS idx_ai_tools_upvotes ON ai_tools(upvotes DESC);
+        CREATE INDEX IF NOT EXISTS idx_ai_tools_downvotes ON ai_tools(downvotes DESC);
+      `;
+      
+      const { error } = await supabase.rpc('exec_sql', { sql: migrationSQL });
+      
+      if (error) {
+        console.error('Migration error:', error);
+        return res.status(500).json({ error: 'Failed to run migration', details: error });
+      }
+      
+      res.json({ message: 'Migration completed successfully' });
+    } catch (error: any) {
+      console.error('Migration error:', error);
+      res.status(500).json({ error: 'Failed to run migration', details: error.message });
+    }
+  });
+
+  // Temporary seed endpoint for AI tools (remove after use)
+  app.post("/api/seed-ai-tools", async (req, res) => {
+    try {
+      const aiTools = [
+        { name: 'ChatGPT', description: 'Matn yozadi va savollarga javob beradi', link: 'https://chat.openai.com' },
+        { name: 'Claude', description: 'Yirik hajmli matnlar uchun muloqot va tahlil', link: 'https://claude.ai' },
+        { name: 'Midjourney', description: 'So\'zlardan san\'at asari yaratuvchi AI', link: 'https://www.midjourney.com' },
+        { name: 'DALL-E', description: 'Matndan bir zumda rasmlar yaratadi', link: 'https://openai.com/dall-e/' },
+        { name: 'Stable Diffusion', description: 'Kompyuterda bepul rasm chizuvchi AI', link: 'https://stability.ai' },
+        { name: 'Google Gemini', description: 'Google\'ning AI yordamchisi', link: 'https://gemini.google' },
+        { name: 'GitHub Copilot', description: 'Kod yozishga yordamchi', link: 'https://github.com/features/copilot' },
+        { name: 'Jasper', description: 'Marketing va blog matnlarini yozadi', link: 'https://www.jasper.ai' },
+        { name: 'Synthesia', description: 'AI orqali dars yoki reklama videosi tayyorlash', link: 'https://www.synthesia.io' },
+        { name: 'Runway Gen-2', description: 'Matn/rasmdan video generatsiya qiladi', link: 'https://runwayml.com' },
+        { name: 'Pika Labs', description: 'Promptdan qisqa, animatsion video', link: 'https://pika.art' },
+        { name: 'ElevenLabs', description: 'Eng natural sun\'iy ovoz generatori', link: 'https://elevenlabs.io' },
+        { name: 'Fireflies', description: 'Meetings uchun avtomatik yozuv va tahlil', link: 'https://fireflies.ai' },
+        { name: 'Otter.ai', description: 'Avtomatik transkript va xulosa', link: 'https://otter.ai' },
+        { name: 'Notion AI', description: 'Notion\'ga AI yordamchi funksiyasi', link: 'https://www.notion.so/product/ai' },
+        { name: 'Tome', description: 'Promptdan chiroyli taqdimot yaratadi', link: 'https://tome.app' },
+        { name: 'Canva Magic Design', description: 'Matndan dizayn va slayd generatori', link: 'https://www.canva.com/magic-design/' },
+        { name: 'Grammarly AI', description: 'Grammatikani tekshiradi', link: 'https://grammarly.com' },
+        { name: 'Quillbot', description: 'Matnni qayta yozadi (paraphrase)', link: 'https://quillbot.com' },
+        { name: 'DeepL', description: 'Juda aniq tarjima AI', link: 'https://deepl.com' },
+        { name: 'Perplexity', description: 'Real vaqtli javoblar, manbali', link: 'https://www.perplexity.ai' },
+        { name: 'Replit Ghostwriter', description: 'Kod yozishda sun\'iy yordam', link: 'https://replit.com/site/ghostwriter' },
+        { name: 'Figma AI', description: 'Dizaynda avtomatlashtirish', link: 'https://www.figma.com' },
+        { name: 'Framer AI', description: 'Web-saytlarni avtomatik loyihalovchi', link: 'https://www.framer.com' },
+        { name: 'Adobe Firefly', description: 'AI yordamida rasm, video yaratish', link: 'https://firefly.adobe.com' },
+        { name: 'Microsoft Designer', description: 'Banner, post va dizayn generatsiyasi', link: 'https://designer.microsoft.com' },
+        { name: 'DreamStudio', description: 'Stable Diffusion asosida generatsiya', link: 'https://dreamstudio.ai' },
+        { name: 'Leonardo AI', description: 'Maxsus san\'at uchun AI', link: 'https://leonardo.ai' },
+        { name: 'Upscale Media', description: 'Tasvirlarni tiniqlashtiradi, 8x gacha', link: 'https://www.upscale.media' },
+        { name: 'Remove.bg', description: 'Rasm fonini avtomatik o\'chiradi', link: 'https://remove.bg' },
+        { name: 'Magic Eraser', description: 'Suratdagi keraksiz elementni o\'chirish', link: 'https://magic-eraser.ai' },
+        { name: 'Browse AI', description: 'Vebdan avtomat ma\'lumot yig\'adi', link: 'https://browse.ai' },
+        { name: 'Vidyo.ai', description: 'Uzun videoni qisqa kliplarga ajratadi', link: 'https://vidyo.ai' },
+        { name: 'OpusClip', description: 'Bir uzun videodan bir nechta short', link: 'https://www.opus.pro' },
+        { name: 'Suno AI', description: 'Matndan musiqa/g\'azallar hosil qiladi', link: 'https://suno.ai' },
+        { name: 'Udio', description: 'AI orqali vokalli musiqa yaratadi', link: 'https://www.udio.com' },
+        { name: 'Soundraw', description: 'Avtomatik royaltifree musiqa generatori', link: 'https://soundraw.io' },
+        { name: 'Murf AI', description: 'Sun\'iy intellektli professional voiceover', link: 'https://murf.ai' },
+        { name: 'Speechelo', description: 'Soddalashtirilgan matn-to-speech', link: 'https://speechelo.com' },
+        { name: 'ChatPDF', description: 'PDF\'ni tahlil qilib, chat shaklida savollarga javob beradi', link: 'https://www.chatpdf.com' },
+        { name: 'SciSpace', description: 'Ilmiy maqolalar uchun AI tahlil', link: 'https://scispace.com' },
+        { name: 'Elicit', description: 'AI yordamida tezkor adabiyot tahlili', link: 'https://elicit.org' },
+        { name: 'Photoroom', description: 'Rasm fonini, logoni, shablonlarni tez tayyorlaydi', link: 'https://www.photoroom.com' },
+        { name: 'Voice.ai', description: 'Ovoz klonlash va tovushli kontent generatsiyasi', link: 'https://voice.ai' },
+        { name: 'Beautiful.ai', description: 'AI orqali tezkor taqdimot (presentation)', link: 'https://www.beautiful.ai' },
+        { name: 'Gamma', description: 'AI-pleyta yangi taqdimot ve hujjat shakli', link: 'https://gamma.app' },
+        { name: 'Guru', description: 'AI yordamida bilim bazasi va tezkor qidiruv', link: 'https://www.getguru.com' },
+        { name: 'Voiceflow', description: 'Kodsiz chat-bot va support AI agentlar', link: 'https://www.voiceflow.com' },
+        { name: 'n8n + AI', description: 'Vizual avtomatlashtirish va RAG + AI integratsiyasi', link: 'https://n8n.io' },
+        { name: 'NotebookLM', description: 'Foydalanuvchi ma\'lumotidan sun\'iy izlanish', link: 'https://notebooklm.google' }
+      ];
+
+      let successCount = 0;
+      let errors = [];
+      
+      for (const tool of aiTools) {
+        try {
+          await storage.createAiTool(tool);
+          successCount++;
+          console.log(`✅ Successfully inserted: ${tool.name}`);
+        } catch (error: any) {
+          console.error(`Failed to insert ${tool.name}:`, error);
+          errors.push({ tool: tool.name, error: error.message || error.toString() });
+        }
+      }
+
+      res.json({ 
+        message: `Successfully seeded ${successCount} AI tools`,
+        total: aiTools.length,
+        errors: errors.length > 0 ? errors : undefined
+      });
+    } catch (error) {
+      console.error('Seed AI tools error:', error);
+      res.status(500).json({ error: 'Failed to seed AI tools' });
+    }
+  });
+
+  // Get all AI tools
+  app.get("/api/ai-tools", async (req, res) => {
+    try {
+      const tools = await storage.getAiTools();
+      res.json(tools);
+    } catch (error: any) {
+      console.error('❌ [API] Failed to get AI tools:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get user votes for AI tools (requires auth)
+  app.get("/api/ai-tools/user-votes", requireFlexibleAuth, async (req, res) => {
+    try {
+      const userId = req.user.id || req.user.supabaseUser?.id;
+      const votes = await storage.getUserVotes(userId);
+      res.json(votes);
+    } catch (error: any) {
+      console.error('❌ [API] Failed to get user votes:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Vote for an AI tool (requires auth)
+  app.post("/api/ai-tools/:id/vote", requireFlexibleAuth, async (req, res) => {
+    try {
+      const toolId = parseInt(req.params.id);
+      const { voteType } = req.body;
+      
+      if (!voteType || !['up', 'down'].includes(voteType)) {
+        return res.status(400).json({ error: 'Invalid vote type. Must be "up" or "down"' });
+      }
+      
+      const userId = req.user.id || req.user.supabaseUser?.id;
+      await storage.voteForTool(userId, toolId, voteType);
+      
+      // Return updated tool
+      const tool = await storage.getAiTool(toolId);
+      res.json({ success: true, tool });
+    } catch (error: any) {
+      console.error('❌ [API] Failed to vote for tool:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Remove vote from an AI tool (requires auth)
+  app.delete("/api/ai-tools/:id/vote", requireFlexibleAuth, async (req, res) => {
+    try {
+      const toolId = parseInt(req.params.id);
+      const userId = req.user.id || req.user.supabaseUser?.id;
+      
+      await storage.removeVote(userId, toolId);
+      
+      // Return updated tool
+      const tool = await storage.getAiTool(toolId);
+      res.json({ success: true, tool });
+    } catch (error: any) {
+      console.error('❌ [API] Failed to remove vote:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Create AI tool
+  app.post("/api/admin/ai-tools", 
+    isSupabaseAdmin,
+    async (req, res) => {
+    try {
+      const { name, description, link } = req.body;
+      
+      if (!name || !description || !link) {
+        return res.status(400).json({ error: 'Name, description, and link are required' });
+      }
+      
+      const tool = await storage.createAiTool({ name, description, link });
+      res.json(tool);
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to create AI tool:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Update AI tool
+  app.put("/api/admin/ai-tools/:id", 
+    isSupabaseAdmin,
+    async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const tool = await storage.updateAiTool(id, req.body);
+      
+      if (!tool) {
+        return res.status(404).json({ error: 'AI tool not found' });
+      }
+      
+      res.json(tool);
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to update AI tool:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin: Delete AI tool
+  app.delete("/api/admin/ai-tools/:id", 
+    isSupabaseAdmin,
+    async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteAiTool(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: 'AI tool not found' });
+      }
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error('❌ [ADMIN] Failed to delete AI tool:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Admin: Get coupon analytics
   app.get("/api/admin/analytics/coupons", 
     isSupabaseAdmin,

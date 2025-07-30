@@ -2,10 +2,12 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { 
   users, protocols, categories, userProgress, prompts, payments, coupons, couponUsages,
+  aiTools, aiToolVotes,
   type User, type InsertUser, type Protocol, type InsertProtocol, type Category, 
   type UserProgress, type InsertUserProgress, type Prompt, type InsertPrompt, 
   type Payment, type InsertPayment, type Coupon, type InsertCoupon,
-  type CouponUsage, type InsertCouponUsage 
+  type CouponUsage, type InsertCouponUsage, type AiTool, type InsertAiTool,
+  type AiToolVote, type InsertAiToolVote
 } from "@shared/schema";
 import { eq, ilike, or, desc, and } from "drizzle-orm";
 
@@ -76,6 +78,18 @@ export interface IStorage {
   // Coupon usage tracking
   recordCouponUsage(usage: InsertCouponUsage): Promise<CouponUsage>;
   getCouponUsageHistory(couponId: number): Promise<CouponUsage[]>;
+  
+  // AI Tools methods
+  getAiTools(): Promise<AiTool[]>;
+  getAiTool(id: number): Promise<AiTool | undefined>;
+  createAiTool(tool: InsertAiTool): Promise<AiTool>;
+  updateAiTool(id: number, tool: Partial<InsertAiTool>): Promise<AiTool | undefined>;
+  deleteAiTool(id: number): Promise<boolean>;
+  
+  // AI Tool voting methods
+  voteForTool(userId: string, toolId: number, voteType: 'up' | 'down'): Promise<void>;
+  removeVote(userId: string, toolId: number): Promise<void>;
+  getUserVotes(userId: string): Promise<AiToolVote[]>;
   
   // Connection management
   close(): Promise<void>;
@@ -1366,6 +1380,274 @@ export class HybridStorage implements IStorage {
     }
     
     return 0;
+  }
+
+  // AI Tools methods
+  async getAiTools(): Promise<AiTool[]> {
+    // Try Supabase storage first
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.getAiTools();
+      } catch (error) {
+        console.error('[STORAGE] Failed to get AI tools from Supabase:', error);
+      }
+    }
+    
+    // Fall back to direct database connection
+    if (isDatabaseConnected && db) {
+      try {
+        const tools = await db.select().from(aiTools).orderBy(desc(aiTools.upvotes));
+        return tools;
+      } catch (error) {
+        console.error('[STORAGE] Failed to get AI tools:', error);
+      }
+    }
+    
+    return [];
+  }
+
+  async getAiTool(id: number): Promise<AiTool | undefined> {
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.getAiTool(id);
+      } catch (error) {
+        console.error('[STORAGE] Failed to get AI tool from Supabase:', error);
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.select().from(aiTools).where(eq(aiTools.id, id));
+        return result[0];
+      } catch (error) {
+        console.error('[STORAGE] Failed to get AI tool:', error);
+      }
+    }
+    
+    return undefined;
+  }
+
+  async createAiTool(tool: InsertAiTool): Promise<AiTool> {
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.createAiTool(tool);
+      } catch (error) {
+        console.error('[STORAGE] Failed to create AI tool in Supabase:', error);
+        throw error;
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.insert(aiTools).values(tool).returning();
+        return result[0];
+      } catch (error) {
+        console.error('[STORAGE] Failed to create AI tool:', error);
+        throw error;
+      }
+    }
+    
+    throw new Error("Database not available for AI tool creation");
+  }
+
+  async updateAiTool(id: number, tool: Partial<InsertAiTool>): Promise<AiTool | undefined> {
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.updateAiTool(id, tool);
+      } catch (error) {
+        console.error('[STORAGE] Failed to update AI tool in Supabase:', error);
+        throw error;
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.update(aiTools)
+          .set(tool)
+          .where(eq(aiTools.id, id))
+          .returning();
+        return result[0];
+      } catch (error) {
+        console.error('[STORAGE] Failed to update AI tool:', error);
+        throw error;
+      }
+    }
+    
+    return undefined;
+  }
+
+  async deleteAiTool(id: number): Promise<boolean> {
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.deleteAiTool(id);
+      } catch (error) {
+        console.error('[STORAGE] Failed to delete AI tool from Supabase:', error);
+        throw error;
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
+      try {
+        const result = await db.delete(aiTools).where(eq(aiTools.id, id)).returning();
+        return result.length > 0;
+      } catch (error) {
+        console.error('[STORAGE] Failed to delete AI tool:', error);
+        throw error;
+      }
+    }
+    
+    return false;
+  }
+
+  // AI Tool voting methods
+  async voteForTool(userId: string, toolId: number, voteType: 'up' | 'down'): Promise<void> {
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.voteForTool(userId, toolId, voteType);
+      } catch (error) {
+        console.error('[STORAGE] Failed to vote for tool in Supabase:', error);
+        throw error;
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
+      try {
+        // Start a transaction
+        await db.transaction(async (tx: any) => {
+          // Check if user already voted
+          const existingVote = await tx.select()
+            .from(aiToolVotes)
+            .where(and(
+              eq(aiToolVotes.userId, userId),
+              eq(aiToolVotes.toolId, toolId)
+            ));
+          
+          // If user already voted, update the vote
+          if (existingVote.length > 0) {
+            const oldVoteType = existingVote[0].voteType;
+            if (oldVoteType !== voteType) {
+              // Update vote
+              await tx.update(aiToolVotes)
+                .set({ voteType, votedAt: new Date() })
+                .where(and(
+                  eq(aiToolVotes.userId, userId),
+                  eq(aiToolVotes.toolId, toolId)
+                ));
+              
+              // Update tool vote counts
+              if (oldVoteType === 'up') {
+                await tx.update(aiTools)
+                  .set({ 
+                    upvotes: tx.sql`${aiTools.upvotes} - 1`,
+                    downvotes: tx.sql`${aiTools.downvotes} + 1`
+                  })
+                  .where(eq(aiTools.id, toolId));
+              } else {
+                await tx.update(aiTools)
+                  .set({ 
+                    upvotes: tx.sql`${aiTools.upvotes} + 1`,
+                    downvotes: tx.sql`${aiTools.downvotes} - 1`
+                  })
+                  .where(eq(aiTools.id, toolId));
+              }
+            }
+          } else {
+            // Create new vote
+            await tx.insert(aiToolVotes).values({
+              userId,
+              toolId,
+              voteType
+            });
+            
+            // Update tool vote count
+            if (voteType === 'up') {
+              await tx.update(aiTools)
+                .set({ upvotes: tx.sql`${aiTools.upvotes} + 1` })
+                .where(eq(aiTools.id, toolId));
+            } else {
+              await tx.update(aiTools)
+                .set({ downvotes: tx.sql`${aiTools.downvotes} + 1` })
+                .where(eq(aiTools.id, toolId));
+            }
+          }
+        });
+      } catch (error) {
+        console.error('[STORAGE] Failed to vote for tool:', error);
+        throw error;
+      }
+    }
+  }
+
+  async removeVote(userId: string, toolId: number): Promise<void> {
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.removeVote(userId, toolId);
+      } catch (error) {
+        console.error('[STORAGE] Failed to remove vote in Supabase:', error);
+        throw error;
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
+      try {
+        await db.transaction(async (tx: any) => {
+          // Get existing vote
+          const existingVote = await tx.select()
+            .from(aiToolVotes)
+            .where(and(
+              eq(aiToolVotes.userId, userId),
+              eq(aiToolVotes.toolId, toolId)
+            ));
+          
+          if (existingVote.length > 0) {
+            const voteType = existingVote[0].voteType;
+            
+            // Delete vote
+            await tx.delete(aiToolVotes)
+              .where(and(
+                eq(aiToolVotes.userId, userId),
+                eq(aiToolVotes.toolId, toolId)
+              ));
+            
+            // Update tool vote count
+            if (voteType === 'up') {
+              await tx.update(aiTools)
+                .set({ upvotes: tx.sql`${aiTools.upvotes} - 1` })
+                .where(eq(aiTools.id, toolId));
+            } else {
+              await tx.update(aiTools)
+                .set({ downvotes: tx.sql`${aiTools.downvotes} - 1` })
+                .where(eq(aiTools.id, toolId));
+            }
+          }
+        });
+      } catch (error) {
+        console.error('[STORAGE] Failed to remove vote:', error);
+        throw error;
+      }
+    }
+  }
+
+  async getUserVotes(userId: string): Promise<AiToolVote[]> {
+    if ((global as any).supabaseStorage) {
+      try {
+        return await (global as any).supabaseStorage.getUserVotes(userId);
+      } catch (error) {
+        console.error('[STORAGE] Failed to get user votes from Supabase:', error);
+      }
+    }
+    
+    if (isDatabaseConnected && db) {
+      try {
+        return await db.select()
+          .from(aiToolVotes)
+          .where(eq(aiToolVotes.userId, userId));
+      } catch (error) {
+        console.error('[STORAGE] Failed to get user votes:', error);
+      }
+    }
+    
+    return [];
   }
 
   async close(): Promise<void> {

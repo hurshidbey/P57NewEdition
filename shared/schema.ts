@@ -164,6 +164,37 @@ export const insertPaymentSessionSchema = createInsertSchema(paymentSessions).om
   createdAt: true,
 });
 
+// AI Tools tables
+export const aiTools = pgTable("ai_tools", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  link: text("link").notNull(),
+  upvotes: integer("upvotes").notNull().default(0),
+  downvotes: integer("downvotes").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const aiToolVotes = pgTable("ai_tool_votes", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  toolId: integer("tool_id").notNull(),
+  voteType: text("vote_type").notNull(), // 'up' | 'down'
+  votedAt: timestamp("voted_at").defaultNow(),
+});
+
+export const insertAiToolSchema = createInsertSchema(aiTools).omit({
+  id: true,
+  upvotes: true,
+  downvotes: true,
+  createdAt: true,
+});
+
+export const insertAiToolVoteSchema = createInsertSchema(aiToolVotes).omit({
+  id: true,
+  votedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Protocol = typeof protocols.$inferSelect;
@@ -182,3 +213,7 @@ export type CouponUsage = typeof couponUsages.$inferSelect;
 export type InsertCouponUsage = z.infer<typeof insertCouponUsageSchema>;
 export type PaymentSession = typeof paymentSessions.$inferSelect;
 export type InsertPaymentSession = z.infer<typeof insertPaymentSessionSchema>;
+export type AiTool = typeof aiTools.$inferSelect;
+export type InsertAiTool = z.infer<typeof insertAiToolSchema>;
+export type AiToolVote = typeof aiToolVotes.$inferSelect;
+export type InsertAiToolVote = z.infer<typeof insertAiToolVoteSchema>;

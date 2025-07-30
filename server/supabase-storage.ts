@@ -960,6 +960,241 @@ export class SupabaseStorage implements IStorage {
     return count;
   }
 
+  // AI Tools methods
+  async getAiTools(): Promise<any[]> {
+    const { data, error } = await this.supabase
+      .from('ai_tools')
+      .select('*')
+      .order('upvotes', { ascending: false });
+    
+    if (error) {
+      console.error('[SUPABASE] Failed to get AI tools:', error);
+      throw error;
+    }
+    
+    return data || [];
+  }
+
+  async getAiTool(id: number): Promise<any | undefined> {
+    const { data, error } = await this.supabase
+      .from('ai_tools')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error('[SUPABASE] Failed to get AI tool:', error);
+      throw error;
+    }
+    
+    return data;
+  }
+
+  async createAiTool(tool: any): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('ai_tools')
+      .insert(tool)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('[SUPABASE] Failed to create AI tool:', error);
+      throw error;
+    }
+    
+    return data;
+  }
+
+  async updateAiTool(id: number, tool: any): Promise<any | undefined> {
+    const { data, error } = await this.supabase
+      .from('ai_tools')
+      .update(tool)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('[SUPABASE] Failed to update AI tool:', error);
+      throw error;
+    }
+    
+    return data;
+  }
+
+  async deleteAiTool(id: number): Promise<boolean> {
+    const { error } = await this.supabase
+      .from('ai_tools')
+      .delete()
+      .eq('id', id);
+    
+    if (error) {
+      console.error('[SUPABASE] Failed to delete AI tool:', error);
+      throw error;
+    }
+    
+    return true;
+  }
+
+  // AI Tool voting methods
+  async voteForTool(userId: string, toolId: number, voteType: 'up' | 'down'): Promise<void> {
+    // Start by checking if user already voted
+    const { data: existingVote } = await this.supabase
+      .from('ai_tool_votes')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('tool_id', toolId)
+      .single();
+    
+    if (existingVote) {
+      // Update existing vote
+      if (existingVote.vote_type !== voteType) {
+        // Update vote
+        const { error: voteError } = await this.supabase
+          .from('ai_tool_votes')
+          .update({ vote_type: voteType, voted_at: new Date().toISOString() })
+          .eq('user_id', userId)
+          .eq('tool_id', toolId);
+        
+        if (voteError) {
+          console.error('[SUPABASE] Failed to update vote:', voteError);
+          throw voteError;
+        }
+        
+        // Update tool vote counts
+        const { data: tool } = await this.supabase
+          .from('ai_tools')
+          .select('upvotes, downvotes')
+          .eq('id', toolId)
+          .single();
+        
+        if (tool) {
+          const updates: any = {};
+          if (existingVote.vote_type === 'up') {
+            updates.upvotes = tool.upvotes - 1;
+            updates.downvotes = tool.downvotes + 1;
+          } else {
+            updates.upvotes = tool.upvotes + 1;
+            updates.downvotes = tool.downvotes - 1;
+          }
+          
+          const { error: updateError } = await this.supabase
+            .from('ai_tools')
+            .update(updates)
+            .eq('id', toolId);
+          
+          if (updateError) {
+            console.error('[SUPABASE] Failed to update tool vote counts:', updateError);
+            throw updateError;
+          }
+        }
+      }
+    } else {
+      // Create new vote
+      const { error: voteError } = await this.supabase
+        .from('ai_tool_votes')
+        .insert({
+          user_id: userId,
+          tool_id: toolId,
+          vote_type: voteType
+        });
+      
+      if (voteError) {
+        console.error('[SUPABASE] Failed to create vote:', voteError);
+        throw voteError;
+      }
+      
+      // Update tool vote count
+      const { data: tool } = await this.supabase
+        .from('ai_tools')
+        .select('upvotes, downvotes')
+        .eq('id', toolId)
+        .single();
+      
+      if (tool) {
+        const updates: any = {};
+        if (voteType === 'up') {
+          updates.upvotes = tool.upvotes + 1;
+        } else {
+          updates.downvotes = tool.downvotes + 1;
+        }
+        
+        const { error: updateError } = await this.supabase
+          .from('ai_tools')
+          .update(updates)
+          .eq('id', toolId);
+        
+        if (updateError) {
+          console.error('[SUPABASE] Failed to update tool vote count:', updateError);
+          throw updateError;
+        }
+      }
+    }
+  }
+
+  async removeVote(userId: string, toolId: number): Promise<void> {
+    // Get existing vote
+    const { data: existingVote } = await this.supabase
+      .from('ai_tool_votes')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('tool_id', toolId)
+      .single();
+    
+    if (existingVote) {
+      // Delete vote
+      const { error: deleteError } = await this.supabase
+        .from('ai_tool_votes')
+        .delete()
+        .eq('user_id', userId)
+        .eq('tool_id', toolId);
+      
+      if (deleteError) {
+        console.error('[SUPABASE] Failed to delete vote:', deleteError);
+        throw deleteError;
+      }
+      
+      // Update tool vote count
+      const { data: tool } = await this.supabase
+        .from('ai_tools')
+        .select('upvotes, downvotes')
+        .eq('id', toolId)
+        .single();
+      
+      if (tool) {
+        const updates: any = {};
+        if (existingVote.vote_type === 'up') {
+          updates.upvotes = tool.upvotes - 1;
+        } else {
+          updates.downvotes = tool.downvotes - 1;
+        }
+        
+        const { error: updateError } = await this.supabase
+          .from('ai_tools')
+          .update(updates)
+          .eq('id', toolId);
+        
+        if (updateError) {
+          console.error('[SUPABASE] Failed to update tool vote count:', updateError);
+          throw updateError;
+        }
+      }
+    }
+  }
+
+  async getUserVotes(userId: string): Promise<any[]> {
+    const { data, error } = await this.supabase
+      .from('ai_tool_votes')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (error) {
+      console.error('[SUPABASE] Failed to get user votes:', error);
+      throw error;
+    }
+    
+    return data || [];
+  }
+
   async close(): Promise<void> {
     console.log('[SUPABASE] Closing connections...');
     // Supabase client doesn't need explicit close
