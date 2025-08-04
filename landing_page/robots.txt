@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /assets/Partnerlogos/
+
+# Sitemap location
+Sitemap: https://p57.uz/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

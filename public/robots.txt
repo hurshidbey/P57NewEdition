@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /payment/processing
+Disallow: /auth/callback
+
+# Allow search engines to crawl public content
+Allow: /protocols/
+Allow: /knowledge-base
+Allow: /ai-tools
+
+# Sitemap location
+Sitemap: https://app.p57.uz/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

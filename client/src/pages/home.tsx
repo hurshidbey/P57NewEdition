@@ -6,6 +6,7 @@ import AppFooter from "@/components/app-footer";
 import ProtocolCardContainer from "@/components/protocol-card-container";
 import DifficultyFilters from "@/components/difficulty-filters";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/seo";
 
 export default function Home() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
@@ -57,6 +58,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="57 ta AI Protokol - Bosh sahifa"
+        description="Professional AI va ChatGPT foydalanish uchun 57 ta protokol. O'zbek tilida to'liq qo'llanma va amaliyot."
+        url="https://app.p57.uz"
+      />
       <AppHeader />
       
       {/* Main Container - 8pt Grid System */}

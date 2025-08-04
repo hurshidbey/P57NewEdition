@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "vite build && esbuild server/index.ts --define:process.env.SUPABASE_URL=process.env.SUPABASE_URL --define:process.env.SUPABASE_ANON_KEY=process.env.SUPABASE_ANON_KEY --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "postbuild": "react-snap",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push",
@@ -14,6 +15,12 @@
     "test:coverage": "vitest run --coverage",
     "generate-password-hash": "tsx scripts/generate-password-hash.ts",
     "assign-admin": "tsx scripts/assign-admin-role.ts"
+  },
+  "reactSnap": {
+    "inlineCss": true,
+    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
+    "skipThirdPartyRequests": true,
+    "source": "dist/client"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -85,6 +92,7 @@
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
+    "react-helmet-async": "^2.0.5",
     "react-hook-form": "^7.55.0",
     "react-icons": "^5.4.0",
     "react-resizable-panels": "^2.1.7",
@@ -124,6 +132,7 @@
     "jsdom": "^26.1.0",
     "postcss": "^8.4.47",
     "puppeteer": "^24.10.2",
+    "react-snap": "^1.23.0",
     "supertest": "^7.0.0",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.20.3",
