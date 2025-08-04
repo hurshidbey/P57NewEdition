@@ -10,9 +10,9 @@ interface SEOProps {
 }
 
 const defaultSEO = {
-  title: 'P57 - Sun\'iy Intellekt O\'rganish Platformasi',
-  description: 'ChatGPT va AI dan professional foydalanishni o\'rganing. 57 ta protokol, 50+ premium prompt. Bir martalik to\'lov - umrbod foydalanish.',
-  keywords: 'AI, ChatGPT, sun\'iy intellekt, prompt, o\'zbek tilida, AI o\'rganish, prompt engineering',
+  title: 'P57 - ChatGPT va AI O\'rganish Platformasi | 57 Protokol',
+  description: 'ChatGPT, Claude, Gemini va boshqa AI vositalaridan professional foydalanishni o\'rganing. 57 ta maxsus protokol, 50+ premium prompt. O\'zbek tilida.',
+  keywords: 'ChatGPT o\'zbek tilida, AI o\'rganish, sun\'iy intellekt, prompt yozish, prompt engineering, AI prompt, ChatGPT qanday ishlatiladi, AI kurslari, sun\'iy intellekt dasturlari, O\'zbekistonda AI',
   image: 'https://app.p57.uz/og-image.png',
   url: 'https://app.p57.uz',
   type: 'website'
