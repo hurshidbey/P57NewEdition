@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/contexts/theme-context";
 import { ProgressProvider } from "@/contexts/progress-context";
 import { ProtocolsProvider } from "@/contexts/protocols-context";
 import { lazy, Suspense, useEffect } from "react";
+import NotificationPopup from "@/components/notification-popup";
+import { useNotificationPopup } from "@/hooks/use-notification-popup";
 
 // Static imports for non-authenticated pages
 import AuthPage from "@/pages/auth";
@@ -53,6 +55,7 @@ function PageLoader() {
 
 function AppContent() {
   const { isAuthenticated, loading, user } = useAuth();
+  const { popupNotification, isOpen, handleDismiss, handleCTAClick } = useNotificationPopup();
 
   // TEMPORARY: Enable maintenance mode
   const MAINTENANCE_MODE = false;
@@ -84,9 +87,18 @@ function AppContent() {
   }
 
   return (
-    <Switch>
-      {/* Non-authenticated routes - static imports */}
-      <Route path="/landing" component={LandingPage} />
+    <>
+      {/* Global Notification Popup */}
+      <NotificationPopup
+        notification={popupNotification}
+        open={isOpen}
+        onDismiss={handleDismiss}
+        onCTAClick={handleCTAClick}
+      />
+      
+      <Switch>
+        {/* Non-authenticated routes - static imports */}
+        <Route path="/landing" component={LandingPage} />
       <Route path="/landing-conversion" component={LandingConversion} />
       <Route path="/landing-tilda" component={LandingTildaNew} />
       <Route path="/test" component={LandingSimple} />
@@ -242,6 +254,7 @@ function AppContent() {
       
       <Route component={NotFound} />
     </Switch>
+    </>
   );
 }
 

@@ -8,6 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { User, Calendar, Crown } from "lucide-react";
 import { format } from "date-fns";
 import { uz } from "date-fns/locale";
+import { lazy, Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy load notification section for better initial page load
+const NotificationSection = lazy(() => import("@/components/notification-section"));
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -69,6 +74,17 @@ export default function ProfilePage() {
             </div>
           </CardContent>
         </Card>
+        
+        {/* Notifications Section */}
+        <Suspense fallback={
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-32 w-full" />
+          </div>
+        }>
+          <NotificationSection />
+        </Suspense>
         
         {/* Progress Dashboard - Moved from Home */}
         <div>

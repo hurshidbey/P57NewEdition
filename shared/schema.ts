@@ -195,6 +195,42 @@ export const insertAiToolVoteSchema = createInsertSchema(aiToolVotes).omit({
   votedAt: true,
 });
 
+// Notifications tables for admin announcements
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  targetAudience: text("target_audience").notNull(), // 'all' | 'free' | 'paid'
+  isActive: boolean("is_active").notNull().default(true),
+  showAsPopup: boolean("show_as_popup").notNull().default(false),
+  priority: integer("priority").notNull().default(0), // 0-100
+  ctaText: text("cta_text"),
+  ctaUrl: text("cta_url"),
+  createdBy: text("created_by").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+});
+
+export const notificationInteractions = pgTable("notification_interactions", {
+  id: serial("id").primaryKey(),
+  notificationId: integer("notification_id").notNull(),
+  userId: text("user_id").notNull(),
+  viewedAt: timestamp("viewed_at"),
+  dismissedAt: timestamp("dismissed_at"),
+  clickedAt: timestamp("clicked_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertNotificationSchema = createInsertSchema(notifications).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertNotificationInteractionSchema = createInsertSchema(notificationInteractions).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Protocol = typeof protocols.$inferSelect;
@@ -217,3 +253,7 @@ export type AiTool = typeof aiTools.$inferSelect;
 export type InsertAiTool = z.infer<typeof insertAiToolSchema>;
 export type AiToolVote = typeof aiToolVotes.$inferSelect;
 export type InsertAiToolVote = z.infer<typeof insertAiToolVoteSchema>;
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type NotificationInteraction = typeof notificationInteractions.$inferSelect;
+export type InsertNotificationInteraction = z.infer<typeof insertNotificationInteractionSchema>;

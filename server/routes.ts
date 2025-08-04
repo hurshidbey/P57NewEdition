@@ -19,6 +19,8 @@ import { RESOURCES, ACTIONS } from "@shared/rbac-schema";
 import auditLogRoutes from "./routes/audit-logs";
 import roleRoutes from "./routes/roles";
 import dnsHealthRoutes from "./routes/dns-health";
+import adminNotificationRoutes from "./routes/admin-notifications";
+import userNotificationRoutes from "./routes/user-notifications";
 import { flexibleAuth, requireFlexibleAuth, optionalAuth, isFlexibleAdmin } from "./middleware/flexible-auth";
 
 // Simple request counter for metrics
@@ -670,6 +672,10 @@ export function setupRoutes(app: Express): Server {
   // RBAC routes
   app.use('/api/admin', auditLogRoutes);
   app.use('/api/admin', roleRoutes);
+  
+  // Notification routes
+  app.use('/api/admin/notifications', isSupabaseAdmin, adminNotificationRoutes);
+  app.use('/api/notifications', flexibleAuth, userNotificationRoutes);
   
   // DNS health monitoring routes (public)
   app.use('/api', dnsHealthRoutes);

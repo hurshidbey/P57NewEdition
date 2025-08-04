@@ -15,8 +15,10 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText, Edit, Trash2, Plus, Tag, Calendar, Percent, Hash, RefreshCw, AlertCircle, Search, Crown, UserMinus } from 'lucide-react';
+import { Loader2, Lock, Unlock, TrendingUp, Users, DollarSign, FileText, Edit, Trash2, Plus, Tag, Calendar, Percent, Hash, RefreshCw, AlertCircle, Search, Crown, UserMinus, Bell } from 'lucide-react';
 import AnalyticsDashboard from '@/components/analytics-dashboard';
+import NotificationForm from '@/components/admin/notification-form';
+import NotificationsList from '@/components/admin/notifications-list';
 
 interface Protocol {
   id: number;
@@ -165,6 +167,11 @@ export default function Admin() {
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
   const [editingAiTool, setEditingAiTool] = useState<AiTool | null>(null);
   const [selectedCouponId, setSelectedCouponId] = useState<number | null>(null);
+  
+  // Notification states
+  const [notificationFormOpen, setNotificationFormOpen] = useState(false);
+  const [editingNotification, setEditingNotification] = useState<any>(null);
+  const [notificationRefresh, setNotificationRefresh] = useState(0);
 
   // Form states
   const [protocolForm, setProtocolForm] = useState<Partial<Protocol>>({});
@@ -1121,12 +1128,13 @@ export default function Admin() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="protocols">Protokollar</TabsTrigger>
             <TabsTrigger value="prompts">Promptlar</TabsTrigger>
             <TabsTrigger value="users">Foydalanuvchilar</TabsTrigger>
             <TabsTrigger value="payments">To'lovlar</TabsTrigger>
             <TabsTrigger value="coupons">Kuponlar</TabsTrigger>
+            <TabsTrigger value="notifications">Bildirishnomalar</TabsTrigger>
             <TabsTrigger value="ai-tools">AI Toollar</TabsTrigger>
             <TabsTrigger value="analytics">Analitika</TabsTrigger>
           </TabsList>
@@ -1731,6 +1739,44 @@ export default function Admin() {
           <TabsContent value="analytics">
             <AnalyticsDashboard />
           </TabsContent>
+
+          {/* Notifications Tab */}
+          <TabsContent value="notifications">
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Bell className="h-5 w-5" />
+                      Bildirishnomalar
+                    </span>
+                    <Button 
+                      onClick={() => {
+                        setEditingNotification(null);
+                        setNotificationFormOpen(true);
+                      }}
+                      className="gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Yangi bildirishnoma
+                    </Button>
+                  </CardTitle>
+                  <CardDescription>
+                    Foydalanuvchilarga e'lonlar va chegirmalar haqida xabar bering
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <NotificationsList 
+                    onEdit={(notification) => {
+                      setEditingNotification(notification);
+                      setNotificationFormOpen(true);
+                    }}
+                    refreshTrigger={notificationRefresh}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
         </Tabs>
 
         {/* Protocol Dialog */}
@@ -2147,6 +2193,18 @@ export default function Admin() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Notification Form Dialog */}
+        <NotificationForm
+          open={notificationFormOpen}
+          onOpenChange={setNotificationFormOpen}
+          notification={editingNotification}
+          onSuccess={() => {
+            setNotificationRefresh(prev => prev + 1);
+            setNotificationFormOpen(false);
+            setEditingNotification(null);
+          }}
+        />
       </main>
       <AppFooter />
     </div>
