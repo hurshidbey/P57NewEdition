@@ -674,8 +674,8 @@ export function setupRoutes(app: Express): Server {
   app.use('/api/admin', roleRoutes);
   
   // Notification routes
-  app.use('/api/admin/notifications', isSupabaseAdmin, adminNotificationRoutes);
-  app.use('/api/notifications', flexibleAuth, userNotificationRoutes);
+  app.use('/api/admin/notifications', requireFlexibleAuth, isFlexibleAdmin, adminNotificationRoutes);
+  app.use('/api/notifications', requireFlexibleAuth, userNotificationRoutes);
   
   // DNS health monitoring routes (public)
   app.use('/api', dnsHealthRoutes);
