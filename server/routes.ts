@@ -447,7 +447,7 @@ export function setupRoutes(app: Express): Server {
   });
 
   // Prompts endpoints
-  app.get("/api/prompts", async (req, res) => {
+  app.get("/api/prompts", optionalAuth, async (req, res) => {
     try {
       // Check if user is authenticated via Supabase (for admins)
       const authHeader = req.headers.authorization;
@@ -482,8 +482,23 @@ export function setupRoutes(app: Express): Server {
         const allPrompts = await hybridPromptsStorage.getAllPrompts();
         res.json(allPrompts);
       } else {
-        // For regular users, respect the tier parameter
-        const userTier = (req.query.tier as string) || 'free';
+        // CRITICAL SECURITY FIX: Use actual authenticated user's tier, not query parameter
+        let userTier = 'free'; // Default to free tier
+        
+        // Check if user is authenticated and get their actual tier
+        if (req.user) {
+          // Get the user's actual tier from their metadata
+          userTier = req.user.tier || 'free';
+          logger.info(`[SECURITY] User ${req.user.email || req.user.id} accessing prompts with tier: ${userTier}`);
+        } else {
+          logger.info(`[SECURITY] Unauthenticated user accessing prompts with tier: free`);
+        }
+        
+        // IMPORTANT: Ignore any tier parameter from query string to prevent privilege escalation
+        if (req.query.tier && req.query.tier !== userTier) {
+          logger.warn(`[SECURITY WARNING] User attempted to access tier '${req.query.tier}' but has tier '${userTier}'`);
+        }
+        
         const prompts = await hybridPromptsStorage.getPrompts(userTier);
         res.json(prompts);
       }

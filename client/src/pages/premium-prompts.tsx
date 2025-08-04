@@ -153,9 +153,9 @@ export default function PremiumPrompts() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const { tier } = useUserTier();
 
-  // Always fetch all prompts, we'll handle access control in the UI
+  // Fetch prompts - server will automatically use authenticated user's tier
   const { data: prompts = [], isLoading, error } = useQuery<Prompt[]>({
-    queryKey: [`/api/prompts`, { tier: 'paid' }], // Fetch all prompts with correct parameter name
+    queryKey: [`/api/prompts`], // Server now enforces tier based on authentication
   });
 
   // Filter prompts based on search and category
