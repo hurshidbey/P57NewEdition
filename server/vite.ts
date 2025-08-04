@@ -48,6 +48,11 @@ export async function setupVite(app: Express, server: Server) {
     if (url.startsWith('/api/') || url.startsWith('/health')) {
       return next();
     }
+    
+    // Skip static files that should be served directly (robots.txt, sitemap.xml, etc.)
+    if (url.endsWith('.xml') || url.endsWith('.txt') || url === '/robots.txt' || url === '/sitemap.xml') {
+      return next();
+    }
 
     try {
       const clientTemplate = path.resolve(
@@ -121,7 +126,11 @@ export function serveStatic(app: Express) {
         req.originalUrl.endsWith('.png') || 
         req.originalUrl.endsWith('.jpg') || 
         req.originalUrl.endsWith('.svg') ||
-        req.originalUrl.endsWith('.ico')) {
+        req.originalUrl.endsWith('.ico') ||
+        req.originalUrl.endsWith('.xml') ||
+        req.originalUrl.endsWith('.txt') ||
+        req.originalUrl === '/robots.txt' ||
+        req.originalUrl === '/sitemap.xml') {
       return next();
     }
     

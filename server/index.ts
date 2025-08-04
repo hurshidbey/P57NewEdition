@@ -154,6 +154,14 @@ app.use((req, res, next) => {
 
   }
 
+  // Add middleware to serve XML files with correct content type
+  app.use((req, res, next) => {
+    if (req.path.endsWith('.xml')) {
+      res.type('application/xml');
+    }
+    next();
+  });
+
   let server;
   try {
     server = await setupRoutes(app);
