@@ -1,8 +1,5 @@
-import { eq, and, or, gte, lt, desc, sql, isNull } from 'drizzle-orm';
-import { db } from '../db';
+import { createClient } from '@supabase/supabase-js';
 import { 
-  notifications, 
-  notificationInteractions, 
   type Notification, 
   type NotificationInteraction,
   type InsertNotification 
@@ -42,14 +39,31 @@ export interface NotificationWithStats extends Notification {
 }
 
 export class NotificationService {
+  private supabase: any;
+
+  constructor() {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase credentials not found');
+    }
+
+    this.supabase = createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+  }
   /**
    * Create a new notification
    */
   async createNotification(data: CreateNotificationInput): Promise<Notification> {
     try {
-      const [notification] = await db
-        .insert(notifications)
-        .values({
+      const { data: notification, error } = await this.supabase
+        .from('notifications')
+        .insert({
           title: data.title,
           content: data.content,
           targetAudience: data.targetAudience,
@@ -61,7 +75,10 @@ export class NotificationService {
           createdBy: data.createdBy,
           expiresAt: data.expiresAt,
         })
-        .returning();
+        .select()
+        .single();
+
+      if (error) throw error;
 
       logger.info('Created notification', { 
         notificationId: notification.id,
@@ -81,29 +98,21 @@ export class NotificationService {
    */
   async getNotificationsForUser(userId: string, userTier: 'free' | 'paid'): Promise<Notification[]> {
     try {
-      const now = new Date();
+      const now = new Date().toISOString();
       
-      // Build query conditions
-      const conditions = and(
-        eq(notifications.isActive, true),
-        or(
-          eq(notifications.targetAudience, 'all'),
-          eq(notifications.targetAudience, userTier)
-        ),
-        or(
-          isNull(notifications.expiresAt),
-          gte(notifications.expiresAt, now)
-        )
-      );
+      // Get notifications that are active, match user tier, and not expired
+      const { data: userNotifications, error } = await this.supabase
+        .from('notifications')
+        .select('*')
+        .eq('isActive', true)
+        .in('targetAudience', ['all', userTier])
+        .or(`expiresAt.is.null,expiresAt.gte.${now}`)
+        .order('priority', { ascending: false })
+        .order('createdAt', { ascending: false });
 
-      // Get notifications ordered by priority and creation date
-      const userNotifications = await db
-        .select()
-        .from(notifications)
-        .where(conditions)
-        .orderBy(desc(notifications.priority), desc(notifications.createdAt));
+      if (error) throw error;
 
-      return userNotifications;
+      return userNotifications || [];
     } catch (error) {
       logger.error('Failed to get notifications for user', { userId, error });
       throw new Error('Failed to get notifications');
@@ -115,12 +124,14 @@ export class NotificationService {
    */
   async getNotificationById(id: number): Promise<Notification | null> {
     try {
-      const [notification] = await db
-        .select()
-        .from(notifications)
-        .where(eq(notifications.id, id))
-        .limit(1);
+      const { data: notification, error } = await this.supabase
+        .from('notifications')
+        .select('*')
+        .eq('id', id)
+        .single();
 
+      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = Row not found
+      
       return notification || null;
     } catch (error) {
       logger.error('Failed to get notification', { id, error });
@@ -133,16 +144,18 @@ export class NotificationService {
    */
   async updateNotification(id: number, data: UpdateNotificationInput): Promise<Notification> {
     try {
-      const [updated] = await db
-        .update(notifications)
-        .set({
+      const { data: updated, error } = await this.supabase
+        .from('notifications')
+        .update({
           ...data,
           // Handle null for expiresAt
           expiresAt: data.expiresAt === null ? null : data.expiresAt,
         })
-        .where(eq(notifications.id, id))
-        .returning();
+        .eq('id', id)
+        .select()
+        .single();
 
+      if (error) throw error;
       if (!updated) {
         throw new Error('Notification not found');
       }
@@ -160,10 +173,12 @@ export class NotificationService {
    */
   async deleteNotification(id: number): Promise<void> {
     try {
-      await db
-        .update(notifications)
-        .set({ isActive: false })
-        .where(eq(notifications.id, id));
+      const { error } = await this.supabase
+        .from('notifications')
+        .update({ isActive: false })
+        .eq('id', id);
+
+      if (error) throw error;
 
       logger.info('Soft deleted notification', { notificationId: id });
     } catch (error) {
@@ -182,19 +197,15 @@ export class NotificationService {
   ): Promise<void> {
     try {
       // Check if interaction record exists
-      const [existing] = await db
-        .select()
-        .from(notificationInteractions)
-        .where(
-          and(
-            eq(notificationInteractions.notificationId, notificationId),
-            eq(notificationInteractions.userId, userId)
-          )
-        )
-        .limit(1);
+      const { data: existing } = await this.supabase
+        .from('notificationInteractions')
+        .select('*')
+        .eq('notificationId', notificationId)
+        .eq('userId', userId)
+        .single();
 
-      const now = new Date();
-      const updateData: Partial<NotificationInteraction> = {};
+      const now = new Date().toISOString();
+      const updateData: any = {};
 
       switch (type) {
         case 'view':
@@ -210,19 +221,23 @@ export class NotificationService {
 
       if (existing) {
         // Update existing record
-        await db
-          .update(notificationInteractions)
-          .set(updateData)
-          .where(eq(notificationInteractions.id, existing.id));
+        const { error } = await this.supabase
+          .from('notificationInteractions')
+          .update(updateData)
+          .eq('id', existing.id);
+          
+        if (error) throw error;
       } else {
         // Create new record
-        await db
-          .insert(notificationInteractions)
-          .values({
+        const { error } = await this.supabase
+          .from('notificationInteractions')
+          .insert({
             notificationId,
             userId,
             ...updateData,
           });
+          
+        if (error) throw error;
       }
 
       logger.info('Recorded notification interaction', { 
@@ -252,30 +267,28 @@ export class NotificationService {
         throw new Error('Notification not found');
       }
 
-      // Get interaction stats
-      const stats = await db
-        .select({
-          viewCount: sql<number>`COUNT(CASE WHEN viewed_at IS NOT NULL THEN 1 END)`,
-          dismissCount: sql<number>`COUNT(CASE WHEN dismissed_at IS NOT NULL THEN 1 END)`,
-          clickCount: sql<number>`COUNT(CASE WHEN clicked_at IS NOT NULL THEN 1 END)`,
-          uniqueUserCount: sql<number>`COUNT(DISTINCT user_id)`,
-        })
-        .from(notificationInteractions)
-        .where(eq(notificationInteractions.notificationId, id));
+      // Get all interactions for this notification
+      const { data: interactions, error } = await this.supabase
+        .from('notificationInteractions')
+        .select('*')
+        .eq('notificationId', id);
 
-      const analyticsData = stats[0] || {
-        viewCount: 0,
-        dismissCount: 0,
-        clickCount: 0,
-        uniqueUserCount: 0,
-      };
+      if (error) throw error;
+
+      const interactionsList = interactions || [];
+      
+      // Calculate stats
+      const viewCount = interactionsList.filter(i => i.viewedAt).length;
+      const dismissCount = interactionsList.filter(i => i.dismissedAt).length;
+      const clickCount = interactionsList.filter(i => i.clickedAt).length;
+      const uniqueUserCount = new Set(interactionsList.map(i => i.userId)).size;
 
       return {
         ...notification,
-        viewCount: Number(analyticsData.viewCount),
-        dismissCount: Number(analyticsData.dismissCount),
-        clickCount: Number(analyticsData.clickCount),
-        uniqueUserCount: Number(analyticsData.uniqueUserCount),
+        viewCount,
+        dismissCount,
+        clickCount,
+        uniqueUserCount,
       };
     } catch (error) {
       logger.error('Failed to get notification analytics', { id, error });
@@ -289,14 +302,16 @@ export class NotificationService {
   async getAllNotificationsWithStats(): Promise<NotificationWithStats[]> {
     try {
       // Get all notifications
-      const allNotifications = await db
-        .select()
-        .from(notifications)
-        .orderBy(desc(notifications.createdAt));
+      const { data: allNotifications, error } = await this.supabase
+        .from('notifications')
+        .select('*')
+        .order('createdAt', { ascending: false });
+
+      if (error) throw error;
 
       // Get stats for each notification
       const notificationsWithStats = await Promise.all(
-        allNotifications.map(async (notification) => {
+        (allNotifications || []).map(async (notification) => {
           const stats = await this.getNotificationAnalytics(notification.id);
           return stats;
         })
@@ -323,18 +338,16 @@ export class NotificationService {
       }
 
       // Check which ones have been viewed
-      const interactions = await db
-        .select()
-        .from(notificationInteractions)
-        .where(
-          and(
-            eq(notificationInteractions.userId, userId),
-            sql`notification_id IN ${sql.raw(`(${popupOnly.map(n => n.id).join(',')})`)}`,
-            sql`viewed_at IS NOT NULL`
-          )
-        );
+      const { data: interactions, error } = await this.supabase
+        .from('notificationInteractions')
+        .select('*')
+        .eq('userId', userId)
+        .in('notificationId', popupOnly.map(n => n.id))
+        .not('viewedAt', 'is', null);
 
-      const viewedIds = new Set(interactions.map(i => i.notificationId));
+      if (error) throw error;
+
+      const viewedIds = new Set((interactions || []).map(i => i.notificationId));
       const unreadPopups = popupOnly.filter(n => !viewedIds.has(n.id));
 
       return unreadPopups;
