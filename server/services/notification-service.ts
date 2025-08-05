@@ -66,14 +66,14 @@ export class NotificationService {
         .insert({
           title: data.title,
           content: data.content,
-          targetAudience: data.targetAudience,
-          isActive: data.isActive ?? true,
-          showAsPopup: data.showAsPopup ?? false,
+          target_audience: data.targetAudience,
+          is_active: data.isActive ?? true,
+          show_as_popup: data.showAsPopup ?? false,
           priority: data.priority ?? 0,
-          ctaText: data.ctaText,
-          ctaUrl: data.ctaUrl,
-          createdBy: data.createdBy,
-          expiresAt: data.expiresAt,
+          cta_text: data.ctaText,
+          cta_url: data.ctaUrl,
+          created_by: data.createdBy,
+          expires_at: data.expiresAt,
         })
         .select()
         .single();
@@ -104,11 +104,11 @@ export class NotificationService {
       const { data: userNotifications, error } = await this.supabase
         .from('notifications')
         .select('*')
-        .eq('isActive', true)
-        .in('targetAudience', ['all', userTier])
-        .or(`expiresAt.is.null,expiresAt.gte.${now}`)
+        .eq('is_active', true)
+        .in('target_audience', ['all', userTier])
+        .or(`expires_at.is.null,expires_at.gte.${now}`)
         .order('priority', { ascending: false })
-        .order('createdAt', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
@@ -147,9 +147,15 @@ export class NotificationService {
       const { data: updated, error } = await this.supabase
         .from('notifications')
         .update({
-          ...data,
-          // Handle null for expiresAt
-          expiresAt: data.expiresAt === null ? null : data.expiresAt,
+          ...(data.title !== undefined && { title: data.title }),
+          ...(data.content !== undefined && { content: data.content }),
+          ...(data.targetAudience !== undefined && { target_audience: data.targetAudience }),
+          ...(data.isActive !== undefined && { is_active: data.isActive }),
+          ...(data.showAsPopup !== undefined && { show_as_popup: data.showAsPopup }),
+          ...(data.priority !== undefined && { priority: data.priority }),
+          ...(data.ctaText !== undefined && { cta_text: data.ctaText }),
+          ...(data.ctaUrl !== undefined && { cta_url: data.ctaUrl }),
+          ...(data.expiresAt !== undefined && { expires_at: data.expiresAt === null ? null : data.expiresAt }),
         })
         .eq('id', id)
         .select()
@@ -175,7 +181,7 @@ export class NotificationService {
     try {
       const { error } = await this.supabase
         .from('notifications')
-        .update({ isActive: false })
+        .update({ is_active: false })
         .eq('id', id);
 
       if (error) throw error;
@@ -198,10 +204,10 @@ export class NotificationService {
     try {
       // Check if interaction record exists
       const { data: existing } = await this.supabase
-        .from('notificationInteractions')
+        .from('notification_interactions')
         .select('*')
-        .eq('notificationId', notificationId)
-        .eq('userId', userId)
+        .eq('notification_id', notificationId)
+        .eq('user_id', userId)
         .single();
 
       const now = new Date().toISOString();
@@ -209,20 +215,20 @@ export class NotificationService {
 
       switch (type) {
         case 'view':
-          updateData.viewedAt = now;
+          updateData.viewed_at = now;
           break;
         case 'dismiss':
-          updateData.dismissedAt = now;
+          updateData.dismissed_at = now;
           break;
         case 'click':
-          updateData.clickedAt = now;
+          updateData.clicked_at = now;
           break;
       }
 
       if (existing) {
         // Update existing record
         const { error } = await this.supabase
-          .from('notificationInteractions')
+          .from('notification_interactions')
           .update(updateData)
           .eq('id', existing.id);
           
@@ -230,10 +236,10 @@ export class NotificationService {
       } else {
         // Create new record
         const { error } = await this.supabase
-          .from('notificationInteractions')
+          .from('notification_interactions')
           .insert({
-            notificationId,
-            userId,
+            notification_id: notificationId,
+            user_id: userId,
             ...updateData,
           });
           
@@ -269,19 +275,19 @@ export class NotificationService {
 
       // Get all interactions for this notification
       const { data: interactions, error } = await this.supabase
-        .from('notificationInteractions')
+        .from('notification_interactions')
         .select('*')
-        .eq('notificationId', id);
+        .eq('notification_id', id);
 
       if (error) throw error;
 
       const interactionsList = interactions || [];
       
       // Calculate stats
-      const viewCount = interactionsList.filter(i => i.viewedAt).length;
-      const dismissCount = interactionsList.filter(i => i.dismissedAt).length;
-      const clickCount = interactionsList.filter(i => i.clickedAt).length;
-      const uniqueUserCount = new Set(interactionsList.map(i => i.userId)).size;
+      const viewCount = interactionsList.filter(i => i.viewed_at).length;
+      const dismissCount = interactionsList.filter(i => i.dismissed_at).length;
+      const clickCount = interactionsList.filter(i => i.clicked_at).length;
+      const uniqueUserCount = new Set(interactionsList.map(i => i.user_id)).size;
 
       return {
         ...notification,
@@ -305,7 +311,7 @@ export class NotificationService {
       const { data: allNotifications, error } = await this.supabase
         .from('notifications')
         .select('*')
-        .order('createdAt', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
@@ -331,7 +337,7 @@ export class NotificationService {
     try {
       // Get all active popup notifications for user
       const popupNotifications = await this.getNotificationsForUser(userId, userTier);
-      const popupOnly = popupNotifications.filter(n => n.showAsPopup);
+      const popupOnly = popupNotifications.filter(n => n.show_as_popup);
 
       if (popupOnly.length === 0) {
         return [];
@@ -339,15 +345,15 @@ export class NotificationService {
 
       // Check which ones have been viewed
       const { data: interactions, error } = await this.supabase
-        .from('notificationInteractions')
+        .from('notification_interactions')
         .select('*')
-        .eq('userId', userId)
-        .in('notificationId', popupOnly.map(n => n.id))
-        .not('viewedAt', 'is', null);
+        .eq('user_id', userId)
+        .in('notification_id', popupOnly.map(n => n.id))
+        .not('viewed_at', 'is', null);
 
       if (error) throw error;
 
-      const viewedIds = new Set((interactions || []).map(i => i.notificationId));
+      const viewedIds = new Set((interactions || []).map(i => i.notification_id));
       const unreadPopups = popupOnly.filter(n => !viewedIds.has(n.id));
 
       return unreadPopups;
