@@ -18,8 +18,19 @@ router.get('/', async (req: Request, res: Response) => {
       });
     }
 
-    // Get user tier from metadata
-    const userTier = user.user_metadata?.tier || 'free';
+    // Get user tier - check both places for compatibility
+    const userTier = user.tier || user.user_metadata?.tier || user.supabaseUser?.user_metadata?.tier || 'free';
+    
+    logger.info('Getting notifications for user', {
+      userId: user.id,
+      userTier,
+      userEmail: user.email,
+      tierSources: {
+        direct: user.tier,
+        metadata: user.user_metadata?.tier,
+        supabase: user.supabaseUser?.user_metadata?.tier
+      }
+    });
 
     // Get notifications for user
     let notifications = await notificationService.getNotificationsForUser(
@@ -202,8 +213,8 @@ router.get('/popup', async (req: Request, res: Response) => {
       });
     }
 
-    // Get user tier from metadata
-    const userTier = user.user_metadata?.tier || 'free';
+    // Get user tier - check both places for compatibility
+    const userTier = user.tier || user.user_metadata?.tier || user.supabaseUser?.user_metadata?.tier || 'free';
 
     // Get unread popup notifications
     const popupNotifications = await notificationService.getUnreadPopupNotifications(
