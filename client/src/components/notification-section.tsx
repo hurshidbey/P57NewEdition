@@ -87,7 +87,18 @@ export default function NotificationSection() {
       console.log('Notification API response:', data);
       console.log('User tier:', tier);
       console.log('User:', user);
-      setNotifications(Array.isArray(data.data) ? data.data : []);
+      
+      // Ensure we always set an array, even if data.data is null/undefined
+      if (!data || typeof data !== 'object') {
+        console.warn('Invalid API response format:', data);
+        setNotifications([]);
+        return;
+      }
+      
+      const notificationData = data?.data || [];
+      const validNotifications = Array.isArray(notificationData) ? notificationData : [];
+      console.log('Setting notifications:', validNotifications);
+      setNotifications(validNotifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
       
@@ -153,7 +164,7 @@ export default function NotificationSection() {
       }
 
       // Remove from local state with optimistic update
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
+      setNotifications(prev => (prev || []).filter(n => n.id !== notificationId));
       
       toast({
         title: "Muvaffaqiyat",
@@ -246,6 +257,10 @@ export default function NotificationSection() {
 
   // Track which notifications need to be marked as viewed
   useEffect(() => {
+    if (!notifications || !Array.isArray(notifications)) {
+      return;
+    }
+    
     const unreadIds = notifications
       .filter(n => !n.isRead)
       .map(n => n.id);
@@ -268,7 +283,8 @@ export default function NotificationSection() {
     );
   }
 
-  if (notifications.length === 0) {
+  // Ensure notifications is an array before checking length
+  if (!notifications || notifications.length === 0) {
     return (
       <div className="space-y-4">
         <h2 className="text-2xl font-black uppercase mb-4">Bildirishnomalar</h2>
@@ -281,7 +297,7 @@ export default function NotificationSection() {
   }
 
   // Memoize notification count for performance
-  const notificationCount = useMemo(() => notifications.length, [notifications]);
+  const notificationCount = useMemo(() => notifications?.length || 0, [notifications]);
 
   return (
     <div className="space-y-4">
@@ -294,7 +310,7 @@ export default function NotificationSection() {
       </div>
       
       <div className="space-y-4">
-        {notifications.map((notification) => (
+        {(notifications || []).map((notification) => (
           <NotificationCard
             key={notification.id}
             notification={notification}
