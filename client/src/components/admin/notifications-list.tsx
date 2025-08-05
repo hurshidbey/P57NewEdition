@@ -15,15 +15,15 @@ interface NotificationWithStats {
   id: number;
   title: string;
   content: string;
-  targetAudience: 'all' | 'free' | 'paid';
-  isActive: boolean;
-  showAsPopup: boolean;
+  target_audience: 'all' | 'free' | 'paid';
+  is_active: boolean;
+  show_as_popup: boolean;
   priority: number;
-  ctaText?: string;
-  ctaUrl?: string;
-  createdBy: string;
-  createdAt: string;
-  expiresAt?: string;
+  cta_text?: string;
+  cta_url?: string;
+  created_by: string;
+  created_at: string;
+  expires_at?: string;
   viewCount: number;
   dismissCount: number;
   clickCount: number;
@@ -119,9 +119,9 @@ export default function NotificationsList({ onEdit, refreshTrigger }: Notificati
 
   const getStatusBadge = (notification: NotificationWithStats) => {
     const now = new Date();
-    const expiresAt = notification.expiresAt ? new Date(notification.expiresAt) : null;
+    const expiresAt = notification.expires_at ? new Date(notification.expires_at) : null;
     
-    if (!notification.isActive) {
+    if (!notification.is_active) {
       return <Badge variant="secondary">Nofaol</Badge>;
     } else if (expiresAt && expiresAt < now) {
       return <Badge variant="destructive">Muddati tugagan</Badge>;
@@ -179,7 +179,7 @@ export default function NotificationsList({ onEdit, refreshTrigger }: Notificati
                   <TableCell className="font-medium">
                     <div>
                       <p className="line-clamp-1">{notification.title}</p>
-                      {notification.showAsPopup && (
+                      {notification.show_as_popup && (
                         <Badge variant="outline" className="mt-1">
                           <Bell className="h-3 w-3 mr-1" />
                           Popup
@@ -187,7 +187,7 @@ export default function NotificationsList({ onEdit, refreshTrigger }: Notificati
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>{getAudienceBadge(notification.targetAudience)}</TableCell>
+                  <TableCell>{getAudienceBadge(notification.target_audience)}</TableCell>
                   <TableCell>{getStatusBadge(notification)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -219,9 +219,9 @@ export default function NotificationsList({ onEdit, refreshTrigger }: Notificati
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      <p>{format(new Date(notification.createdAt), 'd MMM', { locale: uz })}</p>
+                      <p>{format(new Date(notification.created_at), 'd MMM', { locale: uz })}</p>
                       <p className="text-muted-foreground">
-                        {notification.createdBy.split('@')[0]}
+                        {notification.created_by.split('@')[0]}
                       </p>
                     </div>
                   </TableCell>

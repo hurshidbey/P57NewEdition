@@ -62,13 +62,13 @@ export default function NotificationForm({
         setFormData({
           title: notification.title || '',
           content: notification.content || '',
-          targetAudience: notification.targetAudience || 'all',
-          isActive: notification.isActive ?? true,
-          showAsPopup: notification.showAsPopup ?? false,
+          targetAudience: notification.target_audience || 'all',
+          isActive: notification.is_active ?? true,
+          showAsPopup: notification.show_as_popup ?? false,
           priority: notification.priority || 0,
-          ctaText: notification.ctaText || '',
-          ctaUrl: notification.ctaUrl || '',
-          expiresAt: notification.expiresAt ? new Date(notification.expiresAt) : null,
+          ctaText: notification.cta_text || '',
+          ctaUrl: notification.cta_url || '',
+          expiresAt: notification.expires_at ? new Date(notification.expires_at) : null,
         });
       } else {
         // Creating new notification
