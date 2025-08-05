@@ -122,11 +122,16 @@ export default function NotificationForm({
       const method = notification ? 'PUT' : 'POST';
       
       const payload = {
-        ...formData,
-        expiresAt: formData.expiresAt?.toISOString() || null,
+        title: formData.title,
+        content: formData.content,
+        target_audience: formData.targetAudience,
+        is_active: formData.isActive,
+        show_as_popup: formData.showAsPopup,
+        priority: formData.priority,
+        expires_at: formData.expiresAt?.toISOString() || null,
         // Clear empty strings
-        ctaText: formData.ctaText || null,
-        ctaUrl: formData.ctaUrl || null,
+        cta_text: formData.ctaText || null,
+        cta_url: formData.ctaUrl || null,
       };
 
       const response = await fetch(url, {
