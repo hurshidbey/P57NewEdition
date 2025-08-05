@@ -23,7 +23,7 @@ interface Notification {
   isDismissed?: boolean;
 }
 
-export default function NotificationSection() {
+function NotificationSection() {
   console.log('NotificationSection RENDERING');
   
   const { user } = useAuth();
@@ -421,3 +421,6 @@ export default function NotificationSection() {
     </div>
   );
 }
+
+// Memoize the component to prevent unnecessary re-renders
+export default React.memo(NotificationSection);

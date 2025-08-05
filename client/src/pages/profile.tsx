@@ -49,7 +49,7 @@ export default function ProfilePage() {
   const { user } = useAuth();
   const { tier, getTierStatus } = useUserTier();
   
-  // Memoize expensive operations to prevent re-renders
+  // Memoize expensive operations to prevent re-renders - use tier and user instead of getTierStatus function
   const tierStatus = useMemo(() => {
     try {
       return getTierStatus();
@@ -62,7 +62,7 @@ export default function ProfilePage() {
         features: []
       };
     }
-  }, [getTierStatus]);
+  }, [tier, user?.role]); // Fixed: Use stable dependencies instead of function reference
 
   // Safe date formatting with error handling
   const joinDate = useMemo(() => {
