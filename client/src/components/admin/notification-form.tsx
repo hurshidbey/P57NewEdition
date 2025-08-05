@@ -133,6 +133,8 @@ export default function NotificationForm({
         cta_text: formData.ctaText || null,
         cta_url: formData.ctaUrl || null,
       };
+      
+      console.log('Sending notification payload:', payload);
 
       const response = await fetch(url, {
         method,
@@ -145,7 +147,19 @@ export default function NotificationForm({
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Xatolik yuz berdi');
+        console.error('Notification creation failed:', {
+          status: response.status,
+          error: error,
+          payload: payload,
+        });
+        
+        // Show detailed error in development
+        if (error.details && Array.isArray(error.details)) {
+          const fieldErrors = error.details.map((d: any) => `${d.field}: ${d.message}`).join(', ');
+          throw new Error(`Validation failed: ${fieldErrors}`);
+        }
+        
+        throw new Error(error.message || error.error || 'Xatolik yuz berdi');
       }
 
       toast({

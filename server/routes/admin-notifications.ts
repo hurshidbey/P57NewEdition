@@ -13,9 +13,9 @@ const createNotificationSchema = z.object({
   is_active: z.boolean().optional(),
   show_as_popup: z.boolean().optional(),
   priority: z.number().min(0).max(100).optional(),
-  cta_text: z.string().max(50).optional(),
-  cta_url: z.string().url().optional(),
-  expires_at: z.string().datetime().optional(),
+  cta_text: z.string().max(50).optional().nullable(),
+  cta_url: z.string().url().optional().nullable().or(z.literal('')),
+  expires_at: z.string().datetime().optional().nullable(),
 });
 
 const updateNotificationSchema = z.object({
@@ -26,7 +26,7 @@ const updateNotificationSchema = z.object({
   show_as_popup: z.boolean().optional(),
   priority: z.number().min(0).max(100).optional(),
   cta_text: z.string().max(50).optional().nullable(),
-  cta_url: z.string().url().optional().nullable(),
+  cta_url: z.string().url().optional().nullable().or(z.literal('')),
   expires_at: z.string().datetime().optional().nullable(),
 });
 
@@ -82,17 +82,31 @@ router.post('/', async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      logger.error('Notification validation failed', {
+        errors: error.errors,
+        body: req.body,
+      });
       return res.status(400).json({
         success: false,
         message: 'Invalid input',
         errors: error.errors,
+        details: error.errors.map(e => ({
+          field: e.path.join('.'),
+          message: e.message,
+          code: e.code,
+        })),
       });
     }
 
-    logger.error('Failed to create notification', error);
+    logger.error('Failed to create notification', {
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined,
+      body: req.body,
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to create notification',
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 });

@@ -78,18 +78,34 @@ export class NotificationService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        logger.error('Supabase insert error', {
+          error: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+          data: data,
+        });
+        throw error;
+      }
+
+      if (!notification) {
+        throw new Error('No notification returned from database');
+      }
 
       logger.info('Created notification', { 
         notificationId: notification.id,
         title: notification.title,
-        targetAudience: notification.targetAudience 
+        target_audience: notification.target_audience 
       });
 
       return notification;
     } catch (error) {
-      logger.error('Failed to create notification', error);
-      throw new Error('Failed to create notification');
+      logger.error('Failed to create notification', {
+        error: error instanceof Error ? error.message : error,
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      throw error instanceof Error ? error : new Error('Failed to create notification');
     }
   }
 
@@ -307,7 +323,7 @@ export class NotificationService {
    */
   async getAllNotificationsWithStats(): Promise<NotificationWithStats[]> {
     try {
-      // Get all notifications
+      // Get all notifications (including soft-deleted for admin view)
       const { data: allNotifications, error } = await this.supabase
         .from('notifications')
         .select('*')
