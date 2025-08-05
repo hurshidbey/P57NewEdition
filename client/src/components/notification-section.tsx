@@ -28,9 +28,17 @@ export default function NotificationSection() {
   const { tier } = useUserTier();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchNotifications = async () => {
+    // Prevent duplicate fetches
+    if (isFetching) {
+      console.log('Already fetching notifications, skipping...');
+      return;
+    }
+    
     console.log('fetchNotifications called - user:', user, 'tier:', tier);
+    setIsFetching(true);
     
     // Get the current session directly from Supabase
     const { data: { session } } = await supabase.auth.getSession();
@@ -38,6 +46,7 @@ export default function NotificationSection() {
     if (!session?.user) {
       console.log('No session found, skipping notification fetch');
       setLoading(false);
+      setIsFetching(false);
       return;
     }
     
@@ -102,6 +111,7 @@ export default function NotificationSection() {
       }
     } finally {
       setLoading(false);
+      setIsFetching(false);
     }
   };
 
@@ -119,7 +129,7 @@ export default function NotificationSection() {
     return () => {
       isMounted = false;
     };
-  }, [tier]); // Only depend on tier since we get session directly
+  }, []); // Only fetch once on mount
 
   const handleDismiss = async (notificationId: number) => {
     try {
