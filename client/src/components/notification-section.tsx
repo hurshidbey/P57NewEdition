@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useUserTier } from '@/hooks/use-user-tier';
 import { supabase } from '@/lib/supabase';
@@ -24,23 +24,46 @@ interface Notification {
 }
 
 export default function NotificationSection() {
+  console.log('NotificationSection RENDERING');
+  
   const { user } = useAuth();
   const { tier } = useUserTier();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotificationsRaw] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
+  const hasFetchedRef = useRef(false);
+  const notificationsRef = useRef<Notification[]>([]);
   
-  // Create a wrapper for setNotifications with logging
-  const setNotificationsWithLogging = (newNotifications: Notification[] | ((prev: Notification[]) => Notification[])) => {
-    if (typeof newNotifications === 'function') {
-      setNotifications(prev => {
-        const result = newNotifications(prev);
-        console.log('setNotifications (function): prev:', prev?.length, 'new:', result?.length, 'stack:', new Error().stack?.split('\n')[2]);
+  useEffect(() => {
+    console.log('NotificationSection MOUNTED');
+    return () => {
+      console.log('NotificationSection UNMOUNTING');
+    };
+  }, []);
+  
+  // Single wrapper to track ALL setNotifications calls
+  const setNotifications = (value: Notification[] | ((prev: Notification[]) => Notification[])) => {
+    if (typeof value === 'function') {
+      setNotificationsRaw(prev => {
+        const result = value(prev);
+        console.log('SET_NOTIFICATIONS (function):', {
+          prevLength: prev?.length,
+          newLength: result?.length,
+          isEmpty: !result || result.length === 0,
+          caller: new Error().stack?.split('\n')[2]
+        });
+        notificationsRef.current = result || [];
         return result;
       });
     } else {
-      console.log('setNotifications (direct): new length:', newNotifications?.length, 'stack:', new Error().stack?.split('\n')[2]);
-      setNotifications(newNotifications);
+      console.log('SET_NOTIFICATIONS (direct):', {
+        newLength: value?.length,
+        isEmpty: !value || value.length === 0,
+        value: value,
+        caller: new Error().stack?.split('\n')[2]
+      });
+      notificationsRef.current = value || [];
+      setNotificationsRaw(value);
     }
   };
 
@@ -71,7 +94,7 @@ export default function NotificationSection() {
       
       if (!token) {
         console.warn('No authentication token available');
-        setNotificationsWithLogging([]);
+        setNotifications([]);
         return;
       }
       
@@ -90,7 +113,7 @@ export default function NotificationSection() {
       if (!response.ok) {
         if (response.status === 404) {
           // Notifications endpoint not available - this is not an error
-          setNotificationsWithLogging([]);
+          setNotifications([]);
           return;
         }
         const errorData = await response.json().catch(() => null);
@@ -105,7 +128,7 @@ export default function NotificationSection() {
       // Ensure we always set an array, even if data.data is null/undefined
       if (!data || typeof data !== 'object') {
         console.warn('Invalid API response format:', data);
-        setNotificationsWithLogging([]);
+        setNotifications([]);
         return;
       }
       
@@ -118,19 +141,19 @@ export default function NotificationSection() {
         console.log('WARNING: Setting empty notifications array - Stack trace:', new Error().stack);
       }
       
-      setNotificationsWithLogging(validNotifications);
+      setNotifications(validNotifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
       
       // Don't show toast for AbortError (timeout)
       if (error instanceof Error && error.name === 'AbortError') {
         console.warn('Notification fetch timed out');
-        setNotificationsWithLogging([]);
+        setNotifications([]);
         return;
       }
       
       // Set empty array on error to prevent crashes
-      setNotificationsWithLogging([]);
+      setNotifications([]);
       
       // Only show error toast for non-network errors
       if (error instanceof Error && !error.message.includes('fetch')) {
@@ -147,11 +170,18 @@ export default function NotificationSection() {
   };
 
   useEffect(() => {
+    // Prevent double fetch in React StrictMode
+    if (hasFetchedRef.current) {
+      console.log('useEffect: Already fetched, skipping');
+      return;
+    }
+    
     let isMounted = true;
     
     const loadNotifications = async () => {
-      if (isMounted) {
-        console.log('useEffect: About to fetch notifications, current notifications:', notifications);
+      if (isMounted && !hasFetchedRef.current) {
+        console.log('useEffect: About to fetch notifications for the first time');
+        hasFetchedRef.current = true;
         await fetchNotifications();
       }
     };
@@ -189,7 +219,7 @@ export default function NotificationSection() {
       }
 
       // Remove from local state with optimistic update
-      setNotificationsWithLogging(prev => (prev || []).filter(n => n.id !== notificationId));
+      setNotifications(prev => (prev || []).filter(n => n.id !== notificationId));
       
       toast({
         title: "Muvaffaqiyat",
@@ -338,8 +368,12 @@ export default function NotificationSection() {
     );
   }
 
+  // Debug log before render decision
+  console.log('RENDER CHECK - notifications:', notifications, 'length:', notifications?.length, 'loading:', loading);
+  
   // Ensure notifications is an array before checking length
   if (!notifications || notifications.length === 0) {
+    console.log('RENDERING EMPTY STATE because notifications:', notifications);
     return (
       <div className="space-y-4">
         <h2 className="text-2xl font-black uppercase mb-4">Bildirishnomalar</h2>
