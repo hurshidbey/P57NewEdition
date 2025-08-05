@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User, Calendar, Crown } from "lucide-react";
 import { format } from "date-fns";
-import { uz } from "date-fns/locale";
+import { ru } from "date-fns/locale"; // Using Russian locale as Uzbek not available
 import { lazy, Suspense, useMemo, Component, ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -73,7 +73,7 @@ export default function ProfilePage() {
     try {
       const date = new Date(user.paidAt);
       if (isNaN(date.getTime())) return "Yangi foydalanuvchi";
-      return format(date, "d MMMM yyyy", { locale: uz });
+      return format(date, "d MMMM yyyy", { locale: ru });
     } catch (error) {
       console.error('Error formatting date:', error);
       return "Yangi foydalanuvchi";

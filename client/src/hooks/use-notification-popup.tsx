@@ -19,71 +19,116 @@ export function useNotificationPopup() {
 
   // Check for popup notifications when user logs in
   const checkForPopupNotifications = useCallback(async () => {
-    if (!user) return;
+    if (!user?.id) return;
 
     try {
-      const token = (await supabase.auth.getSession()).data.session?.access_token;
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+      
+      if (!token) {
+        console.warn('No auth token available for popup notifications');
+        return;
+      }
       
       // Get user's tier from metadata
       const userTier = user.tier || 'free';
+      
+      // Add timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
       
       // Fetch notifications with popup flag
       const response = await fetch('/api/notifications?popup=true', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch popup notifications');
+        if (response.status === 404) {
+          // Notifications endpoint not available - silently skip
+          return;
+        }
+        throw new Error(`Failed to fetch popup notifications: ${response.status}`);
       }
 
       const data = await response.json();
-      const notifications = data.data || [];
+      const notifications = Array.isArray(data.data) ? data.data : [];
 
-      // Get list of shown popup IDs from localStorage
+      // Get list of shown popup IDs from localStorage  
       const shownPopupsKey = `protokol57_shown_popups_${user.id}`;
-      const shownPopupIds = JSON.parse(localStorage.getItem(shownPopupsKey) || '[]');
+      let shownPopupIds: number[] = [];
+      
+      try {
+        shownPopupIds = JSON.parse(localStorage.getItem(shownPopupsKey) || '[]');
+        if (!Array.isArray(shownPopupIds)) shownPopupIds = [];
+      } catch (e) {
+        console.warn('Error parsing shown popup IDs from localStorage');
+        shownPopupIds = [];
+      }
 
       // Filter out already shown popups
       const unshownPopups = notifications.filter((n: PopupNotification) => 
-        !shownPopupIds.includes(n.id)
+        n && typeof n.id === 'number' && !shownPopupIds.includes(n.id)
       );
 
       if (unshownPopups.length > 0) {
         // Get highest priority popup
         const highestPriorityPopup = unshownPopups.reduce((prev: PopupNotification, current: PopupNotification) => 
-          current.priority > prev.priority ? current : prev
+          (current.priority || 0) > (prev.priority || 0) ? current : prev
         );
 
         // Show popup after a delay
-        setTimeout(() => {
+        const timeoutHandle = setTimeout(() => {
           setPopupNotification(highestPriorityPopup);
           setIsOpen(true);
           
           // Mark as viewed
-          markAsViewed(highestPriorityPopup.id);
+          markAsViewed(highestPriorityPopup.id).catch(err => 
+            console.warn('Failed to mark popup as viewed:', err)
+          );
         }, 2000); // 2 second delay after login
+        
+        // Cleanup timeout if component unmounts
+        return () => clearTimeout(timeoutHandle);
       }
     } catch (error) {
-      console.error('Error checking for popup notifications:', error);
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.warn('Popup notification fetch timed out');
+      } else {
+        console.error('Error checking for popup notifications:', error);
+      }
     }
-  }, [user]);
+  }, [user?.id]);
 
   const markAsViewed = async (notificationId: number) => {
-    if (!user) return;
+    if (!user?.id || !notificationId) return;
 
     try {
-      const token = (await supabase.auth.getSession()).data.session?.access_token;
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+      
+      if (!token) return;
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
       
       await fetch(`/api/notifications/${notificationId}/view`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
         },
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
     } catch (error) {
-      console.error('Error marking notification as viewed:', error);
+      if (!(error instanceof Error && error.name === 'AbortError')) {
+        console.error('Error marking notification as viewed:', error);
+      }
     }
   };
 

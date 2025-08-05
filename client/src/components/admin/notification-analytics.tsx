@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Eye, Users, MousePointer, X, TrendingUp, Bell } from 'lucide-react';
 import { format } from 'date-fns';
-import { uz } from 'date-fns/locale';
+import { ru } from 'date-fns/locale'; // Using Russian locale as Uzbek not available
 
 interface NotificationAnalyticsProps {
   notification: any;
@@ -184,7 +184,7 @@ export default function NotificationAnalytics({
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Yaratilgan:</span>
                 <span className="font-medium">
-                  {format(new Date(notification.createdAt), 'd MMMM yyyy', { locale: uz })}
+                  {format(new Date(notification.createdAt), 'd MMMM yyyy', { locale: ru })}
                 </span>
               </div>
 
@@ -192,7 +192,7 @@ export default function NotificationAnalytics({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Tugash muddati:</span>
                   <span className="font-medium">
-                    {format(new Date(notification.expiresAt), 'd MMMM yyyy', { locale: uz })}
+                    {format(new Date(notification.expiresAt), 'd MMMM yyyy', { locale: ru })}
                   </span>
                 </div>
               )}

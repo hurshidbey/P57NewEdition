@@ -11,7 +11,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { uz } from 'date-fns/locale';
+import { ru } from 'date-fns/locale'; // Using Russian locale as Uzbek not available
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
@@ -336,7 +336,7 @@ export default function NotificationForm({
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {formData.expiresAt ? (
-                      format(formData.expiresAt, "d MMMM yyyy", { locale: uz })
+                      format(formData.expiresAt, "d MMMM yyyy", { locale: ru })
                     ) : (
                       "Muddat tanlang"
                     )}

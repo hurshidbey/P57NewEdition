@@ -30,55 +30,86 @@ export default function NotificationSection() {
   const [loading, setLoading] = useState(true);
 
   const fetchNotifications = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     
     try {
       const session = await supabase.auth.getSession();
       const token = session.data.session?.access_token;
       
       if (!token) {
-        throw new Error('No authentication token available');
+        console.warn('No authentication token available');
+        setNotifications([]);
+        return;
       }
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
       
       const response = await fetch('/api/notifications', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
+        if (response.status === 404) {
+          // Notifications endpoint not available - this is not an error
+          setNotifications([]);
+          return;
+        }
         const errorData = await response.json().catch(() => null);
         throw new Error(errorData?.message || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      setNotifications(data.data || []);
+      setNotifications(Array.isArray(data.data) ? data.data : []);
     } catch (error) {
       console.error('Error fetching notifications:', error);
       
-      // More specific error messages
-      let errorMessage = "Bildirishnomalarni yuklashda xatolik";
-      if (error instanceof Error) {
-        if (error.message.includes('authentication')) {
-          errorMessage = "Avtorizatsiya xatosi. Qaytadan kiring";
-        } else if (error.message.includes('network')) {
-          errorMessage = "Internet aloqasi yo'q";
-        }
+      // Don't show toast for AbortError (timeout)
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.warn('Notification fetch timed out');
+        setNotifications([]);
+        return;
       }
       
-      toast({
-        title: "Xatolik",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      // Set empty array on error to prevent crashes
+      setNotifications([]);
+      
+      // Only show error toast for non-network errors
+      if (error instanceof Error && !error.message.includes('fetch')) {
+        toast({
+          title: "Bildirishnoma xatosi",
+          description: "Bildirishnomalarni yuklashda muammo yuz berdi",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchNotifications();
-  }, [user, tier]);
+    let isMounted = true;
+    
+    const loadNotifications = async () => {
+      if (isMounted) {
+        await fetchNotifications();
+      }
+    };
+    
+    loadNotifications();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id, tier]); // More specific dependencies
 
   const handleDismiss = async (notificationId: number) => {
     try {

@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Edit, Trash2, MoreHorizontal, BarChart, Eye, Users, MousePointer, Bell } from 'lucide-react';
 import { format } from 'date-fns';
-import { uz } from 'date-fns/locale';
+import { ru } from 'date-fns/locale'; // Using Russian locale as Uzbek not available
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 import NotificationAnalytics from './notification-analytics';
@@ -219,7 +219,7 @@ export default function NotificationsList({ onEdit, refreshTrigger }: Notificati
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      <p>{format(new Date(notification.created_at), 'd MMM', { locale: uz })}</p>
+                      <p>{format(new Date(notification.created_at), 'd MMM', { locale: ru })}</p>
                       <p className="text-muted-foreground">
                         {notification.created_by.split('@')[0]}
                       </p>

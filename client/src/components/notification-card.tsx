@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { X, Bell, ExternalLink } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { uz } from 'date-fns/locale';
+import { ru } from 'date-fns/locale'; // Using Russian locale as Uzbek not available
 
 interface NotificationData {
   id: number;
@@ -78,7 +78,7 @@ export default function NotificationCard({
               <span>
                 {formatDistanceToNow(new Date(notification.createdAt), {
                   addSuffix: true,
-                  locale: uz
+                  locale: ru
                 })}
               </span>
               {isExpiringSoon() && (
