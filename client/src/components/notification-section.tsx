@@ -388,38 +388,55 @@ function NotificationSection() {
   // Memoize notification count for performance
   const notificationCount = useMemo(() => notifications?.length || 0, [notifications]);
 
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-black uppercase">Bildirishnomalar</h2>
-        <div className="flex items-center gap-2">
-          <Bell className="h-5 w-5" />
-          <span className="text-sm font-medium">{notificationCount} ta</span>
+  try {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-black uppercase">Bildirishnomalar</h2>
+          <div className="flex items-center gap-2">
+            <Bell className="h-5 w-5" />
+            <span className="text-sm font-medium">{notificationCount} ta</span>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          {(notifications || [])
+            .filter(notification => notification && typeof notification === 'object' && notification.id)
+            .map((notification) => {
+              console.log('About to render notification:', JSON.stringify(notification));
+              try {
+                return (
+                  <NotificationCard
+                    key={notification.id}
+                    notification={notification}
+                    onDismiss={handleDismiss}
+                    onCTAClick={handleCTAClick}
+                  />
+                );
+              } catch (error) {
+                console.error('Error rendering NotificationCard:', error, 'for notification:', notification);
+                return null;
+              }
+            })
+            .filter(Boolean)}
         </div>
       </div>
-      
+    );
+  } catch (error) {
+    console.error('CRITICAL ERROR in NotificationSection render:', error);
+    console.log('Current notifications state:', notifications);
+    console.log('Error details:', error instanceof Error ? error.stack : error);
+    
+    // Return a fallback UI
+    return (
       <div className="space-y-4">
-        {(notifications || [])
-          .filter(notification => notification && typeof notification === 'object' && notification.id)
-          .map((notification) => {
-            try {
-              return (
-                <NotificationCard
-                  key={notification.id}
-                  notification={notification}
-                  onDismiss={handleDismiss}
-                  onCTAClick={handleCTAClick}
-                />
-              );
-            } catch (error) {
-              console.error('Error rendering notification:', notification, error);
-              return null;
-            }
-          })
-          .filter(Boolean)}
+        <h2 className="text-2xl font-black uppercase mb-4">Bildirishnomalar</h2>
+        <div className="border-2 border-red-500 border-dashed rounded-lg p-8 text-center">
+          <p className="text-red-500">Xatolik yuz berdi. Sahifani yangilang.</p>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 // Memoize the component to prevent unnecessary re-renders
