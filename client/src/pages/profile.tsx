@@ -23,13 +23,13 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error getting tier status:', error);
       return {
-        tier: 'free',
+        tier: 'free' as const,
         displayName: 'Bepul',
         color: 'bg-gray-100 text-gray-800',
         features: []
       };
     }
-  }, [tier, user?.role]); // Fixed: Use stable dependencies instead of function reference
+  }, [getTierStatus]); // Use getTierStatus directly since it's memoized in the context
 
   // Safe date formatting with error handling
   const joinDate = useMemo(() => {

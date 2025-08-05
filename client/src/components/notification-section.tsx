@@ -28,78 +28,55 @@ function NotificationSection() {
   
   const { user } = useAuth();
   const { tier } = useUserTier();
-  const [notifications, setNotificationsRaw] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const hasFetchedRef = useRef(false);
-  const notificationsRef = useRef<Notification[]>([]);
+  const mountedRef = useRef(true);
   
   useEffect(() => {
     console.log('NotificationSection MOUNTED');
+    mountedRef.current = true;
     return () => {
       console.log('NotificationSection UNMOUNTING');
+      mountedRef.current = false;
     };
   }, []);
-  
-  // Single wrapper to track ALL setNotifications calls
-  const setNotifications = (value: Notification[] | ((prev: Notification[]) => Notification[])) => {
-    if (typeof value === 'function') {
-      setNotificationsRaw(prev => {
-        const result = value(prev);
-        console.log('SET_NOTIFICATIONS (function):', {
-          prevLength: prev?.length,
-          newLength: result?.length,
-          isEmpty: !result || result.length === 0,
-          caller: new Error().stack?.split('\n')[2]
-        });
-        notificationsRef.current = result || [];
-        return result;
-      });
-    } else {
-      console.log('SET_NOTIFICATIONS (direct):', {
-        newLength: value?.length,
-        isEmpty: !value || value.length === 0,
-        value: value,
-        caller: new Error().stack?.split('\n')[2]
-      });
-      notificationsRef.current = value || [];
-      setNotificationsRaw(value);
-    }
-  };
 
-  const fetchNotifications = async () => {
-    // Prevent duplicate fetches
-    if (isFetching) {
-      console.log('Already fetching notifications, skipping...');
+  const fetchNotifications = useCallback(async () => {
+    // Prevent duplicate fetches or fetch if unmounted
+    if (isFetching || !mountedRef.current) {
+      console.log('Already fetching or unmounted, skipping...');
       return;
     }
     
-    console.log('fetchNotifications called - user:', user, 'tier:', tier);
+    console.log('fetchNotifications called - user:', user?.email, 'tier:', tier);
     setIsFetching(true);
     
-    // Get the current session directly from Supabase
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session?.user) {
-      console.log('No session found, skipping notification fetch');
-      setLoading(false);
-      setIsFetching(false);
-      return;
-    }
-    
-    console.log('Using session user:', session.user.email, 'id:', session.user.id);
-    
     try {
-      const token = session.access_token;
+      // Get the current session directly from Supabase
+      const { data: { session } } = await supabase.auth.getSession();
       
+      if (!session?.user || !mountedRef.current) {
+        console.log('No session found or unmounted, skipping notification fetch');
+        if (mountedRef.current) {
+          setNotifications([]);
+          setLoading(false);
+        }
+        return;
+      }
+      
+      const token = session.access_token;
       if (!token) {
         console.warn('No authentication token available');
-        setNotifications([]);
+        if (mountedRef.current) {
+          setNotifications([]);
+        }
         return;
       }
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
       
       const response = await fetch('/api/notifications', {
         headers: {
@@ -113,89 +90,70 @@ function NotificationSection() {
       if (!response.ok) {
         if (response.status === 404) {
           // Notifications endpoint not available - this is not an error
-          setNotifications([]);
+          if (mountedRef.current) {
+            setNotifications([]);
+          }
           return;
         }
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message || `HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
       console.log('Notification API response:', data);
-      console.log('User tier:', tier);
-      console.log('User:', user);
       
       // Ensure we always set an array, even if data.data is null/undefined
-      if (!data || typeof data !== 'object') {
-        console.warn('Invalid API response format:', data);
-        setNotifications([]);
-        return;
-      }
-      
       const notificationData = data?.data || [];
       const validNotifications = Array.isArray(notificationData) ? notificationData : [];
-      console.log('Setting notifications:', validNotifications);
       
-      // Add stack trace to understand who is calling this
-      if (validNotifications.length === 0) {
-        console.log('WARNING: Setting empty notifications array - Stack trace:', new Error().stack);
+      if (mountedRef.current) {
+        setNotifications(validNotifications);
+        console.log('Set notifications:', validNotifications.length, 'items');
       }
-      
-      setNotifications(validNotifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
       
-      // Don't show toast for AbortError (timeout)
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.warn('Notification fetch timed out');
+      // Only update state if still mounted
+      if (mountedRef.current) {
         setNotifications([]);
-        return;
-      }
-      
-      // Set empty array on error to prevent crashes
-      setNotifications([]);
-      
-      // Only show error toast for non-network errors
-      if (error instanceof Error && !error.message.includes('fetch')) {
-        toast({
-          title: "Bildirishnoma xatosi",
-          description: "Bildirishnomalarni yuklashda muammo yuz berdi",
-          variant: "destructive",
-        });
+        
+        // Only show toast for real errors, not timeouts or network issues
+        if (error instanceof Error && error.name !== 'AbortError' && !error.message.includes('fetch')) {
+          toast({
+            title: "Bildirishnoma xatosi",
+            description: "Bildirishnomalarni yuklashda muammo yuz berdi",
+            variant: "destructive",
+          });
+        }
       }
     } finally {
-      setLoading(false);
-      setIsFetching(false);
+      if (mountedRef.current) {
+        setLoading(false);
+        setIsFetching(false);
+      }
     }
-  };
+  }, [user?.email, tier, isFetching]); // Stable dependencies only
 
   useEffect(() => {
-    // Prevent double fetch in React StrictMode
-    if (hasFetchedRef.current) {
-      console.log('useEffect: Already fetched, skipping');
+    // Only fetch if we have a user and haven't fetched yet
+    if (!user || hasFetchedRef.current) {
+      console.log('useEffect: No user or already fetched, skipping');
       return;
     }
     
-    let isMounted = true;
+    console.log('useEffect: About to fetch notifications for the first time');
+    hasFetchedRef.current = true;
     
-    const loadNotifications = async () => {
-      if (isMounted && !hasFetchedRef.current) {
-        console.log('useEffect: About to fetch notifications for the first time');
-        hasFetchedRef.current = true;
-        await fetchNotifications();
-      }
-    };
-    
-    // Add a small delay to prevent race conditions with lazy loading
+    // Small delay to prevent race conditions
     const timeoutId = setTimeout(() => {
-      loadNotifications();
+      if (mountedRef.current) {
+        fetchNotifications();
+      }
     }, 100);
     
     return () => {
-      isMounted = false;
       clearTimeout(timeoutId);
     };
-  }, []); // Only fetch once on mount
+  }, [user?.id, fetchNotifications]); // Only depend on user ID and the memoized fetch function
 
   const handleDismiss = async (notificationId: number) => {
     try {
@@ -315,45 +273,24 @@ function NotificationSection() {
 
   // Track which notifications need to be marked as viewed
   useEffect(() => {
-    // Add a guard to prevent running during initial load
-    if (loading || isFetching) {
-      console.log('markAsViewed: Skipping during loading state');
+    // Skip if still loading or no notifications
+    if (loading || !notifications || notifications.length === 0) {
       return;
     }
-    
-    // Defensive checks with detailed logging
-    if (!notifications) {
-      console.log('markAsViewed: notifications is null/undefined');
-      return;
-    }
-    
-    if (!Array.isArray(notifications)) {
-      console.error('markAsViewed: notifications is not an array:', typeof notifications, notifications);
-      return;
-    }
-    
-    if (notifications.length === 0) {
-      console.log('marked/viewed: no notifications to process - CURRENT ARRAY LENGTH:', notifications?.length);
-      return;
-    }
-    
-    console.log('markAsViewed: Processing notifications array with length:', notifications.length);
     
     try {
       const unreadIds = notifications
-        .filter(n => n && typeof n === 'object' && n.id && !n.isRead)
+        .filter(n => n && n.id && !n.isRead)
         .map(n => n.id);
       
-      console.log('markAsViewed: unread notification IDs:', unreadIds);
-      
       if (unreadIds.length > 0) {
-        console.log('markAsViewed: Calling debouncedMarkAsViewed with IDs:', unreadIds);
+        console.log('markAsViewed: Found unread notifications:', unreadIds.length);
         debouncedMarkAsViewed(unreadIds);
       }
     } catch (error) {
       console.error('Error processing notifications for markAsViewed:', error);
     }
-  }, [notifications, debouncedMarkAsViewed, loading, isFetching]); // Added loading/fetching to dependencies
+  }, [notifications, debouncedMarkAsViewed, loading]); // Minimal dependencies
 
   if (loading) {
     return (
@@ -368,12 +305,8 @@ function NotificationSection() {
     );
   }
 
-  // Debug log before render decision
-  console.log('RENDER CHECK - notifications:', notifications, 'length:', notifications?.length, 'loading:', loading);
-  
-  // Ensure notifications is an array before checking length
+  // Simple render logic without excessive logging
   if (!notifications || notifications.length === 0) {
-    console.log('RENDERING EMPTY STATE because notifications:', notifications);
     return (
       <div className="space-y-4">
         <h2 className="text-2xl font-black uppercase mb-4">Bildirishnomalar</h2>
@@ -385,58 +318,30 @@ function NotificationSection() {
     );
   }
 
-  // Memoize notification count for performance
-  const notificationCount = useMemo(() => notifications?.length || 0, [notifications]);
-
-  try {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-black uppercase">Bildirishnomalar</h2>
-          <div className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            <span className="text-sm font-medium">{notificationCount} ta</span>
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          {(notifications || [])
-            .filter(notification => notification && typeof notification === 'object' && notification.id)
-            .map((notification) => {
-              console.log('About to render notification:', JSON.stringify(notification));
-              try {
-                return (
-                  <NotificationCard
-                    key={notification.id}
-                    notification={notification}
-                    onDismiss={handleDismiss}
-                    onCTAClick={handleCTAClick}
-                  />
-                );
-              } catch (error) {
-                console.error('Error rendering NotificationCard:', error, 'for notification:', notification);
-                return null;
-              }
-            })
-            .filter(Boolean)}
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-black uppercase">Bildirishnomalar</h2>
+        <div className="flex items-center gap-2">
+          <Bell className="h-5 w-5" />
+          <span className="text-sm font-medium">{notifications.length} ta</span>
         </div>
       </div>
-    );
-  } catch (error) {
-    console.error('CRITICAL ERROR in NotificationSection render:', error);
-    console.log('Current notifications state:', notifications);
-    console.log('Error details:', error instanceof Error ? error.stack : error);
-    
-    // Return a fallback UI
-    return (
+      
       <div className="space-y-4">
-        <h2 className="text-2xl font-black uppercase mb-4">Bildirishnomalar</h2>
-        <div className="border-2 border-red-500 border-dashed rounded-lg p-8 text-center">
-          <p className="text-red-500">Xatolik yuz berdi. Sahifani yangilang.</p>
-        </div>
+        {notifications
+          .filter(notification => notification && notification.id)
+          .map((notification) => (
+            <NotificationCard
+              key={notification.id}
+              notification={notification}
+              onDismiss={handleDismiss}
+              onCTAClick={handleCTAClick}
+            />
+          ))}
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 // Memoize the component to prevent unnecessary re-renders
