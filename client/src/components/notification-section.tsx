@@ -31,15 +31,20 @@ export default function NotificationSection() {
 
   const fetchNotifications = async () => {
     console.log('fetchNotifications called - user:', user, 'tier:', tier);
-    if (!user) {
-      console.log('No user found, skipping notification fetch');
+    
+    // Get the current session directly from Supabase
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session?.user) {
+      console.log('No session found, skipping notification fetch');
       setLoading(false);
       return;
     }
     
+    console.log('Using session user:', session.user.email, 'id:', session.user.id);
+    
     try {
-      const session = await supabase.auth.getSession();
-      const token = session.data.session?.access_token;
+      const token = session.access_token;
       
       if (!token) {
         console.warn('No authentication token available');
@@ -114,7 +119,7 @@ export default function NotificationSection() {
     return () => {
       isMounted = false;
     };
-  }, [user?.id, tier]); // More specific dependencies
+  }, [tier]); // Only depend on tier since we get session directly
 
   const handleDismiss = async (notificationId: number) => {
     try {
@@ -201,7 +206,7 @@ export default function NotificationSection() {
 
   // Debounced function to mark notifications as viewed
   const markAsViewed = useDebounce(async (notificationIds: number[]) => {
-    if (!user || notificationIds.length === 0) return;
+    if (notificationIds.length === 0) return;
 
     try {
       const session = await supabase.auth.getSession();
