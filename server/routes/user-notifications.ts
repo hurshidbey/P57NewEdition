@@ -27,14 +27,31 @@ router.get('/', async (req: Request, res: Response) => {
       userTier as 'free' | 'paid'
     );
 
+    // Transform snake_case to camelCase for frontend compatibility
+    const transformedNotifications = notifications.map(n => ({
+      id: n.id,
+      title: n.title,
+      content: n.content,
+      targetAudience: n.target_audience,
+      showAsPopup: n.show_as_popup,
+      priority: n.priority,
+      ctaText: n.cta_text,
+      ctaUrl: n.cta_url,
+      createdAt: n.created_at,
+      expiresAt: n.expires_at,
+      isRead: false, // We'll implement read tracking later
+      isDismissed: false, // We'll implement dismiss tracking later
+    }));
+
     // Filter for popup notifications if requested
+    let filteredNotifications = transformedNotifications;
     if (req.query.popup === 'true') {
-      notifications = notifications.filter(n => n.showAsPopup);
+      filteredNotifications = transformedNotifications.filter(n => n.showAsPopup);
     }
 
     res.json({
       success: true,
-      data: notifications,
+      data: filteredNotifications,
     });
   } catch (error) {
     logger.error('Failed to get user notifications', { 
@@ -194,9 +211,25 @@ router.get('/popup', async (req: Request, res: Response) => {
       userTier as 'free' | 'paid'
     );
 
+    // Transform snake_case to camelCase for frontend compatibility
+    const transformedNotifications = popupNotifications.map(n => ({
+      id: n.id,
+      title: n.title,
+      content: n.content,
+      targetAudience: n.target_audience,
+      showAsPopup: n.show_as_popup,
+      priority: n.priority,
+      ctaText: n.cta_text,
+      ctaUrl: n.cta_url,
+      createdAt: n.created_at,
+      expiresAt: n.expires_at,
+      isRead: false,
+      isDismissed: false,
+    }));
+
     res.json({
       success: true,
-      data: popupNotifications,
+      data: transformedNotifications,
     });
   } catch (error) {
     logger.error('Failed to get popup notifications', { 
