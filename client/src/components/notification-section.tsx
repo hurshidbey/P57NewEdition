@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useUserTier } from '@/hooks/use-user-tier';
 import { supabase } from '@/lib/supabase';
@@ -225,8 +225,8 @@ export default function NotificationSection() {
     }
   };
 
-  // Debounced function to mark notifications as viewed
-  const markAsViewed = useDebounce(async (notificationIds: number[]) => {
+  // Create stable markAsViewed function with useCallback
+  const markAsViewed = useCallback(async (notificationIds: number[]) => {
     if (notificationIds.length === 0) return;
 
     try {
@@ -253,22 +253,43 @@ export default function NotificationSection() {
     } catch (error) {
       console.error('Error marking notifications as viewed:', error);
     }
-  }, 1000); // Debounce for 1 second
+  }, []); // Empty dependency array - function doesn't depend on any props/state
+
+  // Debounced version of markAsViewed
+  const debouncedMarkAsViewed = useDebounce(markAsViewed, 1000);
 
   // Track which notifications need to be marked as viewed
   useEffect(() => {
-    if (!notifications || !Array.isArray(notifications)) {
+    // Defensive checks with detailed logging
+    if (!notifications) {
+      console.log('markAsViewed: notifications is null/undefined');
       return;
     }
     
-    const unreadIds = notifications
-      .filter(n => !n.isRead)
-      .map(n => n.id);
-    
-    if (unreadIds.length > 0) {
-      markAsViewed(unreadIds);
+    if (!Array.isArray(notifications)) {
+      console.error('markAsViewed: notifications is not an array:', typeof notifications, notifications);
+      return;
     }
-  }, [notifications]);
+    
+    if (notifications.length === 0) {
+      console.log('markAsViewed: no notifications to process');
+      return;
+    }
+    
+    try {
+      const unreadIds = notifications
+        .filter(n => n && typeof n === 'object' && n.id && !n.isRead)
+        .map(n => n.id);
+      
+      console.log('markAsViewed: unread notification IDs:', unreadIds);
+      
+      if (unreadIds.length > 0) {
+        debouncedMarkAsViewed(unreadIds);
+      }
+    } catch (error) {
+      console.error('Error processing notifications for markAsViewed:', error);
+    }
+  }, [notifications, debouncedMarkAsViewed]); // Now depends on stable debouncedMarkAsViewed
 
   if (loading) {
     return (
@@ -310,14 +331,24 @@ export default function NotificationSection() {
       </div>
       
       <div className="space-y-4">
-        {(notifications || []).map((notification) => (
-          <NotificationCard
-            key={notification.id}
-            notification={notification}
-            onDismiss={handleDismiss}
-            onCTAClick={handleCTAClick}
-          />
-        ))}
+        {(notifications || [])
+          .filter(notification => notification && typeof notification === 'object' && notification.id)
+          .map((notification) => {
+            try {
+              return (
+                <NotificationCard
+                  key={notification.id}
+                  notification={notification}
+                  onDismiss={handleDismiss}
+                  onCTAClick={handleCTAClick}
+                />
+              );
+            } catch (error) {
+              console.error('Error rendering notification:', notification, error);
+              return null;
+            }
+          })
+          .filter(Boolean)}
       </div>
     </div>
   );
