@@ -8,21 +8,94 @@ import { Badge } from "@/components/ui/badge";
 import { User, Calendar, Crown } from "lucide-react";
 import { format } from "date-fns";
 import { uz } from "date-fns/locale";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useMemo, Component, ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Lazy load notification section for better initial page load
 const NotificationSection = lazy(() => import("@/components/notification-section"));
 
+// Error boundary component for catching React errors
+class ErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(_: Error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    console.error('Profile Page Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 text-center">
+          <p className="text-muted-foreground">
+            Bildirishnomalar bo'limini yuklashda xatolik yuz berdi.
+          </p>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 export default function ProfilePage() {
   const { user } = useAuth();
   const { tier, getTierStatus } = useUserTier();
-  const tierStatus = getTierStatus();
+  
+  // Memoize expensive operations to prevent re-renders
+  const tierStatus = useMemo(() => {
+    try {
+      return getTierStatus();
+    } catch (error) {
+      console.error('Error getting tier status:', error);
+      return {
+        tier: 'free',
+        displayName: 'Bepul',
+        color: 'bg-gray-100 text-gray-800',
+        features: []
+      };
+    }
+  }, [getTierStatus]);
 
-  // Format join date - using paidAt as a fallback since createdAt might not be available
-  const joinDate = user?.paidAt 
-    ? format(new Date(user.paidAt), "d MMMM yyyy", { locale: uz })
-    : "Yangi foydalanuvchi";
+  // Safe date formatting with error handling
+  const joinDate = useMemo(() => {
+    if (!user?.paidAt) return "Yangi foydalanuvchi";
+    
+    try {
+      const date = new Date(user.paidAt);
+      if (isNaN(date.getTime())) return "Yangi foydalanuvchi";
+      return format(date, "d MMMM yyyy", { locale: uz });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return "Yangi foydalanuvchi";
+    }
+  }, [user?.paidAt]);
+
+  // Show loading state if user data is not available
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <AppHeader />
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-32 w-full" />
+          </div>
+        </main>
+        <AppFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -67,7 +140,7 @@ export default function ProfilePage() {
                 {/* Paid Date if Premium */}
                 {tier === 'paid' && user?.paidAt && (
                   <p className="text-sm text-muted-foreground">
-                    Premium faollashtirilgan: {format(new Date(user.paidAt), "d MMMM yyyy", { locale: uz })}
+                    Premium faollashtirilgan: {joinDate}
                   </p>
                 )}
               </div>
@@ -83,7 +156,9 @@ export default function ProfilePage() {
             <Skeleton className="h-32 w-full" />
           </div>
         }>
-          <NotificationSection />
+          <ErrorBoundary>
+            <NotificationSection />
+          </ErrorBoundary>
         </Suspense>
         
         {/* Progress Dashboard - Moved from Home */}

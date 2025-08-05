@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [
     react(),
   ],
-  publicDir: path.resolve(__dirname, "public"),
+  publicDir: path.resolve(__dirname, "client", "public"),
   define: {
     'process.env': {},
   },
