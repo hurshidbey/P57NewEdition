@@ -9,25 +9,25 @@ const router = Router();
 const createNotificationSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.string().min(1).max(2000),
-  targetAudience: z.enum(['all', 'free', 'paid']),
-  isActive: z.boolean().optional(),
-  showAsPopup: z.boolean().optional(),
+  target_audience: z.enum(['all', 'free', 'paid']),
+  is_active: z.boolean().optional(),
+  show_as_popup: z.boolean().optional(),
   priority: z.number().min(0).max(100).optional(),
-  ctaText: z.string().max(50).optional(),
-  ctaUrl: z.string().url().optional(),
-  expiresAt: z.string().datetime().optional(),
+  cta_text: z.string().max(50).optional(),
+  cta_url: z.string().url().optional(),
+  expires_at: z.string().datetime().optional(),
 });
 
 const updateNotificationSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   content: z.string().min(1).max(2000).optional(),
-  targetAudience: z.enum(['all', 'free', 'paid']).optional(),
-  isActive: z.boolean().optional(),
-  showAsPopup: z.boolean().optional(),
+  target_audience: z.enum(['all', 'free', 'paid']).optional(),
+  is_active: z.boolean().optional(),
+  show_as_popup: z.boolean().optional(),
   priority: z.number().min(0).max(100).optional(),
-  ctaText: z.string().max(50).optional().nullable(),
-  ctaUrl: z.string().url().optional().nullable(),
-  expiresAt: z.string().datetime().optional().nullable(),
+  cta_text: z.string().max(50).optional().nullable(),
+  cta_url: z.string().url().optional().nullable(),
+  expires_at: z.string().datetime().optional().nullable(),
 });
 
 /**
@@ -66,8 +66,8 @@ router.post('/', async (req: Request, res: Response) => {
     // Create notification
     const notification = await notificationService.createNotification({
       ...validatedData,
-      createdBy: adminEmail,
-      expiresAt: validatedData.expiresAt ? new Date(validatedData.expiresAt) : undefined,
+      created_by: adminEmail,
+      expires_at: validatedData.expires_at ? new Date(validatedData.expires_at) : undefined,
     });
 
     logger.info('Admin created notification', {
@@ -117,10 +117,10 @@ router.put('/:id', async (req: Request, res: Response) => {
     // Update notification
     const notification = await notificationService.updateNotification(id, {
       ...validatedData,
-      expiresAt: validatedData.expiresAt === null 
+      expires_at: validatedData.expires_at === null 
         ? null 
-        : validatedData.expiresAt 
-          ? new Date(validatedData.expiresAt) 
+        : validatedData.expires_at 
+          ? new Date(validatedData.expires_at) 
           : undefined,
     });
 

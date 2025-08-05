@@ -9,26 +9,26 @@ import { logger } from '../utils/logger';
 export interface CreateNotificationInput {
   title: string;
   content: string;
-  targetAudience: 'all' | 'free' | 'paid';
-  isActive?: boolean;
-  showAsPopup?: boolean;
+  target_audience: 'all' | 'free' | 'paid';
+  is_active?: boolean;
+  show_as_popup?: boolean;
   priority?: number;
-  ctaText?: string;
-  ctaUrl?: string;
-  createdBy: string;
-  expiresAt?: Date;
+  cta_text?: string;
+  cta_url?: string;
+  created_by: string;
+  expires_at?: Date;
 }
 
 export interface UpdateNotificationInput {
   title?: string;
   content?: string;
-  targetAudience?: 'all' | 'free' | 'paid';
-  isActive?: boolean;
-  showAsPopup?: boolean;
+  target_audience?: 'all' | 'free' | 'paid';
+  is_active?: boolean;
+  show_as_popup?: boolean;
   priority?: number;
-  ctaText?: string;
-  ctaUrl?: string;
-  expiresAt?: Date | null;
+  cta_text?: string;
+  cta_url?: string;
+  expires_at?: Date | null;
 }
 
 export interface NotificationWithStats extends Notification {
@@ -66,14 +66,14 @@ export class NotificationService {
         .insert({
           title: data.title,
           content: data.content,
-          target_audience: data.targetAudience,
-          is_active: data.isActive ?? true,
-          show_as_popup: data.showAsPopup ?? false,
+          target_audience: data.target_audience,
+          is_active: data.is_active ?? true,
+          show_as_popup: data.show_as_popup ?? false,
           priority: data.priority ?? 0,
-          cta_text: data.ctaText,
-          cta_url: data.ctaUrl,
-          created_by: data.createdBy,
-          expires_at: data.expiresAt,
+          cta_text: data.cta_text,
+          cta_url: data.cta_url,
+          created_by: data.created_by,
+          expires_at: data.expires_at,
         })
         .select()
         .single();
@@ -149,13 +149,13 @@ export class NotificationService {
         .update({
           ...(data.title !== undefined && { title: data.title }),
           ...(data.content !== undefined && { content: data.content }),
-          ...(data.targetAudience !== undefined && { target_audience: data.targetAudience }),
-          ...(data.isActive !== undefined && { is_active: data.isActive }),
-          ...(data.showAsPopup !== undefined && { show_as_popup: data.showAsPopup }),
+          ...(data.target_audience !== undefined && { target_audience: data.target_audience }),
+          ...(data.is_active !== undefined && { is_active: data.is_active }),
+          ...(data.show_as_popup !== undefined && { show_as_popup: data.show_as_popup }),
           ...(data.priority !== undefined && { priority: data.priority }),
-          ...(data.ctaText !== undefined && { cta_text: data.ctaText }),
-          ...(data.ctaUrl !== undefined && { cta_url: data.ctaUrl }),
-          ...(data.expiresAt !== undefined && { expires_at: data.expiresAt === null ? null : data.expiresAt }),
+          ...(data.cta_text !== undefined && { cta_text: data.cta_text }),
+          ...(data.cta_url !== undefined && { cta_url: data.cta_url }),
+          ...(data.expires_at !== undefined && { expires_at: data.expires_at === null ? null : data.expires_at }),
         })
         .eq('id', id)
         .select()
