@@ -8,42 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { User, Calendar, Crown } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale"; // Using Russian locale as Uzbek not available
-import { useMemo, Component, ReactNode } from "react";
+import { useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import NotificationSection from "@/components/notification-section";
-
-// Error boundary component for catching React errors
-class ErrorBoundary extends Component<
-  { children: ReactNode },
-  { hasError: boolean }
-> {
-  constructor(props: { children: ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(_: Error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: any) {
-    console.error('Profile Page Error:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="p-4 text-center">
-          <p className="text-muted-foreground">
-            Bildirishnomalar bo'limini yuklashda xatolik yuz berdi.
-          </p>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -147,9 +114,7 @@ export default function ProfilePage() {
         </Card>
         
         {/* Notifications Section */}
-        <ErrorBoundary>
-          <NotificationSection />
-        </ErrorBoundary>
+        <NotificationSection />
         
         {/* Progress Dashboard - Moved from Home */}
         <div>
