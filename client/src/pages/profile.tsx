@@ -8,11 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { User, Calendar, Crown } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale"; // Using Russian locale as Uzbek not available
-import { lazy, Suspense, useMemo, Component, ReactNode } from "react";
+import { useMemo, Component, ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-
-// Lazy load notification section for better initial page load
-const NotificationSection = lazy(() => import("@/components/notification-section"));
+import NotificationSection from "@/components/notification-section";
 
 // Error boundary component for catching React errors
 class ErrorBoundary extends Component<
@@ -149,17 +147,9 @@ export default function ProfilePage() {
         </Card>
         
         {/* Notifications Section */}
-        <Suspense fallback={
-          <div className="space-y-4">
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-32 w-full" />
-          </div>
-        }>
-          <ErrorBoundary>
-            <NotificationSection />
-          </ErrorBoundary>
-        </Suspense>
+        <ErrorBoundary>
+          <NotificationSection />
+        </ErrorBoundary>
         
         {/* Progress Dashboard - Moved from Home */}
         <div>

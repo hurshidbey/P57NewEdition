@@ -29,6 +29,20 @@ export default function NotificationSection() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
+  
+  // Create a wrapper for setNotifications with logging
+  const setNotificationsWithLogging = (newNotifications: Notification[] | ((prev: Notification[]) => Notification[])) => {
+    if (typeof newNotifications === 'function') {
+      setNotifications(prev => {
+        const result = newNotifications(prev);
+        console.log('setNotifications (function): prev:', prev?.length, 'new:', result?.length, 'stack:', new Error().stack?.split('\n')[2]);
+        return result;
+      });
+    } else {
+      console.log('setNotifications (direct): new length:', newNotifications?.length, 'stack:', new Error().stack?.split('\n')[2]);
+      setNotifications(newNotifications);
+    }
+  };
 
   const fetchNotifications = async () => {
     // Prevent duplicate fetches
@@ -57,7 +71,7 @@ export default function NotificationSection() {
       
       if (!token) {
         console.warn('No authentication token available');
-        setNotifications([]);
+        setNotificationsWithLogging([]);
         return;
       }
       
@@ -76,7 +90,7 @@ export default function NotificationSection() {
       if (!response.ok) {
         if (response.status === 404) {
           // Notifications endpoint not available - this is not an error
-          setNotifications([]);
+          setNotificationsWithLogging([]);
           return;
         }
         const errorData = await response.json().catch(() => null);
@@ -91,26 +105,32 @@ export default function NotificationSection() {
       // Ensure we always set an array, even if data.data is null/undefined
       if (!data || typeof data !== 'object') {
         console.warn('Invalid API response format:', data);
-        setNotifications([]);
+        setNotificationsWithLogging([]);
         return;
       }
       
       const notificationData = data?.data || [];
       const validNotifications = Array.isArray(notificationData) ? notificationData : [];
       console.log('Setting notifications:', validNotifications);
-      setNotifications(validNotifications);
+      
+      // Add stack trace to understand who is calling this
+      if (validNotifications.length === 0) {
+        console.log('WARNING: Setting empty notifications array - Stack trace:', new Error().stack);
+      }
+      
+      setNotificationsWithLogging(validNotifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
       
       // Don't show toast for AbortError (timeout)
       if (error instanceof Error && error.name === 'AbortError') {
         console.warn('Notification fetch timed out');
-        setNotifications([]);
+        setNotificationsWithLogging([]);
         return;
       }
       
       // Set empty array on error to prevent crashes
-      setNotifications([]);
+      setNotificationsWithLogging([]);
       
       // Only show error toast for non-network errors
       if (error instanceof Error && !error.message.includes('fetch')) {
@@ -131,14 +151,19 @@ export default function NotificationSection() {
     
     const loadNotifications = async () => {
       if (isMounted) {
+        console.log('useEffect: About to fetch notifications, current notifications:', notifications);
         await fetchNotifications();
       }
     };
     
-    loadNotifications();
+    // Add a small delay to prevent race conditions with lazy loading
+    const timeoutId = setTimeout(() => {
+      loadNotifications();
+    }, 100);
     
     return () => {
       isMounted = false;
+      clearTimeout(timeoutId);
     };
   }, []); // Only fetch once on mount
 
@@ -164,7 +189,7 @@ export default function NotificationSection() {
       }
 
       // Remove from local state with optimistic update
-      setNotifications(prev => (prev || []).filter(n => n.id !== notificationId));
+      setNotificationsWithLogging(prev => (prev || []).filter(n => n.id !== notificationId));
       
       toast({
         title: "Muvaffaqiyat",
@@ -260,6 +285,12 @@ export default function NotificationSection() {
 
   // Track which notifications need to be marked as viewed
   useEffect(() => {
+    // Add a guard to prevent running during initial load
+    if (loading || isFetching) {
+      console.log('markAsViewed: Skipping during loading state');
+      return;
+    }
+    
     // Defensive checks with detailed logging
     if (!notifications) {
       console.log('markAsViewed: notifications is null/undefined');
@@ -272,9 +303,11 @@ export default function NotificationSection() {
     }
     
     if (notifications.length === 0) {
-      console.log('markAsViewed: no notifications to process');
+      console.log('marked/viewed: no notifications to process - CURRENT ARRAY LENGTH:', notifications?.length);
       return;
     }
+    
+    console.log('markAsViewed: Processing notifications array with length:', notifications.length);
     
     try {
       const unreadIds = notifications
@@ -284,12 +317,13 @@ export default function NotificationSection() {
       console.log('markAsViewed: unread notification IDs:', unreadIds);
       
       if (unreadIds.length > 0) {
+        console.log('markAsViewed: Calling debouncedMarkAsViewed with IDs:', unreadIds);
         debouncedMarkAsViewed(unreadIds);
       }
     } catch (error) {
       console.error('Error processing notifications for markAsViewed:', error);
     }
-  }, [notifications, debouncedMarkAsViewed]); // Now depends on stable debouncedMarkAsViewed
+  }, [notifications, debouncedMarkAsViewed, loading, isFetching]); // Added loading/fetching to dependencies
 
   if (loading) {
     return (
