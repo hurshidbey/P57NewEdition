@@ -30,7 +30,9 @@ export default function NotificationSection() {
   const [loading, setLoading] = useState(true);
 
   const fetchNotifications = async () => {
+    console.log('fetchNotifications called - user:', user, 'tier:', tier);
     if (!user) {
+      console.log('No user found, skipping notification fetch');
       setLoading(false);
       return;
     }
@@ -68,6 +70,9 @@ export default function NotificationSection() {
       }
 
       const data = await response.json();
+      console.log('Notification API response:', data);
+      console.log('User tier:', tier);
+      console.log('User:', user);
       setNotifications(Array.isArray(data.data) ? data.data : []);
     } catch (error) {
       console.error('Error fetching notifications:', error);
