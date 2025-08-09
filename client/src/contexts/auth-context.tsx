@@ -92,17 +92,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (email: string, password: string) => {
     const { user } = await authService.signIn(email, password)
     if (user) {
-      // Check if user is admin
-      const adminEmails = ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
-      const isAdmin = adminEmails.includes(user.email || '');
-      
-      setUser({
-        id: user.id,
-        email: user.email!,
-        name: user.user_metadata?.name || user.email?.split('@')[0],
-        tier: isAdmin ? 'paid' : (user.user_metadata?.tier || 'free'),
-        role: isAdmin ? 'admin' : undefined
-      })
+      // Get the current user with proper tier and role
+      const authUser = await authService.getCurrentUser()
+      if (authUser) {
+        setUser(authUser)
+      }
     }
   }
 

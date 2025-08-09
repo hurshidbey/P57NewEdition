@@ -200,11 +200,14 @@ export const authService = {
     const isAdminEmail = adminEmails.includes(user.email!);
     const isAdmin = user.user_metadata?.role === 'admin' || isAdminEmail;
     
+    // Admins should always have 'paid' tier for access to all features
+    const userTier = isAdmin ? 'paid' : (user.user_metadata?.tier || 'free');
+    
     return {
       id: userId,
       email: user.email!,
       name: user.user_metadata?.name || user.email?.split('@')[0],
-      tier: user.user_metadata?.tier || 'free',
+      tier: userTier,
       paidAt: user.user_metadata?.paidAt,
       role: isAdmin ? 'admin' : undefined
     }
@@ -256,11 +259,14 @@ export const authService = {
         const isAdminEmail = adminEmails.includes(session.user.email!);
         const isAdmin = session.user.user_metadata?.role === 'admin' || isAdminEmail;
         
+        // Admins should always have 'paid' tier for access to all features
+        const userTier = isAdmin ? 'paid' : (session.user.user_metadata?.tier || 'free');
+        
         const authUser: AuthUser = {
           id: userId,
           email: session.user.email!,
           name: session.user.user_metadata?.name || session.user.email?.split('@')[0],
-          tier: session.user.user_metadata?.tier || 'free',
+          tier: userTier,
           paidAt: session.user.user_metadata?.paidAt,
           role: isAdmin ? 'admin' : undefined
         }
