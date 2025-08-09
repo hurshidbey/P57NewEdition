@@ -44,17 +44,23 @@ export const flexibleAuth = async (req: Request, res: Response, next: NextFuncti
         const { data: { user }, error } = await supabase.auth.getUser(token);
         
         if (!error && user) {
+          // Check if user is admin
+          const adminEmails = process.env.ADMIN_EMAILS 
+            ? process.env.ADMIN_EMAILS.split(',').map(email => email.trim())
+            : ['hurshidbey@gmail.com', 'mustafaabdurahmonov7777@gmail.com'];
+          const isAdmin = user.user_metadata?.role === 'admin' || adminEmails.includes(user.email || '');
+          
           // Transform Supabase user to match legacy user format
           req.user = {
             id: user.id,
             email: user.email,
             username: user.email?.split('@')[0] || user.id,
-            role: user.user_metadata?.role || 'user',
-            tier: user.user_metadata?.tier || 'free',
+            role: isAdmin ? 'admin' : (user.user_metadata?.role || 'user'),
+            tier: isAdmin ? 'paid' : (user.user_metadata?.tier || 'free'), // Admins get paid tier
             // Include full Supabase user data for new features
             supabaseUser: user
           };
-          logger.debug('Auth via Bearer token', { userId: user.id });
+          logger.debug('Auth via Bearer token', { userId: user.id, tier: req.user.tier });
           return next();
         }
       } catch (tokenError) {

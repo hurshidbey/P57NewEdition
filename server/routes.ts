@@ -451,57 +451,28 @@ export function setupRoutes(app: Express): Server {
   // Prompts endpoints
   app.get("/api/prompts", optionalAuth, async (req, res) => {
     try {
-      // Check if user is authenticated via Supabase (for admins)
-      const authHeader = req.headers.authorization;
-      let isAdmin = false;
-      
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        try {
-          const token = authHeader.split(' ')[1];
-          const { createClient } = await import('@supabase/supabase-js');
-          const supabase = createClient(
-            process.env.SUPABASE_URL!,
-            process.env.SUPABASE_ANON_KEY!
-          );
-          
-          const { data: { user }, error } = await supabase.auth.getUser(token);
-          
-          if (!error && user) {
-            // Check if user is admin
-            const adminEmails = process.env.ADMIN_EMAILS 
-              ? process.env.ADMIN_EMAILS.split(',').map(email => email.trim())
-              : [];
-            
-            isAdmin = adminEmails.includes(user.email || '');
-          }
-        } catch (e) {
-          // Silent fail - not critical for this endpoint
-        }
-      }
-      
-      // If admin, return all prompts regardless of tier
-      if (isAdmin) {
-        const allPrompts = await hybridPromptsStorage.getAllPrompts();
-        res.json(allPrompts);
-      } else {
-        // CRITICAL SECURITY FIX: Use actual authenticated user's tier, not query parameter
-        let userTier = 'free'; // Default to free tier
+      // Use the user from middleware (already has admin detection and tier adjustment)
+      if (req.user) {
+        // Check if user is admin (already set by middleware)
+        const isAdmin = req.user.role === 'admin';
         
-        // Check if user is authenticated and get their actual tier
-        if (req.user) {
-          // Get the user's actual tier from their metadata
-          userTier = req.user.tier || 'free';
-          logger.info(`[SECURITY] User ${req.user.email || req.user.id} accessing prompts with tier: ${userTier}`);
+        // If admin, return all prompts regardless of tier
+        if (isAdmin) {
+          logger.info(`[PROMPTS] Admin user ${req.user.email} accessing all prompts`);
+          const allPrompts = await hybridPromptsStorage.getAllPrompts();
+          res.json(allPrompts);
         } else {
-          logger.info(`[SECURITY] Unauthenticated user accessing prompts with tier: free`);
+          // Use the tier from req.user (already adjusted for admins in middleware)
+          const userTier = req.user.tier || 'free';
+          logger.info(`[PROMPTS] User ${req.user.email || req.user.id} accessing prompts with tier: ${userTier}`);
+          
+          const prompts = await hybridPromptsStorage.getPrompts(userTier);
+          res.json(prompts);
         }
-        
-        // IMPORTANT: Ignore any tier parameter from query string to prevent privilege escalation
-        if (req.query.tier && req.query.tier !== userTier) {
-          logger.warn(`[SECURITY WARNING] User attempted to access tier '${req.query.tier}' but has tier '${userTier}'`);
-        }
-        
-        const prompts = await hybridPromptsStorage.getPrompts(userTier);
+      } else {
+        // Unauthenticated user - only get free tier prompts
+        logger.info(`[PROMPTS] Unauthenticated user accessing prompts with tier: free`);
+        const prompts = await hybridPromptsStorage.getPrompts('free');
         res.json(prompts);
       }
     } catch (error: any) {

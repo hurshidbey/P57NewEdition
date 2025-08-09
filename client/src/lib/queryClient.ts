@@ -19,7 +19,7 @@ export async function apiRequest(
   const headers: HeadersInit = data ? { "Content-Type": "application/json" } : {};
   
   // Only add auth token for protected routes
-  const protectedPaths = ['/api/admin', '/api/user', '/api/progress'];
+  const protectedPaths = ['/api/admin', '/api/user', '/api/progress', '/api/prompts'];
   const isProtectedRoute = protectedPaths.some(path => url.includes(path));
   
   if (isProtectedRoute) {
@@ -75,7 +75,7 @@ export const getQueryFn: <T>(options: {
     const headers: HeadersInit = {};
     
     // Only add auth token for protected routes
-    const protectedPaths = ['/api/admin', '/api/user', '/api/progress'];
+    const protectedPaths = ['/api/admin', '/api/user', '/api/progress', '/api/prompts'];
     const isProtectedRoute = protectedPaths.some(path => url.includes(path));
     
     if (isProtectedRoute) {
